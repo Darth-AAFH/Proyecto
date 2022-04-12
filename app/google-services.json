@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "727481893022",
+    "project_id": "wildtracker-421d4",
+    "storage_bucket": "wildtracker-421d4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727481893022:android:d86923e1e29e8c9b2abb8f",
+        "android_client_info": {
+          "package_name": "com.example.wildtracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "727481893022-adct709pnvj5tlihh532i6gjgm26thh6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDr5ezbUuNKuKHvlysB24XddWQa__49xlo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "727481893022-adct709pnvj5tlihh532i6gjgm26thh6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

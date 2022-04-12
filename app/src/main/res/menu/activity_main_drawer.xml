@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_perfil"
+            android:icon="@drawable/profile_icon"
+            android:title="@string/menu_perfil" />
+
+        <item
+            android:id="@+id/nav_inicio"
+            android:icon="@drawable/home_icon"
+            android:title="@string/menu_inicio" />
+
+        <item
+            android:id="@+id/nav_plantillas"
+            android:icon="@drawable/form_icon"
+            android:title="@string/menu_plantillas" />
+
+        <item
+            android:id="@+id/nav_ejercicio"
+            android:icon="@drawable/excersice_icon"
+            android:title="@string/menu_ejercicio" />
+        <item
+            android:id="@+id/nav_maps"
+            android:icon="@drawable/maps_icon"
+            android:title="@string/menu_maps" />
+        <item
+            android:id="@+id/nav_seguimiento"
+            android:icon="@drawable/plantillas_icon"
+            android:title="@string/menu_seguimiento" />
+
+        <item
+            android:id="@+id/nav_ranking"
+            android:icon="@drawable/ranking_icon"
+            android:title="@string/menu_ranking" />
+        <item
+            android:id="@+id/nav_chat"
+            android:icon="@drawable/chat_icon"
+            android:title="@string/menu_chat" />
+        <item
+            android:id="@+id/nav_metas"
+            android:icon="@drawable/medalgold"
+            android:title="Metas" />
+    </group>
+
+    <item android:title="Cuenta">
+    <menu>
+        <item
+            android:id="@+id/logOut"
+            android:icon="@drawable/logout"
+            android:title="@string/logout" />
+    </menu>
+    </item>
+
+
+</menu>
