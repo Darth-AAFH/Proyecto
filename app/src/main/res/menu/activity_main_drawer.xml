@@ -48,12 +48,16 @@
             android:title="Metas" />
     </group>
 
-    <item android:title="Cuenta">
-    <menu>
+    <item android:title="Aplicación">
+    <menu><item
+        android:id="@+id/Settings"
+        android:icon="@drawable/setting"
+        android:title="@string/settings" />
         <item
             android:id="@+id/logOut"
             android:icon="@drawable/logout"
             android:title="@string/logout" />
+
     </menu>
     </item>
 
