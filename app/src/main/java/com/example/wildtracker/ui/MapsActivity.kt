@@ -14,6 +14,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -39,6 +40,7 @@ import com.google.android.gms.maps.model.LatLng as LatLng1
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
     private lateinit var map: GoogleMap
+    private lateinit var builder: AlertDialog.Builder
     private var markers: MutableList<Marker> = mutableListOf<Marker>()
     companion object {
         const val REQUEST_CODE_LOCATION = 0
@@ -102,12 +104,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,NavigationView.OnNa
             markerToDelete.remove()
         }
         map.setOnMapLongClickListener { latLng ->
-            val marker = map.addMarker(
-                MarkerOptions().position(latLng).title("NewMarcador").snippet("A cool place")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.location))
-            )
-
-            markers.add(marker!!)
+            showAlertDialog(latLng)
         }
          createMarker()
         enableMyLocation()
@@ -115,7 +112,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,NavigationView.OnNa
 
 
     private fun showAlertDialog(latLng: LatLng1) {
+        builder = AlertDialog.Builder(this)
 
+        builder.setTitle("Alert")
+            .setMessage("Quieres Agregar el marcador?")
+            .setCancelable(true)
+            .setPositiveButton("Si"){dialogInterface,it->addMarker(latLng)}
+            .setNegativeButton("No"){dialogInterface,it->dialogInterface.cancel()}
+            .setNeutralButton("?"){dialogInterface,it->Toast.makeText(this@MapsActivity,
+                "Agregar un punto en el marcador",Toast.LENGTH_SHORT).show()}
+            .show()
+
+    }
+    private fun addMarker(latLng: LatLng1){
+        val marker = map.addMarker(
+            MarkerOptions().position(latLng).title("NewMarcador").snippet("A cool place")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.location))
+        )
+
+        markers.add(marker!!)
     }
 
 
