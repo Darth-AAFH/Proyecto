@@ -1,4 +1,5 @@
 package com.example.wildtracker.ui
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,7 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 
-class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
 
 
@@ -35,19 +36,21 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         setSupportActionBar(toolbar)
 
         drawer = findViewById(R.id.drawerlayout)
-        val toggle = ActionBarDrawerToggle(this,drawer,toolbar, R.string.bar_title,
+        val toggle = ActionBarDrawerToggle(
+            this, drawer, toolbar, R.string.bar_title,
             R.string.navigation_drawer_close
         )
         drawer.addDrawerListener(toggle)
         toggle.syncState()
     }
+
     private fun initNavigationView() {
 
-        val navigationView:NavigationView = findViewById(R.id.nav_view)
+        val navigationView: NavigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
         val headerView: View = LayoutInflater.from(this)
-            .inflate(R.layout.nav_header_main,navigationView,false)
+            .inflate(R.layout.nav_header_main, navigationView, false)
         //Header para datos del usuario
         navigationView.removeHeaderView(headerView)
         //para actualizar los datos del header
@@ -59,21 +62,18 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
     }
 
 
-
-
-
-
     fun callSignOut(view: View) {
         signOut()
     }
 
-      fun signOut() {
+    fun signOut() {
 
         useremail = ""
         FirebaseAuth.getInstance().signOut()
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("727481893022-adct709pnvj5tlihh532i6gjgm26thh6.apps.googleusercontent.com")            .requestEmail()
+            .requestIdToken("727481893022-adct709pnvj5tlihh532i6gjgm26thh6.apps.googleusercontent.com")
+            .requestEmail()
             .build()
 
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
@@ -87,17 +87,17 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.nav_perfil -> callPerfilActivity()
             R.id.nav_inicio -> callInicioActivity()
-            R.id.nav_plantillas ->callPlantillasActivity()
-            R.id.nav_ejercicio ->callEjercicioActivity()
+            R.id.nav_plantillas -> callPlantillasActivity()
+            R.id.nav_ejercicio -> callEjercicioActivity()
             R.id.nav_maps -> callMapsActivity()
-            R.id.nav_seguimiento ->callSeguimientoActivity()
-            R.id.nav_ranking ->callRankingActivity()
-            R.id.nav_chat ->callChatActivity()
+            R.id.nav_seguimiento -> callSeguimientoActivity()
+            R.id.nav_ranking -> callRankingActivity()
+            R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            R.id.nav_metas ->callMetasActivity()
+            R.id.nav_metas -> callMetasActivity()
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
@@ -105,35 +105,43 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         return true
     }
 
-    private fun callPerfilActivity() { val intent = Intent(this, PerfilActivity::class.java)
-        startActivity(intent) }
+    private fun callPerfilActivity() {
+        val intent = Intent(this, PerfilActivity::class.java)
+        startActivity(intent)
+    }
+
     private fun callInicioActivity() {
-        val intent = Intent(this,MainActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
+
     private fun callPlantillasActivity() {
-        val intent = Intent(this,PlantillasActivity::class.java)
+        val intent = Intent(this, PlantillasActivity::class.java)
         startActivity(intent)
     }
+
     private fun callEjercicioActivity() {
-        val intent = Intent(this,EjecicioActivity::class.java)
+        val intent = Intent(this, EjecicioActivity::class.java)
         startActivity(intent)
     }
+
     private fun callMapsActivity() {
-        val intent = Intent(this,MapsActivity::class.java)
+        val intent = Intent(this, MapsActivity::class.java)
         startActivity(intent)
     }
+
     private fun callSeguimientoActivity() {
-        val intent = Intent(this,SeguimientoActivity::class.java)
+        val intent = Intent(this, SeguimientoActivity::class.java)
         startActivity(intent)
     }
+
     private fun callRankingActivity() {
-        val intent = Intent(this,RankingActivity::class.java)
+        val intent = Intent(this, RankingActivity::class.java)
         startActivity(intent)
     }
 
     private fun callChatActivity() {
-        val intent = Intent(this,ChatActivity::class.java)
+        val intent = Intent(this, ChatActivity::class.java)
         startActivity(intent)
     }
 
@@ -141,8 +149,6 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         val intent = Intent(this, RecordActivity::class.java)
         startActivity(intent)
     }
-
-
 
 
 }

@@ -17,7 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 
-class RecordActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelectedListener {
+class RecordActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,25 +26,28 @@ class RecordActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelect
         initNavigationView()
 
     }
+
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
-        toolbar.title ="Metas"
+        toolbar.title = "Metas"
         setSupportActionBar(toolbar)
 
         drawer = findViewById(R.id.drawerlayout)
-        val toggle = ActionBarDrawerToggle(this,drawer,toolbar, R.string.bar_title,
+        val toggle = ActionBarDrawerToggle(
+            this, drawer, toolbar, R.string.bar_title,
             R.string.navigation_drawer_close
         )
         drawer.addDrawerListener(toggle)
         toggle.syncState()
     }
+
     private fun initNavigationView() {
 
         val navigationView: NavigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
         val headerView: View = LayoutInflater.from(this)
-            .inflate(R.layout.nav_header_main,navigationView,false)
+            .inflate(R.layout.nav_header_main, navigationView, false)
         //Header para datos del usuario
         navigationView.removeHeaderView(headerView)
         //para actualizar los datos del header
@@ -54,9 +57,10 @@ class RecordActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelect
         tvUser.text = LoginActivity.useremail
 
     }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
-        when(item.itemId){
+        when (item.itemId) {
             R.id.nav_maps -> callMapsActivity()
             R.id.logOut -> signOut()
         }
