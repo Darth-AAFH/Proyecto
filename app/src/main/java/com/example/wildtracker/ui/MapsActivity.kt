@@ -11,6 +11,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -22,6 +24,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
+import com.example.wildtracker.R.layout.dialog_interface
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.LocationServices
@@ -129,20 +132,31 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
 
     private fun showAlertAddDialog(latLng: LatLng1) {
-        builder = AlertDialog.Builder(this)
 
-        builder.setTitle("Alert")
-            .setMessage("Quieres Agregar el marcador?")
-            .setCancelable(true)
-            .setPositiveButton("Si") { dialogInterface, it -> addMarker(latLng) }
-            .setNegativeButton("No") { dialogInterface, it -> dialogInterface.cancel() }
-            .setNeutralButton("?") { dialogInterface, it ->
-                Toast.makeText(
-                    this@MapsActivity,
-                    "Agregar un punto en el marcador", Toast.LENGTH_SHORT
-                ).show()
-            }
-            .show()
+        val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_interface, null)
+        //Alert Dialog Builder
+        val mBuilder = AlertDialog.Builder(this)
+            .setView(mDialogView)
+            .setTitle("Formulario")
+        //show dialogInterface
+        mBuilder.show()
+            .dismiss()
+
+        //OnAddDialogListener
+        /*  builder = AlertDialog.Builder(this)
+
+          builder.setTitle("Alert")
+              .setMessage("Quieres Agregar el marcador?")
+              .setCancelable(true)
+              .setPositiveButton("Si") { dialogInterface, it -> addMarker(latLng) }
+              .setNegativeButton("No") { dialogInterface, it -> dialogInterface.cancel() }
+              .setNeutralButton("?") { dialogInterface, it ->
+                  Toast.makeText(
+                      this@MapsActivity,
+                      "Agregar un punto en el marcador", Toast.LENGTH_SHORT
+                  ).show()
+              }*/
+
 
     }
 
