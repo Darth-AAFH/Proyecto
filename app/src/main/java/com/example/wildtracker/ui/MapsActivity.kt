@@ -98,20 +98,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,NavigationView.OnNa
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        map.setOnInfoWindowClickListener { markerToDelete ->
+       /* map.setOnInfoWindowClickListener { markerToDelete ->
             Log.i(TAG, "OnWindowClickDelete")
             markers.remove(markerToDelete)
             markerToDelete.remove()
-        }
+        }*/
         map.setOnMapLongClickListener { latLng ->
-            showAlertDialog(latLng)
+            showAlertAddDialog(latLng)
         }
+        map.setOnInfoWindowLongClickListener { markerToDelete ->
+
+            showAlertDeleteDialog (markerToDelete)
+            }
+
+
          createMarker()
         enableMyLocation()
     }
 
 
-    private fun showAlertDialog(latLng: LatLng1) {
+    private fun showAlertAddDialog(latLng: LatLng1) {
         builder = AlertDialog.Builder(this)
 
         builder.setTitle("Alert")
@@ -124,6 +130,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,NavigationView.OnNa
             .show()
 
     }
+
+
     private fun addMarker(latLng: LatLng1){
         val marker = map.addMarker(
             MarkerOptions().position(latLng).title("NewMarcador").snippet("A cool place")
@@ -131,6 +139,28 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,NavigationView.OnNa
         )
 
         markers.add(marker!!)
+    }
+
+
+    private fun showAlertDeleteDialog(markerToDelete: Marker) {
+        builder = AlertDialog.Builder(this)
+
+        builder.setTitle("Alert")
+            .setMessage("Quieres Eliminar el marcador?")
+            .setCancelable(true)
+            .setPositiveButton("Si"){dialogInterface,it->DeleteMarker(markerToDelete)}
+            .setNegativeButton("No"){dialogInterface,it->dialogInterface.cancel()}
+            .setNeutralButton("?"){dialogInterface,it->Toast.makeText(this@MapsActivity,
+                "Eliminar marcador seleccionado",Toast.LENGTH_SHORT).show()}
+            .show()
+
+    }
+
+
+    private fun DeleteMarker(markerToDelete: Marker){
+        Log.i(TAG, "OnWindowClickDelete")
+        markers.remove(markerToDelete)
+        markerToDelete.remove()
     }
 
 
