@@ -11,20 +11,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
-import com.example.wildtracker.R.layout.dialog_interface
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.LocationServices
@@ -50,6 +47,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     companion object {
         const val REQUEST_CODE_LOCATION = 0
     }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_maps)
+        LocationServices.getFusedLocationProviderClient(this)
+        createMapFragment()
+        initToolbar()
+        initNavigationView()
+    }
+
 
     private fun isPermissionsGranted() = ContextCompat.checkSelfPermission(
         this,
@@ -133,45 +140,89 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     private fun showAlertAddDialog(latLng: LatLng1) {
 
-        val mDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_interface, null)
-        //Alert Dialog Builder
-        val mBuilder = AlertDialog.Builder(this)
-            .setView(mDialogView)
-            .setTitle("Formulario")
-        //show dialogInterface
-        mBuilder.show()
-            .dismiss()
-
         //OnAddDialogListener
-        /*  builder = AlertDialog.Builder(this)
+        builder = AlertDialog.Builder(this)
+        val dialogBuilder = AlertDialog.Builder(this)
 
-          builder.setTitle("Alert")
-              .setMessage("Quieres Agregar el marcador?")
-              .setCancelable(true)
-              .setPositiveButton("Si") { dialogInterface, it -> addMarker(latLng) }
-              .setNegativeButton("No") { dialogInterface, it -> dialogInterface.cancel() }
-              .setNeutralButton("?") { dialogInterface, it ->
-                  Toast.makeText(
-                      this@MapsActivity,
-                      "Agregar un punto en el marcador", Toast.LENGTH_SHORT
-                  ).show()
-              }*/
+        builder.setTitle("Alert")
+            .setMessage("Quieres Agregar el marcador?")
+            .setCancelable(true)
+            .setPositiveButton("Si") { dialogInterface, it ->
+                val inflater = this.layoutInflater
+                val dialogView: View = inflater.inflate(R.layout.dialog_interface, null)
+                dialogBuilder.setView(dialogView)
+                val editText = dialogView.findViewById<View>(R.id.PlacesName) as EditText
+                val alertDialog: AlertDialog = dialogBuilder.create()
+                alertDialog.show()
+                val btAdd = dialogView.findViewById<Button>(R.id.buttonAddAlert)
+                val btCancell = dialogView.findViewById<Button>(R.id.buttonCancelAlert)
+                val radioGroup = dialogView.findViewById<RadioGroup>(R.id.RadioGroupDialog)
 
 
+                // Initializing the radio button check change listener
+
+
+                var selectedPlace = "s"
+                radioGroup.setOnCheckedChangeListener { radioGroup, selectedId ->
+                    // Now, listening to the changed radio button here
+                    when (selectedId) {
+                        // Case 1
+                        R.id.rdBtnPark -> {
+                            selectedPlace = "Parque"
+                        }
+                        // Case 2
+                        R.id.rdBtnGym -> {
+                            selectedPlace = "Gimnasio"
+                        }
+                    }
+                }
+                btAdd.setOnClickListener {
+
+                    var string = editText.text.toString()
+                    addMarker(latLng, string, selectedPlace)
+                    alertDialog.dismiss()
+                }
+                btCancell.setOnClickListener { alertDialog.dismiss() }
+
+
+            }
+            .setNegativeButton("No") { dialogInterface, it -> dialogInterface.cancel() }
+            .setNeutralButton("?") { dialogInterface, it ->
+                Toast.makeText(
+                    this@MapsActivity,
+                    "Agregar un punto en el marcador", Toast.LENGTH_SHORT
+                ).show()
+            }
+            .show()
     }
 
 
-    private fun addMarker(latLng: LatLng1) {
-        val marker = map.addMarker(
-            MarkerOptions().position(latLng).title("NewMarcador").snippet("A cool place")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.location))
-        )
+    private fun addMarker(latLng: LatLng1, string: String, selectedPlace: String) {
+        if (selectedPlace.equals("Parque")) {
+            val marker = map.addMarker(
+                MarkerOptions().position(latLng).title("${selectedPlace}").snippet("${string}")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.park))
+            )
+            markers.add(marker!!)
 
-        markers.add(marker!!)
+
+        } else if (selectedPlace.equals("Gimnasio")) {
+            val marker = map.addMarker(
+                MarkerOptions().position(latLng).title("${selectedPlace}").snippet("${string}")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.gym))
+            )
+            markers.add(marker!!)
+
+
+        } else {
+            Toast.makeText(this, "${selectedPlace}", Toast.LENGTH_LONG).show()
+        }
+
     }
 
 
     private fun showAlertDeleteDialog(markerToDelete: Marker) {
+
         builder = AlertDialog.Builder(this)
         builder.setTitle("Alert")
             .setMessage("Quieres Eliminar el marcador?")
@@ -181,6 +232,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             .show()
 
     }
+
 
     private fun deleteMarker(markerToDelete: Marker) {
         Log.i(TAG, "OnWindowClickDelete")
@@ -218,20 +270,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 .position(home)
                 .title("Marcador en mi casa")
                 .snippet("Population: 776733")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.location))
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.gym))
         )
 
 
-    }
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_maps)
-        LocationServices.getFusedLocationProviderClient(this)
-        createMapFragment()
-        initToolbar()
-        initNavigationView()
     }
 
 
@@ -294,50 +336,60 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         return true
     }
 
+
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
     }
+
 
     private fun callInicioActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 
+
     private fun callPlantillasActivity() {
         val intent = Intent(this, PlantillasActivity::class.java)
         startActivity(intent)
     }
+
 
     private fun callEjercicioActivity() {
         val intent = Intent(this, EjecicioActivity::class.java)
         startActivity(intent)
     }
 
+
     private fun callMapsActivity() {
         val intent = Intent(this, MapsActivity::class.java)
         startActivity(intent)
     }
+
 
     private fun callSeguimientoActivity() {
         val intent = Intent(this, SeguimientoActivity::class.java)
         startActivity(intent)
     }
 
+
     private fun callRankingActivity() {
         val intent = Intent(this, RankingActivity::class.java)
         startActivity(intent)
     }
+
 
     private fun callChatActivity() {
         val intent = Intent(this, ChatActivity::class.java)
         startActivity(intent)
     }
 
+
     private fun callMetasActivity() {
         val intent = Intent(this, RecordActivity::class.java)
         startActivity(intent)
     }
+
 
     private fun signOut() {
         LoginActivity.useremail = ""
