@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.get
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
@@ -144,8 +145,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         builder = AlertDialog.Builder(this)
         val dialogBuilder = AlertDialog.Builder(this)
 
-        builder.setTitle("Alert")
-            .setMessage("Quieres Agregar el marcador?")
+        builder.setTitle("Marcador nuevo")
+            .setMessage("Quieres Agregar un nuevo marcador?")
             .setCancelable(true)
             .setPositiveButton("Si") { dialogInterface, it ->
                 val inflater = this.layoutInflater
@@ -155,35 +156,39 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 val alertDialog: AlertDialog = dialogBuilder.create()
                 alertDialog.show()
                 val btAdd = dialogView.findViewById<Button>(R.id.buttonAddAlert)
+                btAdd.isVisible=false
                 val btCancell = dialogView.findViewById<Button>(R.id.buttonCancelAlert)
                 val radioGroup = dialogView.findViewById<RadioGroup>(R.id.RadioGroupDialog)
 
-
-                // Initializing the radio button check change listener
-
-
-                var selectedPlace = "s"
+                var selectedPlace = ""
                 radioGroup.setOnCheckedChangeListener { radioGroup, selectedId ->
                     // Now, listening to the changed radio button here
                     when (selectedId) {
                         // Case 1
                         R.id.rdBtnPark -> {
                             selectedPlace = "Parque"
+                            btAdd.isVisible=true
                         }
                         // Case 2
                         R.id.rdBtnGym -> {
                             selectedPlace = "Gimnasio"
+                            btAdd.isVisible=true
                         }
+                        else->                btAdd.isVisible=false
+
                     }
                 }
                 btAdd.setOnClickListener {
 
                     var string = editText.text.toString()
-                    addMarker(latLng, string, selectedPlace)
-                    alertDialog.dismiss()
+                    if (string.isEmpty())
+                        editText.setError("Añade una descripción al lugar")
+                    else {
+                        addMarker(latLng, string, selectedPlace)
+                        alertDialog.dismiss()
+                    }
+                    btCancell.setOnClickListener { alertDialog.dismiss() }
                 }
-                btCancell.setOnClickListener { alertDialog.dismiss() }
-
 
             }
             .setNegativeButton("No") { dialogInterface, it -> dialogInterface.cancel() }
@@ -256,22 +261,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     null
                 )
             }
-        val favoritePlace = LatLng1(20.702609, -103.389246)
-        val home = LatLng1(20.669607, -103.388950)
-        map.addMarker(MarkerOptions().position(favoritePlace).title("Here we are"))
-        /*  map.animateCamera(
-              CameraUpdateFactory.newLatLngZoom(home , 18f),
-              1000,
-              null
-          )
-  */
-        map.addMarker(
-            MarkerOptions()
-                .position(home)
-                .title("Marcador en mi casa")
-                .snippet("Population: 776733")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.gym))
-        )
 
 
     }

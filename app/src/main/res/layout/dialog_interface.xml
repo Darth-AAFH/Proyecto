@@ -40,6 +40,7 @@
         android:orientation="horizontal">
 
         <Button
+            android:backgroundTint="@color/green"
             android:id="@+id/buttonAddAlert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
