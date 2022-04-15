@@ -35,11 +35,13 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.android.gms.maps.model.LatLng as LatLng1
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     NavigationView.OnNavigationItemSelectedListener {
+    private val db = FirebaseFirestore.getInstance()
     private lateinit var drawer: DrawerLayout
     private lateinit var map: GoogleMap
     private lateinit var builder: AlertDialog.Builder

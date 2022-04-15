@@ -11,107 +11,71 @@ tools:context=".ui.PerfilActivity"
 tools:openDrawer="start">
 
 
-
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        android:orientation="vertical"
+        android:paddingTop="100dp"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/Perfil_pic"
+            android:layout_width="135dp"
+            android:layout_height="135dp"
+
+            app:srcCompat="@drawable/no_profile_pic" />
+
+        <Button
+            android:id="@+id/ChangeProfilePicButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:text="Cambiar foto" />
+
+        <TextView
+            android:id="@+id/birthDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fecha de nacimiento"
+
+            />
 
         <EditText
             android:id="@+id/Perfil_birthday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="datetime"
             android:hint="Fecha"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.645" />
+            android:inputType="datetime" />
 
-        <ImageView
-            android:id="@+id/imageView5"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginStart="56dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.642"
-            app:srcCompat="@drawable/ic_birthday" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fecha de nacimiento"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.37"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.595" />
+            android:text="Correo" />
 
         <EditText
             android:id="@+id/Perfil_mail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textEmailAddress"
             android:hint="Correo"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.53" />
-
-        <ImageView
-            android:id="@+id/imageView4"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginStart="56dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.527"
-            app:srcCompat="@drawable/ic_email" />
+            android:inputType="textEmailAddress" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Correo"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.283"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.474" />
-
-        <ImageView
-            android:id="@+id/Perfil_pic"
-            android:layout_width="135dp"
-            android:layout_height="135dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.137"
-            app:srcCompat="@drawable/no_profile_pic" />
+            android:text="Nombre" />
 
         <EditText
             android:id="@+id/Perfil_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPersonName"
             android:hint="Nombre"
+            android:inputType="textPersonName"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
@@ -119,56 +83,28 @@ tools:openDrawer="start">
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.418" />
 
-        <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginStart="56dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.419"
-            app:srcCompat="@drawable/ic_profile" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nombre"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.283"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.366" />
-
         <Button
-            android:id="@+id/EditProfileButton"
-            android:layout_width="wrap_content"
+            android:id="@+id/EditProfileDataButton"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:text="Editar Datos"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.816" />
+            app:layout_constraintVertical_bias="0.737" />
 
         <Button
-            android:id="@+id/ChangeProfileButton"
-            android:layout_width="wrap_content"
+            android:id="@+id/recoverProfileDataButton"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
-            android:text="Cambiar foto"
-            app:layout_constraintBottom_toTopOf="@+id/Perfil_pic"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.482"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.571" />
+            android:text="Recuperar" />
+
+        <Button
+            android:id="@+id/saveProfileButton"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="60dp"
+            android:text="Guardar" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
     <include
         layout="@layout/app_bar_main"
         android:layout_width="match_parent"

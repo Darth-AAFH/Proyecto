@@ -5,10 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
@@ -16,14 +19,21 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
+    private val db = FirebaseFirestore.getInstance()
+    /*var Perfil_birthday = findViewById<EditText>(R.id.Perfil_birthday)
+    var Perfil_mail = findViewById<EditText>(R.id.Perfil_mail)
+    var Perfil_name = findViewById<EditText>(R.id.Perfil_name)
+*/
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_perfil)
         initToolbar()
         initNavigationView()
+          setup()
     }
 
     private fun initToolbar() {
@@ -133,6 +143,49 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         googleSignInClient.signOut()
         //Cierra sesion y manda devuelta al login
         startActivity(Intent(this, LoginActivity::class.java))
+    }
+    private fun setup(){
+        val EditProfileDataButton = findViewById<Button>(R.id.EditProfileDataButton)
+        val recoverProfileDataButton = findViewById<Button>(R.id.recoverProfileDataButton)
+        val saveProfileButton = findViewById<Button>(R.id.saveProfileButton)
+        val ChangeProfilePicButton = findViewById<Button>(R.id.ChangeProfilePicButton)
+        val edBirthDay =   findViewById<EditText>(R.id.Perfil_birthday)
+        val edEmail =   findViewById<EditText>(R.id.Perfil_mail)
+        val edName =   findViewById<EditText>(R.id.Perfil_name)
+        edBirthDay.isEnabled = false
+        edEmail.isEnabled = false
+        edName.isEnabled = false
+        saveProfileButton.isVisible = false
+
+        saveProfileButton.setOnClickListener{
+            db.collection("users").document(LoginActivity.useremail).set(
+                hashMapOf( "birthDay"  to  findViewById<EditText>(R.id.Perfil_birthday).text.toString(),
+                "email" to findViewById<EditText>(R.id.Perfil_mail).text.toString(),
+                "Name" to findViewById<EditText>(R.id.Perfil_name).text.toString()
+                )
+            )
+            saveProfileButton.isVisible = false
+            edBirthDay.isEnabled = false
+            edEmail.isEnabled = false
+            edName.isEnabled = false
+        }
+
+        EditProfileDataButton.setOnClickListener {
+            saveProfileButton.isVisible = true
+              edBirthDay.isEnabled = true
+            edEmail.isEnabled = true
+            edName.isEnabled = true
+
+        }
+        recoverProfileDataButton.setOnClickListener {
+            db.collection("users").document(LoginActivity.useremail).get().addOnSuccessListener{
+                edBirthDay.setText(it.get("birthDay") as String?)
+                edEmail.setText(it.get("email") as String?)
+                edName.setText(it.get("Name") as String?)
+            }
+
+        }
+
     }
 
 
