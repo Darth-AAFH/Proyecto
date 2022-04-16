@@ -134,10 +134,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
             showAlertDeleteDialog(markerToDelete)
         }
-
-
         createMarker()
         enableMyLocation()
+
+      /*  db.collection("locations").get().addOnSuccessListener { result->
+            for ()
+        }
+
+*/
+
     }
 
 
@@ -213,7 +218,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             markers.add(marker!!)
 
 
-        } else if (selectedPlace.equals("Gimnasio")) {
+        }
+        else if (selectedPlace.equals("Gimnasio")) {
             val marker = map.addMarker(
                 MarkerOptions().position(latLng).title("${selectedPlace}").snippet("${string}")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.gym))
@@ -224,6 +230,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         } else {
             Toast.makeText(this, "${selectedPlace}", Toast.LENGTH_LONG).show()
         }
+
+        db.collection("locations").add(
+          hashMapOf( "latitud"  to  latLng.latitude,
+                 "longitud"  to  latLng.longitude,
+                "descripcion" to string,
+              "tipo" to selectedPlace
+              )
+        )
 
     }
 
