@@ -1,18 +1,24 @@
 package com.example.wildtracker.ui
 
+import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.FragmentManager
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -20,10 +26,19 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
     private val db = FirebaseFirestore.getInstance()
+    private lateinit var filepath:Uri
     /*var Perfil_birthday = findViewById<EditText>(R.id.Perfil_birthday)
     var Perfil_mail = findViewById<EditText>(R.id.Perfil_mail)
     var Perfil_name = findViewById<EditText>(R.id.Perfil_name)
@@ -152,22 +167,28 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val edBirthDay =   findViewById<EditText>(R.id.Perfil_birthday)
         val edEmail =   findViewById<EditText>(R.id.Perfil_mail)
         val edName =   findViewById<EditText>(R.id.Perfil_name)
+        val ivProfilePic = findViewById<ImageView>(R.id.Perfil_pic)
+
         edBirthDay.isEnabled = false
         edEmail.isEnabled = false
         edName.isEnabled = false
         saveProfileButton.isVisible = false
+        ChangeProfilePicButton.isVisible = false
+        EditProfileDataButton.isVisible = false
 
         saveProfileButton.setOnClickListener{
             db.collection("users").document(LoginActivity.useremail).set(
                 hashMapOf( "birthDay"  to  findViewById<EditText>(R.id.Perfil_birthday).text.toString(),
                 "email" to findViewById<EditText>(R.id.Perfil_mail).text.toString(),
-                "Name" to findViewById<EditText>(R.id.Perfil_name).text.toString()
+                "Name" to findViewById<EditText>(R.id.Perfil_name).text.toString(),
                 )
             )
             saveProfileButton.isVisible = false
             edBirthDay.isEnabled = false
             edEmail.isEnabled = false
             edName.isEnabled = false
+            EditProfileDataButton.isVisible = true
+
         }
 
         EditProfileDataButton.setOnClickListener {
@@ -175,18 +196,102 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
               edBirthDay.isEnabled = true
             edEmail.isEnabled = true
             edName.isEnabled = true
+            EditProfileDataButton.isVisible = false
 
         }
+
         recoverProfileDataButton.setOnClickListener {
+            EditProfileDataButton.isVisible = true
             db.collection("users").document(LoginActivity.useremail).get().addOnSuccessListener{
                 edBirthDay.setText(it.get("birthDay") as String?)
                 edEmail.setText(it.get("email") as String?)
                 edName.setText(it.get("Name") as String?)
             }
 
+            val progresDialog = ProgressDialog(this)
+            progresDialog.setMessage("Fetching image....")
+            progresDialog.setCancelable(false)
+            progresDialog.show()
+
+
+            val userID =FirebaseAuth.getInstance().currentUser!!.email.toString();
+            val storageRef = FirebaseStorage.getInstance().reference.child("UsersProfileImages/$userID.jpg")
+            val localfile = File.createTempFile("tempImage","jpg")
+            storageRef.getFile(localfile).addOnSuccessListener{
+
+                if(progresDialog.isShowing){
+                    progresDialog.dismiss()
+                }
+                val bitmap =BitmapFactory.decodeFile(localfile.absolutePath)
+                ivProfilePic.setImageBitmap(bitmap)
+
+
+            }.addOnFailureListener{
+                progresDialog.dismiss()
+                Toast.makeText(this,"Fallo el recuperar imagen",Toast.LENGTH_SHORT).show()
+
+            }
+
+        }
+
+        ChangeProfilePicButton.setOnClickListener {
+        uploadFile()
+        }
+        ivProfilePic.setOnClickListener {
+          startFileChooser()
+            ChangeProfilePicButton.isVisible = true
         }
 
     }
+
+    private fun uploadFile() {
+        val ChangeProfilePicButton = findViewById<Button>(R.id.ChangeProfilePicButton)
+        val  userID = FirebaseAuth.getInstance().currentUser!!.email.toString();
+        if (filepath != null) {
+            var pd = ProgressDialog(this)
+            pd.setTitle("Uploading")
+            pd.show()
+            var imageRef = FirebaseStorage.getInstance().reference.child("UsersProfileImages/$userID.jpg")
+            imageRef.putFile(filepath)
+                .addOnSuccessListener { p0 ->
+                    pd.dismiss()
+                    Toast.makeText(applicationContext, "File Uploaded", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "${userID}", Toast.LENGTH_LONG).show()
+
+                }
+                .addOnFailureListener { p0 ->
+                    pd.dismiss()
+                    Toast.makeText(applicationContext, p0.message, Toast.LENGTH_LONG).show()
+                }
+                .addOnProgressListener { p0 ->
+                    var progress = (100.0 * p0.bytesTransferred) / p0.totalByteCount
+                    pd.setMessage("Uploaded ${progress.toInt()}%")
+                }
+
+
+        }
+        ChangeProfilePicButton.isVisible = false
+    }
+
+    private fun startFileChooser() {
+        var i = Intent()
+        i.setType("image/*")
+            .setAction(Intent.ACTION_GET_CONTENT)
+        startActivityForResult(Intent.createChooser(i,"Elige una imagen"),111)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val ivProfilePic = findViewById<ImageView>(R.id.Perfil_pic)
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode==111 && resultCode==Activity.RESULT_OK && data!=null)
+        {
+            filepath =data.data!!
+            var bitmap = MediaStore.Images.Media.getBitmap(contentResolver,filepath)
+            ivProfilePic.setImageBitmap(bitmap)
+        }
+    }
+
+
 
 
 }

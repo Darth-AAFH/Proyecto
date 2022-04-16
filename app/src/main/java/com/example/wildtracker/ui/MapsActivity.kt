@@ -142,7 +142,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
 
     private fun showAlertAddDialog(latLng: LatLng1) {
-
+        Toast.makeText(this,"$latLng",Toast.LENGTH_SHORT).show()
         //OnAddDialogListener
         builder = AlertDialog.Builder(this)
         val dialogBuilder = AlertDialog.Builder(this)
