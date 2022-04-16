@@ -36,6 +36,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.type.LatLng
+import com.google.type.LatLngProto
 import com.google.android.gms.maps.model.LatLng as LatLng1
 
 
@@ -137,8 +139,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         createMarker()
         enableMyLocation()
 
-      /*  db.collection("locations").get().addOnSuccessListener { result->
-            for ()
+      /* db.collection("locations").get().addOnSuccessListener { result->
+            for (document in result ){
+                    val marker = map.addMarker(
+                        MarkerOptions().position("${ document.get("posicion") }" )
+                            .title("${document.get("tipo")as String}").snippet("${document.get("descripcion")as String}")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.park))
+                    )
+                    markers.add(marker!!)
+            }
         }
 
 */
@@ -209,10 +218,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
 
-    private fun addMarker(latLng: LatLng1, string: String, selectedPlace: String) {
+    private fun addMarker(latLng: LatLng1, descripcion: String, selectedPlace: String) {
         if (selectedPlace.equals("Parque")) {
             val marker = map.addMarker(
-                MarkerOptions().position(latLng).title("${selectedPlace}").snippet("${string}")
+                MarkerOptions().position(latLng).title("${selectedPlace}").snippet("${descripcion}")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.park))
             )
             markers.add(marker!!)
@@ -221,7 +230,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         }
         else if (selectedPlace.equals("Gimnasio")) {
             val marker = map.addMarker(
-                MarkerOptions().position(latLng).title("${selectedPlace}").snippet("${string}")
+                MarkerOptions().position(latLng).title("${selectedPlace}").snippet("${descripcion}")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.gym))
             )
             markers.add(marker!!)
@@ -232,15 +241,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         }
 
         db.collection("locations").add(
-          hashMapOf( "latitud"  to  latLng.latitude,
-                 "longitud"  to  latLng.longitude,
-                "descripcion" to string,
+          hashMapOf( "posicion"  to  latLng,
+                "descripcion" to descripcion,
               "tipo" to selectedPlace
               )
         )
-
     }
-
 
     private fun showAlertDeleteDialog(markerToDelete: Marker) {
 
@@ -251,7 +257,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             .setPositiveButton("Si") { dialogInterface, it -> deleteMarker(markerToDelete) }
             .setNegativeButton("No") { dialogInterface, it -> dialogInterface.cancel() }
             .show()
-
     }
 
 
