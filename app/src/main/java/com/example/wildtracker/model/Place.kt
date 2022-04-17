@@ -5,6 +5,4 @@ data class Place(
     val description: String,
     val latitude: Double,
     val longitude: Double
-) {
-
-}
+)

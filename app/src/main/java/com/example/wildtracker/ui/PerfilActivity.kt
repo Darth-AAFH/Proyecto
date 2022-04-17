@@ -49,6 +49,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         initToolbar()
         initNavigationView()
           setup()
+
     }
 
     private fun initToolbar() {
@@ -202,6 +203,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         recoverProfileDataButton.setOnClickListener {
             EditProfileDataButton.isVisible = true
+            recoverProfileDataButton.isVisible = false
             db.collection("users").document(LoginActivity.useremail).get().addOnSuccessListener{
                 edBirthDay.setText(it.get("birthDay") as String?)
                 edEmail.setText(it.get("email") as String?)
@@ -214,7 +216,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             progresDialog.show()
 
 
-            val userID =FirebaseAuth.getInstance().currentUser!!.email.toString();
+            val userID =FirebaseAuth.getInstance().currentUser!!.email.toString()
             val storageRef = FirebaseStorage.getInstance().reference.child("UsersProfileImages/$userID.jpg")
             val localfile = File.createTempFile("tempImage","jpg")
             storageRef.getFile(localfile).addOnSuccessListener{
@@ -246,7 +248,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
     private fun uploadFile() {
         val ChangeProfilePicButton = findViewById<Button>(R.id.ChangeProfilePicButton)
-        val  userID = FirebaseAuth.getInstance().currentUser!!.email.toString();
+        val  userID = FirebaseAuth.getInstance().currentUser!!.email.toString()
         if (filepath != null) {
             var pd = ProgressDialog(this)
             pd.setTitle("Uploading")
@@ -275,8 +277,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
     private fun startFileChooser() {
         var i = Intent()
-        i.setType("image/*")
-            .setAction(Intent.ACTION_GET_CONTENT)
+        i.setType("image/*").action = Intent.ACTION_GET_CONTENT
         startActivityForResult(Intent.createChooser(i,"Elige una imagen"),111)
     }
 

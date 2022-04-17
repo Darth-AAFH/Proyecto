@@ -231,7 +231,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
                     var string = editText.text.toString()
                     if (string.isEmpty())
-                        editText.setError("Añade una descripción al lugar")
+                        editText.error = "Añade una descripción al lugar"
                     else {
                         addMarker(latLng, string, selectedPlace)
                         alertDialog.dismiss()
