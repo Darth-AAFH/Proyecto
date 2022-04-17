@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
-import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
@@ -36,8 +35,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.type.LatLng
-import com.google.type.LatLngProto
+import com.google.firebase.firestore.GeoPoint
 import com.google.android.gms.maps.model.LatLng as LatLng1
 
 
@@ -139,8 +137,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         createMarker()
         enableMyLocation()
 
-      /* db.collection("locations").get().addOnSuccessListener { result->
-            for (document in result ){
+       /*db.collection("locations").get().addOnSuccessListener { result->
+           val geoPoint: GeoPoint = value.getGeoPoint("geoPoint")
+
+           val location = LatLng(geoPoint.getLatitude(), geoPoint.getLongitude())
+
+           for (document in result ){
                     val marker = map.addMarker(
                         MarkerOptions().position("${ document.get("posicion") }" )
                             .title("${document.get("tipo")as String}").snippet("${document.get("descripcion")as String}")
@@ -149,8 +151,39 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     markers.add(marker!!)
             }
         }
-
 */
+        db.collection("locations").get().addOnSuccessListener{
+
+            for (document in it ){
+                val lat =  document.get("latitud") as Double
+                val lng = document.get("longitud") as Double
+                val latLng:LatLng1 = LatLng1(lat, lng)
+                val placeType = document.get("tipo") as String
+                Toast.makeText(
+                    this,
+                    "Direccion: $latLng",
+                    Toast.LENGTH_SHORT
+                ).show()
+                if(placeType.equals("Parque")){
+
+                val marker = map.addMarker(
+                    MarkerOptions().position( latLng  )
+                        .title("${document.get("tipo")as String}").snippet("${document.get("descripcion")as String}")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.park))
+                )
+                markers.add(marker!!)
+                }
+                else{
+                    val marker = map.addMarker(
+                        MarkerOptions().position( latLng  )
+                            .title("${document.get("tipo")as String}").snippet("${document.get("descripcion")as String}")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.gym))
+                    )
+                    markers.add(marker!!)
+                }
+
+            }
+        }
 
     }
 
@@ -219,6 +252,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
 
     private fun addMarker(latLng: LatLng1, descripcion: String, selectedPlace: String) {
+       val latitud: Double = latLng.latitude
+        val longitud: Double = latLng.longitude
+
         if (selectedPlace.equals("Parque")) {
             val marker = map.addMarker(
                 MarkerOptions().position(latLng).title("${selectedPlace}").snippet("${descripcion}")
@@ -241,7 +277,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         }
 
         db.collection("locations").add(
-          hashMapOf( "posicion"  to  latLng,
+          hashMapOf(
+              "latitud" to latitud,
+              "longitud" to longitud,
                 "descripcion" to descripcion,
               "tipo" to selectedPlace
               )
