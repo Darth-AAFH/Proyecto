@@ -225,7 +225,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 val inflater = this.layoutInflater
                 //Infla la vista del mapa con el nuevo dialog para pedir los datos del lugar
                 /**
-                 * Vista del DialogAlert para llenar datos de un marcador en el mapa
+                 * Vista del DialogAlert para llenar datos de un
+                 * marcador en el mapa
                  */
                 val dialogView: View = inflater.inflate(R.layout.dialog_interface, null)
                 dialogBuilder.setView(dialogView)
@@ -233,31 +234,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                  * Edit text para la descripción del lugar en el mapa
                  */
                 val etMarkerDescription = dialogView.findViewById<View>(R.id.PlacesName) as EditText
+
                 /**
                  * Segundo AlertDialog para verificar el punto a añadir
                  */
                 val alertDialog: AlertDialog = dialogBuilder.create()
                 alertDialog.show()
-                /**
-                 * Boton para confirmar el añadir lugar
-                 */
+                /** Boton para confirmar el añadir lugar */
                 val btAddMarkerAlertDialog = dialogView.findViewById<Button>(R.id.buttonAddAlert)
                 btAddMarkerAlertDialog.isVisible = false
-                /**
-                 * Boton para cancelar el añadir lugar
-                 */
+                /** Boton para cancelar el añadir lugar */
                 val btCancell = dialogView.findViewById<Button>(R.id.buttonCancelAlert)
                 val radioGroup = dialogView.findViewById<RadioGroup>(R.id.RadioGroupDialog)
 
                 /**
-                 * Variable para almacenar el tipo de lugar del marcador añadido
+                 * Variable que almacena el tipo de lugar del marcador
+                 * añadido
                  */
                 var selectedPlace = ""
 
-                /**
-                 * RadioGrup para elegir el tipo de marcador a añadir : Parque || Gimnasio
-                 * y despues pasarlo a String de selectedPlace
-                 */
+                /**RadioGrup elige el tipo de marcador a añadir: Parque || Gimnasio
+                 * y despues pasarlo a String deselectedPlace */
                 radioGroup.setOnCheckedChangeListener { radioGroup, selectedId ->
                     when (selectedId) {
 
@@ -274,7 +271,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     }
                 }
                 btAddMarkerAlertDialog.setOnClickListener {
-                    // Para obtener la descripcion del lugar
+                    /**Obtiene la descripción del marcador a colocar en el mapa*/
                     var edDescripction = etMarkerDescription.text.toString()
                     if (edDescripction.isEmpty())
                         etMarkerDescription.error = "Añade una descripción al lugar"
@@ -296,11 +293,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             .show()
     }
 
-
+    /**
+     * Funcion para añadir marcadores en el mapa
+     * @param latLng  Latlng -> Recibe latitud y longitud
+     * @param descripcion  String -> Descripción del lugar a añadir
+     * @param selectedPlace String -> Tipo de lugar "Parque" o "Gimnasio"
+     */
     private fun addMarker(latLng: LatLng1, descripcion: String, selectedPlace: String) {
+        //Separar lat y lng para despues almacenarla en la base de datos como datos de tipo Double
         val latitud: Double = latLng.latitude
         val longitud: Double = latLng.longitude
 
+        // Añadir un marcador dependiendo del tipo de lugar "Gimasio" o "Parque"
         if (selectedPlace.equals("Parque")) {
             val marker = map.addMarker(
                 MarkerOptions().position(latLng).title("${selectedPlace}").snippet("${descripcion}")
@@ -317,10 +321,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             markers.add(marker!!)
 
 
-        } else {
-            Toast.makeText(this, "${selectedPlace}", Toast.LENGTH_LONG).show()
         }
-
+        /**Añade a la base de datos marcadores*/
         db.collection("locations").add(
             hashMapOf(
                 "latitud" to latitud,
@@ -331,6 +333,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         )
     }
 
+    /**AlertDialog para preguntar si se desea eliminar un marcador en el mapa*/
     private fun showAlertDeleteDialog(markerToDelete: Marker) {
 
         builder = AlertDialog.Builder(this)
@@ -342,14 +345,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             .show()
     }
 
-
+    /**Funcion para eliminar el marcador seleccionado en el mapa*/
     private fun deleteMarker(markerToDelete: Marker) {
         Log.i(TAG, "OnWindowClickDelete")
         markers.remove(markerToDelete)
         markerToDelete.remove()
+
     }
 
-
+    /**
+     * Obtiene la ultima Ubicación del usuario
+     */
     @SuppressLint("MissingPermission")
     private fun createMarker() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -369,7 +375,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     }
 
-
+    /**
+     * Iniciar interfaces graficas
+     */
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         toolbar.title = "Maps"
@@ -384,7 +392,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         toggle.syncState()
     }
 
-
+    /**
+     * Iniciar el menu de nav desplegable
+     */
     private fun initNavigationView() {
 
         val navigationView: NavigationView = findViewById(R.id.nav_view)
@@ -402,14 +412,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     }
 
-
+    /**
+     * Crear el mapa en el activity
+     */
     private fun createMapFragment() {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.fragggment_map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
 
-
+    /**
+     * Navegación por el menu desplegable
+     */
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_perfil -> callPerfilActivity()
@@ -429,7 +443,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         return true
     }
 
-
+    /**
+     * Llamada de actividades
+     */
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
@@ -483,7 +499,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         startActivity(intent)
     }
 
-
+    /**
+     * Cierre de sesión del usuario
+     */
     private fun signOut() {
         LoginActivity.useremail = ""
         FirebaseAuth.getInstance().signOut()
