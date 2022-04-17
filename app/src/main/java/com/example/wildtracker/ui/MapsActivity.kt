@@ -35,22 +35,43 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.GeoPoint
 import com.google.android.gms.maps.model.LatLng as LatLng1
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     NavigationView.OnNavigationItemSelectedListener {
+
+
+    /** Instancia a la base de datos */
     private val db = FirebaseFirestore.getInstance()
     private lateinit var drawer: DrawerLayout
+
+    /**
+     * Variable para hacer referencia a la clase de Google Maps y ser la
+     * entrada a los metodos relacionados con los mapas.
+     */
     private lateinit var map: GoogleMap
     private lateinit var builder: AlertDialog.Builder
+
+    /**
+     * Lista de marcadores en donde se almacenan los datos de los puntos
+     * del mapa
+     *
+     * @param Position Longitud y latitud : Latlng
+     * @param Tittle Titulo del marcador : String
+     * @param spippet Descripcion del marcador : String
+     */
     private var markers: MutableList<Marker> = mutableListOf<Marker>()
 
     companion object {
         const val REQUEST_CODE_LOCATION = 0
     }
 
+    /**
+     * Funcion al iniciar la actividad
+     *
+     * @throws LocationServices accede a la ubicación
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
@@ -60,13 +81,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         initNavigationView()
     }
 
-
+    /**
+     * @throws isPermissionsGranted Determina que se haya concedido un
+     *     permiso en especifico
+     * @param Manifest.permission.ACCESS_FINE_LOCATION Permiso a la
+     *     ubicacion actual del usuario
+     */
     private fun isPermissionsGranted() = ContextCompat.checkSelfPermission(
         this,
         Manifest.permission.ACCESS_FINE_LOCATION
     ) == PackageManager.PERMISSION_GRANTED
 
 
+    /**
+     * Revisa si la ubicación está habilitada, si no lo esta, una
+     * función la manda habilitar
+     */
     @SuppressLint("MissingPermission")
     private fun enableMyLocation() {
         if (!::map.isInitialized) return
@@ -79,7 +109,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     }
 
-
+    /** Solicita el acceso a la ubicación */
     private fun requestLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
@@ -97,7 +127,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         }
     }
 
-
+    /**
+     * En el resultado de pedir el permiso de ubicación
+     *
+     * @return Bool de map.IsLocationEnabled
+     */
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -120,63 +154,49 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         }
     }
 
+    /**
+     * Función que se manda a llamar cuando se pudo acceder a la
+     * ubicación y el mapa se ha cargado
+     *
+     * @param map Instancia de un mapa de Google
+     */
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        /* map.setOnInfoWindowClickListener { markerToDelete ->
-             Log.i(TAG, "OnWindowClickDelete")
-             markers.remove(markerToDelete)
-             markerToDelete.remove()
-         }*/
         map.setOnMapLongClickListener { latLng ->
             showAlertAddDialog(latLng)
         }
         map.setOnInfoWindowLongClickListener { markerToDelete ->
-
             showAlertDeleteDialog(markerToDelete)
         }
         createMarker()
         enableMyLocation()
 
-       /*db.collection("locations").get().addOnSuccessListener { result->
-           val geoPoint: GeoPoint = value.getGeoPoint("geoPoint")
+        /*
+        * Cuando se carga el mapa, accede a Firebase Cloud Firestore y trae todos los datos
+        * que se encuentran en "locations" asignando los respectivos valores de cada marcador
+        * para asi poder mostrarlos en el mapa       * */
+        db.collection("locations").get().addOnSuccessListener {
 
-           val location = LatLng(geoPoint.getLatitude(), geoPoint.getLongitude())
+            for (document in it) { // Entra a las propiedades de cada "locations"
+                val lat = document.get("latitud") as Double
+                val lng = document.get("longitud") as Double
+                val latLng: LatLng1 = LatLng1(lat, lng)
+                val placeType = document.get("tipo") as String
 
-           for (document in result ){
+                //Verifica que tipo de marcador es: Parque || Gimnasio para asi poder añadir cada marcador de cada "location"
+                if (placeType.equals("Parque")) {
                     val marker = map.addMarker(
-                        MarkerOptions().position("${ document.get("posicion") }" )
-                            .title("${document.get("tipo")as String}").snippet("${document.get("descripcion")as String}")
+                        MarkerOptions().position(latLng)
+                            .title("${document.get("tipo") as String}")
+                            .snippet("${document.get("descripcion") as String}")
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.park))
                     )
                     markers.add(marker!!)
-            }
-        }
-*/
-        db.collection("locations").get().addOnSuccessListener{
-
-            for (document in it ){
-                val lat =  document.get("latitud") as Double
-                val lng = document.get("longitud") as Double
-                val latLng:LatLng1 = LatLng1(lat, lng)
-                val placeType = document.get("tipo") as String
-                Toast.makeText(
-                    this,
-                    "Direccion: $latLng",
-                    Toast.LENGTH_SHORT
-                ).show()
-                if(placeType.equals("Parque")){
-
-                val marker = map.addMarker(
-                    MarkerOptions().position( latLng  )
-                        .title("${document.get("tipo")as String}").snippet("${document.get("descripcion")as String}")
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.park))
-                )
-                markers.add(marker!!)
-                }
-                else{
+                } else {
                     val marker = map.addMarker(
-                        MarkerOptions().position( latLng  )
-                            .title("${document.get("tipo")as String}").snippet("${document.get("descripcion")as String}")
+                        MarkerOptions().position(latLng)
+                            .title("${document.get("tipo") as String}")
+                            .snippet("${document.get("descripcion") as String}")
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.gym))
                     )
                     markers.add(marker!!)
@@ -187,53 +207,79 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
     }
 
-
+    /**
+     * Muestra 2 tipos de alert Dialog:
+     * 1. Para preguntar si que quiere añadir un nuevo marcador: Si ||
+     *    No || ?
+     * 2. Para verificar que se desea añadir
+     */
     private fun showAlertAddDialog(latLng: LatLng1) {
-        Toast.makeText(this,"$latLng",Toast.LENGTH_SHORT).show()
-        //OnAddDialogListener
+        //Inicializa el primer AlertDialog
         builder = AlertDialog.Builder(this)
         val dialogBuilder = AlertDialog.Builder(this)
-
         builder.setTitle("Marcador nuevo")
             .setMessage("Quieres Agregar un nuevo marcador?")
             .setCancelable(true)
-            .setPositiveButton("Si") { dialogInterface, it ->
+            .setPositiveButton("Si")
+            { dialogInterface, it ->
                 val inflater = this.layoutInflater
+                //Infla la vista del mapa con el nuevo dialog para pedir los datos del lugar
+                /**
+                 * Vista del DialogAlert para llenar datos de un marcador en el mapa
+                 */
                 val dialogView: View = inflater.inflate(R.layout.dialog_interface, null)
                 dialogBuilder.setView(dialogView)
-                val editText = dialogView.findViewById<View>(R.id.PlacesName) as EditText
+                /**
+                 * Edit text para la descripción del lugar en el mapa
+                 */
+                val etMarkerDescription = dialogView.findViewById<View>(R.id.PlacesName) as EditText
+                /**
+                 * Segundo AlertDialog para verificar el punto a añadir
+                 */
                 val alertDialog: AlertDialog = dialogBuilder.create()
                 alertDialog.show()
-                val btAdd = dialogView.findViewById<Button>(R.id.buttonAddAlert)
-                btAdd.isVisible=false
+                /**
+                 * Boton para confirmar el añadir lugar
+                 */
+                val btAddMarkerAlertDialog = dialogView.findViewById<Button>(R.id.buttonAddAlert)
+                btAddMarkerAlertDialog.isVisible = false
+                /**
+                 * Boton para cancelar el añadir lugar
+                 */
                 val btCancell = dialogView.findViewById<Button>(R.id.buttonCancelAlert)
                 val radioGroup = dialogView.findViewById<RadioGroup>(R.id.RadioGroupDialog)
 
+                /**
+                 * Variable para almacenar el tipo de lugar del marcador añadido
+                 */
                 var selectedPlace = ""
+
+                /**
+                 * RadioGrup para elegir el tipo de marcador a añadir : Parque || Gimnasio
+                 * y despues pasarlo a String de selectedPlace
+                 */
                 radioGroup.setOnCheckedChangeListener { radioGroup, selectedId ->
-                    // Now, listening to the changed radio button here
                     when (selectedId) {
-                        // Case 1
+
                         R.id.rdBtnPark -> {
                             selectedPlace = "Parque"
-                            btAdd.isVisible=true
+                            btAddMarkerAlertDialog.isVisible = true
                         }
-                        // Case 2
                         R.id.rdBtnGym -> {
                             selectedPlace = "Gimnasio"
-                            btAdd.isVisible=true
+                            btAddMarkerAlertDialog.isVisible = true
                         }
-                        else->                btAdd.isVisible=false
+                        else -> btAddMarkerAlertDialog.isVisible = false
 
                     }
                 }
-                btAdd.setOnClickListener {
-
-                    var string = editText.text.toString()
-                    if (string.isEmpty())
-                        editText.error = "Añade una descripción al lugar"
+                btAddMarkerAlertDialog.setOnClickListener {
+                    // Para obtener la descripcion del lugar
+                    var edDescripction = etMarkerDescription.text.toString()
+                    if (edDescripction.isEmpty())
+                        etMarkerDescription.error = "Añade una descripción al lugar"
                     else {
-                        addMarker(latLng, string, selectedPlace)
+                        addMarker(latLng, edDescripction, selectedPlace)
                         alertDialog.dismiss()
                     }
                     btCancell.setOnClickListener { alertDialog.dismiss() }
@@ -252,7 +298,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
 
     private fun addMarker(latLng: LatLng1, descripcion: String, selectedPlace: String) {
-       val latitud: Double = latLng.latitude
+        val latitud: Double = latLng.latitude
         val longitud: Double = latLng.longitude
 
         if (selectedPlace.equals("Parque")) {
@@ -263,8 +309,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             markers.add(marker!!)
 
 
-        }
-        else if (selectedPlace.equals("Gimnasio")) {
+        } else if (selectedPlace.equals("Gimnasio")) {
             val marker = map.addMarker(
                 MarkerOptions().position(latLng).title("${selectedPlace}").snippet("${descripcion}")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.gym))
@@ -277,12 +322,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         }
 
         db.collection("locations").add(
-          hashMapOf(
-              "latitud" to latitud,
-              "longitud" to longitud,
+            hashMapOf(
+                "latitud" to latitud,
+                "longitud" to longitud,
                 "descripcion" to descripcion,
-              "tipo" to selectedPlace
-              )
+                "tipo" to selectedPlace
+            )
         )
     }
 
