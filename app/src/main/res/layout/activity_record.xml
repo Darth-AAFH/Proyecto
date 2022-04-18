@@ -42,7 +42,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight=".3"
                 android:background="@color/gray_medium"
-                android:onClick="loadRunsBike"
                 android:src="@drawable/tiempo" />
 
             <ImageView
@@ -53,7 +52,6 @@
                 android:layout_marginRight="5dp"
                 android:layout_weight=".3"
                 android:background="@color/gray_medium"
-                android:onClick="loadRunsRollerSkate"
                 android:src="@drawable/peso" />
 
             <ImageView
@@ -62,8 +60,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight=".3"
                 android:background="@color/gray_medium"
-
-                android:onClick="loadRunsRunning"
                 android:src="@drawable/repeticion" />
 
         </LinearLayout>
@@ -88,7 +84,6 @@
         android:layout_gravity="end|bottom"
         android:layout_marginRight="10dp"
         android:backgroundTint="@color/blue"
-        android:onClick="callHome"
         android:src="@drawable/camino"
         android:translationX="-20dp"
         android:translationY="-90dp"
@@ -96,7 +91,6 @@
 
 
 </LinearLayout>
-
 
     <include
         layout="@layout/app_bar_main"
