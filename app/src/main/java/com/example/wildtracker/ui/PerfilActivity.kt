@@ -202,7 +202,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             }
 
             val progresDialog = ProgressDialog(this)
-            progresDialog.setMessage("Fetching image....")
+            progresDialog.setMessage("Cargando Imagen")
             progresDialog.setCancelable(false)
             progresDialog.show()
 
