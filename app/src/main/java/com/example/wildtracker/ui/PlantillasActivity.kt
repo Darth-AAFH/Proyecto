@@ -18,6 +18,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 
 class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
     private lateinit var drawer: DrawerLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +42,6 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     private fun initNavigationView() {
-
         val navigationView: NavigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
@@ -54,7 +54,6 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         val tvUser: TextView = headerView.findViewById(R.id.tvUser)
         tvUser.text = LoginActivity.useremail
-
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -133,4 +132,5 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         //Cierra sesion y manda devuelta al login
         startActivity(Intent(this, LoginActivity::class.java))
     }
+
 }
