@@ -1,7 +1,6 @@
 package com.example.wildtracker.ui
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.view.MenuItem
