@@ -118,7 +118,7 @@ class EditorRutinas : AppCompatActivity() {
                 Toast.makeText(this, "El nombre no puede estar vacio", Toast.LENGTH_SHORT).show()
             }else {
                 if(guardar(num, cambioNombre)) {
-                    val intent = Intent(this@EditorRutinas, MainActivity::class.java)
+                    val intent = Intent(this@EditorRutinas, PlantillasActivity::class.java)
                     startActivity(intent)
                 }
             }
@@ -126,7 +126,7 @@ class EditorRutinas : AppCompatActivity() {
 
         buttonBorrar2!!.setOnClickListener{
             borrar(num)
-            val intent = Intent(this@EditorRutinas, MainActivity::class.java)
+            val intent = Intent(this@EditorRutinas, PlantillasActivity::class.java)
             startActivity(intent)
         }
 

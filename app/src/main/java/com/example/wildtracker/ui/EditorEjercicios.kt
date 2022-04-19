@@ -1,6 +1,7 @@
 package com.example.wildtracker.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.view.MenuItem
@@ -99,8 +100,9 @@ class EditorEjercicios : AppCompatActivity() {
 
             if(validadorGuardar == true) {
                 val cambioNombre = editTextNombre2!!.text.toString(); val cambioTipo = spinnerTipos2.selectedItem.toString(); val cambioPeso = switchPeso2!!.isChecked()
-                if(guardar(num, cambioNombre, cambioTipo, cambioPeso))
-                    onBackPressed()
+                if(guardar(num, cambioNombre, cambioTipo, cambioPeso)){
+                    finish()
+                }
             }else{
                 Toast.makeText(this, "No se puede editar un ejercicio que esta siendo utilizado en una rutina", Toast.LENGTH_SHORT).show()
             }
@@ -108,7 +110,7 @@ class EditorEjercicios : AppCompatActivity() {
 
         buttonBorrar!!.setOnClickListener{
             if(borrar(num))
-                onBackPressed()
+                finish()
         }
 
         if (supportActionBar != null) {

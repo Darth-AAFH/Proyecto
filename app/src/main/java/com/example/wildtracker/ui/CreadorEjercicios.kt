@@ -39,8 +39,7 @@ class CreadorEjercicios : AppCompatActivity() {
             val nombre = editTextNombre!!.text.toString(); val tipo = spinnerTipos.selectedItem.toString(); val peso = switchPeso!!.isChecked()
             if(crear(nombre, tipo, peso)){
                 if(validadorNombre) {
-                    val intent = Intent(this@CreadorEjercicios, MainActivity::class.java)
-                    startActivity(intent)
+                    finish()
                 }
             }else {
                 Toast.makeText(this, "Se ha alcanzado el numero maximo de ejercicios", Toast.LENGTH_SHORT).show()

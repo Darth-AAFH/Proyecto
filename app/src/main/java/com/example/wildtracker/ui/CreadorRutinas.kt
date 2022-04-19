@@ -66,7 +66,7 @@ class CreadorRutinas : AppCompatActivity() {
             val nombre = editTextNombre3!!.text.toString()
             if(crear(nombre)){
                 if(validadorVacia == true) {
-                    val intent = Intent(this@CreadorRutinas, MainActivity::class.java)
+                    val intent = Intent(this@CreadorRutinas, PlantillasActivity::class.java)
                     startActivity(intent)
                 }
             }else {
