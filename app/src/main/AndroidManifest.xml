@@ -15,6 +15,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SportsTracker">
         <activity
+            android:name=".ui.EditorEjercicios"
+            android:exported="false" />
+        <activity
+            android:name=".ui.VerEjercicios"
+            android:exported="false" />
+        <activity
+            android:name=".ui.EditorRutinas"
+            android:exported="false" />
+        <activity
+            android:name=".ui.CreadorEjercicios"
+            android:exported="false" />
+        <activity
+            android:name=".ui.CreadorRutinas"
+            android:exported="false" />
+        <activity
             android:name=".ui.MetasActivity"
             android:exported="false" />
         <activity
@@ -29,7 +44,6 @@
         <activity
             android:name=".ui.EjecicioActivity"
             android:exported="false" />
-
         <activity
             android:name=".ui.PlantillasActivity"
             android:exported="false" />
@@ -39,7 +53,6 @@
         <activity
             android:name=".ui.RecordActivity"
             android:exported="false" />
-
         <activity
             android:name=".ui.MapsActivity"
             android:exported="false" />
@@ -57,7 +70,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCl2rT3RiBkDBFRunLs5ucKfVOjCyPNnKU" />
-
 
         <activity
             android:name=".TermsActivity"

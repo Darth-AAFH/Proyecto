@@ -16,8 +16,42 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import android.content.ContentValues
+import android.database.sqlite.SQLiteDatabase
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ListView
+import android.widget.AdapterView.OnItemClickListener
 
 class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    var buttonAdd: Button ?= null; var buttonRutina: Button ?= null; var buttonEjercicio: Button ?= null
+    var listViewRutinas: ListView?= null
+
+    var validadorMostar = 0
+    var listado: java.util.ArrayList<String>? = null
+
+    private fun CargarTabla(){
+        val datos1 = ArrayList<String>()
+
+        val helper = LocalDB(this, "Demo", null, 1)
+        val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
+
+        val sql = "select Id, Nombre, Ejercicios from Rutinas"
+        val c = db.rawQuery(sql, null) //Se crea un cursor que ira avanzando de posicion uno a uno
+        if (c.moveToFirst()) {
+            do { //Mientras se haya movido de posicion va a tomar todos los datos de esa fila
+                val linea = c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2)
+                datos1.add(linea)
+            } while (c.moveToNext())
+        }
+        c.close()
+        db.close()
+
+        listado = datos1
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
+        listViewRutinas!!.setAdapter(adapter) //La tabla se adapta en la text view
+    }
 
     private lateinit var drawer: DrawerLayout
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,6 +59,108 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         setContentView(R.layout.activity_plantillas)
         initToolbar()
         initNavigationView()
+
+        buttonAdd = findViewById(R.id.buttonAdd)
+        buttonRutina = findViewById(R.id.buttonRutina); buttonRutina!!.setVisibility(View.INVISIBLE); buttonRutina!!.setEnabled(false)
+        buttonEjercicio = findViewById(R.id.buttonEjercicio); buttonEjercicio!!.setVisibility(View.INVISIBLE); buttonEjercicio!!.setEnabled(false)
+        listViewRutinas = findViewById(R.id.listViewRutinas)
+
+        CargarTabla()
+
+        buttonAdd!!.setOnClickListener{
+            if(validadorMostar == 0) {
+                buttonRutina!!.setVisibility(View.VISIBLE); buttonRutina!!.setEnabled(true)
+                buttonEjercicio!!.setVisibility(View.VISIBLE); buttonEjercicio!!.setEnabled(true)
+                validadorMostar = 1
+            }else{
+                buttonRutina!!.setVisibility(View.INVISIBLE); buttonRutina!!.setEnabled(false)
+                buttonEjercicio!!.setVisibility(View.INVISIBLE); buttonEjercicio!!.setEnabled(false)
+                validadorMostar = 0
+            }
+            validadorLocalDB()
+        }
+
+        buttonRutina!!.setOnClickListener{
+            val intent = Intent(this@PlantillasActivity, CreadorRutinas::class.java)
+            startActivity(intent)
+        }
+
+        buttonEjercicio!!.setOnClickListener{
+            val intent = Intent(this@PlantillasActivity, CreadorEjercicios::class.java)
+            startActivity(intent)
+        }
+
+        listViewRutinas!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+            val num = this.listado!![position].split(" ").toTypedArray()[0].toInt()
+            val intent = Intent(this@PlantillasActivity, EditorRutinas::class.java)
+            intent.putExtra("Num", num)
+            startActivity(intent)
+        }
+    }
+
+    private fun validadorLocalDB(){
+        val helper = LocalDB(this, "Demo", null, 1)
+        val db: SQLiteDatabase = helper.getReadableDatabase()
+
+        val sql = "select id from Ejercicios"
+        val c = db.rawQuery(sql, null)
+
+        if (!c.moveToFirst()) {
+            var id = 1; var nombre = "Sentadillas"; var tipo = "Piernas"; var peso = true
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+            id = 2; nombre = "Saltos de tijera"; tipo = "Piernas"; peso = false
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+            id = 3; nombre = "Elevación de talones"; tipo = "Piernas"; peso = false
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+
+            id = 4; nombre = "Abdominales"; tipo = "Abdomen"; peso = false
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+            id = 5; nombre = "Plancha"; tipo = "Abdomen"; peso = false
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+            id = 6; nombre = "Escaladores"; tipo = "Abdomen"; peso = false
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+
+            id = 7; nombre = "Dominadas"; tipo = "Pecho"; peso = false
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+            id = 8; nombre = "Press de pecho"; tipo = "Pecho"; peso = true
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+
+            id = 9; nombre = "Peso muerto"; tipo = "Espalda"; peso = true
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+
+            id = 10; nombre = "Punches"; tipo = "Brazos"; peso = false
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+            id = 11; nombre = "Dips de tríceps"; tipo = "Brazos"; peso = false
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+
+            id = 12; nombre = "Press de hombros"; tipo = "Hombros"; peso = true
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+            id = 13; nombre = "Elevaciones laterales"; tipo = "Hombros"; peso = true
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+
+            id = 14; nombre = "Flexiones"; tipo = "Otro"; peso = false
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+            id = 15; nombre = "Burpees"; tipo = "Otro"; peso = false
+            ejerciciosLocalDB(id, nombre, tipo, peso)
+        }
+        c.close()
+        db.close()
+    }
+
+    private fun ejerciciosLocalDB(Id: Int, Nombre: String, Tipo: String, Peso: Boolean){
+        val helper = LocalDB(this, "Demo", null, 1)
+        val db: SQLiteDatabase = helper.getWritableDatabase() //Se abre la base de datos
+
+        try {
+            val c = ContentValues()
+            c.put("Id", Id)
+            c.put("Nombre", Nombre)
+            c.put("Tipo", Tipo)
+            c.put("Peso", Peso)
+            db.insert("EJERCICIOS", null, c)
+            db.close()
+        } catch (e: Exception) {
+        }
     }
 
     private fun initToolbar() {
