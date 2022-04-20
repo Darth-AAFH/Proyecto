@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
+import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -12,13 +14,18 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
+import com.example.wildtracker.model.ChatMessage
+import com.firebase.ui.database.FirebaseListAdapter
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+
 
 class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    private lateinit var drawer: DrawerLayout
+    lateinit var drawer: DrawerLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
@@ -26,11 +33,12 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initNavigationView()
     }
 
+
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         toolbar.title = "Chat"
         setSupportActionBar(toolbar)
-
+       
         drawer = findViewById(R.id.drawerlayout)!!
         val toggle = ActionBarDrawerToggle(
             this, drawer, toolbar, R.string.bar_title,
@@ -133,5 +141,5 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //Cierra sesion y manda devuelta al login
         startActivity(Intent(this, LoginActivity::class.java))
     }
-
 }
+
