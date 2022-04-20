@@ -111,11 +111,6 @@ class EditorEjercicios : AppCompatActivity() {
             if(borrar(num))
                 finish()
         }
-
-        if (supportActionBar != null) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.setDisplayShowHomeEnabled(true)
-        }
     }
 
     private fun guardar(Id: Int, Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean{
@@ -200,13 +195,6 @@ class EditorEjercicios : AppCompatActivity() {
             Toast.makeText(this, "No se puede borrar un ejercicio que esta siendo utilizado en una rutina", Toast.LENGTH_SHORT).show()
         }
         return validadorBorrar
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 }

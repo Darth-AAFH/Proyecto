@@ -183,11 +183,6 @@ class EditorRutinas : AppCompatActivity() {
                 contadorMax += 1
             }
         }
-
-        if (supportActionBar != null) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.setDisplayShowHomeEnabled(true)
-        }
     }
 
     private fun guardar(Id: Int, Nombre: String): Boolean{
@@ -239,13 +234,6 @@ class EditorRutinas : AppCompatActivity() {
         db.execSQL(sql) //Se ejecuta la consulta
         db.close() //Se cierra la base de datos y se manda mensaje de confirmacion
         Toast.makeText(this, "Se ha BORRADO la rutina", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 }

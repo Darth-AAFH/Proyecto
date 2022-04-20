@@ -56,19 +56,6 @@ class VerEjercicios : AppCompatActivity() {
             intent.putExtra("Num", num)
             startActivity(intent)
         }
-
-
-        if (supportActionBar != null) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.setDisplayShowHomeEnabled(true)
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 }

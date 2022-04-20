@@ -127,11 +127,6 @@ class CreadorRutinas : AppCompatActivity() {
                 contadorMax += 1
             }
         }
-
-        if (supportActionBar != null) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.setDisplayShowHomeEnabled(true)
-        }
     }
 
     private fun crear(Nombre: String): Boolean{
@@ -211,13 +206,6 @@ class CreadorRutinas : AppCompatActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, "Ha habido un error", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 }

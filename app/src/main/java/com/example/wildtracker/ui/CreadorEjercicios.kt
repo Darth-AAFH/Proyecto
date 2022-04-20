@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
@@ -49,11 +50,6 @@ class CreadorEjercicios : AppCompatActivity() {
         buttonEditar!!.setOnClickListener{
             val intent = Intent(this@CreadorEjercicios, VerEjercicios::class.java)
             startActivity(intent)
-        }
-
-        if (supportActionBar != null) {
-            supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            supportActionBar!!.setDisplayShowHomeEnabled(true)
         }
     }
 
@@ -118,13 +114,6 @@ class CreadorEjercicios : AppCompatActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, "Ha habido un error", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
-            finish()
-        }
-        return super.onOptionsItemSelected(item)
     }
 
 }
