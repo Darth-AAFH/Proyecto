@@ -1,5 +1,6 @@
 package com.example.wildtracker.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,14 +17,83 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import android.database.sqlite.SQLiteDatabase
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ListView
 
 class EjecicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    var listViewRutinas2: ListView?= null
+    var textViewRutina: TextView?= null
+    var buttonIniciar: Button?= null
+
+    var listado: java.util.ArrayList<String>? = null
+
+    var num = 0
+
+    private fun CargarTabla(){
+        val datos = ArrayList<String>()
+
+        val helper = LocalDB(this, "Demo", null, 1)
+        val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
+
+        val sql = "select Id, Nombre, Ejercicios from Rutinas"
+        val c = db.rawQuery(sql, null) //Se crea un cursor que ira avanzando de posicion uno a uno
+        if (c.moveToFirst()) {
+            do { //Mientras se haya movido de posicion va a tomar todos los datos de esa fila
+                val linea = c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2)
+                datos.add(linea)
+            } while (c.moveToNext())
+        }
+        c.close()
+        db.close()
+
+        listado = datos
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
+        listViewRutinas2!!.setAdapter(adapter) //La tabla se adapta en la text view
+    }
+
     private lateinit var drawer: DrawerLayout
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ejecicio)
         initToolbar()
         initNavigationView()
+
+        listViewRutinas2 = findViewById(R.id.listViewRutinas2)
+        textViewRutina = findViewById(R.id.textViewRutina)
+        buttonIniciar = findViewById(R.id.buttonIniciar); buttonIniciar!!.setVisibility(View.INVISIBLE); buttonIniciar!!.setEnabled(false)
+
+        CargarTabla()
+
+        listViewRutinas2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+            var nombre = ""
+            num = this.listado!![position].split(" ").toTypedArray()[0].toInt()
+
+            val helper = LocalDB(this, "Demo", null, 1)
+            val db: SQLiteDatabase = helper.getWritableDatabase()
+
+            val sql = "select Nombre from Rutinas where Id = " + num
+            val c = db.rawQuery(sql, null)
+            if (c.moveToFirst()) {
+                nombre = c.getString(0)
+            }
+            c.close()
+            db.close()
+
+            textViewRutina!!.setText(""+nombre)
+
+            buttonIniciar!!.setVisibility(View.VISIBLE); buttonIniciar!!.setEnabled(true)
+        }
+
+        buttonIniciar!!.setOnClickListener{
+            val intent = Intent(this@EjecicioActivity, PlantillasActivity::class.java)
+            //intent.putExtra("Num", num)
+            startActivity(intent)
+        }
     }
 
     private fun initToolbar() {
@@ -133,4 +203,5 @@ class EjecicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         //Cierra sesion y manda devuelta al login
         startActivity(Intent(this, LoginActivity::class.java))
     }
+
 }
