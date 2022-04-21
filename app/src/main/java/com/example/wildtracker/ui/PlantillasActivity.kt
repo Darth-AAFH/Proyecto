@@ -178,6 +178,7 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     }
 
     private fun initNavigationView() {
+
         val navigationView: NavigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
 
@@ -189,7 +190,8 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         navigationView.addHeaderView(headerView)
 
         val tvUser: TextView = headerView.findViewById(R.id.tvUser)
-        tvUser.text = LoginActivity.useremail
+        tvUser.text = MainActivity.user
+
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

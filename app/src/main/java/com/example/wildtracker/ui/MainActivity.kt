@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navigationView.addHeaderView(headerView)
 
         val tvUser: TextView = headerView.findViewById(R.id.tvUser)
-        tvUser.text = useremail
+        tvUser.text = MainActivity.user
 
     }
 
