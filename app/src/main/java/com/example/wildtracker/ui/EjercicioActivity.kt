@@ -20,7 +20,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 
-class EjecicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     var listViewRutinas2: ListView?= null
     var textViewRutina: TextView?= null
@@ -88,7 +88,7 @@ class EjecicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         }
 
         buttonIniciar!!.setOnClickListener{
-            val intent = Intent(this@EjecicioActivity, EjecutadorRutina::class.java)
+            val intent = Intent(this@EjercicioActivity, EjecutadorRutina::class.java)
             intent.putExtra("Num", num)
             startActivity(intent)
         }
@@ -160,7 +160,7 @@ class EjecicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     }
 
     private fun callEjercicioActivity() {
-        val intent = Intent(this, EjecicioActivity::class.java)
+        val intent = Intent(this, EjercicioActivity::class.java)
         startActivity(intent)
     }
 

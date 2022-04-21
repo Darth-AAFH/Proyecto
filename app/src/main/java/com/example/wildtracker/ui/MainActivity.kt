@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun callEjercicioActivity() {
-        val intent = Intent(this, EjecicioActivity::class.java)
+        val intent = Intent(this, EjercicioActivity::class.java)
         startActivity(intent)
     }
 
