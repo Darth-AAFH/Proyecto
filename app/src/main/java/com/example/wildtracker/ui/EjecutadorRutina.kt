@@ -1,5 +1,6 @@
 package com.example.wildtracker.ui
 
+import android.annotation.SuppressLint
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.widget.*
@@ -14,17 +15,18 @@ class EjecutadorRutina : AppCompatActivity() {
     var buttonParar: Button?= null; var buttonPausar: Button?= null; var buttonSaltar: Button?= null
     var listViewEjerciciosPorHacer: ListView?= null; var buttonSiguiente: Button?= null
 
+    var listado = ArrayList<String>()
+    var datos = ArrayList<String>()
+
     lateinit var timer: Timer
     lateinit var trabajoTimer: TimerTask
     var tiempo = 0.0
-    var inicio = false
-    var parar = false
+    var inicio = false; var firstclick = false; var parar = false
+    var final = false
 
     var num = 0
 
     private fun CargarRutina(arreglo: Array<String?>) { //Funcion que trae la rutina
-        var listado = ArrayList<String>(); var datos = ArrayList<String>()
-
         val helper = LocalDB(this, "Demo", null, 1)
         val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
 
@@ -42,11 +44,13 @@ class EjecutadorRutina : AppCompatActivity() {
         c.close()
         db.close()
 
+        datos.add(" ")
         listado = datos
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
         listViewEjerciciosPorHacer!!.setAdapter(adapter) //La rutina se adapta en la text view
     }
 
+    @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ejecutador_rutina)
@@ -80,10 +84,11 @@ class EjecutadorRutina : AppCompatActivity() {
         val arreglo: Array<String?>
         arreglo = ejercicios.split(",").toTypedArray() //toma los ids de los ejercicios
         CargarRutina(arreglo)
-
+        Toast.makeText(this, "Presione > para iniciar", Toast.LENGTH_SHORT).show()
         timer = Timer()
 
         buttonParar!!.setOnClickListener{
+            ////mandar un warning antes de parar
             if(parar == false){
                 trabajoTimer.cancel()
                 parar = true
@@ -91,6 +96,21 @@ class EjecutadorRutina : AppCompatActivity() {
         }
 
         buttonPausar!!.setOnClickListener{
+            if(firstclick == false){
+                var ejercicio1 = listado[0]
+                textViewActividadEnFoco!!.setText(""+ejercicio1)
+                listado.removeAt(0) //Remueve el primer ejercicio de la lista
+                val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
+                listViewEjerciciosPorHacer!!.setAdapter(adapter)
+
+                if(listado!![0] == " ") {
+                    buttonSiguiente!!.setText("Terminar")
+                    final = true
+                }
+
+                firstclick = true
+            }
+
             if(parar != true) {
                 if (inicio == false) {
                     buttonPausar!!.background = getDrawable(R.drawable.ic_pause)
@@ -100,6 +120,28 @@ class EjecutadorRutina : AppCompatActivity() {
                     buttonPausar!!.background = getDrawable(R.drawable.ic_play)
                     trabajoTimer.cancel()
                     inicio = false
+                }
+            }
+        }
+
+        buttonSiguiente!!.setOnClickListener{
+            if(firstclick == true && parar == false){
+                if(final == false) {
+                    var ejercicio = listado[0]
+                    textViewActividadEnFoco!!.setText("" + ejercicio)
+                    listado.removeAt(0) //Remueve el primer ejercicio de la lista
+                    val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
+                    listViewEjerciciosPorHacer!!.setAdapter(adapter)
+
+                    if (listado!![0] == " ") {
+                        buttonSiguiente!!.setText("Terminar")
+                        final = true
+                    }
+                }else{
+                    parar = true
+                    trabajoTimer.cancel()
+
+                    //mandar actividad extra y tomar el tiempo para la base de datos
                 }
             }
         }
