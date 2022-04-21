@@ -56,7 +56,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_ejecicio)
+        setContentView(R.layout.activity_ejercicio)
         initToolbar()
         initNavigationView()
 
