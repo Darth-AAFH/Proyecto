@@ -204,7 +204,6 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     edName.setText(it.get("Name") as String?)
                 }
             }
-
             val progresDialog = ProgressDialog(this)
             progresDialog.setMessage("Cargando Imagen")
             progresDialog.setCancelable(false)
