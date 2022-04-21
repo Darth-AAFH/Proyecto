@@ -21,15 +21,18 @@ import com.google.firebase.auth.FirebaseAuth
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
 
-
+ companion object{
+       val auth: String? = FirebaseAuth.getInstance().currentUser?.email
+    var user =  auth
+}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         initToolbar()
         initNavigationView()
-
     }
+
 
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)

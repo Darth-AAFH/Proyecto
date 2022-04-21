@@ -29,6 +29,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
@@ -37,6 +38,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var binding: ActivityChatBinding
     private lateinit var manager: LinearLayoutManager
     private lateinit var drawer: DrawerLayout
+    private val accesdata = FirebaseFirestore.getInstance()
 
     private val openDocument = registerForActivityResult(MyOpenDocumentContract()) { uri ->
         onImageSelected(uri)
@@ -45,7 +47,6 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     // TODO: implement Firebase instance variables
     // Firebase instance variables
     private lateinit var auth: FirebaseAuth
-
     private lateinit var db: FirebaseDatabase
     private lateinit var adapter: FriendlyMessageAdapter
 
@@ -138,6 +139,12 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     public override fun onResume() {
         super.onResume()
         adapter.startListening()
+        getUserName()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        getUserName()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -219,10 +226,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun getUserName(): String? {
-        val user = auth.currentUser
-        return if (user != null) {
-            user.displayName
-        } else ANONYMOUS
+        return MainActivity.user
     }
 
 
@@ -230,7 +234,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     companion object {
         private const val TAG = "MainActivity"
         const val MESSAGES_CHILD = "messages"
-        const val ANONYMOUS = "anonymous"
+        const val ANONYMOUS = "Sanonymous"
         private const val LOADING_IMAGE_URL = "https://www.google.com/images/spin-32.gif"
     }
     private fun initToolbar() {
@@ -260,7 +264,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navigationView.addHeaderView(headerView)
 
         val tvUser: TextView = headerView.findViewById(R.id.tvUser)
-        tvUser.text = LoginActivity.useremail
+        tvUser.text = MainActivity.user
 
     }
 

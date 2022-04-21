@@ -155,6 +155,14 @@ class LoginActivity : AppCompatActivity() {
         if (currentUser != null) goHome(currentUser.email.toString(), currentUser.providerId)
 
     }
+    public override fun onResume() {
+        super.onResume()
+        //Comprueba si hay usuario con sesión iniciada
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) goHome(currentUser.email.toString(), currentUser.providerId)
+
+    }
+
 
     override fun onBackPressed() {
         //Cuando pulse por atrasque se vea solo la pantalla de inicio de aplicación, no vuelva al inicio de sesion
