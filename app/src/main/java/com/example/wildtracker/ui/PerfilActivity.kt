@@ -169,12 +169,14 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         EditProfileDataButton.isVisible = false
 
         saveProfileButton.setOnClickListener{
-            db.collection("users").document(LoginActivity.useremail).set(
-                hashMapOf( "birthDay"  to  findViewById<EditText>(R.id.Perfil_birthday).text.toString(),
-                "email" to findViewById<EditText>(R.id.Perfil_mail).text.toString(),
-                "Name" to findViewById<EditText>(R.id.Perfil_name).text.toString(),
+            MainActivity.user?.let { it1 ->
+                db.collection("users").document(it1).set(
+                    hashMapOf( "birthDay"  to  findViewById<EditText>(R.id.Perfil_birthday).text.toString(),
+                        "email" to findViewById<EditText>(R.id.Perfil_mail).text.toString(),
+                        "Name" to findViewById<EditText>(R.id.Perfil_name).text.toString(),
+                    )
                 )
-            )
+            }
             saveProfileButton.isVisible = false
             edBirthDay.isEnabled = false
             edEmail.isEnabled = false
@@ -195,10 +197,12 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         recoverProfileDataButton.setOnClickListener {
             EditProfileDataButton.isVisible = true
             recoverProfileDataButton.isVisible = false
-            db.collection("users").document(LoginActivity.useremail).get().addOnSuccessListener{
-                edBirthDay.setText(it.get("birthDay") as String?)
-                edEmail.setText(it.get("email") as String?)
-                edName.setText(it.get("Name") as String?)
+            MainActivity.user?.let { it1 ->
+                db.collection("users").document(it1).get().addOnSuccessListener{
+                    edBirthDay.setText(it.get("birthDay") as String?)
+                    edEmail.setText(it.get("email") as String?)
+                    edName.setText(it.get("Name") as String?)
+                }
             }
 
             val progresDialog = ProgressDialog(this)
