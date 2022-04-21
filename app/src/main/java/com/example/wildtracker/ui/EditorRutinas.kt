@@ -55,14 +55,13 @@ class EditorRutinas : AppCompatActivity() {
 
         val sql = "select Id, Nombre, Tipo, Peso from Ejercicios"
         val c = db.rawQuery(sql, null) //Se crea un cursor que ira avanzando de posicion uno a uno
-        if (c.moveToFirst()) {
-            do{
-                for (i in 0 until arreglo.size) {//recorre todo el arreglo
-                    if(c.getInt(0) == arreglo[i]!!.toInt()){ //si un ehjercicio de la lista completa esta en la de la rutina
-                        val linea = c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2) + " | " + c.getInt(3)
-                        datos.add(linea) //Lo va a añadir a la liena de la listView
-                        contadorMax += 1
-                    }
+        for (i in 0 until arreglo.size) {//recorre todo el arreglo
+            c.moveToFirst()
+            do {
+                if (c.getInt(0) == arreglo[i]!!.toInt()) { //si un ejercicio de la lista completa esta en la de la rutina
+                    val linea = c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2) + " | " + c.getInt(3)
+                    datos.add(linea) //Lo va a añadir a la linea de la listView
+                    contadorMax += 1
                 }
             } while (c.moveToNext())
         }
@@ -96,11 +95,11 @@ class EditorRutinas : AppCompatActivity() {
         val helper = LocalDB(this, "Demo", null, 1)
         val db: SQLiteDatabase = helper.getWritableDatabase()
 
-        val sql ="select Id, Nombre, Ejercicios from Rutinas where Id = "+num
+        val sql ="select Nombre, Ejercicios from Rutinas where Id = "+num
         val c = db.rawQuery(sql, null)
         if (c.moveToFirst()) {
-            nombre =  c.getString(1)
-            ejercicios =  c.getString(2)
+            nombre =  c.getString(0)
+            ejercicios =  c.getString(1)
         }
         c.close()
         db.close()

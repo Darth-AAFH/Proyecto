@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -18,10 +17,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import android.database.sqlite.SQLiteDatabase
+import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.ListView
 
 class EjecicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -67,6 +64,7 @@ class EjecicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         textViewRutina = findViewById(R.id.textViewRutina)
         buttonIniciar = findViewById(R.id.buttonIniciar); buttonIniciar!!.setVisibility(View.INVISIBLE); buttonIniciar!!.setEnabled(false)
 
+        Toast.makeText(this, "Seleccione la rutina", Toast.LENGTH_SHORT).show()
         CargarTabla()
 
         listViewRutinas2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
@@ -84,14 +82,14 @@ class EjecicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             c.close()
             db.close()
 
-            textViewRutina!!.setText(""+nombre)
+            textViewRutina!!.setText("Rutina seleccionada: "+nombre)
 
             buttonIniciar!!.setVisibility(View.VISIBLE); buttonIniciar!!.setEnabled(true)
         }
 
         buttonIniciar!!.setOnClickListener{
-            val intent = Intent(this@EjecicioActivity, PlantillasActivity::class.java)
-            //intent.putExtra("Num", num)
+            val intent = Intent(this@EjecicioActivity, EjecutadorRutina::class.java)
+            intent.putExtra("Num", num)
             startActivity(intent)
         }
     }
