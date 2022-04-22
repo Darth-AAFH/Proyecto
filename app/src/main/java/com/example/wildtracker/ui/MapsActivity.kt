@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.android.gms.maps.model.LatLng as LatLng1
 
@@ -166,8 +167,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             showAlertAddDialog(latLng)
         }
         map.setOnInfoWindowLongClickListener { markerToDelete ->
-            showAlertDeleteDialog(markerToDelete)
+
+            showAlertDeleteDialog(markerToDelete, )
         }
+       /* map.setOnMarkerClickListener {
+            askForAddOrDelete(markers.snippet)
+        }*/
         createMarker()
         enableMyLocation()
 
@@ -182,9 +187,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 val lng = document.get("longitud") as Double
                 val latLng: LatLng1 = LatLng1(lat, lng)
                 val placeType = document.get("tipo") as String
+                val contadorAñadido = document.get("contador añadir") as Long
 
                 //Verifica que tipo de marcador es: Parque || Gimnasio para asi poder añadir cada marcador de cada "location"
-                if (placeType.equals("Parque")) {
+                if (placeType.equals("Parque")&& contadorAñadido.toInt()==5) {
                     val marker = map.addMarker(
                         MarkerOptions().position(latLng)
                             .title("${document.get("tipo") as String}")
@@ -192,12 +198,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.park))
                     )
                     markers.add(marker!!)
-                } else {
+                } else if(placeType.equals("Gimnasio")&& contadorAñadido.toInt()==5){
                     val marker = map.addMarker(
                         MarkerOptions().position(latLng)
                             .title("${document.get("tipo") as String}")
                             .snippet("${document.get("descripcion") as String}")
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.gym))
+                    )
+                    markers.add(marker!!)
+                }
+                else{
+                    val marker = map.addMarker(
+                        MarkerOptions().position(latLng)
+                            .title("${document.get("tipo") as String}")
+                            .snippet("${document.get("descripcion") as String}")
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.fantasma))
                     )
                     markers.add(marker!!)
                 }
@@ -303,7 +318,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         //Separar lat y lng para despues almacenarla en la base de datos como datos de tipo Double
         val latitud: Double = latLng.latitude
         val longitud: Double = latLng.longitude
-
+        var contadorAñadir: Int = 0
+        var contadorEliminar: Int = 0
+        val ghostmarker = map.addMarker(
+            MarkerOptions().position(latLng).title("${selectedPlace}").snippet("${descripcion}")
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.fantasma))
+        )
+        markers.add(ghostmarker!!)
+        /*
         // Añadir un marcador dependiendo del tipo de lugar "Gimasio" o "Parque"
         if (selectedPlace.equals("Parque")) {
             val marker = map.addMarker(
@@ -321,27 +343,37 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             markers.add(marker!!)
 
 
-        }
+        }*/
         /**Añade a la base de datos marcadores*/
-        db.collection("locations").add(
+        db.collection("locations").document("$descripcion").set(
             hashMapOf(
                 "latitud" to latitud,
                 "longitud" to longitud,
                 "descripcion" to descripcion,
-                "tipo" to selectedPlace
+                "tipo" to selectedPlace,
+                "contador añadir" to contadorAñadir,
+                "contador eliminar" to contadorEliminar
+
             )
+
         )
+        val markerRef = db.collection("locations").document("$descripcion")
+
+// Atomically increment the population of the city by 50.
+
+// Atomically increment the population of the city by 50.
+        markerRef.update("contador añadir", FieldValue.increment(1))
     }
 
-    /**AlertDialog para preguntar si se desea eliminar un marcador en el mapa*/
+    /**AlertDialog para preguntar si se desea eliminar un marcador en el mapa o sumar puntos a añadirlo*/
     private fun showAlertDeleteDialog(markerToDelete: Marker) {
 
         builder = AlertDialog.Builder(this)
-        builder.setTitle("Alert")
-            .setMessage("Quieres Eliminar el marcador?")
+        builder.setTitle("Marcador seleccionado")
+            .setMessage("Que desea hacer con este punto?")
             .setCancelable(true)
-            .setPositiveButton("Si") { dialogInterface, it -> deleteMarker(markerToDelete) }
-            .setNegativeButton("No") { dialogInterface, it -> dialogInterface.cancel() }
+            .setPositiveButton("Añadir") { dialogInterface, it -> deleteMarker(markerToDelete) }
+            .setNegativeButton("Eliminar") { dialogInterface, it -> dialogInterface.cancel() }
             .show()
     }
 
