@@ -81,11 +81,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
         googleSignInClient.signOut()
-
-
         //Cierra sesion y manda devuelta al login
-
-
         startActivity(Intent(this, LoginActivity::class.java))
     }
 
