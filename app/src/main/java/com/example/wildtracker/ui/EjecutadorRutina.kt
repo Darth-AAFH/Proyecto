@@ -102,7 +102,7 @@ class EjecutadorRutina : AppCompatActivity() {
                 alertaParar.setPositiveButton("Sí") { dialogInterface, i ->
                     trabajoTimer.cancel()
                     parar = true
-                    fin()
+                    fin(false)
                 }
 
                 alertaParar.setNegativeButton("Cancelar") { dialogInterface, i ->
@@ -154,7 +154,7 @@ class EjecutadorRutina : AppCompatActivity() {
                 alertaSaltar.setPositiveButton("Sí") { dialogInterface, i ->
                     val alertaIncompleto = AlertDialog.Builder(this)
                     alertaIncompleto.setTitle("Ejercicio Incompleto")
-                    alertaIncompleto.setMessage("¿Inició el ejercicio?")
+                    alertaIncompleto.setMessage("¿Comenzó el ejercicio?")
 
                     alertaIncompleto.setPositiveButton("Sí") { dialogInterface, i ->
                         puntos += 1
@@ -175,7 +175,7 @@ class EjecutadorRutina : AppCompatActivity() {
                         }else {
                             parar = true
                             trabajoTimer.cancel()
-                            fin()
+                            fin(true)
                         }
                     }
 
@@ -197,7 +197,7 @@ class EjecutadorRutina : AppCompatActivity() {
                         }else{
                             parar = true
                             trabajoTimer.cancel()
-                            fin()
+                            fin(true)
                         }
                     }
                     alertaIncompleto.show()
@@ -229,7 +229,7 @@ class EjecutadorRutina : AppCompatActivity() {
                 }else{
                     parar = true
                     trabajoTimer.cancel()
-                    fin()
+                    fin(true)
                 }
             }
         }
@@ -259,8 +259,18 @@ class EjecutadorRutina : AppCompatActivity() {
         return String.format("%02d", horas) + " : " + String.format("%02d",minutos) + " : " + String.format("%02d", segundos)
     }
 
-    private fun fin(){
+    private fun fin(completado: Boolean){
+        val redondeo = tiempo.roundToInt()
+        val horas = redondeo % 86400 / 3600
+        val minutos = redondeo % 86400 % 3600 / 60
+        val segundos = redondeo % 86400 % 3600 % 60
+
+        if(completado == true)
+            Toast.makeText(this, "Felicidades, completó la rutina!!", Toast.LENGTH_LONG).show()
         Toast.makeText(this, "Usted obtuvo: "+puntos+" puntos", Toast.LENGTH_SHORT).show()
-    }///////////////////////mensaje de finalización? y ejercicios extras y tomar el tiempo y os puntos
+        Toast.makeText(this, "y: "+horas+" horas, "+minutos+" minutos y "+segundos+" segundos", Toast.LENGTH_SHORT).show()
+
+
+    }///////////////////////mandar tiempo y puntos a la base de datos
 
 }
