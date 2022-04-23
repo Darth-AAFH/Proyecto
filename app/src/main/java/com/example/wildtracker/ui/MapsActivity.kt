@@ -301,8 +301,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         addMarker(latLng, edDescripction, selectedPlace)
                         alertDialog.dismiss()
                     }
-                    btCancell.setOnClickListener { alertDialog.dismiss() }
                 }
+                btCancell.setOnClickListener { alertDialog.dismiss() }
 
             }
             .setNegativeButton("No") { dialogInterface, it -> dialogInterface.cancel() }
