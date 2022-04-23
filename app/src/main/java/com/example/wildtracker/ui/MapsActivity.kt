@@ -193,7 +193,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 //Verifica que tipo de marcador es: Parque || Gimnasio para asi poder añadir cada marcador de cada "location"
 
 
-                if (placeType.equals("Parque") && contadorAñadido.toInt() >= 5) {
+                if (placeType.equals("Parque") && contadorAñadido.toInt() >= 5 && contadorEliminar>-4) {
                     val marker = map.addMarker(
                         MarkerOptions().position(latLng)
                             .title("${document.get("tipo") as String}")
@@ -201,7 +201,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.park))
                     )
                     markers.add(marker!!)
-                } else if (placeType.equals("Gimnasio") && contadorAñadido.toInt() >= 5) {
+                } else if (placeType.equals("Gimnasio") && contadorAñadido.toInt() >= 5 && contadorEliminar>-4) {
                     val marker = map.addMarker(
                         MarkerOptions().position(latLng)
                             .title("${document.get("tipo") as String}")
@@ -220,7 +220,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     if (contadorEliminar.toInt() < -4) {
                         deleteMarker(marker)
                         db.collection("locations").document("${marker.snippet}").delete()
-
+                        markers.remove(marker)
                     }
                 }
 
@@ -366,9 +366,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         )
         val markerRef = db.collection("locations").document("$descripcion")
 
-// Atomically increment the population of the city by 50.
-
-// Atomically increment the population of the city by 50.
         markerRef.update("contador añadir", FieldValue.increment(1))
     }
 
@@ -401,7 +398,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         Log.i(TAG, "OnWindowClickDelete")
         markers.remove(markerToDelete)
         markerToDelete.remove()
-
     }
 
     /**
