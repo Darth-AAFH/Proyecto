@@ -168,7 +168,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         }
         map.setOnInfoWindowLongClickListener { markerToDelete ->
 
-            showAlertDeleteDialog(markerToDelete, )
+            showAlertDeleteDialog(markerToDelete,markerToDelete.snippet )
         }
        /* map.setOnMarkerClickListener {
             askForAddOrDelete(markers.snippet)
@@ -188,9 +188,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 val latLng: LatLng1 = LatLng1(lat, lng)
                 val placeType = document.get("tipo") as String
                 val contadorAñadido = document.get("contador añadir") as Long
+                val contadorEliminar = document.get("contador eliminar") as Long
 
                 //Verifica que tipo de marcador es: Parque || Gimnasio para asi poder añadir cada marcador de cada "location"
-                if (placeType.equals("Parque")&& contadorAñadido.toInt()==5) {
+
+
+                if (placeType.equals("Parque") && contadorAñadido.toInt() >= 5) {
                     val marker = map.addMarker(
                         MarkerOptions().position(latLng)
                             .title("${document.get("tipo") as String}")
@@ -198,7 +201,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.park))
                     )
                     markers.add(marker!!)
-                } else if(placeType.equals("Gimnasio")&& contadorAñadido.toInt()==5){
+                } else if (placeType.equals("Gimnasio") && contadorAñadido.toInt() >= 5) {
                     val marker = map.addMarker(
                         MarkerOptions().position(latLng)
                             .title("${document.get("tipo") as String}")
@@ -206,8 +209,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.gym))
                     )
                     markers.add(marker!!)
-                }
-                else{
+                } else {
                     val marker = map.addMarker(
                         MarkerOptions().position(latLng)
                             .title("${document.get("tipo") as String}")
@@ -215,6 +217,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.fantasma))
                     )
                     markers.add(marker!!)
+                    if (contadorEliminar.toInt() < -4) {
+                        deleteMarker(marker)
+                        db.collection("locations").document("${marker.snippet}").delete()
+
+                    }
                 }
 
             }
@@ -366,15 +373,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     /**AlertDialog para preguntar si se desea eliminar un marcador en el mapa o sumar puntos a añadirlo*/
-    private fun showAlertDeleteDialog(markerToDelete: Marker) {
-
+    private fun showAlertDeleteDialog(markerToDelete: Marker, snippet: String?) {
+        Toast.makeText(this,snippet,Toast.LENGTH_SHORT).show()
+        val markerRef = db.collection("locations").document("$snippet")
         builder = AlertDialog.Builder(this)
         builder.setTitle("Marcador seleccionado")
             .setMessage("Que desea hacer con este punto?")
             .setCancelable(true)
-            .setPositiveButton("Añadir") { dialogInterface, it -> deleteMarker(markerToDelete) }
-            .setNegativeButton("Eliminar") { dialogInterface, it -> dialogInterface.cancel() }
+            .setPositiveButton("Añadir") { dialogInterface, it ->
+                //deleteMarker(markerToDelete)
+
+                markerRef.update("contador añadir", FieldValue.increment(1))
+                finish();
+                startActivity(getIntent());
+            }
+            .setNegativeButton("Eliminar") { dialogInterface, it -> //dialogInterface.cancel()
+                markerRef.update("contador eliminar", FieldValue.increment(-1))
+                finish();
+                startActivity(getIntent());
+            }
             .show()
+
     }
 
     /**Funcion para eliminar el marcador seleccionado en el mapa*/
