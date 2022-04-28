@@ -181,7 +181,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         * que se encuentran en "locations" asignando los respectivos valores de cada marcador
         * para asi poder mostrarlos en el mapa       * */
         db.collection("locations").get().addOnSuccessListener {
-
+            var ultimo = it.last().get("ID")
             for (document in it) { // Entra a las propiedades de cada "locations"
                 val lat = document.get("latitud") as Double
                 val lng = document.get("longitud") as Double
