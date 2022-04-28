@@ -169,8 +169,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         EditProfileDataButton.isVisible = false
 
         saveProfileButton.setOnClickListener{
-            MainActivity.user?.let { it1 ->
-                db.collection("users").document(it1).set(
+            MainActivity.user?.let { usuario ->
+                db.collection("users").document(usuario).collection("Ejercicios").document().set(
                     hashMapOf( "birthDay"  to  findViewById<EditText>(R.id.Perfil_birthday).text.toString(),
                         "email" to findViewById<EditText>(R.id.Perfil_mail).text.toString(),
                         "Name" to findViewById<EditText>(R.id.Perfil_name).text.toString(),
@@ -199,9 +199,9 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             recoverProfileDataButton.isVisible = false
             MainActivity.user?.let { it1 ->
                 db.collection("users").document(it1).get().addOnSuccessListener{
-                    edBirthDay.setText(it.get("birthDay") as String?)
+                    var nomber = (it.get("birthDay") as String?)
                     edEmail.setText(it.get("email") as String?)
-                    edName.setText(it.get("Name") as String?)
+                    edName.setText (it.get("Name") as String?)
                 }
             }
             val progresDialog = ProgressDialog(this)
