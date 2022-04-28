@@ -52,28 +52,25 @@ class CreadorEjercicios : AppCompatActivity() {
         buttonEditar!!.setOnClickListener{
             //val intent = Intent(this@CreadorEjercicios, VerEjercicios::class.java)
             //startActivity(intent)
-            Toast.makeText(this, ""+Nombre2, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "El nuevo ejercicio debera tener id: "+ultimoEjercicio+1, Toast.LENGTH_SHORT).show()
         }
     }
 
     private val db = FirebaseFirestore.getInstance()
     var Nombre2: String? = null
+    var ultimoEjercicio = 0
 
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
 
-        /*var ultimoEjercicio = 0
         MainActivity.user?.let { usuario ->
             db.collection("users").document(usuario).collection("ejercicios").get().addOnSuccessListener {
-                //for(ejercicio in it){
-                    //ultimoEjercicio += 1
-                //}
-                ultimoEjercicio = it.last().get()
+                ultimoEjercicio = it.last().get("id") as Int
             }
-        }*/
+        }
 
 
 
-        //escribir
+        /*//escribir
         var id = 2
         MainActivity.user?.let{ usuario ->
             db.collection("users").document(usuario).collection("ejercicios").document().set(
@@ -84,10 +81,10 @@ class CreadorEjercicios : AppCompatActivity() {
                     "peso" to validadorPeso
                 )
             )
-        }
+        }*/
 
 
-        /* tomar datos
+        /*//tomar datos
         var id = 2
         MainActivity.user?.let{ usuario ->
             db.collection("users").document(usuario).collection("ejercicios")
@@ -99,8 +96,6 @@ class CreadorEjercicios : AppCompatActivity() {
         */
 
 
-        //Toast.makeText(this, ""+Nombre2, Toast.LENGTH_SHORT).show()
-        //id = 2; nombre = "Saltos de tijera"; tipo = "Piernas"; peso = false
         return true
     }
 
