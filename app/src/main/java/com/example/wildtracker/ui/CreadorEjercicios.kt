@@ -5,12 +5,15 @@ import android.content.ContentValues
 import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.isDigitsOnly
 import com.example.wildtracker.R
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.delay
 
 class CreadorEjercicios : AppCompatActivity() {
 
@@ -53,25 +56,32 @@ class CreadorEjercicios : AppCompatActivity() {
     }
 
     private val db = FirebaseFirestore.getInstance()
-
+    var contadorMax = 0; var idFinal = 0
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean{
-        var contadorMax = 0; var idFinal = 0
+        var handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
         MainActivity.user?.let { usuario ->
-            db.collection("users").document(usuario).collection("ejercicios").get().addOnSuccessListener {
+            db.collection("users").document(usuario).collection("ejercicios")
+                .get().addOnSuccessListener {
                  for(ejercicio in it){
                      contadorMax += 1
                      idFinal = (ejercicio.get("id") as Long).toInt()
+                     Toast.makeText(this,"ID FINAL ES: "+idFinal,Toast.LENGTH_SHORT).show()
                  }
-
             }
         }
+
+        },50000)
 
         var confirmacion = false
         if(contadorMax <= 65){//////////////numero máx de ejercicios que el usuario puede crear (50)
             var nombre = Nombre
 
-            if(nombre == "")
-                nombre = "Ejercicio" + (idFinal - 14)
+            if(nombre == ""){
+                val idF=idFinal
+                nombre = "Ejercicio" + (idF - 14)
+            }
+
 
             val arreglo: Array<String?>
             arreglo = nombre.split(" ").toTypedArray()
@@ -96,7 +106,8 @@ class CreadorEjercicios : AppCompatActivity() {
 
     private fun guardarLocal(Ejercicio: ejercicio) {
         MainActivity.user?.let{ usuario ->
-            db.collection("users").document(usuario).collection("ejercicios").document(Ejercicio.id.toString()).set(
+            db.collection("users").document(usuario).collection("ejercicios")
+                .document(Ejercicio.id.toString()).set(
                 hashMapOf(
                     "id" to Ejercicio.id,
                     "nombre" to Ejercicio.nombre,
