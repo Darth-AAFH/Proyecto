@@ -36,7 +36,7 @@ class CreadorEjercicios : AppCompatActivity() {
         spinnerTipos.adapter = adaptador0
 
         buttonCrear!!.setOnClickListener{
-            /*val nombre = editTextNombre!!.text.toString(); val tipo = spinnerTipos.selectedItem.toString(); val peso = switchPeso!!.isChecked()
+            val nombre = editTextNombre!!.text.toString(); val tipo = spinnerTipos.selectedItem.toString(); val peso = switchPeso!!.isChecked()
             if(crear(nombre, tipo, peso)){
                 if(validadorNombre) {
                     finish()
@@ -44,67 +44,68 @@ class CreadorEjercicios : AppCompatActivity() {
             }else {
                 Toast.makeText(this, "Se ha alcanzado el numero maximo de ejercicios", Toast.LENGTH_SHORT).show()
             }
-
-             */
-            crear("Lagartijas", "Brazos", false)
         }
 
         buttonEditar!!.setOnClickListener{
-            //val intent = Intent(this@CreadorEjercicios, VerEjercicios::class.java)
-            //startActivity(intent)
-            Toast.makeText(this, "El nuevo ejercicio debera tener id: "+aux+" + 1", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this@CreadorEjercicios, VerEjercicios::class.java)
+            startActivity(intent)
         }
     }
 
     private val db = FirebaseFirestore.getInstance()
-    var Nombre2: String? = null
-    var ultimoEjercicio = 0
-    var aux: String ?= null
 
-    private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean) {
-
-        var contador = 0
+    private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean{
+        var contadorMax = 0; var idFinal = 0
         MainActivity.user?.let { usuario ->
             db.collection("users").document(usuario).collection("ejercicios").get().addOnSuccessListener {
                  for(ejercicio in it){
-                     contador += 1
+                     contadorMax += 1
+                     idFinal = (ejercicio.get("id") as Long).toInt()
                  }
-            }
-        }
-        MainActivity.user?.let{ usuario ->
-            db.collection("users").document(usuario).collection("ejercicios")
-                .document(contador.toString()).get().addOnSuccessListener {
-                aux = it.get("id") as String?
+
             }
         }
 
+        var confirmacion = false
+        if(contadorMax <= 65){//////////////numero máx de ejercicios que el usuario puede crear (50)
+            var nombre = Nombre
 
-        /*//escribir
-        var id = 1
+            if(nombre == "")
+                nombre = "Ejercicio" + (idFinal - 14)
+
+            val arreglo: Array<String?>
+            arreglo = nombre.split(" ").toTypedArray()
+
+            validadorNombre = true
+            for (i in 0 until arreglo.size) {//recorre todo el nombre
+                if(arreglo[i]!!.isDigitsOnly()) { //si uno de los datos es numero
+                    Toast.makeText(this, "El nombre de un ejercicio no puede contener numeros", Toast.LENGTH_SHORT).show()
+                    validadorNombre = false
+                }
+            }
+
+            if(validadorNombre == true){
+                arregloEjercicios[contadorMax] = ejercicio(idFinal+1, nombre, Tipo, validadorPeso)
+                guardarLocal(arregloEjercicios[contadorMax]!!)
+            }
+
+            confirmacion = true
+        }
+        return confirmacion
+    }
+
+    private fun guardarLocal(Ejercicio: ejercicio) {
         MainActivity.user?.let{ usuario ->
-            db.collection("users").document(usuario).collection("ejercicios").document(id.toString()).set(
+            db.collection("users").document(usuario).collection("ejercicios").document(Ejercicio.id.toString()).set(
                 hashMapOf(
-                    "id" to id,
-                    "nombre" to Nombre,
-                    "tipo" to Tipo,
-                    "peso" to validadorPeso
+                    "id" to Ejercicio.id,
+                    "nombre" to Ejercicio.nombre,
+                    "tipo" to Ejercicio.tipo,
+                    "peso" to Ejercicio.peso
                 )
             )
         }
-         */
-
-
-        /*//tomar datos
-        var id = 2
-        MainActivity.user?.let{ usuario ->
-            db.collection("users").document(usuario).collection("ejercicios")
-                .document(id.toString()).get().addOnSuccessListener {
-                    Nombre2 = it.get("nombre") as String?
-
-                }
-        }
-        */
-
+        Toast.makeText(this, "Se ha guardado el ejercicio", Toast.LENGTH_SHORT).show()
     }
 
     /*private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
@@ -154,7 +155,7 @@ class CreadorEjercicios : AppCompatActivity() {
 
      */
 
-    private fun guardarLocal(Ejercicio: ejercicio) {
+    /*private fun guardarLocal(Ejercicio: ejercicio) {
         val helper = LocalDB(this, "Demo", null, 1)
         val db: SQLiteDatabase = helper.getWritableDatabase() //Se abre la base de datos
 
@@ -170,6 +171,6 @@ class CreadorEjercicios : AppCompatActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, "Ha habido un error", Toast.LENGTH_SHORT).show()
         }
-    }
+    }*/
 
 }
