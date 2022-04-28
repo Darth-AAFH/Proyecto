@@ -52,18 +52,18 @@ class CreadorEjercicios : AppCompatActivity() {
         buttonEditar!!.setOnClickListener{
             //val intent = Intent(this@CreadorEjercicios, VerEjercicios::class.java)
             //startActivity(intent)
-            Toast.makeText(this, "El nuevo ejercicio debera tener id: "+ultimoEjercicio+1, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "El nuevo ejercicio debera tener id: "+aux, Toast.LENGTH_SHORT).show()
         }
     }
 
     private val db = FirebaseFirestore.getInstance()
     var Nombre2: String? = null
     var ultimoEjercicio = 0
+    var aux: String ?= null
 
-    private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
+    private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean) {
 
-        var aux: String ?= null
-        var contador = 0
+        /*var contador = 0
         MainActivity.user?.let { usuario ->
             db.collection("users").document(usuario).collection("ejercicios").get().addOnSuccessListener {
                  for(ejercicio in it){
@@ -76,14 +76,13 @@ class CreadorEjercicios : AppCompatActivity() {
                 .document(contador.toString()).get().addOnSuccessListener {
                 aux = it.get("id") as String?
             }
-        }
-        ultimoEjercicio = aux!!.toInt()
+        }*/
 
 
-        /*//escribir
+        //escribir
         var id = 2
         MainActivity.user?.let{ usuario ->
-            db.collection("users").document(usuario).collection("ejercicios").document().set(
+            db.collection("users").document(usuario).collection("ejercicios").document(id.toString()).set(
                 hashMapOf(
                     "id" to id,
                     "nombre" to Nombre,
@@ -91,7 +90,7 @@ class CreadorEjercicios : AppCompatActivity() {
                     "peso" to validadorPeso
                 )
             )
-        }*/
+        }
 
 
         /*//tomar datos
@@ -105,8 +104,6 @@ class CreadorEjercicios : AppCompatActivity() {
         }
         */
 
-
-        return true
     }
 
     /*private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
