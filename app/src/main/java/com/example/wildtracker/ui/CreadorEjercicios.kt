@@ -58,7 +58,7 @@ class CreadorEjercicios : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
 
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
-        var id = 2
+        /*var id = 2
         MainActivity.user?.let{ usuario ->
             db.collection("users").document(usuario).collection("ejercicios").document(id.toString()).set(
                 hashMapOf(
@@ -68,6 +68,21 @@ class CreadorEjercicios : AppCompatActivity() {
                 )
             )
         }
+
+        */
+
+        var id = 2
+        var Nombre2: String?
+        Nombre2 = ""
+        MainActivity.user?.let{ usuario ->
+            db.collection("users").document(usuario).collection("ejercicios")
+                .document(id.toString()).get().addOnSuccessListener {
+                    Nombre2 = it.get("nombre") as String?
+
+                }
+        }
+
+        Toast.makeText(this, ""+Nombre2, Toast.LENGTH_SHORT).show()
         //id = 2; nombre = "Saltos de tijera"; tipo = "Piernas"; peso = false
         return true
     }
