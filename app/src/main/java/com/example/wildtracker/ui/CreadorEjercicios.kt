@@ -62,12 +62,13 @@ class CreadorEjercicios : AppCompatActivity() {
 
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
 
+        var aux: String ?= null
         MainActivity.user?.let { usuario ->
             db.collection("users").document(usuario).collection("ejercicios").get().addOnSuccessListener {
-                ultimoEjercicio = it.last().get("id") as Int
+                 aux = it.last().get("id") as String?
             }
         }
-
+        ultimoEjercicio = aux!!.toInt()
 
 
         /*//escribir
