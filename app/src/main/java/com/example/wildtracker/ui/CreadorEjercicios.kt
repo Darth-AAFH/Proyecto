@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.isDigitsOnly
 import com.example.wildtracker.R
+import com.google.firebase.firestore.FirebaseFirestore
 
 class CreadorEjercicios : AppCompatActivity() {
 
@@ -35,7 +36,7 @@ class CreadorEjercicios : AppCompatActivity() {
         spinnerTipos.adapter = adaptador0
 
         buttonCrear!!.setOnClickListener{
-            val nombre = editTextNombre!!.text.toString(); val tipo = spinnerTipos.selectedItem.toString(); val peso = switchPeso!!.isChecked()
+            /*val nombre = editTextNombre!!.text.toString(); val tipo = spinnerTipos.selectedItem.toString(); val peso = switchPeso!!.isChecked()
             if(crear(nombre, tipo, peso)){
                 if(validadorNombre) {
                     finish()
@@ -43,6 +44,9 @@ class CreadorEjercicios : AppCompatActivity() {
             }else {
                 Toast.makeText(this, "Se ha alcanzado el numero maximo de ejercicios", Toast.LENGTH_SHORT).show()
             }
+
+             */
+            crear("Lagartijas", "Brazos", false)
         }
 
         buttonEditar!!.setOnClickListener{
@@ -51,7 +55,24 @@ class CreadorEjercicios : AppCompatActivity() {
         }
     }
 
+    private val db = FirebaseFirestore.getInstance()
+
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
+        var id = 2
+        MainActivity.user?.let{ usuario ->
+            db.collection("users").document(usuario).collection("ejercicios").document(id.toString()).set(
+                hashMapOf(
+                    "nombre" to Nombre,
+                    "tipo" to Tipo,
+                    "peso" to validadorPeso
+                )
+            )
+        }
+        //id = 2; nombre = "Saltos de tijera"; tipo = "Piernas"; peso = false
+        return true
+    }
+
+    /*private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
         var contadorMax = 1; var idFinal = 0
 
         val helper = LocalDB(this, "Demo", null, 1)
@@ -95,6 +116,8 @@ class CreadorEjercicios : AppCompatActivity() {
         }
         return confirmacion
     }
+
+     */
 
     private fun guardarLocal(Ejercicio: ejercicio) {
         val helper = LocalDB(this, "Demo", null, 1)
