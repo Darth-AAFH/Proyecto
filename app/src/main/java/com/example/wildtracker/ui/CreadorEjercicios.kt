@@ -80,7 +80,7 @@ class CreadorEjercicios : AppCompatActivity() {
 
 
         //escribir
-        var id = 2
+        var id = 1
         MainActivity.user?.let{ usuario ->
             db.collection("users").document(usuario).collection("ejercicios").document(id.toString()).set(
                 hashMapOf(
