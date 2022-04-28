@@ -50,12 +50,14 @@ class CreadorEjercicios : AppCompatActivity() {
         }
 
         buttonEditar!!.setOnClickListener{
-            val intent = Intent(this@CreadorEjercicios, VerEjercicios::class.java)
-            startActivity(intent)
+            //val intent = Intent(this@CreadorEjercicios, VerEjercicios::class.java)
+            //startActivity(intent)
+            Toast.makeText(this, ""+Nombre2, Toast.LENGTH_SHORT).show()
         }
     }
 
     private val db = FirebaseFirestore.getInstance()
+    var Nombre2: String? = null
 
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
         /*var id = 2
@@ -72,17 +74,15 @@ class CreadorEjercicios : AppCompatActivity() {
         */
 
         var id = 2
-        var Nombre2: String?
-        Nombre2 = ""
         MainActivity.user?.let{ usuario ->
             db.collection("users").document(usuario).collection("ejercicios")
-                .document(id.toString()).get().addOnSuccessListener {
+                .document("2").get().addOnSuccessListener {
                     Nombre2 = it.get("nombre") as String?
 
                 }
         }
 
-        Toast.makeText(this, ""+Nombre2, Toast.LENGTH_SHORT).show()
+        //Toast.makeText(this, ""+Nombre2, Toast.LENGTH_SHORT).show()
         //id = 2; nombre = "Saltos de tijera"; tipo = "Piernas"; peso = false
         return true
     }
