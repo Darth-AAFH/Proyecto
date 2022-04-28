@@ -38,6 +38,16 @@ class CreadorEjercicios : AppCompatActivity() {
         val adaptador0 = ArrayAdapter(this, android.R.layout.simple_spinner_item, lista0)
         spinnerTipos.adapter = adaptador0
 
+        MainActivity.user?.let { usuario ->
+            db.collection("users").document(usuario).collection("ejercicios")
+                .get().addOnSuccessListener {
+                    for(ejercicio in it){
+                        contadorMax += 1
+                        idFinal = (ejercicio.get("id") as Long).toInt()
+                    }
+                }
+        }
+
         buttonCrear!!.setOnClickListener{
             val nombre = editTextNombre!!.text.toString(); val tipo = spinnerTipos.selectedItem.toString(); val peso = switchPeso!!.isChecked()
             if(crear(nombre, tipo, peso)){
@@ -55,12 +65,13 @@ class CreadorEjercicios : AppCompatActivity() {
         }
     }
 
-    /*
     private val db = FirebaseFirestore.getInstance()
     var contadorMax = 0; var idFinal = 0
+
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean{
-        var handler = Handler(Looper.getMainLooper())
+        /*var handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
+
         MainActivity.user?.let { usuario ->
             db.collection("users").document(usuario).collection("ejercicios")
                 .get().addOnSuccessListener {
@@ -74,15 +85,16 @@ class CreadorEjercicios : AppCompatActivity() {
 
         },50000)
 
+         */
+
         var confirmacion = false
         if(contadorMax <= 65){//////////////numero máx de ejercicios que el usuario puede crear (50)
             var nombre = Nombre
 
             if(nombre == ""){
-                val idF=idFinal
+                val idF = idFinal
                 nombre = "Ejercicio" + (idF - 14)
             }
-
 
             val arreglo: Array<String?>
             arreglo = nombre.split(" ").toTypedArray()
@@ -119,8 +131,8 @@ class CreadorEjercicios : AppCompatActivity() {
         }
         Toast.makeText(this, "Se ha guardado el ejercicio", Toast.LENGTH_SHORT).show()
     }
-    */
 
+    /*
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
         var contadorMax = 1; var idFinal = 0
 
@@ -183,5 +195,7 @@ class CreadorEjercicios : AppCompatActivity() {
             Toast.makeText(this, "Ha habido un error", Toast.LENGTH_SHORT).show()
         }
     }
+
+     */
 
 }
