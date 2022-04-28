@@ -60,10 +60,25 @@ class CreadorEjercicios : AppCompatActivity() {
     var Nombre2: String? = null
 
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
-        /*var id = 2
+
+        /*var ultimoEjercicio = 0
+        MainActivity.user?.let { usuario ->
+            db.collection("users").document(usuario).collection("ejercicios").get().addOnSuccessListener {
+                //for(ejercicio in it){
+                    //ultimoEjercicio += 1
+                //}
+                ultimoEjercicio = it.last().get()
+            }
+        }*/
+
+
+
+        //escribir
+        var id = 2
         MainActivity.user?.let{ usuario ->
-            db.collection("users").document(usuario).collection("ejercicios").document(id.toString()).set(
+            db.collection("users").document(usuario).collection("ejercicios").document().set(
                 hashMapOf(
+                    "id" to id,
                     "nombre" to Nombre,
                     "tipo" to Tipo,
                     "peso" to validadorPeso
@@ -71,16 +86,18 @@ class CreadorEjercicios : AppCompatActivity() {
             )
         }
 
-        */
 
+        /* tomar datos
         var id = 2
         MainActivity.user?.let{ usuario ->
             db.collection("users").document(usuario).collection("ejercicios")
-                .document("2").get().addOnSuccessListener {
+                .document(id.toString()).get().addOnSuccessListener {
                     Nombre2 = it.get("nombre") as String?
 
                 }
         }
+        */
+
 
         //Toast.makeText(this, ""+Nombre2, Toast.LENGTH_SHORT).show()
         //id = 2; nombre = "Saltos de tijera"; tipo = "Piernas"; peso = false
