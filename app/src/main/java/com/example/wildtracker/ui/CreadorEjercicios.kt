@@ -63,9 +63,18 @@ class CreadorEjercicios : AppCompatActivity() {
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
 
         var aux: String ?= null
+        var contador = 0
         MainActivity.user?.let { usuario ->
             db.collection("users").document(usuario).collection("ejercicios").get().addOnSuccessListener {
-                 aux = it.last().get("id") as String?
+                 for(ejercicio in it){
+                     contador += 1
+                 }
+            }
+        }
+        MainActivity.user?.let{ usuario ->
+            db.collection("users").document(usuario).collection("ejercicios")
+                .document(contador.toString()).get().addOnSuccessListener {
+                aux = it.get("id") as String?
             }
         }
         ultimoEjercicio = aux!!.toInt()
