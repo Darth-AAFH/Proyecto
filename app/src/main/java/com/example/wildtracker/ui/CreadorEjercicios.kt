@@ -55,6 +55,7 @@ class CreadorEjercicios : AppCompatActivity() {
         }
     }
 
+    /*
     private val db = FirebaseFirestore.getInstance()
     var contadorMax = 0; var idFinal = 0
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean{
@@ -118,8 +119,9 @@ class CreadorEjercicios : AppCompatActivity() {
         }
         Toast.makeText(this, "Se ha guardado el ejercicio", Toast.LENGTH_SHORT).show()
     }
+    */
 
-    /*private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
+    private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
         var contadorMax = 1; var idFinal = 0
 
         val helper = LocalDB(this, "Demo", null, 1)
@@ -164,9 +166,7 @@ class CreadorEjercicios : AppCompatActivity() {
         return confirmacion
     }
 
-     */
-
-    /*private fun guardarLocal(Ejercicio: ejercicio) {
+    private fun guardarLocal(Ejercicio: ejercicio) {
         val helper = LocalDB(this, "Demo", null, 1)
         val db: SQLiteDatabase = helper.getWritableDatabase() //Se abre la base de datos
 
@@ -182,6 +182,6 @@ class CreadorEjercicios : AppCompatActivity() {
         } catch (e: Exception) {
             Toast.makeText(this, "Ha habido un error", Toast.LENGTH_SHORT).show()
         }
-    }*/
+    }
 
 }
