@@ -38,4 +38,6 @@
     <color name="colorGray">#dedede</color>
     <color name="colorDarkGray">#b4b4b4</color>
     <color name="colorBlue">#2962FF</color>
+
+    <color name="colorDeletionBg">#83E57373</color>
 </resources>
