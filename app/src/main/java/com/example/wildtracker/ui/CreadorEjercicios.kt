@@ -52,7 +52,7 @@ class CreadorEjercicios : AppCompatActivity() {
         buttonEditar!!.setOnClickListener{
             //val intent = Intent(this@CreadorEjercicios, VerEjercicios::class.java)
             //startActivity(intent)
-            Toast.makeText(this, "El nuevo ejercicio debera tener id: "+aux, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "El nuevo ejercicio debera tener id: "+aux+" + 1", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -63,7 +63,7 @@ class CreadorEjercicios : AppCompatActivity() {
 
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean) {
 
-        /*var contador = 0
+        var contador = 0
         MainActivity.user?.let { usuario ->
             db.collection("users").document(usuario).collection("ejercicios").get().addOnSuccessListener {
                  for(ejercicio in it){
@@ -76,10 +76,10 @@ class CreadorEjercicios : AppCompatActivity() {
                 .document(contador.toString()).get().addOnSuccessListener {
                 aux = it.get("id") as String?
             }
-        }*/
+        }
 
 
-        //escribir
+        /*//escribir
         var id = 1
         MainActivity.user?.let{ usuario ->
             db.collection("users").document(usuario).collection("ejercicios").document(id.toString()).set(
@@ -91,6 +91,7 @@ class CreadorEjercicios : AppCompatActivity() {
                 )
             )
         }
+         */
 
 
         /*//tomar datos
