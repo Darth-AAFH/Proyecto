@@ -134,6 +134,7 @@ class LoginActivity : AppCompatActivity() {
             .build()
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
         startActivityForResult(googleSignInClient.signInIntent, RC_SIGN_IN)
+
     }
 
 

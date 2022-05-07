@@ -152,6 +152,11 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         startActivity(Intent(this, LoginActivity::class.java))
     }
     private fun setup(){
+
+
+
+
+
         val EditProfileDataButton = findViewById<Button>(R.id.EditProfileDataButton)
         val recoverProfileDataButton = findViewById<Button>(R.id.recoverProfileDataButton)
         val saveProfileButton = findViewById<Button>(R.id.saveProfileButton)
@@ -168,9 +173,47 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         ChangeProfilePicButton.isVisible = false
         EditProfileDataButton.isVisible = false
 
+        EditProfileDataButton.isVisible = true
+        recoverProfileDataButton.isVisible = false
+        MainActivity.user?.let { it1 ->
+            db.collection("users").document(MainActivity.user!!).get()
+                .addOnSuccessListener {
+                edName.setText (it.get("Name") as String?)
+                edEmail.setText(it.get("email") as String?)
+                edBirthDay.setText(it.get("birthDay") as String?)
+
+            }
+        }
+        val progresDialog = ProgressDialog(this)
+        progresDialog.setMessage("Cargando Imagen")
+        progresDialog.setCancelable(false)
+        progresDialog.show()
+
+
+        val userID =FirebaseAuth.getInstance().currentUser!!.email.toString()
+        val storageRef = FirebaseStorage.getInstance().reference.child("UsersProfileImages/$userID.jpg")
+        val localfile = File.createTempFile("tempImage","jpg")
+        storageRef.getFile(localfile).addOnSuccessListener{
+
+            if(progresDialog.isShowing){
+                progresDialog.dismiss()
+            }
+            val bitmap =BitmapFactory.decodeFile(localfile.absolutePath)
+            ivProfilePic.setImageBitmap(bitmap)
+
+
+        }.addOnFailureListener{
+            progresDialog.dismiss()
+            Toast.makeText(this,"Recuperación de imagen fallida, sube otra foto",Toast.LENGTH_SHORT).show()
+
+        }
+
+
+
+
         saveProfileButton.setOnClickListener{
             MainActivity.user?.let { usuario ->
-                db.collection("users").document(usuario).collection("Ejercicios").document().set(
+                db.collection("users").document(usuario).set(
                     hashMapOf( "birthDay"  to  findViewById<EditText>(R.id.Perfil_birthday).text.toString(),
                         "email" to findViewById<EditText>(R.id.Perfil_mail).text.toString(),
                         "Name" to findViewById<EditText>(R.id.Perfil_name).text.toString(),
@@ -194,41 +237,10 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         }
 
-        recoverProfileDataButton.setOnClickListener {
-            EditProfileDataButton.isVisible = true
-            recoverProfileDataButton.isVisible = false
-            MainActivity.user?.let { it1 ->
-                db.collection("users").document(it1).get().addOnSuccessListener{
-                    var nomber = (it.get("birthDay") as String?)
-                    edEmail.setText(it.get("email") as String?)
-                    edName.setText (it.get("Name") as String?)
-                }
-            }
-            val progresDialog = ProgressDialog(this)
-            progresDialog.setMessage("Cargando Imagen")
-            progresDialog.setCancelable(false)
-            progresDialog.show()
 
 
-            val userID =FirebaseAuth.getInstance().currentUser!!.email.toString()
-            val storageRef = FirebaseStorage.getInstance().reference.child("UsersProfileImages/$userID.jpg")
-            val localfile = File.createTempFile("tempImage","jpg")
-            storageRef.getFile(localfile).addOnSuccessListener{
-
-                if(progresDialog.isShowing){
-                    progresDialog.dismiss()
-                }
-                val bitmap =BitmapFactory.decodeFile(localfile.absolutePath)
-                ivProfilePic.setImageBitmap(bitmap)
 
 
-            }.addOnFailureListener{
-                progresDialog.dismiss()
-                Toast.makeText(this,"Fallo el recuperar imagen",Toast.LENGTH_SHORT).show()
-
-            }
-
-        }
 
         ChangeProfilePicButton.setOnClickListener {
         uploadFile()

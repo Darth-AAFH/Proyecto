@@ -39,6 +39,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var manager: LinearLayoutManager
     private lateinit var drawer: DrawerLayout
     private val accesdata = FirebaseFirestore.getInstance()
+    private val name = FirebaseFirestore.getInstance()
 
     private val openDocument = registerForActivityResult(MyOpenDocumentContract()) { uri ->
         onImageSelected(uri)
@@ -69,12 +70,6 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Initialize Firebase Auth and check if the user is signed in
         // TODO: implement
         auth = Firebase.auth
-        if (auth.currentUser == null) {
-            // Not signed in, launch the Sign In activity
-            startActivity(Intent(this, SignInActivity::class.java))
-            finish()
-            return
-        }
         // Initialize Realtime Database and FirebaseRecyclerAdapter
         // TODO: implement
         db = Firebase.database
@@ -114,9 +109,6 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
         // When the image button is clicked, launch the image picker
-        binding.addMessageImageView.setOnClickListener {
-            openDocument.launch(arrayOf("image/*"))
-        }
     }
 
     public override fun onStart() {
@@ -226,7 +218,13 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun getUserName(): String? {
-        return MainActivity.user
+       var username = ANONYMOUS
+
+           val documents =  name.collection("users").document(MainActivity.user!!).get()
+
+
+
+        return username
     }
 
 
@@ -239,7 +237,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
-        toolbar.title = "Ranking"
+        toolbar.title = "Community Chat"
         setSupportActionBar(toolbar)
 
         drawer = findViewById(R.id.drawerlayout)!!
