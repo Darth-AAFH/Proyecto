@@ -1,19 +1,14 @@
 package com.example.wildtracker.ui
 
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.Intent
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.isDigitsOnly
 import com.example.wildtracker.R
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.delay
 
 class CreadorEjercicios : AppCompatActivity() {
 
@@ -23,6 +18,12 @@ class CreadorEjercicios : AppCompatActivity() {
 
     var arregloEjercicios = Array<ejercicio?>(66){null}
     var validadorNombre = true
+
+    private val db = FirebaseFirestore.getInstance()
+    var contadorMax = 0; var idFinal = 0; var idAux = 0
+
+    val listaEjercicios = ArrayList<String>()
+    var LEAux = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,16 +35,22 @@ class CreadorEjercicios : AppCompatActivity() {
         buttonEditar = findViewById(R.id.buttonEditar)
         val spinnerTipos: Spinner = findViewById(R.id.spinnerTipos)
 
-        val lista0 = listOf("Piernas", "Abdomen", "Pecho", "Espalda", "Brazos", "Hombros", "Otro")
-        val adaptador0 = ArrayAdapter(this, android.R.layout.simple_spinner_item, lista0)
-        spinnerTipos.adapter = adaptador0
+        val listaSpinner = listOf("Piernas", "Abdomen", "Pecho", "Espalda", "Brazos", "Hombros", "Otro")
+        val adaptadorSpinner = ArrayAdapter(this, android.R.layout.simple_spinner_item, listaSpinner)
+        spinnerTipos.adapter = adaptadorSpinner
 
         MainActivity.user?.let { usuario ->
-            db.collection("users").document(usuario).collection("ejercicios")
+            db.collection("users").document(usuario).collection("ejercicios") //abre la base de datos
                 .get().addOnSuccessListener {
-                    for(ejercicio in it){
-                        contadorMax += 1
-                        idFinal = (ejercicio.get("id") as Long).toInt()
+                    for(ejercicio in it){ //para cada ejercicio
+                        contadorMax += 1 //cuenta cuantos ejercicios hay
+                        idAux = (ejercicio.get("id") as Long).toInt() //toma el id
+                        if(idFinal < idAux){ //si es un id mayor
+                            idFinal = (ejercicio.get("id") as Long).toInt() //lo va a guardar como el id final
+                        }
+
+                        LEAux = ejercicio.get("nombre").toString() //toma el nombre del ejercicio
+                        listaEjercicios.add(LEAux) //y lo guarda en la lista de ejrcicios
                     }
                 }
         }
@@ -61,32 +68,12 @@ class CreadorEjercicios : AppCompatActivity() {
 
         buttonEditar!!.setOnClickListener{
             val intent = Intent(this@CreadorEjercicios, VerEjercicios::class.java)
+            intent.putExtra("LE", listaEjercicios)
             startActivity(intent)
         }
     }
 
-    private val db = FirebaseFirestore.getInstance()
-    var contadorMax = 0; var idFinal = 0
-
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean{
-        /*var handler = Handler(Looper.getMainLooper())
-        handler.postDelayed({
-
-        MainActivity.user?.let { usuario ->
-            db.collection("users").document(usuario).collection("ejercicios")
-                .get().addOnSuccessListener {
-                 for(ejercicio in it){
-                     contadorMax += 1
-                     idFinal = (ejercicio.get("id") as Long).toInt()
-                     Toast.makeText(this,"ID FINAL ES: "+idFinal,Toast.LENGTH_SHORT).show()
-                 }
-            }
-        }
-
-        },50000)
-
-         */
-
         var confirmacion = false
         if(contadorMax <= 65){//////////////numero máx de ejercicios que el usuario puede crear (50)
             var nombre = Nombre
@@ -109,7 +96,7 @@ class CreadorEjercicios : AppCompatActivity() {
 
             if(validadorNombre == true){
                 arregloEjercicios[contadorMax] = ejercicio(idFinal+1, nombre, Tipo, validadorPeso)
-                guardarLocal(arregloEjercicios[contadorMax]!!)
+                guardarBD(arregloEjercicios[contadorMax]!!)
             }
 
             confirmacion = true
@@ -117,7 +104,7 @@ class CreadorEjercicios : AppCompatActivity() {
         return confirmacion
     }
 
-    private fun guardarLocal(Ejercicio: ejercicio) {
+    private fun guardarBD(Ejercicio: ejercicio) {
         MainActivity.user?.let{ usuario ->
             db.collection("users").document(usuario).collection("ejercicios")
                 .document(Ejercicio.id.toString()).set(

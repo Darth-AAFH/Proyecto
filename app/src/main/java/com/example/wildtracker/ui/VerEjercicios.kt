@@ -1,7 +1,6 @@
 package com.example.wildtracker.ui
 
 import android.content.Intent
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
@@ -16,7 +15,7 @@ class VerEjercicios : AppCompatActivity() {
 
     var listado: java.util.ArrayList<String>? = null
 
-    private fun CargarTabla(){
+    /*private fun CargarTabla(){
         val datos1 = ArrayList<String>()
 
         val helper = LocalDB(this, "Demo", null, 1)
@@ -40,9 +39,25 @@ class VerEjercicios : AppCompatActivity() {
         listViewEjercicios!!.setAdapter(adapter) //La tabla se adapta en la text view
     }
 
+     */
+
+    var listaEjercicios = ArrayList<String>()
+
+    private fun CargarTabla(){
+        listaEjercicios.sort()
+        listado = listaEjercicios
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
+        listViewEjercicios!!.setAdapter(adapter) //La tabla se adapta en la text view
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ver_ejercicios)
+
+        val b = intent.extras
+        if (b != null) {
+            listaEjercicios = b.getStringArrayList("LE") as ArrayList<String>
+        }
 
         listViewEjercicios = findViewById(R.id.listViewEjercicios)
 

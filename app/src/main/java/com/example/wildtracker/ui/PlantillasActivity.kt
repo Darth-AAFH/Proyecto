@@ -15,7 +15,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
@@ -29,6 +28,7 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     var validadorMostar = 0
     var listado: java.util.ArrayList<String>? = null
 
+    private val db = FirebaseFirestore.getInstance()
     var ejerciciosPredeterminados = false
 
     private fun CargarTabla(){
@@ -51,7 +51,7 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         listado = datos1
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
         listViewRutinas!!.setAdapter(adapter) //La tabla se adapta en la text view
-    }
+    }//////////////////////////////////////////////////////////////////
 
     private lateinit var drawer: DrawerLayout
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +86,7 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 buttonEjercicio!!.setVisibility(View.INVISIBLE); buttonEjercicio!!.setEnabled(false)
                 validadorMostar = 0
             }
-            validadorLocalDB()
+            validadorPredeterDB()
         }
 
         buttonRutina!!.setOnClickListener{
@@ -107,50 +107,48 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         }
     }
 
-    private val db = FirebaseFirestore.getInstance()
-
-    private fun validadorLocalDB(){
+    private fun validadorPredeterDB(){
         if(ejerciciosPredeterminados) {
             var id = 1; var nombre = "Sentadillas"; var tipo = "Piernas"; var peso = true
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
             id = 2; nombre = "Saltos de tijera"; tipo = "Piernas"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
             id = 3; nombre = "Elevación de talones"; tipo = "Piernas"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
 
             id = 4; nombre = "Abdominales"; tipo = "Abdomen"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
             id = 5; nombre = "Plancha"; tipo = "Abdomen"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
             id = 6; nombre = "Escaladores"; tipo = "Abdomen"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
 
             id = 7; nombre = "Dominadas"; tipo = "Pecho"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
             id = 8; nombre = "Press de pecho"; tipo = "Pecho"; peso = true
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
 
             id = 9; nombre = "Peso muerto"; tipo = "Espalda"; peso = true
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
 
             id = 10; nombre = "Punches"; tipo = "Brazos"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
             id = 11; nombre = "Dips de tríceps"; tipo = "Brazos"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
 
             id = 12; nombre = "Press de hombros"; tipo = "Hombros"; peso = true
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
             id = 13; nombre = "Elevaciones laterales"; tipo = "Hombros"; peso = true
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
 
             id = 14; nombre = "Flexiones"; tipo = "Otro"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
             id = 15; nombre = "Burpees"; tipo = "Otro"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
+            ejerciciosPredeterDB(id, nombre, tipo, peso)
         }
     }
 
-    private fun ejerciciosLocalDB(Id: Int, Nombre: String, Tipo: String, Peso: Boolean){
+    private fun ejerciciosPredeterDB(Id: Int, Nombre: String, Tipo: String, Peso: Boolean){
         MainActivity.user?.let{ usuario ->
             db.collection("users").document(usuario).collection("ejercicios").document(Id.toString()).set(
                 hashMapOf(
