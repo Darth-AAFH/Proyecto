@@ -15,7 +15,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import android.database.sqlite.SQLiteDatabase
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import com.google.firebase.firestore.FirebaseFirestore
@@ -37,27 +36,12 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
     var contadorMaxRut = 0; var idFinalRut = 0; var idAux = 0
 
-    private fun CargarTabla(){
-        val datos1 = ArrayList<String>()
-
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
-
-        val sql = "select Id, Nombre, Ejercicios from Rutinas"
-        val c = db.rawQuery(sql, null) //Se crea un cursor que ira avanzando de posicion uno a uno
-        if (c.moveToFirst()) {
-            do { //Mientras se haya movido de posicion va a tomar todos los datos de esa fila
-                val linea = c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2)
-                datos1.add(linea)
-            } while (c.moveToNext())
-        }
-        c.close()
-        db.close()
-
-        listado = datos1
+    private fun CargarRutinas(){
+        MainActivity.listaRutinas.sort() //acomoda las rutinas por id
+        listado = MainActivity.listaRutinas
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
         listViewRutinas!!.setAdapter(adapter) //La tabla se adapta en la text view
-    }//////////////////////////////////////////////////////////////////
+    }
 
     private lateinit var drawer: DrawerLayout
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,7 +95,7 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                     }
                 }
         }
-        CargarTabla()
+        CargarRutinas()
 
         buttonAdd!!.setOnClickListener{
             if(validadorMostar == 0) {

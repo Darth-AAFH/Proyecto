@@ -17,20 +17,26 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
 
- companion object{
-       val auth: String? = FirebaseAuth.getInstance().currentUser?.email
-    var user =  auth
-}
+    private val db = FirebaseFirestore.getInstance()
+
+    companion object{
+        val auth: String? = FirebaseAuth.getInstance().currentUser?.email
+        var user =  auth
+        val listaRutinas = ArrayList<String>()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         initToolbar()
         initNavigationView()
+        CargarRutinas()
     }
 
 
@@ -60,7 +66,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navigationView.addHeaderView(headerView)
 
         val tvUser: TextView = headerView.findViewById(R.id.tvUser)
-        tvUser.text = MainActivity.user
+        tvUser.text = user
 
     }
 
@@ -114,6 +120,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intent)
     }
 
+    private fun CargarRutinas(){
+        var LRAux: String
+        user?.let { usuario -> //para cargar las rutinas
+            db.collection("users").document(usuario).collection("rutinas") //abre la base de datos
+                .get().addOnSuccessListener {
+                    for(ejercicio in it){ //para cada rutina
+                        LRAux = (ejercicio.get("id") as Long).toString() //toma el id de la rutina
+                        LRAux += " | " //le pone un texto para darle orden
+                        LRAux += ejercicio.get("nombre").toString() //toma el nombre de la rutina
+                        LRAux += " | " //le pone un texto para darle orden
+                        LRAux += ejercicio.get("ejercicios").toString() //toma los ejercicios
+                        LRAux += " | " //le pone un texto para darle orden
+                        LRAux = (ejercicio.get("nivel") as Long).toString() //toma el nivel de la rutina
+                        listaRutinas.add(LRAux) //y guarda el texto en la lista de ejrcicios
+                    }
+                }
+        }
+    }
     private fun callPlantillasActivity() {
         val intent = Intent(this, PlantillasActivity::class.java)
         startActivity(intent)
