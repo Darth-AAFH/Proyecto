@@ -182,12 +182,13 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             db.collection("users").document(MainActivity.user!!).get()
                 .addOnSuccessListener {
                 edName.setText (it.get("Name") as String?)
-                    usernameDb = edName.toString()
-                edEmail.setText(it.get("email") as String?)
+                    edEmail.setText(it.get("email") as String?)
                 edBirthDay.setText(it.get("birthDay") as String?)
 
             }
+
         }
+
         val progresDialog = ProgressDialog(this)
         progresDialog.setMessage("Cargando Imagen")
         progresDialog.setCancelable(false)
@@ -201,6 +202,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
             if(progresDialog.isShowing){
                 progresDialog.dismiss()
+                usernameDb = edName.text.toString()
+                Toast.makeText(this,"N: $usernameDb",Toast.LENGTH_LONG).show()
             }
             val bitmap =BitmapFactory.decodeFile(localfile.absolutePath)
             ivProfilePic.setImageBitmap(bitmap)
@@ -240,11 +243,6 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             EditProfileDataButton.isVisible = false
 
         }
-
-
-
-
-
 
         ChangeProfilePicButton.setOnClickListener {
         uploadFile()

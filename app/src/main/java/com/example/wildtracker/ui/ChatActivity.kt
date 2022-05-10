@@ -222,8 +222,9 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun getUserName(): String? {
 
     var nombre = PerfilActivity.usernameDb
-        Toast.makeText(this,"Ayuda $nombre", Toast.LENGTH_SHORT).show()
-
+        if(nombre ==""){
+            nombre = "Anonimo"
+        }
         return nombre
     }
 
