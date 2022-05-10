@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -34,13 +35,14 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 
+
 class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var binding: ActivityChatBinding
     private lateinit var manager: LinearLayoutManager
     private lateinit var drawer: DrawerLayout
     private val accesdata = FirebaseFirestore.getInstance()
     private val name = FirebaseFirestore.getInstance()
-
+    private  var userName:String = ""
     private val openDocument = registerForActivityResult(MyOpenDocumentContract()) { uri ->
         onImageSelected(uri)
     }
@@ -218,13 +220,38 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun getUserName(): String? {
-       var username = ANONYMOUS
+        Thread.sleep(1000)
+    var nombre = ""
 
-           val documents =  name.collection("users").document(MainActivity.user!!).get()
+           val documents =  name.collection("users").document(MainActivity.user!!)
+        documents.get().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val list = ArrayList<String>()
+                for (document in task){
+
+                }
 
 
+               /* val document = task.result
+                if (document.exists()) {
+                    nombre = document.getString("Name").toString()
+                    Toast.makeText(this,"Existe $nombre" ,Toast.LENGTH_SHORT).show()
+                    userName = nombre
+                } else {
+                    Toast.makeText(this,"NO EXISTE" ,Toast.LENGTH_SHORT).show()
+                }*/
+            } else {
+                Log.d(TAG, "get failed with ", task.exception)
+            }
+            userName = nombre
+        }
 
-        return username
+if (userName==null) {
+    userName = nombre
+}
+        userName = nombre
+        Toast.makeText(this,"Ayuda $nombre", Toast.LENGTH_SHORT).show()
+        return userName
     }
 
 
