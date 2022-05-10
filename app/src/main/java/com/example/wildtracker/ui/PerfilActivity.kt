@@ -207,8 +207,6 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             }
             val bitmap =BitmapFactory.decodeFile(localfile.absolutePath)
             ivProfilePic.setImageBitmap(bitmap)
-
-
         }.addOnFailureListener{
             progresDialog.dismiss()
             Toast.makeText(this,"Recuperación de imagen fallida, sube otra foto",Toast.LENGTH_SHORT).show()
