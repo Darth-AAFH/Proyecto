@@ -17,6 +17,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
@@ -239,8 +241,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         //Inicializa el primer AlertDialog
         builder = AlertDialog.Builder(this)
         val dialogBuilder = AlertDialog.Builder(this)
-        builder.setTitle("Marcador nuevo")
-            .setMessage("Quieres Agregar un nuevo marcador?")
+        builder.setTitle("Añadir un nuevo lugar en mapa")
+            .setMessage("Quieres Agregar un marcador en este punto?")
             .setCancelable(true)
             .setPositiveButton("Si")
             { dialogInterface, it ->
@@ -274,7 +276,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                  * añadido
                  */
                 var selectedPlace = ""
-
                 /**RadioGrup elige el tipo de marcador a añadir: Parque || Gimnasio
                  * y despues pasarlo a String deselectedPlace */
                 radioGroup.setOnCheckedChangeListener { radioGroup, selectedId ->
@@ -306,7 +307,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
             }
             .setNegativeButton("No") { dialogInterface, it -> dialogInterface.cancel() }
-            .setNeutralButton("?") { dialogInterface, it ->
+            .setNeutralButton("Ayuda") { dialogInterface, it ->
                 Toast.makeText(
                     this@MapsActivity,
                     "Agregar un punto en el marcador", Toast.LENGTH_SHORT
@@ -374,12 +375,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         Toast.makeText(this,snippet,Toast.LENGTH_SHORT).show()
         val markerRef = db.collection("locations").document("$snippet")
         builder = AlertDialog.Builder(this)
-        builder.setTitle("Marcador seleccionado")
-            .setMessage("Que desea hacer con este punto?")
+        builder.setTitle("Punto en el mapa")
+            .setMessage("Este es un marcador a añadir, puedes ayudar para añadirlo o eliminarlo!")
             .setCancelable(true)
             .setPositiveButton("Añadir") { dialogInterface, it ->
                 //deleteMarker(markerToDelete)
-
                 markerRef.update("contador añadir", FieldValue.increment(1))
                 finish();
                 startActivity(getIntent());

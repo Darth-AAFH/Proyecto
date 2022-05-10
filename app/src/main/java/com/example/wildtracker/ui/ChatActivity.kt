@@ -220,38 +220,11 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun getUserName(): String? {
-        Thread.sleep(1000)
-    var nombre = ""
 
-           val documents =  name.collection("users").document(MainActivity.user!!)
-        documents.get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val list = ArrayList<String>()
-                for (document in task){
-
-                }
-
-
-               /* val document = task.result
-                if (document.exists()) {
-                    nombre = document.getString("Name").toString()
-                    Toast.makeText(this,"Existe $nombre" ,Toast.LENGTH_SHORT).show()
-                    userName = nombre
-                } else {
-                    Toast.makeText(this,"NO EXISTE" ,Toast.LENGTH_SHORT).show()
-                }*/
-            } else {
-                Log.d(TAG, "get failed with ", task.exception)
-            }
-            userName = nombre
-        }
-
-if (userName==null) {
-    userName = nombre
-}
-        userName = nombre
+    var nombre = PerfilActivity.usernameDb
         Toast.makeText(this,"Ayuda $nombre", Toast.LENGTH_SHORT).show()
-        return userName
+
+        return nombre
     }
 
 

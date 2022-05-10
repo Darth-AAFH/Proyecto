@@ -34,13 +34,16 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     var Perfil_mail = findViewById<EditText>(R.id.Perfil_mail)
     var Perfil_name = findViewById<EditText>(R.id.Perfil_name)
 */
+
+    companion object{
+        lateinit var usernameDb : String
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_perfil)
         initToolbar()
         initNavigationView()
           setup()
-
     }
 
     private fun initToolbar() {
@@ -181,6 +184,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             db.collection("users").document(MainActivity.user!!).get()
                 .addOnSuccessListener {
                 edName.setText (it.get("Name") as String?)
+                    usernameDb = edName.toString()
                 edEmail.setText(it.get("email") as String?)
                 edBirthDay.setText(it.get("birthDay") as String?)
 
