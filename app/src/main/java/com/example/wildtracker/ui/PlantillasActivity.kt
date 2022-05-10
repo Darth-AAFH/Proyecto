@@ -21,6 +21,7 @@ import android.widget.AdapterView.OnItemClickListener
 import com.google.firebase.firestore.FirebaseFirestore
 
 class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    //////////////////////////////////////////////////////
 
     var buttonAdd: Button ?= null; var buttonRutina: Button ?= null; var buttonEjercicio: Button ?= null
     var listViewRutinas: ListView?= null
@@ -30,6 +31,11 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
     private val db = FirebaseFirestore.getInstance()
     var ejerciciosPredeterminados = false
+
+    val listaEjercicios = ArrayList<String>()
+    var LEAux = ""
+
+    var contadorMaxRut = 0; var idFinalRut = 0; var idAux = 0
 
     private fun CargarTabla(){
         val datos1 = ArrayList<String>()
@@ -65,7 +71,7 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         buttonEjercicio = findViewById(R.id.buttonEjercicio); buttonEjercicio!!.setVisibility(View.INVISIBLE); buttonEjercicio!!.setEnabled(false)
         listViewRutinas = findViewById(R.id.listViewRutinas)
 
-        MainActivity.user?.let { usuario ->
+        MainActivity.user?.let { usuario -> //para cargar los ejercicios por defecto
             db.collection("users").document(usuario).collection("ejercicios")
                 .get().addOnSuccessListener {
                 if(it.isEmpty){
@@ -73,7 +79,38 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 }
             }
         }
-
+        MainActivity.user?.let { usuario -> //para cargar los ejercicios
+            db.collection("users").document(usuario).collection("ejercicios") //abre la base de datos
+                .get().addOnSuccessListener {
+                    for(ejercicio in it){ //para cada ejercicio
+                        LEAux = (ejercicio.get("id") as Long).toString() //toma el id del ejercicio
+                        LEAux += " | " //le pone un texto para darle orden
+                        LEAux += ejercicio.get("nombre").toString() //toma el nombre del ejercicio
+                        LEAux += " | " //le pone un texto para darle orden
+                        LEAux += ejercicio.get("tipo").toString() //toma el tipo
+                        LEAux += " | " //le pone un texto para darle orden
+                        val pesoAux = ejercicio.get("peso").toString()
+                        if(pesoAux == "true"){
+                            LEAux += "Con peso"
+                        }else{
+                            LEAux += "Sin peso"
+                        }
+                        listaEjercicios.add(LEAux) //y guarda el texto en la lista de ejrcicios
+                    }
+                }
+        }
+        MainActivity.user?.let { usuario -> //para cargar las rutinas
+            db.collection("users").document(usuario).collection("rutinas") //abre la base de datos
+                .get().addOnSuccessListener {
+                    for(rutina in it){ //para cada rutina
+                        contadorMaxRut += 1 //cuenta cuantas rutinas hay
+                        idAux = (rutina.get("id") as Long).toInt() //toma el id
+                        if(idFinalRut < idAux){ //si es un id mayor
+                            idFinalRut = (rutina.get("id") as Long).toInt() //lo va a guardar como el id final
+                        }
+                    }
+                }
+        }
         CargarTabla()
 
         buttonAdd!!.setOnClickListener{
@@ -91,6 +128,9 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         buttonRutina!!.setOnClickListener{
             val intent = Intent(this@PlantillasActivity, CreadorRutinas::class.java)
+            intent.putExtra("LE", listaEjercicios)
+            intent.putExtra("ContadorMaxRut", contadorMaxRut)
+            intent.putExtra("IdFinalRut", idFinalRut)
             startActivity(intent)
         }
 
@@ -160,72 +200,6 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             )
         }
     }
-
-    /*
-    private fun validadorLocalDB(){
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getReadableDatabase()
-
-        val sql = "select id from Ejercicios"
-        val c = db.rawQuery(sql, null)
-
-        if (!c.moveToFirst()) {
-            var id = 1; var nombre = "Sentadillas"; var tipo = "Piernas"; var peso = true
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-            id = 2; nombre = "Saltos de tijera"; tipo = "Piernas"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-            id = 3; nombre = "Elevación de talones"; tipo = "Piernas"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-
-            id = 4; nombre = "Abdominales"; tipo = "Abdomen"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-            id = 5; nombre = "Plancha"; tipo = "Abdomen"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-            id = 6; nombre = "Escaladores"; tipo = "Abdomen"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-
-            id = 7; nombre = "Dominadas"; tipo = "Pecho"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-            id = 8; nombre = "Press de pecho"; tipo = "Pecho"; peso = true
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-
-            id = 9; nombre = "Peso muerto"; tipo = "Espalda"; peso = true
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-
-            id = 10; nombre = "Punches"; tipo = "Brazos"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-            id = 11; nombre = "Dips de tríceps"; tipo = "Brazos"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-
-            id = 12; nombre = "Press de hombros"; tipo = "Hombros"; peso = true
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-            id = 13; nombre = "Elevaciones laterales"; tipo = "Hombros"; peso = true
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-
-            id = 14; nombre = "Flexiones"; tipo = "Otro"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-            id = 15; nombre = "Burpees"; tipo = "Otro"; peso = false
-            ejerciciosLocalDB(id, nombre, tipo, peso)
-        }
-        c.close()
-        db.close()
-    }
-
-    private fun ejerciciosLocalDB(Id: Int, Nombre: String, Tipo: String, Peso: Boolean){
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getWritableDatabase() //Se abre la base de datos
-
-        try {
-            val c = ContentValues()
-            c.put("Id", Id)
-            c.put("Nombre", Nombre)
-            c.put("Tipo", Tipo)
-            c.put("Peso", Peso)
-            db.insert("EJERCICIOS", null, c)
-            db.close()
-        } catch (e: Exception) {
-        }
-    }*/
 
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)

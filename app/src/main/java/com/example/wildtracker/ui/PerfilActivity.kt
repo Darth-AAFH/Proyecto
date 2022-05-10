@@ -104,6 +104,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     }
 
     private fun callPlantillasActivity() {
+
+
         val intent = Intent(this, PlantillasActivity::class.java)
         startActivity(intent)
     }

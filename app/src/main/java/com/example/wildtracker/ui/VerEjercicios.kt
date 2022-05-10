@@ -8,40 +8,17 @@ import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.wildtracker.R
+import com.google.firebase.firestore.FirebaseFirestore
 
 class VerEjercicios : AppCompatActivity() {
 
     var listViewEjercicios: ListView?= null
 
     var listado: java.util.ArrayList<String>? = null
-
-    /*private fun CargarTabla(){
-        val datos1 = ArrayList<String>()
-
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
-
-        val sql = "select Id, Nombre, Tipo, Peso from Ejercicios"
-        val c = db.rawQuery(sql, null) //Se crea un cursor que ira avanzando de posicion uno a uno
-        if (c.moveToFirst()) {
-            do { //Mientras se haya movido de posicion va a tomar todos los datos de esa fila
-                val linea = c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2) + " | " + c.getInt(3)
-                if(c.getInt(0) > 15) { //Validador para no mostrar los ejericicios dados de alta por defecto
-                    datos1.add(linea)
-                }
-            } while (c.moveToNext())
-        }
-        c.close()
-        db.close()
-
-        listado = datos1
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
-        listViewEjercicios!!.setAdapter(adapter) //La tabla se adapta en la text view
-    }
-
-     */
-
     var listaEjercicios = ArrayList<String>()
+
+    private val db = FirebaseFirestore.getInstance()
+    var cadena = "["
 
     private fun CargarTabla(){
         listaEjercicios.sort()
@@ -61,13 +38,30 @@ class VerEjercicios : AppCompatActivity() {
 
         listViewEjercicios = findViewById(R.id.listViewEjercicios)
 
-        Toast.makeText(this, "Click para editar ejercicio", Toast.LENGTH_SHORT).show()
+        MainActivity.user?.let { usuario -> //para verificar que el ejercicio no esté en alguna rutina
+            db.collection("users").document(usuario).collection("rutinas") //abre la base de datos
+                .get().addOnSuccessListener {
+                    for(rutina in it){ //para cada rutina
+                        cadena += rutina.get("ejercicios").toString() //toma los ids de los ejercicios
+                        cadena += ","
+                    }
+                }
+        }
         CargarTabla()
+        Toast.makeText(this, "Click para editar ejercicio", Toast.LENGTH_SHORT).show()
 
         listViewEjercicios!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             val num = this.listado!![position].split(" ").toTypedArray()[0].toInt()
+            val nombre = this.listado!![position].split(" | ").toTypedArray()[1]
+            val tipo = this.listado!![position].split(" | ").toTypedArray()[2]
+            val peso = this.listado!![position].split(" | ").toTypedArray()[3]
+
             val intent = Intent(this@VerEjercicios, EditorEjercicios::class.java)
             intent.putExtra("Num", num)
+            intent.putExtra("Nombre", nombre)
+            intent.putExtra("Tipo", tipo)
+            intent.putExtra("Peso", peso)
+            intent.putExtra("Cadena", cadena)
             startActivity(intent)
         }
     }

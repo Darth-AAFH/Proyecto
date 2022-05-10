@@ -1,10 +1,7 @@
 package com.example.wildtracker.ui
 
-import android.content.ContentValues
 import android.content.Intent
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
@@ -12,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.isDigitsOnly
 import java.util.*
 import com.example.wildtracker.R
+import com.google.firebase.firestore.FirebaseFirestore
 
 class CreadorRutinas : AppCompatActivity() {
 
@@ -23,29 +21,19 @@ class CreadorRutinas : AppCompatActivity() {
     var listado: ArrayList<String>? = null
     var listado2 = ArrayList<String>()
     var datos = ArrayList<String>()
-    var contadorMax = 0
+    var contadorMaxEjer = 0
 
     var arregloRutinas = Array<rutina?>(51){null}
     var validadorVacia = true
 
+    var listaEjercicios = ArrayList<String>()
+    var contadorMaxRut = 0; var idFinalRut = 0
+
+    private val db = FirebaseFirestore.getInstance()
+
     private fun CargarTabla() { //Funcion que trae la tabla
-        val datos1 = ArrayList<String>()
-
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
-
-        val sql = "select Id, Nombre, Tipo, Peso from Ejercicios"
-        val c = db.rawQuery(sql, null) //Se crea un cursor que ira avanzando de posicion uno a uno
-        if (c.moveToFirst()) {
-            do { //Mientras se haya movido de posicion va a tomar todos los datos de esa fila
-                val linea = c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2) + " | " + c.getInt(3)
-                datos1.add(linea)
-            } while (c.moveToNext())
-        }
-        c.close()
-        db.close()
-
-        listado = datos1
+        listaEjercicios.sort()
+        listado = listaEjercicios
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
         listViewEjerciciosHechos!!.setAdapter(adapter) //La tabla se adapta en la text view
     }
@@ -53,6 +41,13 @@ class CreadorRutinas : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_creador_rutinas)
+
+        val b = intent.extras
+        if (b != null) {
+            listaEjercicios = b.getStringArrayList("LE") as ArrayList<String>
+            contadorMaxRut = b.getInt("ContadorMaxRut")
+            idFinalRut = b.getInt("IdFinalRut")
+        }
 
         editTextNombre3 = findViewById<View>(R.id.editTextNombre3) as EditText
         buttonCrear2 = findViewById(R.id.buttonCrear2)
@@ -75,83 +70,48 @@ class CreadorRutinas : AppCompatActivity() {
         }
 
         listViewEjerciciosRutina!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-            val indice = listado2[position].split(" ").toTypedArray()[0].toInt() //Toma el id del ejercicio
-            var cadena = ""
+            var linea: String
+            linea = this.listado2[position].split(" ").toTypedArray()[0]; linea += " | "
+            linea += this.listado2[position].split(" | ").toTypedArray()[1]; linea += " | "
+            linea += this.listado2[position].split(" | ").toTypedArray()[2]; linea += " | "
+            linea += this.listado2[position].split(" | ").toTypedArray()[3]
 
-            val helper = LocalDB(this, "Demo", null, 1) //Abre la base de datos
-            val db: SQLiteDatabase = helper.getWritableDatabase()
-
-            val sql ="select Id, Nombre, Tipo, Peso from Ejercicios where Id = "+indice
-            val c = db.rawQuery(sql, null)
-            if (c.moveToFirst()) {
-                val linea = c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2) + " | " + c.getInt(3)
-                cadena = linea //Toma la linea completa del ejercicio
-            }
-            c.close()
-            db.close() //Cierra la base de datos
-
-            val posicion = listado2.indexOf(cadena) //Toma la posición del ejercicio en el array list
+            val posicion = listado2.indexOf(linea) //Toma la posición del ejercicio en el array list
 
             listado2.removeAt(posicion) //Remueve el ejercicio del array list
             val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
             listViewEjerciciosRutina!!.setAdapter(adapter)
 
-            contadorMax -= 1
+            contadorMaxEjer -= 1
         }
 
         listViewEjerciciosHechos!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-            if(contadorMax >= 10){
+            if(contadorMaxEjer >= 10){ //un validador para que solo hayan max 10 ejercicios
                 Toast.makeText(this, "Solo se pueden agregar 10 ejercicios a la rutina", Toast.LENGTH_SHORT).show()
             }else {
-                val indice = listado!![position].split(" ").toTypedArray()[0].toInt()
+                var linea: String
+                linea = this.listado!![position].split(" ").toTypedArray()[0]; linea += " | " //va a tomar el indice
+                linea += this.listado!![position].split(" | ").toTypedArray()[1]; linea += " | " //nombre
+                linea += this.listado!![position].split(" | ").toTypedArray()[2]; linea += " | " //tipo
+                linea += this.listado!![position].split(" | ").toTypedArray()[3] //y peso del ejercicio seleccionado
 
-                val helper = LocalDB(this, "Demo", null, 1)
-                val db: SQLiteDatabase = helper.getWritableDatabase()
-
-                val sql = "select Id, Nombre, Tipo, Peso from Ejercicios where Id = " + indice
-                val c = db.rawQuery(sql, null)
-                if (c.moveToFirst()) {
-                    val linea =
-                        c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2) + " | " + c.getInt(
-                            3
-                        )
-                    datos.add(linea)
-                }
-                c.close()
-                db.close()
-
-                listado2 = datos
+                datos.add(linea) //y lo va a añadir a
+                listado2 = datos //el listado de los ejercicios de rutina
                 val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
-                listViewEjerciciosRutina!!.setAdapter(adapter)
+                listViewEjerciciosRutina!!.setAdapter(adapter) //después lo va a poner en la listView
 
-                contadorMax += 1
+                contadorMaxEjer += 1
             }
         }
     }
 
     private fun crear(Nombre: String): Boolean{
-        var contadorMax = 1; var idFinal = 0
-
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
-
-        val sql = "select Id from Rutinas"
-        val c = db.rawQuery(sql, null) //Se crea un cursor
-        if (c.moveToFirst()) {
-            do {
-                contadorMax += 1 ////////Toma la cantidad de rutinas que hayan
-                idFinal = c.getInt(0) ///Toma el id de la última rutina
-            } while (c.moveToNext())
-        }
-        c.close()
-        db.close()
-
         var confirmacion = false
-        if(contadorMax <= 50){
+        if(contadorMaxRut <= 50){
             var nombre = Nombre
 
             if(nombre == "")
-                nombre = "Rutina " + (idFinal + 1)
+                nombre = "Rutina " + (idFinalRut + 1)
 
             var cadena: String //Variables para tomar los datos
             val arreglo: Array<String?>
@@ -176,14 +136,13 @@ class CreadorRutinas : AppCompatActivity() {
             }
             cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
 
-
             validadorVacia = true
             if(cadena == "]"){
                 Toast.makeText(this, "No se puede crear una rutina sin ejercicios", Toast.LENGTH_SHORT).show()
                 validadorVacia = false
             }else {
-                arregloRutinas[contadorMax] = rutina(idFinal + 1, nombre, cadena)
-                guardarLocal(arregloRutinas[contadorMax]!!)
+                arregloRutinas[contadorMaxRut] = rutina(idFinalRut + 1, nombre, cadena)
+                guardarBD(arregloRutinas[contadorMaxRut]!!)
             }
 
             confirmacion = true
@@ -191,21 +150,19 @@ class CreadorRutinas : AppCompatActivity() {
         return confirmacion
     }
 
-    private fun guardarLocal(Rutina: rutina) {
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getWritableDatabase() //Se abre la base de datos
-
-        try {
-            val c = ContentValues() //Se llena con los valores tomados de las editText
-            c.put("Id", Rutina.id)
-            c.put("Nombre", Rutina.nombre)
-            c.put("Ejercicios", Rutina.ejercicios)
-            db.insert("RUTINAS", null, c)
-            db.close() //Se cierra la base de datos y se manda mensaje de confirmacion
-            Toast.makeText(this, "Se ha guardado la rutina", Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            Toast.makeText(this, "Ha habido un error", Toast.LENGTH_SHORT).show()
+    private fun guardarBD(Rutina: rutina) {
+        MainActivity.user?.let{ usuario ->
+            db.collection("users").document(usuario).collection("rutinas")
+                .document(Rutina.id.toString()).set(
+                    hashMapOf(
+                        "id" to Rutina.id,
+                        "nombre" to Rutina.nombre,
+                        "ejercicios" to Rutina.ejercicios,
+                        "nivel" to 0
+                    )
+                )
         }
+        Toast.makeText(this, "Se ha guardado el ejercicio", Toast.LENGTH_SHORT).show()
     }
 
 }

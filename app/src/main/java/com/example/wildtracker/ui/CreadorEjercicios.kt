@@ -20,7 +20,7 @@ class CreadorEjercicios : AppCompatActivity() {
     var validadorNombre = true
 
     private val db = FirebaseFirestore.getInstance()
-    var contadorMax = 0; var idFinal = 0; var idAux = 0
+    var contadorMaxEjer = 0; var idFinalEjer = 0; var idAux = 0
 
     val listaEjercicios = ArrayList<String>()
     var LEAux = ""
@@ -39,18 +39,31 @@ class CreadorEjercicios : AppCompatActivity() {
         val adaptadorSpinner = ArrayAdapter(this, android.R.layout.simple_spinner_item, listaSpinner)
         spinnerTipos.adapter = adaptadorSpinner
 
-        MainActivity.user?.let { usuario ->
+        MainActivity.user?.let { usuario -> //para cargar los ejercicios y encontrar el id final
             db.collection("users").document(usuario).collection("ejercicios") //abre la base de datos
                 .get().addOnSuccessListener {
                     for(ejercicio in it){ //para cada ejercicio
-                        contadorMax += 1 //cuenta cuantos ejercicios hay
+                        contadorMaxEjer += 1 //cuenta cuantos ejercicios hay
                         idAux = (ejercicio.get("id") as Long).toInt() //toma el id
-                        if(idFinal < idAux){ //si es un id mayor
-                            idFinal = (ejercicio.get("id") as Long).toInt() //lo va a guardar como el id final
+                        if(idFinalEjer < idAux){ //si es un id mayor
+                            idFinalEjer = (ejercicio.get("id") as Long).toInt() //lo va a guardar como el id final
                         }
 
-                        LEAux = ejercicio.get("nombre").toString() //toma el nombre del ejercicio
-                        listaEjercicios.add(LEAux) //y lo guarda en la lista de ejrcicios
+                        if(idAux > 15) {
+                            LEAux = idAux.toString() //toma el id del ejercicio
+                            LEAux += " | " //le pone un texto para darle orden
+                            LEAux += ejercicio.get("nombre").toString() //toma el nombre del ejercicio
+                            LEAux += " | " //le pone un texto para darle orden
+                            LEAux += ejercicio.get("tipo").toString() //toma el tipo
+                            LEAux += " | " //le pone un texto para darle orden
+                            val pesoAux = ejercicio.get("peso").toString()
+                            if(pesoAux == "true"){
+                                LEAux += "Con peso"
+                            }else{
+                                LEAux += "Sin peso"
+                            }
+                            listaEjercicios.add(LEAux) //y guarda el texto en la lista de ejrcicios
+                        }
                     }
                 }
         }
@@ -75,11 +88,11 @@ class CreadorEjercicios : AppCompatActivity() {
 
     private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean{
         var confirmacion = false
-        if(contadorMax <= 65){//////////////numero máx de ejercicios que el usuario puede crear (50)
+        if(contadorMaxEjer <= 65){//////////////numero máx de ejercicios que el usuario puede crear (50)
             var nombre = Nombre
 
             if(nombre == ""){
-                val idF = idFinal
+                val idF = idFinalEjer
                 nombre = "Ejercicio" + (idF - 14)
             }
 
@@ -95,8 +108,8 @@ class CreadorEjercicios : AppCompatActivity() {
             }
 
             if(validadorNombre == true){
-                arregloEjercicios[contadorMax] = ejercicio(idFinal+1, nombre, Tipo, validadorPeso)
-                guardarBD(arregloEjercicios[contadorMax]!!)
+                arregloEjercicios[contadorMaxEjer] = ejercicio(idFinalEjer+1, nombre, Tipo, validadorPeso)
+                guardarBD(arregloEjercicios[contadorMaxEjer]!!)
             }
 
             confirmacion = true
@@ -118,71 +131,5 @@ class CreadorEjercicios : AppCompatActivity() {
         }
         Toast.makeText(this, "Se ha guardado el ejercicio", Toast.LENGTH_SHORT).show()
     }
-
-    /*
-    private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
-        var contadorMax = 1; var idFinal = 0
-
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
-
-        val sql = "select Id, Nombre, Tipo, Peso from Ejercicios" //Se puede solo con el ID?
-        val c = db.rawQuery(sql, null) //Se crea un cursor
-        if (c.moveToFirst()) {
-            do {
-                contadorMax += 1 ////////Toma la cantidad de ejercicios que hayan
-                idFinal = c.getInt(0) ///Toma el id del ultimo ejercicio
-            } while (c.moveToNext())
-        }
-        c.close()
-        db.close()
-
-        var confirmacion = false
-        if(contadorMax <= 65){//////////////numero máx de ejercicios que el usuario puede crear (50)
-            var nombre = Nombre; val tipo = Tipo; val peso = validadorPeso
-
-            if(nombre == "")
-                nombre = "Ejercicio" + (idFinal - 14)
-
-            val arreglo: Array<String?>
-            arreglo = nombre.split(" ").toTypedArray()
-
-            validadorNombre = true
-            for (i in 0 until arreglo.size) {//recorre todo el nombre
-                if(arreglo[i]!!.isDigitsOnly()) { //si uno de los datos es numero
-                    Toast.makeText(this, "El nombre de un ejercicio no puede contener numeros", Toast.LENGTH_SHORT).show()
-                    validadorNombre = false
-                }
-            }
-
-            if(validadorNombre == true){
-                arregloEjercicios[contadorMax] = ejercicio(idFinal+1, nombre, tipo, peso)
-                guardarLocal(arregloEjercicios[contadorMax]!!)
-            }
-
-            confirmacion = true
-        }
-        return confirmacion
-    }
-
-    private fun guardarLocal(Ejercicio: ejercicio) {
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getWritableDatabase() //Se abre la base de datos
-
-        try {
-            val c = ContentValues() //Se llena con los valores tomados de las editText
-            c.put("Id", Ejercicio.id)
-            c.put("Nombre", Ejercicio.nombre)
-            c.put("Tipo", Ejercicio.tipo)
-            c.put("Peso", Ejercicio.peso)
-            db.insert("EJERCICIOS", null, c)
-            db.close() //Se cierra la base de datos y se manda mensaje de confirmacion
-            Toast.makeText(this, "Se ha guardado el ejercicio", Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            Toast.makeText(this, "Ha habido un error", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-     */
 
 }

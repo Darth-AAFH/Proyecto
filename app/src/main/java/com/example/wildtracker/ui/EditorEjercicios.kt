@@ -1,23 +1,27 @@
 package com.example.wildtracker.ui
 
 import android.annotation.SuppressLint
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.isDigitsOnly
 import com.example.wildtracker.R
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Suppress("NAME_SHADOWING")
-class EditorEjercicios : AppCompatActivity() {
+class EditorEjercicios : AppCompatActivity() {//////////////////////////////////////////////////////
 
     var editTextNombre2: EditText ?= null
     @SuppressLint("UseSwitchCompatOrMaterialCode") private var switchPeso2: Switch ?= null
     private var buttonGuardar: Button?= null; private var buttonBorrar: Button?= null
 
     var num = 0
+    var nombre: String? = null; var tipo: String? = null; var peso: String? = null
+
+    private val db = FirebaseFirestore.getInstance()
+    var validadorGuardar = true
+    var cadena: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +29,11 @@ class EditorEjercicios : AppCompatActivity() {
 
         val b = intent.extras //b toma los datos enviados del Listado
         if (b != null) { //Si existen datos
-            num = b.getInt("Num") //Los guardara en estas variables
+            num = b.getInt("Num") //Los guarda en estas variables
+            nombre = b.getString("Nombre")
+            tipo = b.getString("Tipo")
+            peso = b.getString("Peso")
+            cadena = b.getString("Cadena")
         }
 
         editTextNombre2 = findViewById<View>(R.id.editTextNombre2) as EditText
@@ -34,24 +42,9 @@ class EditorEjercicios : AppCompatActivity() {
         buttonBorrar = findViewById(R.id.buttonBorrar)
         val spinnerTipos2: Spinner = findViewById(R.id.spinnerTipos2)
 
-        val lista0 = listOf("Piernas", "Abdomen", "Pecho", "Espalda", "Brazos", "Hombros", "Otro")
-        val adaptador0 = ArrayAdapter(this, android.R.layout.simple_spinner_item, lista0)
-        spinnerTipos2.adapter = adaptador0
-
-        var nombre = ""; var tipo = ""; var peso = 0
-
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getWritableDatabase()
-
-        val sql ="select Id, Nombre, Tipo, Peso from Ejercicios where Id = "+num
-        val c = db.rawQuery(sql, null)
-        if (c.moveToFirst()) {
-            nombre =  c.getString(1)
-            tipo =  c.getString(2)
-            peso = c.getInt(3)
-        }
-        c.close()
-        db.close()
+        val listaSpinner = listOf("Piernas", "Abdomen", "Pecho", "Espalda", "Brazos", "Hombros", "Otro")
+        val adaptadorSpinner = ArrayAdapter(this, android.R.layout.simple_spinner_item, listaSpinner)
+        spinnerTipos2.adapter = adaptadorSpinner
 
         editTextNombre2!!.setText(nombre)
         if(tipo == "Piernas") spinnerTipos2.setSelection(0)
@@ -61,59 +54,51 @@ class EditorEjercicios : AppCompatActivity() {
         if(tipo == "Brazos") spinnerTipos2.setSelection(4)
         if(tipo == "Hombros") spinnerTipos2.setSelection(5)
         if(tipo == "Otro") spinnerTipos2.setSelection(6)
-        if(peso == 1) switchPeso2!!.setChecked(true)
-        if(peso == 0) switchPeso2!!.setChecked(false)
+        if(peso == "Con peso") switchPeso2!!.setChecked(true)
+        if(peso == "Sin peso") switchPeso2!!.setChecked(false)
 
-        buttonGuardar!!.setOnClickListener{
-            val helper = LocalDB(this, "Demo", null, 1)
-            val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
+        var contador = 0
+        for(i in 0 until cadena!!.length){ //cuenta la cantidad de ejercicios que hay
+            contador += 1
+        }
+        if(contador != 1) { //si hay por lo menos un ejercicio
+            cadena = cadena!!.substring(1, contador - 1) //quita el '[' y la última coma
+        }
 
-            var cadena = "["
-            val sql = "select Ejercicios from Rutinas"
-            val c = db.rawQuery(sql, null) //Se crea un cursor
-            if (c.moveToFirst()) {
-                do {
-                    cadena += c.getString(0)
-                    cadena += ","
-                } while (c.moveToNext())
-            }
-            c.close()
-            db.close()
-
-            var contador = 0
-            for(i in 0 until cadena.length){
-                contador += 1
-            }
-            cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
-
-            var validadorGuardar = true
+        if(contador >= 3) { //contador es igual a 3 si hay por lo menos un ejercicio
             val arreglo: Array<String?>
-
-            arreglo = cadena.split(",").toTypedArray() //arreglo tiene todos los ejercicios de todas las rutinas
+            arreglo = cadena!!.split(",")
+                .toTypedArray() //arreglo tiene todos los ejercicios de todas las rutinas
 
             for (i in 0 until arreglo.size) {//recorre todo el arreglo
-                if(num == arreglo[i]!!.toInt()){ //si el ejercicio que se desea borrar esta en los de las rutinas
+                if (num == arreglo[i]!!.toInt()) { //si el ejercicio que se desea borrar esta en los de las rutinas
                     validadorGuardar = false
                 }
             }
+        }
 
+        buttonGuardar!!.setOnClickListener{
             if(validadorGuardar == true) {
                 val cambioNombre = editTextNombre2!!.text.toString(); val cambioTipo = spinnerTipos2.selectedItem.toString(); val cambioPeso = switchPeso2!!.isChecked()
                 if(guardar(num, cambioNombre, cambioTipo, cambioPeso)){
-                    finish()
+                    finish() //hacer que vuelva hasta plantillas y no a ver ejercicio
                 }
             }else{
                 Toast.makeText(this, "No se puede editar un ejercicio que esta siendo utilizado en una rutina", Toast.LENGTH_SHORT).show()
             }
-        }
+        }//////////////////////////////////////////////////////
 
         buttonBorrar!!.setOnClickListener{
-            if(borrar(num))
-                finish()
-        }
+            if(validadorGuardar == true) {
+                borrar(num)
+                finish() //hacer que vuelva hasta plantillas y no a ver ejercicio
+            }else{
+                Toast.makeText(this, "No se puede borrar un ejercicio que esta siendo utilizado en una rutina", Toast.LENGTH_SHORT).show()
+            }
+        }//////////////////////////////////////////////////////
     }
 
-    private fun guardar(Id: Int, Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean{
+    private fun guardar(Id: Int, Nombre: String, Tipo: String, Peso: Boolean): Boolean{
         if(Nombre == ""){ //Si el nombre esta vacio lo hara notar
             Toast.makeText(this, "El nombre no puede estar vacio", Toast.LENGTH_SHORT).show()
             return false
@@ -130,17 +115,17 @@ class EditorEjercicios : AppCompatActivity() {
             }
 
             if(validadorNombre == true){
-                var Peso = 0
-                if (validadorPeso == true) {
-                    Peso = 1
+                MainActivity.user?.let{ usuario ->
+                    db.collection("users").document(usuario).collection("ejercicios").document(Id.toString()).set(
+                        hashMapOf(
+                            "id" to Id,
+                            "nombre" to Nombre,
+                            "tipo" to Tipo,
+                            "peso" to Peso
+                        )
+                    )
                 }
 
-                val helper = LocalDB(this, "Demo", null, 1)
-                val db: SQLiteDatabase = helper.getWritableDatabase() //Se abre la base de datos
-
-                val sql = "update Ejercicios set Nombre='" + Nombre + "',Tipo='" + Tipo + "',Peso='" + Peso + "' where Id=" + Id
-                db.execSQL(sql) //Se actualizan los datos por los nuevos que introdujo el usuario
-                db.close() //Se cierra la base de datos y se manda mensaje de confirmacion
                 Toast.makeText(this, "Se ha modificado el ejercicio (incluso si no lo nota)", Toast.LENGTH_SHORT).show()
                 return true
             }else{
@@ -149,52 +134,12 @@ class EditorEjercicios : AppCompatActivity() {
         }
     }
 
-    private fun borrar(Id: Int): Boolean{
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
-
-        var cadena = "["
-        val sql = "select Ejercicios from Rutinas"
-        val c = db.rawQuery(sql, null) //Se crea un cursor
-        if (c.moveToFirst()) {
-            do {
-                cadena += c.getString(0)
-                cadena += ","
-            } while (c.moveToNext())
-        }
-        c.close()
-        db.close()
-
-        var contador = 0
-        for(i in 0 until cadena.length){
-            contador += 1
-        }
-        cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
-
-        var validadorBorrar = true
-        val arreglo: Array<String?>
-
-        arreglo = cadena.split(",").toTypedArray() //arreglo tiene todos los ejercicios de todas las rutinas
-
-        for (i in 0 until arreglo.size) {//recorre todo el arreglo
-            if(Id == arreglo[i]!!.toInt()){ //si el ejercicio que se desea borrar esta en los de las rutinas
-                validadorBorrar = false
-            }
+    private fun borrar(Id: Int) {
+        MainActivity.user?.let{ usuario ->
+            db.collection("users").document(usuario).collection("ejercicios").document(Id.toString()).delete()
         }
 
-        if(validadorBorrar == true) {
-            val helper = LocalDB(this, "Demo", null, 1)
-            val db: SQLiteDatabase = helper.getWritableDatabase() //Se abre la base de datos
-
-            val sql =
-                "delete from Ejercicios where Id=" + Id //Se hace la consulta para borrar el registro
-            db.execSQL(sql) //Se ejecuta la consulta
-            db.close() //Se cierra la base de datos y se manda mensaje de confirmacion
-            Toast.makeText(this, "Se ha BORRADO el ejercicio (incluso si no lo nota)", Toast.LENGTH_SHORT).show()
-        }else{
-            Toast.makeText(this, "No se puede borrar un ejercicio que esta siendo utilizado en una rutina", Toast.LENGTH_SHORT).show()
-        }
-        return validadorBorrar
+        Toast.makeText(this, "Se ha BORRADO el ejercicio (incluso si no lo nota)", Toast.LENGTH_SHORT).show()
     }
 
 }
