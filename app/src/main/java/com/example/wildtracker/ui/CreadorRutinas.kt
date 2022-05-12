@@ -11,7 +11,7 @@ import java.util.*
 import com.example.wildtracker.R
 import com.google.firebase.firestore.FirebaseFirestore
 
-class CreadorRutinas : AppCompatActivity() {//////////////////////////////////////////////////////
+class CreadorRutinas : AppCompatActivity() {
 
     var editTextNombre3: EditText ?= null
     private var buttonCrear2: Button?= null
@@ -26,14 +26,13 @@ class CreadorRutinas : AppCompatActivity() {////////////////////////////////////
     var arregloRutinas = Array<rutina?>(51){null}
     var validadorVacia = true
 
-    var listaEjercicios = ArrayList<String>()
-    var contadorMaxRut = 0; var idFinalRut = 0
+    var contadorMaxRut = 0; var idFinalRut = 0;  var idAux = 0
 
     private val db = FirebaseFirestore.getInstance()
 
     private fun CargarTabla() { //Funcion que trae la tabla
-        listaEjercicios.sort()
-        listado = listaEjercicios
+        listado = MainActivity.listaEjercicios1
+        listado!!.addAll(MainActivity.listaEjercicios2)
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
         listViewEjerciciosHechos!!.setAdapter(adapter) //La tabla se adapta en la text view
     }
@@ -42,13 +41,6 @@ class CreadorRutinas : AppCompatActivity() {////////////////////////////////////
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_creador_rutinas)
 
-        val b = intent.extras
-        if (b != null) {
-            listaEjercicios = b.getStringArrayList("LE") as ArrayList<String>
-            contadorMaxRut = b.getInt("ContadorMaxRut")
-            idFinalRut = b.getInt("IdFinalRut")
-        }
-
         editTextNombre3 = findViewById<View>(R.id.editTextNombre3) as EditText
         buttonCrear2 = findViewById(R.id.buttonCrear2)
         listViewEjerciciosHechos = findViewById(R.id.listViewEjerciciosHechos)
@@ -56,6 +48,19 @@ class CreadorRutinas : AppCompatActivity() {////////////////////////////////////
 
         Toast.makeText(this, "Click para añadir a la rutina", Toast.LENGTH_SHORT).show()
         CargarTabla()
+
+        MainActivity.user?.let { usuario -> //para guardar el id final de las rutinas
+            db.collection("users").document(usuario).collection("rutinas") //abre la base de datos
+                .get().addOnSuccessListener {
+                    for(rutina in it){ //para cada rutina
+                        contadorMaxRut += 1 //cuenta cuantas rutinas hay
+                        idAux = (rutina.get("id") as Long).toInt() //toma el id
+                        if(idFinalRut < idAux){ //si es un id mayor
+                            idFinalRut = (rutina.get("id") as Long).toInt() //lo va a guardar como el id final
+                        }
+                    }
+                }
+        }
 
         buttonCrear2!!.setOnClickListener{
             val nombre = editTextNombre3!!.text.toString()
@@ -162,7 +167,10 @@ class CreadorRutinas : AppCompatActivity() {////////////////////////////////////
                     )
                 )
         }
-        Toast.makeText(this, "Se ha guardado el ejercicio", Toast.LENGTH_SHORT).show()
+        val rutina: String
+        rutina = (Rutina.id).toString() + " | " + Rutina.nombre + " | Nivel: 0 |" + Rutina.ejercicios
+        MainActivity.listaRutinas2.add(rutina)
+        Toast.makeText(this, "Se ha guardado la rutina", Toast.LENGTH_SHORT).show()
     }
 
 }

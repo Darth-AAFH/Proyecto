@@ -20,7 +20,6 @@ import android.widget.AdapterView.OnItemClickListener
 import com.google.firebase.firestore.FirebaseFirestore
 
 class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-    //////////////////////////////////////////////////////
 
     var buttonAdd: Button ?= null; var buttonRutina: Button ?= null; var buttonEjercicio: Button ?= null
     var listViewRutinas: ListView?= null
@@ -31,14 +30,9 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     private val db = FirebaseFirestore.getInstance()
     var ejerciciosPredeterminados = false
 
-    val listaEjercicios = ArrayList<String>()
-    var LEAux = ""
-
-    var contadorMaxRut = 0; var idFinalRut = 0; var idAux = 0
-
     private fun CargarRutinas(){
-        MainActivity.listaRutinas.sort() //acomoda las rutinas por id
-        listado = MainActivity.listaRutinas
+        listado = MainActivity.listaRutinas1
+        listado!!.addAll(MainActivity.listaRutinas2)
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
         listViewRutinas!!.setAdapter(adapter) //La tabla se adapta en la text view
     }
@@ -63,38 +57,6 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 }
             }
         }
-        MainActivity.user?.let { usuario -> //para cargar los ejercicios
-            db.collection("users").document(usuario).collection("ejercicios") //abre la base de datos
-                .get().addOnSuccessListener {
-                    for(ejercicio in it){ //para cada ejercicio
-                        LEAux = (ejercicio.get("id") as Long).toString() //toma el id del ejercicio
-                        LEAux += " | " //le pone un texto para darle orden
-                        LEAux += ejercicio.get("nombre").toString() //toma el nombre del ejercicio
-                        LEAux += " | " //le pone un texto para darle orden
-                        LEAux += ejercicio.get("tipo").toString() //toma el tipo
-                        LEAux += " | " //le pone un texto para darle orden
-                        val pesoAux = ejercicio.get("peso").toString()
-                        if(pesoAux == "true"){
-                            LEAux += "Con peso"
-                        }else{
-                            LEAux += "Sin peso"
-                        }
-                        listaEjercicios.add(LEAux) //y guarda el texto en la lista de ejrcicios
-                    }
-                }
-        }
-        MainActivity.user?.let { usuario -> //para cargar las rutinas
-            db.collection("users").document(usuario).collection("rutinas") //abre la base de datos
-                .get().addOnSuccessListener {
-                    for(rutina in it){ //para cada rutina
-                        contadorMaxRut += 1 //cuenta cuantas rutinas hay
-                        idAux = (rutina.get("id") as Long).toInt() //toma el id
-                        if(idFinalRut < idAux){ //si es un id mayor
-                            idFinalRut = (rutina.get("id") as Long).toInt() //lo va a guardar como el id final
-                        }
-                    }
-                }
-        }
         CargarRutinas()
 
         buttonAdd!!.setOnClickListener{
@@ -112,9 +74,6 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         buttonRutina!!.setOnClickListener{
             val intent = Intent(this@PlantillasActivity, CreadorRutinas::class.java)
-            intent.putExtra("LE", listaEjercicios)
-            intent.putExtra("ContadorMaxRut", contadorMaxRut)
-            intent.putExtra("IdFinalRut", idFinalRut)
             startActivity(intent)
         }
 
@@ -125,8 +84,19 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         listViewRutinas!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             val num = this.listado!![position].split(" ").toTypedArray()[0].toInt()
+            val nombre = this.listado!![position].split(" | ").toTypedArray()[1]
+            val ejercicios = this.listado!![position].split(" | ").toTypedArray()[3]
+            val nivelAux = this.listado!![position].split(" | ").toTypedArray()[2]
+
+            val arreglo: Array<String?>
+            arreglo = nivelAux.split(" ").toTypedArray()
+            val nivel = arreglo[1]!!.toInt()
+
             val intent = Intent(this@PlantillasActivity, EditorRutinas::class.java)
             intent.putExtra("Num", num)
+            intent.putExtra("Nombre", nombre)
+            intent.putExtra("Ejercicios", ejercicios)
+            intent.putExtra("Nivel", nivel)
             startActivity(intent)
         }
     }
@@ -169,6 +139,8 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             ejerciciosPredeterDB(id, nombre, tipo, peso)
             id = 15; nombre = "Burpees"; tipo = "Otro"; peso = false
             ejerciciosPredeterDB(id, nombre, tipo, peso)
+
+            Toast.makeText(this, "Favor de reiniciar la aplicación", Toast.LENGTH_LONG).show()
         }
     }
 

@@ -203,7 +203,6 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             if(progresDialog.isShowing){
                 progresDialog.dismiss()
                 usernameDb = edName.text.toString()
-                Toast.makeText(this,"N: $usernameDb",Toast.LENGTH_LONG).show()
             }
             val bitmap =BitmapFactory.decodeFile(localfile.absolutePath)
             ivProfilePic.setImageBitmap(bitmap)

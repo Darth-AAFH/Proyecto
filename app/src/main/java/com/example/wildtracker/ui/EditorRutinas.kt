@@ -25,52 +25,76 @@ class EditorRutinas : AppCompatActivity() {
     var datos = ArrayList<String>()
     var contadorMax = 0
 
-    var num = 0
+    var num = 0; var nombre: String? = null; var ejercicios: String? = null; var nivel = 0
 
-    private fun CargarTabla() { //Funcion que trae la tabla
-        val datos1 = ArrayList<String>()
+    var listaEjercicios = ArrayList<String>()
 
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
-
-        val sql = "select Id, Nombre, Tipo, Peso from Ejercicios"
-        val c = db.rawQuery(sql, null) //Se crea un cursor que ira avanzando de posicion uno a uno
-        if (c.moveToFirst()) {
-            do { //Mientras se haya movido de posicion va a tomar todos los datos de esa fila
-                val linea = c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2) + " | " + c.getInt(3)
-                datos1.add(linea)
-            } while (c.moveToNext())
-        }
-        c.close()
-        db.close()
-
-        listado = datos1
+    private fun CargarEjercicios() { //Funcion que trae los ejercicios
+        listado = MainActivity.listaEjercicios1
+        listado!!.addAll(MainActivity.listaEjercicios2)
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
         listViewEjerciciosHechos2!!.setAdapter(adapter) //La tabla se adapta en la text view
     }
 
-    private fun CargarRutina(arreglo: Array<String?>) { //Funcion que trae la tabla
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
+    private fun CargarEjerciciosDeRutina(arreglo: Array<String?>) { //Funcion que trae la tabla
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        //var cadenaAux = MainActivity.listaEjercicios1.toString() //guardar toda la lista de ejercicios
+        //cadenaAux += MainActivity.listaEjercicios2.toString()
+        //var arregloLE = cadenaAux.split(" ")!!.toTypedArray() //la separa por caracteres
 
-        val sql = "select Id, Nombre, Tipo, Peso from Ejercicios"
-        val c = db.rawQuery(sql, null) //Se crea un cursor que ira avanzando de posicion uno a uno
-        for (i in 0 until arreglo.size) {//recorre todo el arreglo
-            c.moveToFirst()
-            do {
-                if (c.getInt(0) == arreglo[i]!!.toInt()) { //si un ejercicio de la lista completa esta en la de la rutina
-                    val linea = c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2) + " | " + c.getInt(3)
-                    datos.add(linea) //Lo va a añadir a la linea de la listView
-                    contadorMax += 1
+        //for(i in arregloLE){
+
+        //}
+        //tomar un dato de la lista y separarlo por cadenas y comparar el primer dato que seria el id
+        for(i in 0 until arreglo.size) {
+            for(j in 0 until listado!!.size) {
+                var cadenaAux = listado!![i]
+                val arregloAux: Array<String?> = ejercicios!!.split(" ")!!.toTypedArray()
+                var idAux = arregloAux[0]!!.toInt()
+
+                if (idAux == arreglo[j]!!.toInt()) {
+                    datos.add(cadenaAux)
                 }
-            } while (c.moveToNext())
+            }
         }
-        c.close()
-        db.close()
 
         listado2 = datos
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
         listViewEjerciciosRutina2!!.setAdapter(adapter) //La rutina se adapta en la text view
+
+            //si es igual pues añadir la cadenaAux
+
+        /*for(i in 0 until arreglo.size) {
+            for(j in 0 until listado!!.size){
+                if(arreglo[i] == ){
+                    //listado!!.get(j)
+                }
+            }
+        }
+
+         */
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        /*
+        var cadenaAux = MainActivity.listaEjercicios1.toString() //guardar solo los numeros con un for y un if is digit
+        var arregloLE = cadenaAux.split(" ")!!.toTypedArray()
+        var contadorAux = 0
+        for (i in 0 until arreglo.size) {
+            for(j in 0 until arregloLE.size) {
+                if ((arreglo[i]!!.toString()) == arregloLE[j]!!.toString()){
+                    //val linea = MainActivity.listaEjercicios.get()
+                    //datos.add(linea) //Lo va a añadir a la linea de la listView
+                    contadorMax += 1
+                }
+            }
+            contadorAux += 1
+        }
+
+        listado2 = datos
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
+        listViewEjerciciosRutina2!!.setAdapter(adapter) //La rutina se adapta en la text view
+
+         */
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +104,9 @@ class EditorRutinas : AppCompatActivity() {
         val b = intent.extras //b toma el id de la rutina a editar
         if (b != null) {
             num = b.getInt("Num")
+            nombre = b.getString("Nombre")
+            ejercicios = b.getString("Ejercicios")
+            nivel = b.getInt("Nivel")
         }
 
         editTextNombre4 = findViewById<View>(R.id.editTextNombre4) as EditText
@@ -88,27 +115,13 @@ class EditorRutinas : AppCompatActivity() {
         listViewEjerciciosHechos2 = findViewById(R.id.listViewEjerciciosHechos2)
         listViewEjerciciosRutina2 = findViewById(R.id.listViewEjerciciosRutina2)
 
-        CargarTabla()
-
-        var nombre = ""; var ejercicios = ""
-
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getWritableDatabase()
-
-        val sql ="select Nombre, Ejercicios from Rutinas where Id = "+num
-        val c = db.rawQuery(sql, null)
-        if (c.moveToFirst()) {
-            nombre =  c.getString(0)
-            ejercicios =  c.getString(1)
-        }
-        c.close()
-        db.close()
+        CargarEjercicios()
 
         editTextNombre4!!.setText(nombre)
 
         val arreglo: Array<String?>
-        arreglo = ejercicios.split(",").toTypedArray() //toma los ids de los ejercicios
-        CargarRutina(arreglo)
+        arreglo = ejercicios!!.split(",")!!.toTypedArray() //toma los ids de los ejercicios
+        CargarEjerciciosDeRutina(arreglo)
 
         buttonGuardar2!!.setOnClickListener{
             val cambioNombre = editTextNombre4!!.text.toString()
@@ -129,22 +142,13 @@ class EditorRutinas : AppCompatActivity() {
         }
 
         listViewEjerciciosRutina2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-            val indice = listado2[position].split(" ").toTypedArray()[0].toInt() //Toma el id del ejercicio
-            var cadena = ""
+            var linea: String
+            linea = this.listado2[position].split(" ").toTypedArray()[0]; linea += " | "
+            linea += this.listado2[position].split(" | ").toTypedArray()[1]; linea += " | "
+            linea += this.listado2[position].split(" | ").toTypedArray()[2]; linea += " | "
+            linea += this.listado2[position].split(" | ").toTypedArray()[3]
 
-            val helper = LocalDB(this, "Demo", null, 1) //Abre la base de datos
-            val db: SQLiteDatabase = helper.getWritableDatabase()
-
-            val sql ="select Id, Nombre, Tipo, Peso from Ejercicios where Id = "+indice
-            val c = db.rawQuery(sql, null)
-            if (c.moveToFirst()) {
-                val linea = c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2) + " | " + c.getInt(3)
-                cadena = linea //Toma la linea completa del ejercicio
-            }
-            c.close()
-            db.close() //Cierra la base de datos
-
-            val posicion = listado2.indexOf(cadena) //Toma la posición del ejercicio en el array list
+            val posicion = listado2.indexOf(linea) //Toma la posición del ejercicio en el array list
 
             listado2.removeAt(posicion) //Remueve el ejercicio del array list
             val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
@@ -154,29 +158,19 @@ class EditorRutinas : AppCompatActivity() {
         }
 
         listViewEjerciciosHechos2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-            if(contadorMax >= 10){
-                Toast.makeText(this, "Una rutina solo puede tener 10 ejercicios", Toast.LENGTH_SHORT).show()
+            if(contadorMax >= 10){ //un validador para que solo hayan max 10 ejercicios
+                Toast.makeText(this, "Solo se pueden agregar 10 ejercicios a la rutina", Toast.LENGTH_SHORT).show()
             }else {
-                val indice = listado!![position].split(" ").toTypedArray()[0].toInt()
+                var linea: String
+                linea = this.listado!![position].split(" ").toTypedArray()[0]; linea += " | " //va a tomar el indice
+                linea += this.listado!![position].split(" | ").toTypedArray()[1]; linea += " | " //nombre
+                linea += this.listado!![position].split(" | ").toTypedArray()[2]; linea += " | " //tipo
+                linea += this.listado!![position].split(" | ").toTypedArray()[3] //y peso del ejercicio seleccionado
 
-                val helper = LocalDB(this, "Demo", null, 1)
-                val db: SQLiteDatabase = helper.getWritableDatabase()
-
-                val sql = "select Id, Nombre, Tipo, Peso from Ejercicios where Id = " + indice
-                val c = db.rawQuery(sql, null)
-                if (c.moveToFirst()) {
-                    val linea =
-                        c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2) + " | " + c.getInt(
-                            3
-                        )
-                    datos.add(linea)
-                }
-                c.close()
-                db.close()
-
-                listado2 = datos
+                datos.add(linea) //y lo va a añadir a
+                listado2 = datos //el listado de los ejercicios de rutina
                 val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
-                listViewEjerciciosRutina2!!.setAdapter(adapter)
+                listViewEjerciciosRutina2!!.setAdapter(adapter) //después lo va a poner en la listView
 
                 contadorMax += 1
             }

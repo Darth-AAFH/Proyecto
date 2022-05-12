@@ -27,7 +27,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     companion object{
         val auth: String? = FirebaseAuth.getInstance().currentUser?.email
         var user =  auth
-        val listaRutinas = ArrayList<String>()
+        var listaRutinas1 = ArrayList<String>()
+        var listaRutinas2 = ArrayList<String>()
+        var listaEjercicios1 = ArrayList<String>()
+        var listaEjercicios2 = ArrayList<String>()
+        var validadorListas = true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +40,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         initToolbar()
         initNavigationView()
+
+        CargarEjercicios()
         CargarRutinas()
     }
 
@@ -120,22 +126,83 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intent)
     }
 
-    private fun CargarRutinas(){
-        var LRAux: String
-        user?.let { usuario -> //para cargar las rutinas
-            db.collection("users").document(usuario).collection("rutinas") //abre la base de datos
-                .get().addOnSuccessListener {
-                    for(ejercicio in it){ //para cada rutina
-                        LRAux = (ejercicio.get("id") as Long).toString() //toma el id de la rutina
-                        LRAux += " | " //le pone un texto para darle orden
-                        LRAux += ejercicio.get("nombre").toString() //toma el nombre de la rutina
-                        LRAux += " | " //le pone un texto para darle orden
-                        LRAux += ejercicio.get("ejercicios").toString() //toma los ejercicios
-                        LRAux += " | " //le pone un texto para darle orden
-                        LRAux = (ejercicio.get("nivel") as Long).toString() //toma el nivel de la rutina
-                        listaRutinas.add(LRAux) //y guarda el texto en la lista de ejrcicios
+    private fun CargarEjercicios(){
+        var cadena: String; var id: Int
+        if(validadorListas) {
+            user?.let { usuario -> //para cargar las rutinas
+                db.collection("users").document(usuario)
+                    .collection("ejercicios") //abre la base de datos
+                    .get().addOnSuccessListener {
+                        for (ejercicio in it) { //para cada ejercicio
+                            id = (ejercicio.get("id") as Long).toInt()
+                            if(id < 10) {
+                                cadena = id.toString() //toma el id del ejercicio
+                                cadena += " | " //le pone un texto para darle orden
+                                cadena += ejercicio.get("nombre").toString() //toma el nombre del ejercicio
+                                cadena += " | " //le pone un texto para darle orden
+                                cadena += ejercicio.get("tipo").toString() //toma el tipo
+                                cadena += " | " //le pone un texto para darle orden
+                                val pesoAux = ejercicio.get("peso").toString()
+                                if (pesoAux == "true") {
+                                    cadena += "Con peso"
+                                } else {
+                                    cadena += "Sin peso"
+                                }
+                                listaEjercicios1.add(cadena)//y lo guarda en la primer lista
+                            }else{
+                                cadena = id.toString() //toma el id del ejercicio
+                                cadena += " | " //le pone un texto para darle orden
+                                cadena += ejercicio.get("nombre").toString() //toma el nombre del ejercicio
+                                cadena += " | " //le pone un texto para darle orden
+                                cadena += ejercicio.get("tipo").toString() //toma el tipo
+                                cadena += " | " //le pone un texto para darle orden
+                                val pesoAux = ejercicio.get("peso").toString()
+                                if (pesoAux == "true") {
+                                    cadena += "Con peso"
+                                } else {
+                                    cadena += "Sin peso"
+                                }
+                                listaEjercicios2.add(cadena) //y guarda en la segunda lista
+                            }
+                        }
                     }
-                }
+            }
+            listaEjercicios1.sort(); listaEjercicios2.sort()// acomoda las listas
+        }
+    }
+    private fun CargarRutinas(){
+        var cadena: String; var id: Int
+        if(validadorListas) {
+            user?.let { usuario -> //para cargar las rutinas
+                db.collection("users").document(usuario)
+                    .collection("rutinas") //abre la base de datos
+                    .get().addOnSuccessListener {
+                        for (rutina in it) { //para cada rutina
+                            id = (rutina.get("id") as Long).toInt()
+                            if(id < 10) {
+                                cadena = (rutina.get("id") as Long).toString() //toma el id de la rutina
+                                cadena += " | " //le pone un texto para darle orden
+                                cadena += rutina.get("nombre").toString() //toma el nombre de la rutina
+                                cadena += " | Nivel: " //le pone un texto para darle orden
+                                cadena += (rutina.get("nivel") as Long).toString() //toma el nivel de la rutina
+                                cadena += " | " //le pone un texto para darle orden
+                                cadena += rutina.get("ejercicios").toString() //toma los ejercicios
+                                listaRutinas1.add(cadena)
+                            }else{
+                                cadena = (rutina.get("id") as Long).toString() //toma el id de la rutina
+                                cadena += " | " //le pone un texto para darle orden
+                                cadena += rutina.get("nombre").toString() //toma el nombre de la rutina
+                                cadena += " | Nivel: " //le pone un texto para darle orden
+                                cadena += (rutina.get("nivel") as Long).toString() //toma el nivel de la rutina
+                                cadena += " | " //le pone un texto para darle orden
+                                cadena += rutina.get("ejercicios").toString() //toma los ejercicios
+                                listaRutinas2.add(cadena)
+                            }
+                        }
+                    }
+            }
+            listaRutinas1.sort(); listaRutinas2.sort()// acomoda las listas
+            validadorListas = false //cambia el validador para que esto no se vuelva a hacer
         }
     }
     private fun callPlantillasActivity() {
