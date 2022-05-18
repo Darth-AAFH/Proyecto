@@ -1,7 +1,6 @@
 package com.example.wildtracker.ui
 
 import android.content.Intent
-import android.database.sqlite.SQLiteDatabase
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.AdapterView.OnItemClickListener
@@ -10,6 +9,7 @@ import android.widget.*
 import androidx.core.text.isDigitsOnly
 import java.util.ArrayList
 import com.example.wildtracker.R
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Suppress("NAME_SHADOWING")
 class EditorRutinas : AppCompatActivity() {
@@ -25,35 +25,28 @@ class EditorRutinas : AppCompatActivity() {
     var datos = ArrayList<String>()
     var contadorMax = 0
 
+    private val db = FirebaseFirestore.getInstance()
     var num = 0; var nombre: String? = null; var ejercicios: String? = null; var nivel = 0
-
-    var listaEjercicios = ArrayList<String>()
 
     private fun CargarEjercicios() { //Funcion que trae los ejercicios
         listado = MainActivity.listaEjercicios1
-        listado!!.addAll(MainActivity.listaEjercicios2)
+        if(MainActivity.listaEjercicios1.size == 9) {
+            listado!!.addAll(MainActivity.listaEjercicios2)
+        }
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
         listViewEjerciciosHechos2!!.setAdapter(adapter) //La tabla se adapta en la text view
     }
 
     private fun CargarEjerciciosDeRutina(arreglo: Array<String?>) { //Funcion que trae la tabla
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        //var cadenaAux = MainActivity.listaEjercicios1.toString() //guardar toda la lista de ejercicios
-        //cadenaAux += MainActivity.listaEjercicios2.toString()
-        //var arregloLE = cadenaAux.split(" ")!!.toTypedArray() //la separa por caracteres
-
-        //for(i in arregloLE){
-
-        //}
-        //tomar un dato de la lista y separarlo por cadenas y comparar el primer dato que seria el id
+        contadorMax = arreglo.size
         for(i in 0 until arreglo.size) {
             for(j in 0 until listado!!.size) {
-                var cadenaAux = listado!![i]
-                val arregloAux: Array<String?> = ejercicios!!.split(" ")!!.toTypedArray()
-                var idAux = arregloAux[0]!!.toInt()
+                val lineaEjercicio = listado!![j]
+                val arregloLinea: Array<String?> = lineaEjercicio.split(" ").toTypedArray()
+                val idEjercicio = arregloLinea[0]!!.toInt()
 
-                if (idAux == arreglo[j]!!.toInt()) {
-                    datos.add(cadenaAux)
+                if (arreglo[i]!!.toInt() == idEjercicio) {
+                    datos.add(lineaEjercicio)
                 }
             }
         }
@@ -61,40 +54,6 @@ class EditorRutinas : AppCompatActivity() {
         listado2 = datos
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
         listViewEjerciciosRutina2!!.setAdapter(adapter) //La rutina se adapta en la text view
-
-            //si es igual pues añadir la cadenaAux
-
-        /*for(i in 0 until arreglo.size) {
-            for(j in 0 until listado!!.size){
-                if(arreglo[i] == ){
-                    //listado!!.get(j)
-                }
-            }
-        }
-
-         */
-
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        /*
-        var cadenaAux = MainActivity.listaEjercicios1.toString() //guardar solo los numeros con un for y un if is digit
-        var arregloLE = cadenaAux.split(" ")!!.toTypedArray()
-        var contadorAux = 0
-        for (i in 0 until arreglo.size) {
-            for(j in 0 until arregloLE.size) {
-                if ((arreglo[i]!!.toString()) == arregloLE[j]!!.toString()){
-                    //val linea = MainActivity.listaEjercicios.get()
-                    //datos.add(linea) //Lo va a añadir a la linea de la listView
-                    contadorMax += 1
-                }
-            }
-            contadorAux += 1
-        }
-
-        listado2 = datos
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
-        listViewEjerciciosRutina2!!.setAdapter(adapter) //La rutina se adapta en la text view
-
-         */
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -120,8 +79,12 @@ class EditorRutinas : AppCompatActivity() {
         editTextNombre4!!.setText(nombre)
 
         val arreglo: Array<String?>
-        arreglo = ejercicios!!.split(",")!!.toTypedArray() //toma los ids de los ejercicios
+        arreglo = ejercicios!!.split(",").toTypedArray() //toma los ids de los ejercicios
         CargarEjerciciosDeRutina(arreglo)
+
+        if(nivel != 0){
+            Toast.makeText(this, "Si modifica la rutina el nivel regresara a 0", Toast.LENGTH_LONG).show()
+        }
 
         buttonGuardar2!!.setOnClickListener{
             val cambioNombre = editTextNombre4!!.text.toString()
@@ -178,6 +141,8 @@ class EditorRutinas : AppCompatActivity() {
     }
 
     private fun guardar(Id: Int, Nombre: String): Boolean{
+        var confirmacion = false
+
         var cadena: String //Variables para tomar los datos
         val arreglo: Array<String?>
 
@@ -201,16 +166,33 @@ class EditorRutinas : AppCompatActivity() {
         }
         cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
 
-        var confirmacion = false
         if(cadena == "]"){
             Toast.makeText(this, "La rutina debe contener al menos un ejercicio", Toast.LENGTH_SHORT).show()
         }else {
-            val helper = LocalDB(this, "Demo", null, 1)
-            val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
+            MainActivity.user?.let{ usuario ->
+                db.collection("users").document(usuario).collection("rutinas").document(Id.toString()).set(
+                    hashMapOf(
+                        "id" to Id,
+                        "nombre" to Nombre,
+                        "ejercicios" to cadena,
+                        "nivel" to 0
+                    )
+                )
+            }
 
-            val sql = "update Rutinas set Nombre='" + Nombre + "',Ejercicios='" + cadena + "' where Id="+Id///////
-            db.execSQL(sql) //Se actualizan los datos por los nuevos que introdujo el usuario
-            db.close() //Se cierra la base de datos y se manda mensaje de confirmacion
+            val linea: String; val cadenaCambio: String
+            linea = num.toString() + " | " + nombre + " | Nivel: " + nivel.toString() + " | " + ejercicios
+            cadenaCambio = Id.toString() + " | " + Nombre + " | Nivel: 0 | " + cadena
+
+            val posicion: Int
+            if(num < 10) { //Toma la posición del ejercicio en el array list y remueve el ejercicio del array list
+                posicion = MainActivity.listaRutinas1.indexOf(linea)
+                MainActivity.listaRutinas1.set(posicion, cadenaCambio)
+            }else{
+                posicion = MainActivity.listaRutinas2.indexOf(linea)
+                MainActivity.listaRutinas2.set(posicion, cadenaCambio)
+            }
+
             Toast.makeText(this, "Se ha modificado la rutina", Toast.LENGTH_SHORT).show()
             confirmacion = true
         }
@@ -219,12 +201,22 @@ class EditorRutinas : AppCompatActivity() {
     }
 
     private fun borrar(Id: Int) {
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getWritableDatabase() //Se abre la base de datos
+        MainActivity.user?.let{ usuario ->
+            db.collection("users").document(usuario).collection("rutinas").document(Id.toString()).delete()
+        }
 
-        val sql = "delete from Rutinas where Id="+Id //Se hace la consulta para borrar el registro
-        db.execSQL(sql) //Se ejecuta la consulta
-        db.close() //Se cierra la base de datos y se manda mensaje de confirmacion
+        val linea: String
+        linea = num.toString() + " | " + nombre + " | Nivel: " + nivel.toString() + " | " + ejercicios
+
+        val posicion: Int
+        if(num < 10) { //Toma la posición de la rutina en el array list y la remueve del array list
+            posicion = MainActivity.listaRutinas1.indexOf(linea)
+            MainActivity.listaRutinas1.removeAt(posicion)
+        }else{
+            posicion = MainActivity.listaRutinas2.indexOf(linea)
+            MainActivity.listaRutinas2.removeAt(posicion)
+        }
+
         Toast.makeText(this, "Se ha BORRADO la rutina", Toast.LENGTH_SHORT).show()
     }
 

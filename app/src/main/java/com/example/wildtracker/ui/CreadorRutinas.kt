@@ -32,7 +32,9 @@ class CreadorRutinas : AppCompatActivity() {
 
     private fun CargarTabla() { //Funcion que trae la tabla
         listado = MainActivity.listaEjercicios1
-        listado!!.addAll(MainActivity.listaEjercicios2)
+        if(listado!!.size == 9) {
+            listado!!.addAll(MainActivity.listaEjercicios2)
+        }
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
         listViewEjerciciosHechos!!.setAdapter(adapter) //La tabla se adapta en la text view
     }
@@ -168,8 +170,12 @@ class CreadorRutinas : AppCompatActivity() {
                 )
         }
         val rutina: String
-        rutina = (Rutina.id).toString() + " | " + Rutina.nombre + " | Nivel: 0 |" + Rutina.ejercicios
-        MainActivity.listaRutinas2.add(rutina)
+        rutina = (Rutina.id).toString() + " | " + Rutina.nombre + " | Nivel: 0 | " + Rutina.ejercicios
+        if(Rutina.id < 10) {
+            MainActivity.listaRutinas1.add(rutina)
+        }else{
+            MainActivity.listaRutinas2.add(rutina)
+        }
         Toast.makeText(this, "Se ha guardado la rutina", Toast.LENGTH_SHORT).show()
     }
 

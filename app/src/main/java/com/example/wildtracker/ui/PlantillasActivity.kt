@@ -20,6 +20,7 @@ import android.widget.AdapterView.OnItemClickListener
 import com.google.firebase.firestore.FirebaseFirestore
 
 class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+///////////////////////////////////////////////////////////////////////////////////////escribe doble las rutinas a partir de 10
 
     var buttonAdd: Button ?= null; var buttonRutina: Button ?= null; var buttonEjercicio: Button ?= null
     var listViewRutinas: ListView?= null
