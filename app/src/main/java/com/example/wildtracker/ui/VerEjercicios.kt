@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.wildtracker.R
 
 class VerEjercicios : AppCompatActivity() {
-    //
+
     var listViewEjercicios: ListView?= null
 
     var listaEjercicios = ArrayList<String>()

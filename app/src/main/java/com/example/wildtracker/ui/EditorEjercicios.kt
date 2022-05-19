@@ -12,7 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 @Suppress("NAME_SHADOWING")
 class EditorEjercicios : AppCompatActivity() {
-    //
+
     var editTextNombre2: EditText ?= null
     @SuppressLint("UseSwitchCompatOrMaterialCode") private var switchPeso2: Switch ?= null
     private var buttonGuardar: Button?= null; private var buttonBorrar: Button?= null
