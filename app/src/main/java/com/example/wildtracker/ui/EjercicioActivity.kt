@@ -26,29 +26,20 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     var textViewRutina: TextView?= null
     var buttonIniciar: Button?= null
 
-    var listado: java.util.ArrayList<String>? = null
-
     var num = 0
 
-    private fun CargarTabla(){
-        val datos = ArrayList<String>()
+    private fun CargarListas(){
+        if(MainActivity.validadorAcomodo){ //esto debe ir en plantillas y ejercicios
+            MainActivity.listaRutinas = MainActivity.listaRutinas1
+            MainActivity.listaRutinas.addAll(MainActivity.listaRutinas2)
 
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
+            MainActivity.listaEjercicios = MainActivity.listaEjercicios1
+            MainActivity.listaEjercicios.addAll(MainActivity.listaEjercicios2)
 
-        val sql = "select Id, Nombre, Ejercicios from Rutinas"
-        val c = db.rawQuery(sql, null) //Se crea un cursor que ira avanzando de posicion uno a uno
-        if (c.moveToFirst()) {
-            do { //Mientras se haya movido de posicion va a tomar todos los datos de esa fila
-                val linea = c.getString(0) + " | " + c.getString(1) + " | " + c.getString(2)
-                datos.add(linea)
-            } while (c.moveToNext())
+            MainActivity.validadorAcomodo = false
         }
-        c.close()
-        db.close()
 
-        listado = datos
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinas)
         listViewRutinas2!!.setAdapter(adapter) //La tabla se adapta en la text view
     }
 
@@ -65,22 +56,12 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         buttonIniciar = findViewById(R.id.buttonIniciar); buttonIniciar!!.setVisibility(View.INVISIBLE); buttonIniciar!!.setEnabled(false)
 
         Toast.makeText(this, "Seleccione la rutina", Toast.LENGTH_SHORT).show()
-        CargarTabla()
+        CargarListas()
 
         listViewRutinas2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             var nombre = ""
-            num = this.listado!![position].split(" ").toTypedArray()[0].toInt()
-
-            val helper = LocalDB(this, "Demo", null, 1)
-            val db: SQLiteDatabase = helper.getWritableDatabase()
-
-            val sql = "select Nombre from Rutinas where Id = " + num
-            val c = db.rawQuery(sql, null)
-            if (c.moveToFirst()) {
-                nombre = c.getString(0)
-            }
-            c.close()
-            db.close()
+            num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
+            nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
 
             textViewRutina!!.setText("Rutina seleccionada: "+nombre)
 

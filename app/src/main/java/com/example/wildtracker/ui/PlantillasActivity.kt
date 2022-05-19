@@ -29,7 +29,7 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     private val db = FirebaseFirestore.getInstance()
     var ejerciciosPredeterminados = false
 
-    private fun CargarRutinas(){
+    private fun CargarListas(){
         if(MainActivity.validadorAcomodo){ //esto debe ir en plantillas y ejercicios
             MainActivity.listaRutinas = MainActivity.listaRutinas1
             MainActivity.listaRutinas.addAll(MainActivity.listaRutinas2)
@@ -64,7 +64,7 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 }
             }
         }
-        CargarRutinas()
+        CargarListas()
 
         buttonAdd!!.setOnClickListener{
             if(validadorMostar == 0) {

@@ -1,7 +1,7 @@
 package com.example.wildtracker.ui
 
 import android.annotation.SuppressLint
-import android.database.sqlite.SQLiteDatabase
+import android.content.Intent
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -30,22 +30,15 @@ class EjecutadorRutina : AppCompatActivity() {
     var puntos = 0
 
     private fun CargarRutina(arreglo: Array<String?>) { //Funcion que trae la rutina
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getReadableDatabase() //Se abre la base de datos
-
-        val sql = "select Id, Nombre from Ejercicios"
-        val c = db.rawQuery(sql, null) //Se crea un cursor que ira avanzando de posicion uno a uno
-        for (i in 0 until arreglo.size) { //recorre todo el arreglo
-            c.moveToFirst()
-            do{
-                if (arreglo[i]!!.toInt() == c.getInt(0)) { //si un ejercicio de la lista completa esta en la de la rutina
-                    val linea = c.getString(1)
-                    datos.add(linea) //Lo va a añadir a la linea de la listView
+        for(i in 0 until arreglo.size) { //va a recorrer los ejercicios de la rutina
+            for (j in MainActivity.listaEjercicios) { //para todos los ejercicios
+                val id = j.split(" ").toTypedArray()[0] //toma el id
+                if(arreglo[i] == id){ //si esta el ejercicio en la rutina
+                    val nombre = j.split(" | ").toTypedArray()[1] //va a tomar el nombre
+                    datos.add(nombre) //y lo agrega para la list view
                 }
-            } while (c.moveToNext())
+            }
         }
-        c.close()
-        db.close()
 
         datos.add(" ")
         listado = datos
@@ -72,21 +65,17 @@ class EjecutadorRutina : AppCompatActivity() {
         buttonSiguiente = findViewById(R.id.buttonSiguiente)
 
         var ejercicios = ""
-
-        val helper = LocalDB(this, "Demo", null, 1)
-        val db: SQLiteDatabase = helper.getWritableDatabase()
-
-        val sql ="select Ejercicios from Rutinas where Id = "+num
-        val c = db.rawQuery(sql, null)
-        if (c.moveToFirst()) {
-            ejercicios =  c.getString(0)
+        for(i in MainActivity.listaRutinas){ //recorre todas las rutinas
+            val id = i.split(" ").toTypedArray()[0] //toma el id
+            if(id == num.toString()){ //al encontrar la seleccionada
+                ejercicios = i.split(" | ").toTypedArray()[3] //tomara los ejercicios de esta
+            }
         }
-        c.close()
-        db.close()
 
         val arreglo: Array<String?>
         arreglo = ejercicios.split(",").toTypedArray() //toma los ids de los ejercicios
-        CargarRutina(arreglo)
+        CargarRutina(arreglo) //carga la rutina
+
         Toast.makeText(this, "Presione > para iniciar", Toast.LENGTH_SHORT).show()
         timer = Timer()
 
@@ -270,6 +259,25 @@ class EjecutadorRutina : AppCompatActivity() {
         Toast.makeText(this, "Usted obtuvo: "+puntos+" puntos", Toast.LENGTH_SHORT).show()
         Toast.makeText(this, "y: "+horas+" horas, "+minutos+" minutos y "+segundos+" segundos", Toast.LENGTH_SHORT).show()
 
+        //////////////////////////////////////////////////////////preguntar por los ejercicios extras
+        val alertaEjExtra = AlertDialog.Builder(this)
+
+        alertaEjExtra.setTitle("Puntos extra!")
+        alertaEjExtra.setMessage("¿Quiere hacer un ejercicio extra?")
+
+        alertaEjExtra.setPositiveButton("Sí") { dialogInterface, i ->
+            //trabajoTimer.cancel()
+            //parar = true
+            //fin(false)
+            /////////////////////////funcion random para buscar un ejercicio
+        }
+
+        alertaEjExtra.setNegativeButton("No") { dialogInterface, i ->
+            val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java)
+            startActivity(intent)
+        }
+        alertaEjExtra.show()
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
     }///////////////////////mandar tiempo y puntos a la base de datos
 
