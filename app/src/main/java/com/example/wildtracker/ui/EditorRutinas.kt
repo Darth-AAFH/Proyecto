@@ -13,7 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 @Suppress("NAME_SHADOWING")
 class EditorRutinas : AppCompatActivity() {
-
+    //
     var editTextNombre4: EditText ?= null
     private var buttonGuardar2: Button?= null
     private var buttonBorrar2: Button?= null

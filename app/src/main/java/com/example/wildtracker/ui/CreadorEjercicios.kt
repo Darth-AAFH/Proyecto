@@ -11,7 +11,7 @@ import com.example.wildtracker.R
 import com.google.firebase.firestore.FirebaseFirestore
 
 class CreadorEjercicios : AppCompatActivity() {
-
+    //
     var editTextNombre: EditText ?= null
     @SuppressLint("UseSwitchCompatOrMaterialCode") private var switchPeso: Switch ?= null
     private var buttonCrear: Button?= null; private var buttonEditar: Button ?= null

@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var drawer: DrawerLayout
 
     private val db = FirebaseFirestore.getInstance()
-
+    //
     companion object{
         val auth: String? = FirebaseAuth.getInstance().currentUser?.email
         var user =  auth

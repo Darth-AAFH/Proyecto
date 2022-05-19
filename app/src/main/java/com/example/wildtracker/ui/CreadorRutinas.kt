@@ -12,7 +12,7 @@ import com.example.wildtracker.R
 import com.google.firebase.firestore.FirebaseFirestore
 
 class CreadorRutinas : AppCompatActivity() {
-
+    //
     var editTextNombre3: EditText ?= null
     private var buttonCrear2: Button?= null
     var listViewEjerciciosHechos: ListView?= null
