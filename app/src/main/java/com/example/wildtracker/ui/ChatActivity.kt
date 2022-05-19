@@ -52,6 +52,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseDatabase
     private lateinit var adapter: FriendlyMessageAdapter
+    private val db2 = FirebaseFirestore.getInstance()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,13 +63,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(binding.root)
         initToolbar()
         initNavigationView()
-/*
-        if (BuildConfig.DEBUG) {
-            Firebase.database.useEmulator("10.0.2.2", 9000)
-            Firebase.auth.useEmulator("10.0.2.2", 9099)
-            Firebase.storage.useEmulator("10.0.2.2", 9199)
-        }
-*/
+
         // Initialize Firebase Auth and check if the user is signed in
         // TODO: implement
         auth = Firebase.auth
@@ -220,8 +215,10 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun getUserName(): String? {
+        var nombre: String = ""
 
-    var nombre = PerfilActivity.usernameDb
+        if(nombre.isEmpty())
+        nombre = PerfilActivity.usernameDb
         if(nombre ==""){
             nombre = "Anonimo"
         }

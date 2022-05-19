@@ -1,7 +1,9 @@
 package com.example.wildtracker.model
 
+import android.annotation.SuppressLint
 import java.util.*
 
+@SuppressLint("NotConstructor")
 class ChatMessage(toString: String, displayName: String?) {
     var messageText: String? = null
     var messageUser: String? = null
@@ -10,7 +12,8 @@ class ChatMessage(toString: String, displayName: String?) {
     fun ChatMessage(){
 
     }
-    fun ChatMessage( messageText: String,  messageUser:String) {
+    @SuppressLint("NotConstructor")
+    fun ChatMessage(messageText: String, messageUser:String) {
         this.messageText = messageText;
         this.messageUser = messageUser;
 
