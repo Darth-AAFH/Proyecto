@@ -20,7 +20,6 @@ class EditorRutinas : AppCompatActivity() {
     var listViewEjerciciosHechos2: ListView?= null
     var listViewEjerciciosRutina2: ListView?= null
 
-    var listado: ArrayList<String>? = null
     var listado2 = ArrayList<String>()
     var datos = ArrayList<String>()
     var contadorMax = 0
@@ -29,19 +28,15 @@ class EditorRutinas : AppCompatActivity() {
     var num = 0; var nombre: String? = null; var ejercicios: String? = null; var nivel = 0
 
     private fun CargarEjercicios() { //Funcion que trae los ejercicios
-        listado = MainActivity.listaEjercicios1
-        if(MainActivity.listaEjercicios1.size == 9) {
-            listado!!.addAll(MainActivity.listaEjercicios2)
-        }
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaEjercicios)
         listViewEjerciciosHechos2!!.setAdapter(adapter) //La tabla se adapta en la text view
     }
 
     private fun CargarEjerciciosDeRutina(arreglo: Array<String?>) { //Funcion que trae la tabla
         contadorMax = arreglo.size
         for(i in 0 until arreglo.size) {
-            for(j in 0 until listado!!.size) {
-                val lineaEjercicio = listado!![j]
+            for(j in 0 until MainActivity.listaEjercicios.size) {
+                val lineaEjercicio = MainActivity.listaEjercicios[j]
                 val arregloLinea: Array<String?> = lineaEjercicio.split(" ").toTypedArray()
                 val idEjercicio = arregloLinea[0]!!.toInt()
 
@@ -125,10 +120,10 @@ class EditorRutinas : AppCompatActivity() {
                 Toast.makeText(this, "Solo se pueden agregar 10 ejercicios a la rutina", Toast.LENGTH_SHORT).show()
             }else {
                 var linea: String
-                linea = this.listado!![position].split(" ").toTypedArray()[0]; linea += " | " //va a tomar el indice
-                linea += this.listado!![position].split(" | ").toTypedArray()[1]; linea += " | " //nombre
-                linea += this.listado!![position].split(" | ").toTypedArray()[2]; linea += " | " //tipo
-                linea += this.listado!![position].split(" | ").toTypedArray()[3] //y peso del ejercicio seleccionado
+                linea = MainActivity.listaEjercicios[position].split(" ").toTypedArray()[0]; linea += " | " //va a tomar el indice
+                linea += MainActivity.listaEjercicios[position].split(" | ").toTypedArray()[1]; linea += " | " //nombre
+                linea += MainActivity.listaEjercicios[position].split(" | ").toTypedArray()[2]; linea += " | " //tipo
+                linea += MainActivity.listaEjercicios[position].split(" | ").toTypedArray()[3] //y peso del ejercicio seleccionado
 
                 datos.add(linea) //y lo va a añadir a
                 listado2 = datos //el listado de los ejercicios de rutina
@@ -151,16 +146,14 @@ class EditorRutinas : AppCompatActivity() {
 
         cadena = arreglo[0].toString() //guarda el primer indice de los ejercicios
         cadena += ","
-        var contador = 0
         for (i in 0 until arreglo.size) {//recorre todo el arreglo
-            contador += 1
             if(arreglo[i]!!.isDigitsOnly()){ //si uno de los datos es numero
                 cadena += arreglo[i] //lo añade a la cadena
                 cadena += ","
             }
         }
 
-        contador = 0
+        var contador = 0
         for(i in 0 until cadena.length){
             contador += 1
         }
@@ -185,13 +178,8 @@ class EditorRutinas : AppCompatActivity() {
             cadenaCambio = Id.toString() + " | " + Nombre + " | Nivel: 0 | " + cadena
 
             val posicion: Int
-            if(num < 10) { //Toma la posición del ejercicio en el array list y remueve el ejercicio del array list
-                posicion = MainActivity.listaRutinas1.indexOf(linea)
-                MainActivity.listaRutinas1.set(posicion, cadenaCambio)
-            }else{
-                posicion = MainActivity.listaRutinas2.indexOf(linea)
-                MainActivity.listaRutinas2.set(posicion, cadenaCambio)
-            }
+            posicion = MainActivity.listaRutinas.indexOf(linea)
+            MainActivity.listaRutinas.set(posicion, cadenaCambio)
 
             Toast.makeText(this, "Se ha modificado la rutina", Toast.LENGTH_SHORT).show()
             confirmacion = true
@@ -209,13 +197,8 @@ class EditorRutinas : AppCompatActivity() {
         linea = num.toString() + " | " + nombre + " | Nivel: " + nivel.toString() + " | " + ejercicios
 
         val posicion: Int
-        if(num < 10) { //Toma la posición de la rutina en el array list y la remueve del array list
-            posicion = MainActivity.listaRutinas1.indexOf(linea)
-            MainActivity.listaRutinas1.removeAt(posicion)
-        }else{
-            posicion = MainActivity.listaRutinas2.indexOf(linea)
-            MainActivity.listaRutinas2.removeAt(posicion)
-        }
+        posicion = MainActivity.listaRutinas.indexOf(linea)
+        MainActivity.listaRutinas.removeAt(posicion)
 
         Toast.makeText(this, "Se ha BORRADO la rutina", Toast.LENGTH_SHORT).show()
     }

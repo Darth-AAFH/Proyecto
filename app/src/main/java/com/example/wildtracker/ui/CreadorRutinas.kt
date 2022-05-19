@@ -18,7 +18,6 @@ class CreadorRutinas : AppCompatActivity() {
     var listViewEjerciciosHechos: ListView?= null
     var listViewEjerciciosRutina: ListView?= null
 
-    var listado: ArrayList<String>? = null
     var listado2 = ArrayList<String>()
     var datos = ArrayList<String>()
     var contadorMaxEjer = 0
@@ -31,11 +30,7 @@ class CreadorRutinas : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
 
     private fun CargarTabla() { //Funcion que trae la tabla
-        listado = MainActivity.listaEjercicios1
-        if(listado!!.size == 9) {
-            listado!!.addAll(MainActivity.listaEjercicios2)
-        }
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaEjercicios)
         listViewEjerciciosHechos!!.setAdapter(adapter) //La tabla se adapta en la text view
     }
 
@@ -97,10 +92,10 @@ class CreadorRutinas : AppCompatActivity() {
                 Toast.makeText(this, "Solo se pueden agregar 10 ejercicios a la rutina", Toast.LENGTH_SHORT).show()
             }else {
                 var linea: String
-                linea = this.listado!![position].split(" ").toTypedArray()[0]; linea += " | " //va a tomar el indice
-                linea += this.listado!![position].split(" | ").toTypedArray()[1]; linea += " | " //nombre
-                linea += this.listado!![position].split(" | ").toTypedArray()[2]; linea += " | " //tipo
-                linea += this.listado!![position].split(" | ").toTypedArray()[3] //y peso del ejercicio seleccionado
+                linea = MainActivity.listaEjercicios[position].split(" ").toTypedArray()[0]; linea += " | " //va a tomar el indice
+                linea += MainActivity.listaEjercicios[position].split(" | ").toTypedArray()[1]; linea += " | " //nombre
+                linea += MainActivity.listaEjercicios[position].split(" | ").toTypedArray()[2]; linea += " | " //tipo
+                linea += MainActivity.listaEjercicios[position].split(" | ").toTypedArray()[3] //y peso del ejercicio seleccionado
 
                 datos.add(linea) //y lo va a añadir a
                 listado2 = datos //el listado de los ejercicios de rutina
@@ -171,11 +166,8 @@ class CreadorRutinas : AppCompatActivity() {
         }
         val rutina: String
         rutina = (Rutina.id).toString() + " | " + Rutina.nombre + " | Nivel: 0 | " + Rutina.ejercicios
-        if(Rutina.id < 10) {
-            MainActivity.listaRutinas1.add(rutina)
-        }else{
-            MainActivity.listaRutinas2.add(rutina)
-        }
+        MainActivity.listaRutinas.add(rutina)
+
         Toast.makeText(this, "Se ha guardado la rutina", Toast.LENGTH_SHORT).show()
     }
 

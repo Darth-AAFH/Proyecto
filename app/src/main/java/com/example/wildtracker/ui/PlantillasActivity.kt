@@ -20,21 +20,27 @@ import android.widget.AdapterView.OnItemClickListener
 import com.google.firebase.firestore.FirebaseFirestore
 
 class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
-///////////////////////////////////////////////////////////////////////////////////////escribe doble las rutinas a partir de 10
 
     var buttonAdd: Button ?= null; var buttonRutina: Button ?= null; var buttonEjercicio: Button ?= null
     var listViewRutinas: ListView?= null
 
     var validadorMostar = 0
-    var listado: java.util.ArrayList<String>? = null
 
     private val db = FirebaseFirestore.getInstance()
     var ejerciciosPredeterminados = false
 
     private fun CargarRutinas(){
-        listado = MainActivity.listaRutinas1
-        listado!!.addAll(MainActivity.listaRutinas2)
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado!!)
+        if(MainActivity.validadorAcomodo){ //esto debe ir en plantillas y ejercicios
+            MainActivity.listaRutinas = MainActivity.listaRutinas1
+            MainActivity.listaRutinas.addAll(MainActivity.listaRutinas2)
+
+            MainActivity.listaEjercicios = MainActivity.listaEjercicios1
+            MainActivity.listaEjercicios.addAll(MainActivity.listaEjercicios2)
+
+            MainActivity.validadorAcomodo = false
+        }
+
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinas)
         listViewRutinas!!.setAdapter(adapter) //La tabla se adapta en la text view
     }
 
@@ -84,10 +90,10 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         }
 
         listViewRutinas!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-            val num = this.listado!![position].split(" ").toTypedArray()[0].toInt()
-            val nombre = this.listado!![position].split(" | ").toTypedArray()[1]
-            val ejercicios = this.listado!![position].split(" | ").toTypedArray()[3]
-            val nivelAux = this.listado!![position].split(" | ").toTypedArray()[2]
+            val num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
+            val nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
+            val ejercicios = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[3]
+            val nivelAux = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[2]
 
             val arreglo: Array<String?>
             arreglo = nivelAux.split(" ").toTypedArray()
@@ -140,8 +146,6 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             ejerciciosPredeterDB(id, nombre, tipo, peso)
             id = 15; nombre = "Burpees"; tipo = "Otro"; peso = false
             ejerciciosPredeterDB(id, nombre, tipo, peso)
-
-            Toast.makeText(this, "Favor de reiniciar la aplicación", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -156,6 +160,14 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 )
             )
         }
+
+        var cadena = Id.toString() + " | " + Nombre + " | " + Tipo
+        if(Peso){
+            cadena += " | Con peso"
+        }else{
+            cadena += " | Sin peso"
+        }
+        MainActivity.listaEjercicios.add(cadena)
     }
 
     private fun initToolbar() {

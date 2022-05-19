@@ -22,9 +22,6 @@ class CreadorEjercicios : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     var contadorMaxEjer = 0; var idFinalEjer = 0; var idAux = 0
 
-    val listaEjercicios = ArrayList<String>()
-    var LEAux = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_creador_ejercicios)
@@ -39,7 +36,7 @@ class CreadorEjercicios : AppCompatActivity() {
         val adaptadorSpinner = ArrayAdapter(this, android.R.layout.simple_spinner_item, listaSpinner)
         spinnerTipos.adapter = adaptadorSpinner
 
-        MainActivity.user?.let { usuario -> //para cargar los ejercicios y encontrar el id final
+        MainActivity.user?.let { usuario -> //para encontrar el id final de los ejercicios
             db.collection("users").document(usuario).collection("ejercicios") //abre la base de datos
                 .get().addOnSuccessListener {
                     for(ejercicio in it){ //para cada ejercicio
@@ -49,21 +46,6 @@ class CreadorEjercicios : AppCompatActivity() {
                             idFinalEjer = (ejercicio.get("id") as Long).toInt() //lo va a guardar como el id final
                         }
 
-                        if(idAux > 15) {
-                            LEAux = idAux.toString() //toma el id del ejercicio
-                            LEAux += " | " //le pone un texto para darle orden
-                            LEAux += ejercicio.get("nombre").toString() //toma el nombre del ejercicio
-                            LEAux += " | " //le pone un texto para darle orden
-                            LEAux += ejercicio.get("tipo").toString() //toma el tipo
-                            LEAux += " | " //le pone un texto para darle orden
-                            val pesoAux = ejercicio.get("peso").toString()
-                            if(pesoAux == "true"){
-                                LEAux += "Con peso"
-                            }else{
-                                LEAux += "Sin peso"
-                            }
-                            listaEjercicios.add(LEAux) //y guarda el texto en la lista de ejrcicios
-                        }
                     }
                 }
         }
@@ -81,7 +63,6 @@ class CreadorEjercicios : AppCompatActivity() {
 
         buttonEditar!!.setOnClickListener{
             val intent = Intent(this@CreadorEjercicios, VerEjercicios::class.java)
-            intent.putExtra("LE", listaEjercicios)
             startActivity(intent)
         }
     }
@@ -129,6 +110,14 @@ class CreadorEjercicios : AppCompatActivity() {
                 )
             )
         }
+        var cadena = Ejercicio.id.toString() + " | " + Ejercicio.nombre + " | " + Ejercicio.tipo
+        if(Ejercicio.peso){
+            cadena += " | Con peso"
+        }else{
+            cadena += " | Sin peso"
+        }
+        MainActivity.listaEjercicios.add(cadena)
+
         Toast.makeText(this, "Se ha guardado el ejercicio", Toast.LENGTH_SHORT).show()
     }
 

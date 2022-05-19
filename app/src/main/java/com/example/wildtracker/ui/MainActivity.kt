@@ -27,11 +27,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     companion object{
         val auth: String? = FirebaseAuth.getInstance().currentUser?.email
         var user =  auth
+
         var listaRutinas1 = ArrayList<String>()
         var listaRutinas2 = ArrayList<String>()
         var listaEjercicios1 = ArrayList<String>()
         var listaEjercicios2 = ArrayList<String>()
         var validadorListas = true
+
+        var listaRutinas = ArrayList<String>()
+        var listaEjercicios = ArrayList<String>()
+        var validadorAcomodo = true
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
