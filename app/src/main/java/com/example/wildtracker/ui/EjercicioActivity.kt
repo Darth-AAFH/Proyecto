@@ -16,9 +16,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import android.database.sqlite.SQLiteDatabase
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
+import com.google.firebase.firestore.FirebaseFirestore
 
 class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -26,7 +26,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     var textViewRutina: TextView?= null
     var buttonIniciar: Button?= null
 
-    var num = 0
+    private val db = FirebaseFirestore.getInstance()
+    var num = 0; var nombre  = ""; var xp: Int? = null
 
     private fun CargarListas(){
         if(MainActivity.validadorAcomodo){ //esto debe ir en plantillas y ejercicios
@@ -59,18 +60,32 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         CargarListas()
 
         listViewRutinas2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-            var nombre = ""
             num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
             nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
 
             textViewRutina!!.setText("Rutina seleccionada: "+nombre)
 
             buttonIniciar!!.setVisibility(View.VISIBLE); buttonIniciar!!.setEnabled(true)
+
+            var idRutina: Int
+            MainActivity.user?.let { usuario -> //abre la base de datos
+                db.collection("users").document(usuario).collection("rutinas").get().addOnSuccessListener {
+                    for(rutinas in it){ //para cada rutina
+                        idRutina = (rutinas.get("id") as Long).toInt() //toma el id de la rutina
+                        if(idRutina == num){ //al encontrar la seleccionada
+                            xp = (rutinas.get("xp") as Long).toInt() //guardara la xp que tiene
+                        }
+                    }
+
+                }
+            }
         }
 
         buttonIniciar!!.setOnClickListener{
             val intent = Intent(this@EjercicioActivity, EjecutadorRutina::class.java)
             intent.putExtra("Num", num)
+            intent.putExtra("Nombre", nombre)
+            intent.putExtra("XP", xp)
             startActivity(intent)
         }
     }

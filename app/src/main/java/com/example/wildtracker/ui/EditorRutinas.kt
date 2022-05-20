@@ -168,7 +168,8 @@ class EditorRutinas : AppCompatActivity() {
                         "id" to Id,
                         "nombre" to Nombre,
                         "ejercicios" to cadena,
-                        "nivel" to 0
+                        "nivel" to 0,
+                        "xp" to 0
                     )
                 )
             }

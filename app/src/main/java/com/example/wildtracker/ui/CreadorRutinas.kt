@@ -160,7 +160,8 @@ class CreadorRutinas : AppCompatActivity() {
                         "id" to Rutina.id,
                         "nombre" to Rutina.nombre,
                         "ejercicios" to Rutina.ejercicios,
-                        "nivel" to 0
+                        "nivel" to 0,
+                        "xp" to 0
                     )
                 )
         }

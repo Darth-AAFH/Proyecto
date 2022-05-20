@@ -7,6 +7,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.wildtracker.R
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -26,8 +27,9 @@ class EjecutadorRutina : AppCompatActivity() {
     var pausar = false; var firstclick = false; var parar = false
     var final = false
 
-    var num = 0
-    var puntos = 0
+    private val db = FirebaseFirestore.getInstance()
+    var num = 0; var nombre  = ""; var puntos = 0; var xp = 0; var nivel = 0; var ejercicios = ""
+    var terminar2 = false
 
     private fun CargarRutina(arreglo: Array<String?>) { //Funcion que trae la rutina
         for(i in 0 until arreglo.size) { //va a recorrer los ejercicios de la rutina
@@ -37,6 +39,16 @@ class EjecutadorRutina : AppCompatActivity() {
                     val nombre = j.split(" | ").toTypedArray()[1] //va a tomar el nombre
                     datos.add(nombre) //y lo agrega para la list view
                 }
+            }
+        }
+
+        for(i in MainActivity.listaRutinas){
+            var arreglo: Array<String?>
+            arreglo = i.split(" ").toTypedArray()
+            if(arreglo[0]!!.toInt() == num) {
+                val cadena = i.split("Nivel:").toTypedArray()[1]
+                arreglo[0] = cadena.split(" ").toTypedArray()[1]
+                nivel = arreglo[0]!!.toInt()
             }
         }
 
@@ -54,6 +66,8 @@ class EjecutadorRutina : AppCompatActivity() {
         val b = intent.extras //b toma el id de la rutina a editar
         if (b != null) {
             num = b.getInt("Num")
+            nombre = b.getString("Nombre").toString()
+            xp = b.getInt("XP")
         }
 
         textViewActividadEnFoco = findViewById(R.id.textViewActividadEnFoco)
@@ -64,7 +78,6 @@ class EjecutadorRutina : AppCompatActivity() {
         listViewEjerciciosPorHacer = findViewById(R.id.listViewEjerciciosPorHacer)
         buttonSiguiente = findViewById(R.id.buttonSiguiente)
 
-        var ejercicios = ""
         for(i in MainActivity.listaRutinas){ //recorre todas las rutinas
             val id = i.split(" ").toTypedArray()[0] //toma el id
             if(id == num.toString()){ //al encontrar la seleccionada
@@ -221,6 +234,10 @@ class EjecutadorRutina : AppCompatActivity() {
                     fin(true)
                 }
             }
+            if(terminar2){
+                terminar()
+                terminar2 = false
+            }
         }
     }
 
@@ -248,37 +265,113 @@ class EjecutadorRutina : AppCompatActivity() {
         return String.format("%02d", horas) + " : " + String.format("%02d",minutos) + " : " + String.format("%02d", segundos)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun fin(completado: Boolean){
         val redondeo = tiempo.roundToInt()
         val horas = redondeo % 86400 / 3600
         val minutos = redondeo % 86400 % 3600 / 60
         val segundos = redondeo % 86400 % 3600 % 60
 
-        if(completado == true)
-            Toast.makeText(this, "Felicidades, completó la rutina!!", Toast.LENGTH_LONG).show()
-        Toast.makeText(this, "Usted obtuvo: "+puntos+" puntos", Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, "y: "+horas+" horas, "+minutos+" minutos y "+segundos+" segundos", Toast.LENGTH_SHORT).show()
+        if(completado == true) { //en caso de SI completar la rutina
+            Toast.makeText(this, "Felicidades, completó la rutina!!", Toast.LENGTH_LONG).show() //se mandara mensaje de felicidades
 
-        //////////////////////////////////////////////////////////preguntar por los ejercicios extras
-        val alertaEjExtra = AlertDialog.Builder(this)
+            xp += 1 //se le suma uno de experiencia
+            if((2*nivel)+1 == xp && nivel != 100){ //si la xp llega iguala a lo que pide el nivel
+                xp = 0 //se reinicia la xp
+                MainActivity.user?.let{ usuario ->
+                    db.collection("users").document(usuario).collection("rutinas").document(num.toString()).set(
+                        hashMapOf( //y se actualiza el ejercicio con un nivel más
+                            "id" to num,
+                            "nombre" to nombre,
+                            "nivel" to nivel+1,
+                            "ejercicios" to ejercicios,
+                            "xp" to 0
+                        )
+                    )
+                }
 
-        alertaEjExtra.setTitle("Puntos extra!")
-        alertaEjExtra.setMessage("¿Quiere hacer un ejercicio extra?")
+                var linea: String
+                linea = num.toString() + " | " + nombre + " | Nivel: "+ nivel + " | " + ejercicios //se toma la linea de rutina
 
-        alertaEjExtra.setPositiveButton("Sí") { dialogInterface, i ->
-            //trabajoTimer.cancel()
-            //parar = true
-            //fin(false)
-            /////////////////////////funcion random para buscar un ejercicio
-        }
+                val posicion: Int
+                posicion = MainActivity.listaRutinas.indexOf(linea) //se obtiene la posición de la rutina en la lista
 
-        alertaEjExtra.setNegativeButton("No") { dialogInterface, i ->
+                val nuevoNivel = nivel + 1
+                linea = num.toString() + " | " + nombre + " | Nivel: "+ nuevoNivel + " | " + ejercicios
+                MainActivity.listaRutinas.set(posicion, linea) //se actualiza con el nuevo nivel
+
+                Toast.makeText(this, "Felicidades, la rutina subio a nivel "+ nuevoNivel +"!!!!", Toast.LENGTH_LONG).show() //se le hace saber al usuario que subio el nivel
+                if(nuevoNivel == 100)
+                    Toast.makeText(this, "Felicidades ha halcanzado el nivel máximo en la rútina, gracias por ejercitarse <3", Toast.LENGTH_LONG).show()
+            }else {
+                MainActivity.user?.let { usuario -> //si no se tiene la xp suficiente para subir de nivel
+                    db.collection("users").document(usuario).collection("rutinas")
+                        .document(num.toString()).set(
+                        hashMapOf( //se guardan todos los datos en la base de datos como ya estaban pero sumando uno en xp
+                            "id" to num,
+                            "nombre" to nombre,
+                            "nivel" to nivel,
+                            "ejercicios" to ejercicios,
+                            "xp" to xp
+                        )
+                    )
+                }
+            }
+
+            val alertaEjExtra = AlertDialog.Builder(this) //se crea la alarma
+
+            alertaEjExtra.setTitle("Puntos extra!") //y se ponen los textos para preguntar si quiere un ejercicio extra
+            alertaEjExtra.setMessage("¿Quiere hacer un ejercicio extra?")
+
+            alertaEjExtra.setPositiveButton("Sí") { dialogInterface, i -> //en caso de que sí
+                val idRandom = (0..15).random() //toma un numero random
+
+                for (j in MainActivity.listaEjercicios) { //para todos los ejercicios
+                    val id = j.split(" ").toTypedArray()[0] //toma el id
+                    if(idRandom == id.toInt()){ //si esta el ejercicio en la rutina
+                        val nombre = j.split(" | ").toTypedArray()[1] //va a tomar el nombre
+                        textViewActividadEnFoco!!.setText("" + nombre) //y lo va a poner en la actividad en foco
+                    }
+                }
+
+                inciarTimer()
+                terminar2 = true
+            }
+
+            alertaEjExtra.setNegativeButton("No") { dialogInterface, i -> //en caso de que no
+                //mandar puntos y tiempo a la base de datos
+                Toast.makeText(this, "Usted obtuvo: "+puntos+" puntos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "y: "+horas+" horas, "+minutos+" minutos y "+segundos+" segundos", Toast.LENGTH_SHORT).show()
+
+                val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java)
+                startActivity(intent) //te va a devolver a ejercicio
+            }
+            alertaEjExtra.show() //se muestra la alerta
+        }else{ //en caso que no
             val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java)
-            startActivity(intent)
-        }
-        alertaEjExtra.show()
-        ////////////////////////////////////////////////////////////////////////////////////////////
+            startActivity(intent) //te va a devolver a ejercicio
 
-    }///////////////////////mandar tiempo y puntos a la base de datos
+            //mandar puntos y tiempo a la base de datos
+            Toast.makeText(this, "Usted obtuvo: "+puntos+" puntos", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "y: "+horas+" horas, "+minutos+" minutos y "+segundos+" segundos", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun terminar() {
+        trabajoTimer.cancel()
+        puntos *= 2
+
+        //mandar puntos y tiempo a la base de datos
+        val redondeo = tiempo.roundToInt()
+        val horas = redondeo % 86400 / 3600
+        val minutos = (redondeo % 86400 % 3600 / 60) + (horas * 60)
+        val segundos = (redondeo % 86400 % 3600 % 60)
+
+        Toast.makeText(this, "Usted obtuvo: " + puntos + " puntos", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "y: " + minutos + " minutos y "+ segundos + " segundos", Toast.LENGTH_SHORT).show()
+
+        val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java)
+        startActivity(intent) //te va a devolver a ejercicio
+    }
 
 }
