@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.wildtracker.R
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -30,6 +31,7 @@ class EjecutadorRutina : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     var num = 0; var nombre  = ""; var puntos = 0; var xp = 0; var nivel = 0; var ejercicios = ""
     var terminar2 = false
+    var horasE = 0; var minutosE = 0; var segundosE = 0; var puntosE = 0 //E de extras
 
     private fun CargarRutina(arreglo: Array<String?>) { //Funcion que trae la rutina
         for(i in 0 until arreglo.size) { //va a recorrer los ejercicios de la rutina
@@ -58,7 +60,7 @@ class EjecutadorRutina : AppCompatActivity() {
         listViewEjerciciosPorHacer!!.setAdapter(adapter) //La rutina se adapta en la text view
     }
 
-    @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
+    @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables", "SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ejecutador_rutina)
@@ -77,6 +79,25 @@ class EjecutadorRutina : AppCompatActivity() {
         buttonSaltar = findViewById(R.id.buttonSaltar)
         listViewEjerciciosPorHacer = findViewById(R.id.listViewEjerciciosPorHacer)
         buttonSiguiente = findViewById(R.id.buttonSiguiente)
+
+        val sdf = SimpleDateFormat("dd-MM-yyyy")
+        val currentDate = sdf.format(Date())
+        MainActivity.user?.let { usuario -> //para traer el tiempo del día
+            db.collection("users").document(usuario).collection("tiempos") //abre la base de datos
+                .get().addOnSuccessListener {
+                    for(tiempo in it){ //para cada rutina
+
+                        val idFecha = (tiempo.get("idFecha")).toString() //toma el id
+                        if(currentDate == idFecha){ //si es igual a la fecha actual
+                            puntosE = (tiempo.get("puntos") as Long).toInt()
+                            horasE = (tiempo.get("horas") as Long).toInt() //va a traer los datos de la bd
+                            minutosE = (tiempo.get("minutos") as Long).toInt()
+                            segundosE = (tiempo.get("segundos") as Long).toInt()
+                        }
+
+                    }
+                }
+        }
 
         for(i in MainActivity.listaRutinas){ //recorre todas las rutinas
             val id = i.split(" ").toTypedArray()[0] //toma el id
@@ -339,9 +360,7 @@ class EjecutadorRutina : AppCompatActivity() {
             }
 
             alertaEjExtra.setNegativeButton("No") { dialogInterface, i -> //en caso de que no
-                //mandar puntos y tiempo a la base de datos
-                Toast.makeText(this, "Usted obtuvo: "+puntos+" puntos", Toast.LENGTH_SHORT).show()
-                Toast.makeText(this, "y: "+horas+" horas, "+minutos+" minutos y "+segundos+" segundos", Toast.LENGTH_SHORT).show()
+                mandarPuntos(puntos, horas, minutos, segundos)
 
                 val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java)
                 startActivity(intent) //te va a devolver a ejercicio
@@ -351,9 +370,7 @@ class EjecutadorRutina : AppCompatActivity() {
             val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java)
             startActivity(intent) //te va a devolver a ejercicio
 
-            //mandar puntos y tiempo a la base de datos
-            Toast.makeText(this, "Usted obtuvo: "+puntos+" puntos", Toast.LENGTH_SHORT).show()
-            Toast.makeText(this, "y: "+horas+" horas, "+minutos+" minutos y "+segundos+" segundos", Toast.LENGTH_SHORT).show()
+            mandarPuntos(puntos, horas, minutos, segundos)
         }
     }
 
@@ -361,17 +378,50 @@ class EjecutadorRutina : AppCompatActivity() {
         trabajoTimer.cancel()
         puntos *= 2
 
-        //mandar puntos y tiempo a la base de datos
         val redondeo = tiempo.roundToInt()
         val horas = redondeo % 86400 / 3600
-        val minutos = (redondeo % 86400 % 3600 / 60) + (horas * 60)
-        val segundos = (redondeo % 86400 % 3600 % 60)
+        val minutos = redondeo % 86400 % 3600 / 60
+        val segundos = redondeo % 86400 % 3600 % 60
 
-        Toast.makeText(this, "Usted obtuvo: " + puntos + " puntos", Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, "y: " + minutos + " minutos y "+ segundos + " segundos", Toast.LENGTH_SHORT).show()
+        mandarPuntos(puntos, horas, minutos, segundos)
 
         val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java)
         startActivity(intent) //te va a devolver a ejercicio
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun mandarPuntos(puntos: Int, horasF: Int, minutosF: Int, segundosF: Int){
+        puntosE += puntos
+
+        val sdf = SimpleDateFormat("dd-MM-yyyy")
+        val currentDate = sdf.format(Date())
+
+        horasE += horasF
+        minutosE += minutosF
+        segundosE += segundosF
+
+        while(segundosE >= 60){
+            segundosE -= 60
+            minutosE += 1
+        }
+
+        while(minutosE >= 60){
+            minutosE -= 60
+            horasE += 1
+        }
+
+        MainActivity.user?.let{ usuario ->
+            db.collection("users").document(usuario).collection("tiempos")
+                .document(currentDate).set(
+                    hashMapOf(
+                        "puntos" to puntosE,
+                        "idFecha" to currentDate,
+                        "horas" to horasE,
+                        "minutos" to minutosE,
+                        "segundos" to segundosE
+                    )
+                )
+        }
     }
 
 }
