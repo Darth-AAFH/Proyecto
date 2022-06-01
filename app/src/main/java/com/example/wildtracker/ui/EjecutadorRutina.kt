@@ -1,13 +1,24 @@
 package com.example.wildtracker.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import com.example.wildtracker.R
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import java.io.File
+import java.lang.Thread.sleep
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
@@ -18,10 +29,12 @@ class EjecutadorRutina : AppCompatActivity() {
     var textViewActividadEnFoco: TextView?= null; var textViewReloj: TextView?= null
     var buttonParar: Button?= null; var buttonPausar: Button?= null; var buttonSaltar: Button?= null
     var listViewEjerciciosPorHacer: ListView?= null; var buttonSiguiente: Button?= null
-
+    private lateinit var photofile: File
     var listado = ArrayList<String>()
     var datos = ArrayList<String>()
-
+    companion object {
+        private const val REQUEST_CODE = 42
+    }
     lateinit var timer: Timer
     lateinit var trabajoTimer: TimerTask
     var tiempo = 0.0
@@ -340,7 +353,7 @@ class EjecutadorRutina : AppCompatActivity() {
             }
 
             val alertaEjExtra = AlertDialog.Builder(this) //se crea la alarma
-
+            val alertaFoto = AlertDialog.Builder(this) //Alerta para la foto
             alertaEjExtra.setTitle("Puntos extra!") //y se ponen los textos para preguntar si quiere un ejercicio extra
             alertaEjExtra.setMessage("¿Quiere hacer un ejercicio extra?")
 
@@ -358,12 +371,38 @@ class EjecutadorRutina : AppCompatActivity() {
                 inciarTimer()
                 terminar2 = true
             }
+            alertaFoto.setPositiveButton("Si"){dialogInterface, i ->
+                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                photofile = getPhotoFile("foto_${ SimpleDateFormat("yyyMMdd_HHmmss").format(Date())}")
+                val fileProvider = FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile)
+                Toast.makeText(this,"File:${photofile}",Toast.LENGTH_SHORT).show()
 
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
+                if (takePictureIntent.resolveActivity(this.packageManager) != null) {
+                    startActivityForResult(takePictureIntent, REQUEST_CODE)
+
+                } else {
+                    Toast.makeText(this, "Unable to open camera", Toast.LENGTH_SHORT).show()
+                }
+
+            }
             alertaEjExtra.setNegativeButton("No") { dialogInterface, i -> //en caso de que no
                 mandarPuntos(puntos, horas, minutos, segundos)
 
                 val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java)
                 startActivity(intent) //te va a devolver a ejercicio
+            }
+            alertaEjExtra.setNegativeButton("No") { dialogInterface, i -> //en caso de que no
+                //mandar puntos y tiempo a la base de datos
+                sleep(1000)
+
+                alertaFoto.setTitle("Registro de entrenamiento?") //y se ponen los textos para preguntar si quiere un ejercicio extra
+                alertaFoto.setMessage("¿Deseas tomarte una foto como registro de ejercicio?")
+                alertaFoto.show()
+                Toast.makeText(this, "Usted obtuvo: "+puntos+" puntos", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "y: "+horas+" horas, "+minutos+" minutos y "+segundos+" segundos", Toast.LENGTH_SHORT).show()
+                // val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java)
+                // startActivity(intent) //te va a devolver a ejercicio
             }
             alertaEjExtra.show() //se muestra la alerta
         }else{ //en caso que no
@@ -374,7 +413,8 @@ class EjecutadorRutina : AppCompatActivity() {
         }
     }
 
-    private fun terminar() {
+
+        private fun terminar() {
         trabajoTimer.cancel()
         puntos *= 2
 
@@ -421,6 +461,57 @@ class EjecutadorRutina : AppCompatActivity() {
                         "segundos" to segundosE
                     )
                 )
+        }
+    }
+    private fun getPhotoFile(fileName: String): File {
+        // Use `getExternalFilesDir` on Context to access package-specific directories.
+        val storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+        return File.createTempFile(fileName, ".jpg", storageDirectory)
+    }
+    override  fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+//            val takenImage = data?.extras?.get("data") as Bitmap
+            val takenImage = BitmapFactory.decodeFile(photofile.absolutePath)
+            val fileProvider = FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile.absoluteFile)
+            uploadFile(fileProvider)
+            // foto?.setImageBitmap(takenImage)
+
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+
+    }
+
+    private fun uploadFile(takenImage: Uri) {
+
+        val userID = FirebaseAuth.getInstance().currentUser!!.email.toString()
+        if (takenImage != null) {
+            var pd = ProgressDialog(this)
+            pd.setTitle("Uploading")
+            pd.show()
+            var imageRef =
+                FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/${photofile.name}")
+            imageRef.putFile(takenImage)
+                .addOnSuccessListener { p0 ->
+                    pd.dismiss()
+                    Toast.makeText(applicationContext, "File Uploaded", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "${userID}", Toast.LENGTH_LONG).show()
+
+                }
+                .addOnFailureListener { p0 ->
+                    pd.dismiss()
+                    Toast.makeText(applicationContext, p0.message, Toast.LENGTH_LONG).show()
+                }
+                .addOnProgressListener { p0 ->
+                    var progress = (100.0 * p0.bytesTransferred) / p0.totalByteCount
+                    pd.setMessage("Uploaded ${progress.toInt()}%")
+                }
+            Toast.makeText(this, "Subida", Toast.LENGTH_LONG).show()
         }
     }
 
