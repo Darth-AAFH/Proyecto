@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -18,6 +19,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
@@ -46,6 +50,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initToolbar()
         initNavigationView()
 
+        //
+        CargarTiempos()
+        //
         CargarEjercicios()
         CargarRutinas()
     }
@@ -209,6 +216,172 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             listaRutinas1.sort(); listaRutinas2.sort()// acomoda las listas
             validadorListas = false //cambia el validador para que esto no se vuelva a hacer
         }
+    }
+    private fun CargarTiempos(){
+
+        var lunes: String; var martes: String; var miercoles: String; var jueves: String
+        var viernes: String; var sabado: String; var domingo: String
+
+        var sdf = SimpleDateFormat("dd")
+        var diaHoy = sdf.format(Date())
+        sdf = SimpleDateFormat("MM")
+        val mesHoy = sdf.format(Date())
+        sdf = SimpleDateFormat("yyyy")
+        val anoHoy = sdf.format(Date())
+
+        val diaSemHoy = diaSemana(diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt())
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+        var fecha: String
+        var dia: String; var mes: String; var ano: String; var diaSem: Int
+
+        if(validadorListas) {
+            user?.let { usuario -> db.collection("users").document(usuario)
+                    .collection("tiempos") //abre la base de datos
+                    .get().addOnSuccessListener {
+                        for (tiempo in it) { //para cada fecha
+
+                            fecha = tiempo.get("idFecha").toString()
+                            dia = fecha.split("-").toTypedArray()[0]
+                            mes = fecha.split("-").toTypedArray()[1]
+                            ano = fecha.split("-").toTypedArray()[2]
+                            diaSem = diaSemana(dia.toInt(), mes.toInt(), ano.toInt())
+
+                            if(ano == anoHoy){
+                                if(mes == mesHoy){
+                                    if((dia.toInt()+1) == diaHoy.toInt() || dia.toInt() == diaHoy.toInt()){
+                                        //guardar el dato depende del día
+                                            //if es de los 7 dias anteriores
+                                        when(diaSem){
+                                            1 -> lunes = fecha
+                                            2 -> martes = fecha
+                                            3 -> miercoles = fecha
+                                            4 -> jueves = fecha
+                                            5 -> viernes = fecha
+                                            6 -> sabado = fecha
+                                            7 -> domingo = fecha
+                                        }
+
+                                        if(diaSem == 1){
+                                            lunes = fecha //al final abrir la bd para cada día y sacar el tiempo
+                                        }
+                                        if(diaSem == 2){
+                                            martes = fecha
+                                        }
+                                        diaHoy = dia
+                                    }else{
+                                        //que sea 0
+                                    }
+
+                                }else{
+                                    if((mes+1) == mesHoy){
+
+                                    }
+                                    if((mes+-1) == mesHoy){
+
+                                    }
+                                }
+                            }
+
+
+                            //mejor tomar el dia como numero y ya se es menor guardarla
+
+                            //Toast.makeText(this, "dia: "+dia, Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(this, "mes: "+mes, Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(this, "año: "+ano, Toast.LENGTH_SHORT).show()
+
+
+
+                            /*
+                            if(fecha < 10) {
+                                cadena = fecha.toString() //toma el id del ejercicio
+                                cadena += " | " //le pone un texto para darle orden
+                                cadena += ejercicio.get("nombre").toString() //toma el nombre del ejercicio
+                                cadena += " | " //le pone un texto para darle orden
+                                cadena += ejercicio.get("tipo").toString() //toma el tipo
+                                cadena += " | " //le pone un texto para darle orden
+                                val pesoAux = ejercicio.get("peso").toString()
+                                if (pesoAux == "true") {
+                                    cadena += "Con peso"
+                                } else {
+                                    cadena += "Sin peso"
+                                }
+                            }else{
+                                cadena = fecha.toString() //toma el id del ejercicio
+                                cadena += " | " //le pone un texto para darle orden
+                                cadena += ejercicio.get("nombre").toString() //toma el nombre del ejercicio
+                                cadena += " | " //le pone un texto para darle orden
+                                cadena += ejercicio.get("tipo").toString() //toma el tipo
+                                cadena += " | " //le pone un texto para darle orden
+                                val pesoAux = ejercicio.get("peso").toString()
+                                if (pesoAux == "true") {
+                                    cadena += "Con peso"
+                                } else {
+                                    cadena += "Sin peso"
+                                }
+                            }
+
+                             */
+                        }
+                    }
+            }
+
+
+            //Toast.makeText(this, "dia: "+diaHoy, Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "mes: "+mesHoy, Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this, "año: "+anoHoy, Toast.LENGTH_SHORT).show()
+
+
+            /*
+            if(hoy == "L"){
+                martes = 0; miercoles = 0; jueves = 0; viernes = 0; sabado = 0; domingo = 0
+            }
+            if(hoy == "M"){
+                miercoles = 0; jueves = 0; viernes = 0; sabado = 0; domingo = 0
+            }
+            if(hoy == "I"){
+                jueves = 0; viernes = 0; sabado = 0; domingo = 0
+            }
+            if(hoy == "J"){
+                viernes = 0; sabado = 0; domingo = 0
+            }
+            if(hoy == "V"){
+                sabado = 0; domingo = 0
+            }
+            if(hoy == "S"){
+                domingo = 0
+            }
+             */
+        }
+    }
+    private fun diaSemana(dia: Int, mes: Int, ano: Int): Int {
+        val c = Calendar.getInstance()
+        c.set(ano, mes, dia)
+
+        val diaSem =  c.get(Calendar.DAY_OF_WEEK)
+
+        if(diaSem == 4){
+            return 7
+        }
+        if(diaSem == 5){
+            return 1
+        }
+        if(diaSem == 6){
+            return 2
+        }
+        if(diaSem == 7){
+            return 3 //miercoles
+        }
+        if(diaSem == 1){
+            return 4
+        }
+        if(diaSem == 2){
+            return 5
+        }
+        if(diaSem == 3){
+            return 6
+        }
+        return 0
     }
     private fun callPlantillasActivity() {
         val intent = Intent(this, PlantillasActivity::class.java)
