@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -16,14 +17,65 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
     private lateinit var drawer: DrawerLayout
+
+    private val db = FirebaseFirestore.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ranking)
         initToolbar()
         initNavigationView()
+
+        MainActivity.user?.let { usuario -> //para cargar las rutinas
+            db.collection("users").get().addOnSuccessListener {
+                for (usuario2 in it) { //para cada rutina
+
+                    var user = usuario2.get("email") as String
+                    /*
+                    MainActivity.user?.let { usuario -> //para cargar las rutinas
+                        db.collection("users").document(user)
+                            .collection("tiempos") //abre la base de datos
+                            .get().addOnSuccessListener {
+                                for(puntos in it){
+                                    var puntoUser = (puntos.get("puntos") as Long).toInt()
+                                }
+                            }
+                    }
+                     */
+
+                    Toast.makeText(this, "Usuario: "+user, Toast.LENGTH_SHORT).show()
+
+                    /*
+                        id = (rutina.get("id") as Long).toInt()
+                        if(id < 10) {
+                            cadena = (rutina.get("id") as Long).toString() //toma el id de la rutina
+                            cadena += " | " //le pone un texto para darle orden
+                            cadena += rutina.get("nombre").toString() //toma el nombre de la rutina
+                            cadena += " | Nivel: " //le pone un texto para darle orden
+                            cadena += (rutina.get("nivel") as Long).toString() //toma el nivel de la rutina
+                            cadena += " | " //le pone un texto para darle orden
+                            cadena += rutina.get("ejercicios").toString() //toma los ejercicios
+                            MainActivity.listaRutinas1.add(cadena)
+                        }else{
+                            cadena = (rutina.get("id") as Long).toString() //toma el id de la rutina
+                            cadena += " | " //le pone un texto para darle orden
+                            cadena += rutina.get("nombre").toString() //toma el nombre de la rutina
+                            cadena += " | Nivel: " //le pone un texto para darle orden
+                            cadena += (rutina.get("nivel") as Long).toString() //toma el nivel de la rutina
+                            cadena += " | " //le pone un texto para darle orden
+                            cadena += rutina.get("ejercicios").toString() //toma los ejercicios
+                            MainActivity.listaRutinas2.add(cadena)
+                        }
+                    }
+                */
+                }
+            }
+        }
     }
 
     private fun initToolbar() {

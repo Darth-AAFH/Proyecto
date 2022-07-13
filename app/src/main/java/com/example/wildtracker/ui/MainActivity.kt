@@ -6,11 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
-//import android.widget.Toast
-//import kotlinx.android.synthetic.main.activity_main.*
-import android.graphics.Color
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -23,10 +21,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import org.achartengine.ChartFactory
+import org.achartengine.GraphicalView
+import org.achartengine.model.XYMultipleSeriesDataset
+import org.achartengine.model.XYSeries
+import org.achartengine.renderer.XYMultipleSeriesRenderer
+import org.achartengine.renderer.XYSeriesRenderer
 import java.text.SimpleDateFormat
 import java.util.*
-
-//import com.github.mikephil.charting.data.BarData
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
@@ -34,9 +36,40 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val db = FirebaseFirestore.getInstance()
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-  /*  lateinit var barList: ArrayList<BarEntry>
-    lateinit var barDataSet: BarDataSet
-    lateinit var barData: BarData*/
+    var buttonPruebaBD: Button?= null
+
+    private var grafica: GraphicalView? = null
+    private var datosGrafica: XYSeries? = null
+    private val informacionGrafica = XYMultipleSeriesDataset()
+    private val renderGrafica = XYMultipleSeriesRenderer()
+    private var seriesRendererGrafica: XYSeriesRenderer? = null
+
+    private fun initChart() {
+        datosGrafica = XYSeries("Simple Data")
+        informacionGrafica.addSeries(datosGrafica)
+
+        datosGrafica!!.add(0.0, lunes)
+        datosGrafica!!.add(1.0, martes)
+        datosGrafica!!.add(2.0, miercoles)
+        datosGrafica!!.add(3.0, jueves)
+        datosGrafica!!.add(4.0, viernes)
+        datosGrafica!!.add(5.0, sabado)
+        datosGrafica!!.add(6.0, domingo)
+
+        seriesRendererGrafica = XYSeriesRenderer()
+        renderGrafica.addSeriesRenderer(seriesRendererGrafica)
+    }
+
+    private fun StartChart() {
+        val layout = findViewById<LinearLayout>(R.id.chart)
+        if (grafica == null) {
+            initChart()
+            grafica = ChartFactory.getCubeLineChartView(this, informacionGrafica, renderGrafica, 0f)
+            layout.addView(grafica)
+        } else {
+            grafica!!.repaint()
+        }
+    }
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
     companion object{
@@ -61,13 +94,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initToolbar()
         initNavigationView()
 
-        //
         CargarTiempos()
-        //
+        buttonPruebaBD = findViewById(R.id.buttonPruebaBD)//////////////////////
+
         CargarEjercicios()
         CargarRutinas()
-    }
 
+        //StartChart()
+
+        //var calis = CargarTiempos().async
+        //StartChart().await
+
+        buttonPruebaBD!!.setOnClickListener{////////////////////////////////////
+            StartChart()
+        }
+    }
 
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
@@ -98,7 +139,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         tvUser.text = user
 
     }
-
 
     fun callSignOut(view: View) {
         signOut()
@@ -228,26 +268,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             validadorListas = false //cambia el validador para que esto no se vuelva a hacer
         }
     }
+
+    var lunes: Double = 0.0; var martes: Double = 0.0; var miercoles: Double = 0.0; var jueves : Double = 0.0
+    var viernes: Double = 0.0; var sabado: Double = 0.0; var domingo: Double = 0.0; var tiempoAux: Int = 0
     @SuppressLint("SimpleDateFormat")
-    private fun CargarTiempos(){
+    private fun CargarTiempos() {
         var sdf = SimpleDateFormat("dd")
-        var diaHoy = sdf.format(Date())
+        var diaHoy = sdf.format(Date()) //se obtiene e dia actual
         sdf = SimpleDateFormat("MM")
-        var mesHoy = sdf.format(Date())
+        var mesHoy = sdf.format(Date()) //se obtiene el mes actual
         sdf = SimpleDateFormat("yyyy")
-        val anoHoy = sdf.format(Date())
-        val diaSemHoy = diaSemana(diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt())
+        val anoHoy = sdf.format(Date()) //se obiene el año actual
+        val diaSemHoy = diaSemana(diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt()) //se obtiene el numero de dia de la semana (lunes = 1, martes = 2, miercoles = 3, etc)
 
         val dias: ArrayList<String> = arrayListOf<String>() //arreglo de string?
-        dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add("")
+        dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add("") //se llena el arreglo de dias con datos vacios
 
-        var contadorAux = 0
+        var contadorAux = 0 //un contador auxiliar para encontrar los demas días
 
-        for (i in diaSemHoy downTo 0) {
-            var diaAux = diaHoy.toInt() - contadorAux
+        for (i in diaSemHoy downTo 0) { //para el numero de dia de la semana para toda la semana pasada
+            var diaAux = diaHoy.toInt() - contadorAux //variable que va a modificarse segun el día, inicia siendo el dia actual menos 0
 
-            if(diaAux == 0){
-                val mesAux = mesHoy.toInt()
+            if(diaAux == 0){ //en caso de que llegue a cero el día
+                val mesAux = mesHoy.toInt() //una variable para cambiarle el valor al mes
 
                 if(mesAux == 3){
                     diaHoy = "28"
@@ -271,90 +314,73 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 contadorAux = 0
             }
 
-            if(diaAux < 10){
+            if(diaAux < 10){ //se guardan en el arreglo de días los dias pasados y se les da el formato
                 dias[i] = "0" + diaAux.toString() + "-" + mesHoy + "-" + anoHoy
             }else {
                 dias[i] = diaAux.toString() + "-" + mesHoy + "-" + anoHoy
             }
-            contadorAux+= 1
 
+            contadorAux+= 1 //se le agrega al contador un numero más para retorceder más días
         }
 
-        var lunes = 0.0; var martes = 0; var miercoles = 0; var jueves = 0
-        var viernes = 0; var sabado = 0; var domingo = 0; var tiempoAux: Int
+        user?.let { usuario -> //trae los tiempos segun el día
+            db.collection("users").document(usuario).collection("tiempos") //abre la base de datos
+                .get().addOnSuccessListener {
+                    for(tiempos in it) { //por cada dia registrado
+                        val idFecha = tiempos.get("idFecha") as String //toma la fecha
 
-        if(validadorListas) {
-            user?.let { usuario -> //para cargar las rutinas
-                db.collection("users").document(usuario).collection("tiempos") //abre la base de datos
-                    .get().addOnSuccessListener {
-                        for(tiempos in it) { //por cada dia registrado
-                            val idFecha = tiempos.get("idFecha") as String //toma la fecha
+                        if(idFecha == dias[1]){ //si la fecha es igual al dia lunes guardado
+                            lunes = (tiempos.get("minutos") as Long).toDouble() //guardara el tiempo en la variable del dia
 
-                            if(idFecha == dias[0]){ //si la fecha es igual al dia lunes guardado
-                                lunes = (tiempos.get("minutos") as Long).toDouble() //guardara el tiempo en la variable del dia
+                            tiempoAux = (tiempos.get("horas") as Long).toInt() //de horas a minutos
+                            lunes += tiempoAux * 60
 
-                                tiempoAux = (tiempos.get("horas") as Long).toInt() //de horas a minutos
-                                lunes += tiempoAux * 60
-
-                                tiempoAux = (tiempos.get("segundos") as Long).toInt() //y de segundos a minutos
-                                lunes += tiempoAux / 60
-                            }
-                            if(idFecha == dias[1]){ //y así con las demas fechas
-                                martes = (tiempos.get("minutos") as Long).toInt()
-                                tiempoAux = (tiempos.get("horas") as Long).toInt(); martes += tiempoAux * 60
-                                tiempoAux = (tiempos.get("segundos") as Long).toInt(); martes += tiempoAux / 60
-                            }
-                            if(idFecha == dias[2]){
-                                miercoles = (tiempos.get("minutos") as Long).toInt()
-                                tiempoAux = (tiempos.get("horas") as Long).toInt(); miercoles += tiempoAux * 60
-                                tiempoAux = (tiempos.get("segundos") as Long).toInt(); miercoles += tiempoAux / 60
-                            }
-                            if(idFecha == dias[3]){
-                                jueves = (tiempos.get("minutos") as Long).toInt()
-                                tiempoAux = (tiempos.get("horas") as Long).toInt(); jueves += tiempoAux * 60
-                                tiempoAux = (tiempos.get("segundos") as Long).toInt(); jueves += tiempoAux / 60
-                            }
-                            if(idFecha == dias[4]){
-                                viernes = (tiempos.get("minutos") as Long).toInt()
-                                tiempoAux = (tiempos.get("horas") as Long).toInt(); viernes += tiempoAux * 60
-                                tiempoAux = (tiempos.get("segundos") as Long).toInt(); viernes += tiempoAux / 60
-                            }
-                            if(idFecha == dias[5]){
-                                sabado = (tiempos.get("minutos") as Long).toInt()
-                                tiempoAux = (tiempos.get("horas") as Long).toInt(); sabado += tiempoAux * 60
-                                tiempoAux = (tiempos.get("segundos") as Long).toInt(); sabado += tiempoAux / 60
-                            }
-                            if(idFecha == dias[6]){
-                                domingo = (tiempos.get("minutos") as Long).toInt()
-                                tiempoAux = (tiempos.get("horas") as Long).toInt(); domingo += tiempoAux * 60
-                                tiempoAux = (tiempos.get("segundos") as Long).toInt(); domingo += tiempoAux / 60
-                            }
+                            tiempoAux = (tiempos.get("segundos") as Long).toInt() //y de segundos a minutos
+                            lunes += tiempoAux / 60
                         }
-
+                        if(idFecha == dias[2]){ //y así con las demas fechas
+                            martes = (tiempos.get("minutos") as Long).toDouble()
+                            tiempoAux = (tiempos.get("horas") as Long).toInt(); martes += tiempoAux * 60
+                            tiempoAux = (tiempos.get("segundos") as Long).toInt(); martes += tiempoAux / 60
+                        }
+                        if(idFecha == dias[3]){
+                            miercoles = (tiempos.get("minutos") as Long).toDouble()
+                            tiempoAux = (tiempos.get("horas") as Long).toInt(); miercoles += tiempoAux * 60
+                            tiempoAux = (tiempos.get("segundos") as Long).toInt(); miercoles += tiempoAux / 60
+                        }
+                        if(idFecha == dias[4]){
+                            jueves = (tiempos.get("minutos") as Long).toDouble()
+                            tiempoAux = (tiempos.get("horas") as Long).toInt(); jueves += tiempoAux * 60
+                            tiempoAux = (tiempos.get("segundos") as Long).toInt(); jueves += tiempoAux / 60
+                        }
+                        if(idFecha == dias[5]){
+                            viernes = (tiempos.get("minutos") as Long).toDouble()
+                            tiempoAux = (tiempos.get("horas") as Long).toInt(); viernes += tiempoAux * 60
+                            tiempoAux = (tiempos.get("segundos") as Long).toInt(); viernes += tiempoAux / 60
+                        }
+                        if(idFecha == dias[6]){
+                            sabado = (tiempos.get("minutos") as Long).toDouble()
+                            tiempoAux = (tiempos.get("horas") as Long).toInt(); sabado += tiempoAux * 60
+                            tiempoAux = (tiempos.get("segundos") as Long).toInt(); sabado += tiempoAux / 60
+                        }
+                        if(idFecha == dias[7]){
+                            domingo = (tiempos.get("minutos") as Long).toDouble()
+                            tiempoAux = (tiempos.get("horas") as Long).toInt(); domingo += tiempoAux * 60
+                            tiempoAux = (tiempos.get("segundos") as Long).toInt(); domingo += tiempoAux / 60
+                        }
                     }
+                }
             }
-        }
-
-        Toast.makeText(this, "dom: "+dias[6], Toast.LENGTH_LONG).show()
-        Toast.makeText(this, "sab: "+dias[5], Toast.LENGTH_LONG).show()
-        Toast.makeText(this, "vie: "+dias[4], Toast.LENGTH_LONG).show()
-        Toast.makeText(this, "jue: "+dias[3], Toast.LENGTH_LONG).show()
-        Toast.makeText(this, "mie: "+dias[2], Toast.LENGTH_LONG).show()
-        Toast.makeText(this, "mar: "+dias[1], Toast.LENGTH_LONG).show()
-        Toast.makeText(this, "lun: "+dias[0], Toast.LENGTH_LONG).show()
 
         /*
-        dom: 0
-        sab: 5.5
-        vie: 40
-        jue: 15 (o 16)
-        mie: 0
-        mar: 128
-        lun: 23
-        dom?: 12
+        var a = 1
+        for(i in 0 until 500) { //va a recorrer los ejercicios de la rutina
+            a += a
+        }
 
          */
 
+        //StartChart()
     }
     private fun diaSemana(dia: Int, mes: Int, ano: Int): Int {
         val c = Calendar.getInstance()
