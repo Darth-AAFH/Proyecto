@@ -31,49 +31,70 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         initToolbar()
         initNavigationView()
 
-        MainActivity.user?.let { usuario -> //para cargar las rutinas
-            db.collection("users").get().addOnSuccessListener {
-                for (usuario2 in it) { //para cada rutina
 
-                    var user = usuario2.get("email") as String
-                    /*
-                    MainActivity.user?.let { usuario -> //para cargar las rutinas
-                        db.collection("users").document(user)
-                            .collection("tiempos") //abre la base de datos
+        MainActivity.user?.let { usuario -> //para cargar el ranking
+            db.collection("users").get().addOnSuccessListener {
+
+                /*
+                for (usuario2 in it) { //para cada usuario
+                    var user = usuario2.get("user") as String? //va a tomar el correo
+
+                    MainActivity.user?.let { usuario -> //para cargar los puntos de cada usuario
+                        db.collection("users").document(user).collection("tiempos") //abre la base de datos
                             .get().addOnSuccessListener {
-                                for(puntos in it){
-                                    var puntoUser = (puntos.get("puntos") as Long).toInt()
+                                puntosUser = 0
+                                for(puntos in it){ //por todas las fechas que haya echo ejercicios
+                                    puntosUser += (puntos.get("puntos") as Long).toInt() //los va a juntar
                                 }
                             }
                     }
-                     */
 
-                    Toast.makeText(this, "Usuario: "+user, Toast.LENGTH_SHORT).show()
+                    var linea = puntosUser.toString() //linea para hacer a lista
+                    linea += "----------------" //separación de los puntos y el nombre
 
-                    /*
-                        id = (rutina.get("id") as Long).toInt()
-                        if(id < 10) {
-                            cadena = (rutina.get("id") as Long).toString() //toma el id de la rutina
-                            cadena += " | " //le pone un texto para darle orden
-                            cadena += rutina.get("nombre").toString() //toma el nombre de la rutina
-                            cadena += " | Nivel: " //le pone un texto para darle orden
-                            cadena += (rutina.get("nivel") as Long).toString() //toma el nivel de la rutina
-                            cadena += " | " //le pone un texto para darle orden
-                            cadena += rutina.get("ejercicios").toString() //toma los ejercicios
-                            MainActivity.listaRutinas1.add(cadena)
-                        }else{
-                            cadena = (rutina.get("id") as Long).toString() //toma el id de la rutina
-                            cadena += " | " //le pone un texto para darle orden
-                            cadena += rutina.get("nombre").toString() //toma el nombre de la rutina
-                            cadena += " | Nivel: " //le pone un texto para darle orden
-                            cadena += (rutina.get("nivel") as Long).toString() //toma el nivel de la rutina
-                            cadena += " | " //le pone un texto para darle orden
-                            cadena += rutina.get("ejercicios").toString() //toma los ejercicios
-                            MainActivity.listaRutinas2.add(cadena)
-                        }
+                    MainActivity.user?.let { usuario -> //para cargar el nombre de cada usuario
+                        db.collection("users").document(user).get().addOnSuccessListener { //abre la base de datos
+                                nombreUser = it.get("Name") as String //toma el nombre del usuario
+                            }
                     }
-                */
+
+                    linea += nombreUser //se le agrega el nombre del usuario a la lista
+                    // add a algun arreglo
                 }
+
+                //ordenar el arreglo
+                 */
+
+                val camilo = "camilo@gmail.com"
+
+                var nombreUser = ""
+                MainActivity.user?.let { usuario -> //para cargar el nombre de cada usuario
+                    db.collection("users").document(camilo) //abre la base de datos
+                        .get().addOnSuccessListener {
+                            nombreUser = it.get("Name") as String
+                        }
+                }
+
+                var contadorAux = 0/////////////////////////////////////////////////////////////////
+                var puntosUser = 0
+                MainActivity.user?.let { usuario ->
+                    db.collection("users").document(camilo).collection("tiempos") //abre la base de datos
+                        .get().addOnSuccessListener {
+                            puntosUser = 0
+                            for(puntos in it){
+                                puntosUser += (puntos.get("puntos") as Long).toInt()
+                                Toast.makeText(this, "Puntos : "+(puntos.get("puntos") as Long).toString(), Toast.LENGTH_SHORT).show()
+                                contadorAux += 1
+                                if(contadorAux >= 19) {////////////////////////////////////////////////
+                                    Toast.makeText(this, "Tienen en total : " + puntosUser + " puntos", Toast.LENGTH_SHORT).show()////
+                                    Toast.makeText(this, "Nombre: " + nombreUser, Toast.LENGTH_SHORT).show()////
+                                }
+                            }
+                        }
+                }
+
+
+
             }
         }
     }

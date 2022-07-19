@@ -45,6 +45,7 @@ class EjecutadorRutina : AppCompatActivity() {
     var num = 0; var nombre  = ""; var puntos = 0; var xp = 0; var nivel = 0; var ejercicios = ""
     var terminar2 = false
     var horasE = 0; var minutosE = 0; var segundosE = 0; var puntosE = 0 //E de extras
+    var horasR = 0; var minutosR = 0; var segundosR = 0 //R de rutina
 
     private fun CargarRutina(arreglo: Array<String?>) { //Funcion que trae la rutina
         for(i in 0 until arreglo.size) { //va a recorrer los ejercicios de la rutina
@@ -57,7 +58,7 @@ class EjecutadorRutina : AppCompatActivity() {
             }
         }
 
-        for(i in MainActivity.listaRutinas){
+        for(i in MainActivity.listaRutinas){ //para obtener el nivel de la rutina
             var arreglo: Array<String?>
             arreglo = i.split(" ").toTypedArray()
             if(arreglo[0]!!.toInt() == num) {
@@ -78,7 +79,7 @@ class EjecutadorRutina : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ejecutador_rutina)
 
-        val b = intent.extras //b toma el id de la rutina a editar
+        val b = intent.extras //b toma el id de la rutina a trabajar
         if (b != null) {
             num = b.getInt("Num")
             nombre = b.getString("Nombre").toString()
@@ -98,7 +99,7 @@ class EjecutadorRutina : AppCompatActivity() {
         MainActivity.user?.let { usuario -> //para traer el tiempo del día
             db.collection("users").document(usuario).collection("tiempos") //abre la base de datos
                 .get().addOnSuccessListener {
-                    for(tiempo in it){ //para cada rutina
+                    for(tiempo in it){ //para cada fecha
 
                         val idFecha = (tiempo.get("idFecha")).toString() //toma el id
                         if(currentDate == idFecha){ //si es igual a la fecha actual
@@ -106,6 +107,22 @@ class EjecutadorRutina : AppCompatActivity() {
                             horasE = (tiempo.get("horas") as Long).toInt() //va a traer los datos de la bd
                             minutosE = (tiempo.get("minutos") as Long).toInt()
                             segundosE = (tiempo.get("segundos") as Long).toInt()
+                        }
+
+                    }
+                }
+        }
+
+        MainActivity.user?.let { usuario -> //para traer el tiempo de la rutina
+            db.collection("users").document(usuario).collection("rutinas") //abre la base de datos
+                .get().addOnSuccessListener {
+                    for(rutinas in it){ //para cada rutina
+
+                        val idRutina = (rutinas.get("id")).toString() //toma el id de la rutina
+                        if(num.toString() == idRutina){ //hasta encontrar el de la rutina del que se esta tranajando
+                            horasR = (rutinas.get("horas") as Long).toInt() //va a traer los datos de la bd
+                            minutosR = (rutinas.get("minutos") as Long).toInt()
+                            segundosR = (rutinas.get("segundos") as Long).toInt()
                         }
 
                     }
@@ -319,7 +336,10 @@ class EjecutadorRutina : AppCompatActivity() {
                             "nombre" to nombre,
                             "nivel" to nivel+1,
                             "ejercicios" to ejercicios,
-                            "xp" to 0
+                            "xp" to 0,
+                            "horas" to horasR + horas,
+                            "minutos" to minutosR + minutos,
+                            "segundos" to segundosR + segundos
                         )
                     )
                 }
@@ -346,7 +366,10 @@ class EjecutadorRutina : AppCompatActivity() {
                             "nombre" to nombre,
                             "nivel" to nivel,
                             "ejercicios" to ejercicios,
-                            "xp" to xp
+                            "xp" to xp,
+                            "horas" to horasR + horas,
+                            "minutos" to minutosR + minutos,
+                            "segundos" to segundosR + segundos
                         )
                     )
                 }
@@ -371,6 +394,7 @@ class EjecutadorRutina : AppCompatActivity() {
                 inciarTimer()
                 terminar2 = true
             }
+
             alertaFoto.setPositiveButton("Si"){dialogInterface, i ->
                 val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 photofile = getPhotoFile("foto_${ SimpleDateFormat("yyyMMdd_HHmmss").format(Date())}")
@@ -413,8 +437,7 @@ class EjecutadorRutina : AppCompatActivity() {
         }
     }
 
-
-        private fun terminar() {
+    private fun terminar() {
         trabajoTimer.cancel()
         puntos *= 2
 
@@ -463,6 +486,7 @@ class EjecutadorRutina : AppCompatActivity() {
                 )
         }
     }
+
     private fun getPhotoFile(fileName: String): File {
         // Use `getExternalFilesDir` on Context to access package-specific directories.
         val storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
