@@ -25,12 +25,10 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     private val db = FirebaseFirestore.getInstance()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_ranking)
-        initToolbar()
-        initNavigationView()
+    private fun CargarRanking () {
 
+        var puntosUser: Int
+        var nombreUser = ""
 
         MainActivity.user?.let { usuario -> //para cargar el ranking
             db.collection("users").get().addOnSuccessListener {
@@ -59,15 +57,16 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     }
 
                     linea += nombreUser //se le agrega el nombre del usuario a la lista
-                    // add a algun arreglo
+                    //add linea a un arreglo
                 }
 
-                //ordenar el arreglo
+                //acomodar el arreglo de mayor a menor
+                //poner el arreglo en la listView
                  */
 
+                //val camilo = "nuevo@hotmail.com"
                 val camilo = "camilo@gmail.com"
-
-                var nombreUser = ""
+                var contadorAux = 0
                 MainActivity.user?.let { usuario -> //para cargar el nombre de cada usuario
                     db.collection("users").document(camilo) //abre la base de datos
                         .get().addOnSuccessListener {
@@ -75,28 +74,34 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                         }
                 }
 
-                var contadorAux = 0/////////////////////////////////////////////////////////////////
-                var puntosUser = 0
                 MainActivity.user?.let { usuario ->
                     db.collection("users").document(camilo).collection("tiempos") //abre la base de datos
                         .get().addOnSuccessListener {
                             puntosUser = 0
                             for(puntos in it){
                                 puntosUser += (puntos.get("puntos") as Long).toInt()
-                                Toast.makeText(this, "Puntos : "+(puntos.get("puntos") as Long).toString(), Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(this, "Puntos : "+(puntos.get("puntos") as Long).toString(), Toast.LENGTH_SHORT).show()
                                 contadorAux += 1
-                                if(contadorAux >= 19) {////////////////////////////////////////////////
-                                    Toast.makeText(this, "Tienen en total : " + puntosUser + " puntos", Toast.LENGTH_SHORT).show()////
-                                    Toast.makeText(this, "Nombre: " + nombreUser, Toast.LENGTH_SHORT).show()////
+                                if(contadorAux >= 19){////////////////////////////////////////////////
+                                    Toast.makeText(this, "Tienen en total: "+puntosUser+" puntos", Toast.LENGTH_SHORT).show()////
+                                    Toast.makeText(this, "Nombre: "+nombreUser, Toast.LENGTH_SHORT).show()////
                                 }
                             }
                         }
                 }
 
 
-
             }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_ranking)
+        initToolbar()
+        initNavigationView()
+
+        CargarRanking()
     }
 
     private fun initToolbar() {
