@@ -418,7 +418,15 @@ class EjecutadorRutina : AppCompatActivity() {
                 } else {
                     Toast.makeText(this, "Unable to open camera", Toast.LENGTH_SHORT).show()
                 }
-
+                mandarPuntos(puntos*2, horas, minutos, segundos)
+                val intent = Intent(this, MainActivity::class.java) // Cuando se termina la rutina y toma o no foto, te manda al inicio
+                startActivity(intent)
+            }
+            alertaFoto.setNegativeButton("No"){dialogInterface, i ->
+                mandarPuntos(puntos*2, horas, minutos, segundos)
+                dialogInterface.cancel()
+                val intent = Intent(this, MainActivity::class.java) // Cuando se termina la rutina y toma o no foto, te manda al inicio
+                startActivity(intent)
             }
             alertaEjExtra.setNegativeButton("No") { dialogInterface, i -> //en caso de que no
                 mandarPuntos(puntos, horas, minutos, segundos)
@@ -429,7 +437,6 @@ class EjecutadorRutina : AppCompatActivity() {
             alertaEjExtra.setNegativeButton("No") { dialogInterface, i -> //en caso de que no
                 //mandar puntos y tiempo a la base de datos
                 sleep(1000)
-
                 alertaFoto.setTitle("Registro de entrenamiento?") //y se ponen los textos para preguntar si quiere un ejercicio extra
                 alertaFoto.setMessage("¿Deseas tomarte una foto como registro de ejercicio?")
                 alertaFoto.show()
