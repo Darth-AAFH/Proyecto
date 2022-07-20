@@ -235,7 +235,6 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         EditProfileDataButton.setOnClickListener {
             saveProfileButton.isVisible = true
               edBirthDay.isEnabled = true
-            edEmail.isEnabled = true
             edName.isEnabled = true
             EditProfileDataButton.isVisible = false
 

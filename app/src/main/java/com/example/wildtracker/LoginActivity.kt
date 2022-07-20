@@ -253,7 +253,8 @@ class LoginActivity : AppCompatActivity() {
                     val dbRegister = FirebaseFirestore.getInstance()
                     dbRegister.collection("users").document(email).set(
                         hashMapOf(
-                            "user" to email,
+
+                            "email" to email,
                             "dateRegister" to dateRegister
                         )
                     )
