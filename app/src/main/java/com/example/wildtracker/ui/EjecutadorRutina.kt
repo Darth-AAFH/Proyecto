@@ -429,6 +429,9 @@ class EjecutadorRutina : AppCompatActivity() {
     private fun foto(puntos: Int, horas: Int, minutos: Int, segundos: Int) {
         val alertaFoto = AlertDialog.Builder(this) //Alerta para la foto
 
+        alertaFoto.setTitle("Registro de entrenamiento?") //Se ponen los textos para preguntar si quiere un ejercicio extra
+        alertaFoto.setMessage("¿Deseas tomarte una foto como registro de ejercicio?")
+
         alertaFoto.setPositiveButton("Si"){dialogInterface, i ->
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             photofile = getPhotoFile("foto_${ SimpleDateFormat("yyyMMdd_HHmmss").format(Date())}")
