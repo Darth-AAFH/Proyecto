@@ -21,6 +21,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import java.lang.Math.abs
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.properties.Delegates
@@ -244,16 +245,18 @@ class LoginActivity : AppCompatActivity() {
 
         email = etEmail.text.toString()
         password = etPassword.text.toString()
-
+        var random = (0..999999).random()+1
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
 
                     val dateRegister = SimpleDateFormat("dd/MM/yyyy").format(Date())
                     val dbRegister = FirebaseFirestore.getInstance()
+
                     dbRegister.collection("users").document(email).set(
                         hashMapOf(
-                            "user" to email,
+                            "Name" to  "U" + random,
+                            "email" to email,
                             "dateRegister" to dateRegister
                         )
                     )

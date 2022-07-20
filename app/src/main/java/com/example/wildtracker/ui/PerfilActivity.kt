@@ -182,7 +182,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             db.collection("users").document(MainActivity.user!!).get()
                 .addOnSuccessListener {
                 edName.setText (it.get("Name") as String?)
-                    edEmail.setText(it.get("email") as String?)
+                edEmail.setText(it.get("email") as String?)
                 edBirthDay.setText(it.get("birthDay") as String?)
 
             }
@@ -202,14 +202,48 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
             if(progresDialog.isShowing){
                 progresDialog.dismiss()
-                usernameDb = edName.text.toString()
+                try {
+                    MainActivity.user?.let { it1 ->
+                        db.collection("users").document(MainActivity.user!!).get()
+                            .addOnSuccessListener {
+                                Companion.usernameDb = ((it.get("Name") as String?).toString())
+                            }
+                    }
+
+                   // usernameDb = edName.text.toString()
+
+                }catch (e: Exception){
+                    MainActivity.user?.let { it1 ->
+                        db.collection("users").document(MainActivity.user!!).get()
+                            .addOnSuccessListener {
+                                Companion.usernameDb = ((it.get("Name") as String?).toString())
+                            }
+                    }
+                }
             }
             val bitmap =BitmapFactory.decodeFile(localfile.absolutePath)
             ivProfilePic.setImageBitmap(bitmap)
         }.addOnFailureListener{
             progresDialog.dismiss()
             Toast.makeText(this,"Recuperación de imagen fallida, sube otra foto",Toast.LENGTH_SHORT).show()
+            try {
+                MainActivity.user?.let { it1 ->
+                    db.collection("users").document(MainActivity.user!!).get()
+                        .addOnSuccessListener {
+                            Companion.usernameDb = ((it.get("Name") as String?).toString())
+                        }
+                }
 
+                // usernameDb = edName.text.toString()
+
+            }catch (e: Exception){
+                MainActivity.user?.let { it1 ->
+                    db.collection("users").document(MainActivity.user!!).get()
+                        .addOnSuccessListener {
+                            Companion.usernameDb = ((it.get("Name") as String?).toString())
+                        }
+                }
+            }
         }
 
 
@@ -235,7 +269,6 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         EditProfileDataButton.setOnClickListener {
             saveProfileButton.isVisible = true
               edBirthDay.isEnabled = true
-            edEmail.isEnabled = true
             edName.isEnabled = true
             EditProfileDataButton.isVisible = false
 
