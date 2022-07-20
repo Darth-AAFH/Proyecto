@@ -122,11 +122,11 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         setContentView(R.layout.activity_ranking)
         initToolbar()
         initNavigationView()
-
+        setup()
         listViewRanking = findViewById(R.id.listViewRanking)
         buttonRanking = findViewById(R.id.buttonRanking)//////////////////////
 
-        setup()
+
         //CargarRanking()
 
         buttonRanking!!.setOnClickListener{////////////////////////////////////

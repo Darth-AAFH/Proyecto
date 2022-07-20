@@ -22,9 +22,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import java.lang.Math.abs
+import java.lang.Math.random
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.properties.Delegates
+import kotlin.random.Random
 
 
 class LoginActivity : AppCompatActivity() {
@@ -37,6 +39,7 @@ class LoginActivity : AppCompatActivity() {
         lateinit var providerSession: String
         private const val RC_SIGN_IN = 100
         private const val TAG = "GOOGLE_SIGN_IN_TAG"
+
     }
 
     private var email by Delegates.notNull<String>()
@@ -242,10 +245,9 @@ class LoginActivity : AppCompatActivity() {
 
     @SuppressLint("SimpleDateFormat")
     private fun register() {
-
+    var random = Random.nextInt(1000,99999)
         email = etEmail.text.toString()
         password = etPassword.text.toString()
-        var random = (0..999999).random()+1
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
@@ -255,7 +257,8 @@ class LoginActivity : AppCompatActivity() {
 
                     dbRegister.collection("users").document(email).set(
                         hashMapOf(
-                            "Name" to  "U" + random,
+
+                            "Name" to "U"+(System.nanoTime()),
                             "email" to email,
                             "dateRegister" to dateRegister
                         )
