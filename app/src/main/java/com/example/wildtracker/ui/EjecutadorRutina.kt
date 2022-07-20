@@ -429,7 +429,7 @@ class EjecutadorRutina : AppCompatActivity() {
     private fun foto(puntos: Int, horas: Int, minutos: Int, segundos: Int) {
         val alertaFoto = AlertDialog.Builder(this) //Alerta para la foto
 
-        alertaFoto.setTitle("Registro de entrenamiento?") //Se ponen los textos para preguntar si quiere un ejercicio extra
+        alertaFoto.setTitle("Registro de entrenamiento") //Se ponen los textos para preguntar si quiere un ejercicio extra
         alertaFoto.setMessage("¿Deseas tomarte una foto como registro de ejercicio?")
 
         alertaFoto.setPositiveButton("Si"){dialogInterface, i ->
@@ -450,8 +450,8 @@ class EjecutadorRutina : AppCompatActivity() {
             dialogInterface.cancel()
 
             mandarPuntos(puntos, horas, minutos, segundos)
-            //val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
-            //startActivity(intent)
+            val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
+            startActivity(intent)
         }
 
         alertaFoto.show()
@@ -541,6 +541,9 @@ class EjecutadorRutina : AppCompatActivity() {
                 }
             Toast.makeText(this, "Subida", Toast.LENGTH_LONG).show()
         }
+
+        val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
+        startActivity(intent)
     }
 
 }
