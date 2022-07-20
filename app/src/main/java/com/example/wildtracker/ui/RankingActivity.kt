@@ -3,6 +3,7 @@ package com.example.wildtracker.ui
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -157,7 +158,6 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         var nombreUser = ""
 
         if(progressDialog.isShowing){
-            progressDialog.dismiss()
             try {
                 MainActivity.user?.let { usuario -> //para cargar el nombre de cada usuario
                     db.collection("users").document(camilo) //abre la base de datos
@@ -186,6 +186,9 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
 
                 CargarRanking()
+                Handler().postDelayed({
+                    progressDialog.dismiss()
+                }, 2000)
             } catch(e: Exception) {
                 Toast.makeText(this, "Ha habido un error", Toast.LENGTH_SHORT).show()
             }
