@@ -129,6 +129,16 @@ class EjecutadorRutina : AppCompatActivity() {
                 }
         }
 
+        while(segundosR >= 60){
+            segundosR -= 60
+            minutosR += 1
+        }
+
+        while(minutosR >= 60){
+            minutosR -= 60
+            horasR += 1
+        }
+
         for(i in MainActivity.listaRutinas){ //recorre todas las rutinas
             val id = i.split(" ").toTypedArray()[0] //toma el id
             if(id == num.toString()){ //al encontrar la seleccionada

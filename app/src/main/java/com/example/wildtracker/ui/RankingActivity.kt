@@ -1,12 +1,12 @@
 package com.example.wildtracker.ui
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -24,21 +24,25 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private lateinit var drawer: DrawerLayout
 
     private val db = FirebaseFirestore.getInstance()
+    var listaRanking = ArrayList<String>()
+
+    var listViewRanking: ListView?= null
+
+    var buttonRanking: Button?= null ////////////////////////
 
     private fun CargarRanking () {
 
-        var puntosUser: Int
+        var puntosUser = 0
         var nombreUser = ""
 
         MainActivity.user?.let { usuario -> //para cargar el ranking
             db.collection("users").get().addOnSuccessListener {
 
-                /*
                 for (usuario2 in it) { //para cada usuario
-                    var user = usuario2.get("user") as String? //va a tomar el correo
+                    var user = usuario2.get("email") as String? //va a tomar el correo
 
                     MainActivity.user?.let { usuario -> //para cargar los puntos de cada usuario
-                        db.collection("users").document(user).collection("tiempos") //abre la base de datos
+                        db.collection("users").document(user.toString()).collection("tiempos") //abre la base de datos
                             .get().addOnSuccessListener {
                                 puntosUser = 0
                                 for(puntos in it){ //por todas las fechas que haya echo ejercicios
@@ -48,25 +52,33 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     }
 
                     var linea = puntosUser.toString() //linea para hacer a lista
-                    linea += "----------------" //separación de los puntos y el nombre
+                    linea += " - - - - - - - - - - - - - - - - " //separación de los puntos y el nombre
 
                     MainActivity.user?.let { usuario -> //para cargar el nombre de cada usuario
-                        db.collection("users").document(user).get().addOnSuccessListener { //abre la base de datos
-                                nombreUser = it.get("Name") as String //toma el nombre del usuario
+                        db.collection("users").document(user.toString()).get().addOnSuccessListener { //abre la base de datos
+                                nombreUser = (it.get("Name") as String?).toString() //toma el nombre del usuario
                             }
                     }
 
                     linea += nombreUser //se le agrega el nombre del usuario a la lista
-                    //add linea a un arreglo
+
+                    if(user.toString() == (MainActivity.user).toString()){ //si estamos en el usuario actual
+                        linea += " ✰" //se le agregara una estrellita a modo de identificador
+                    }
+
+                    listaRanking.add(linea)
                 }
 
-                //acomodar el arreglo de mayor a menor
-                //poner el arreglo en la listView
-                 */
+                val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listaRanking)
+                listViewRanking!!.setAdapter(adapter) //La lista se adapta en la text view
 
-                //val camilo = "nuevo@hotmail.com"
-                val camilo = "camilo@gmail.com"
+                /*
+                val camilo = "grafica@hotmail.com"; val ej = 3
+                //val camilo = "nuevo@hotmail.com"; val ej = 0
+                //val camilo = "camilo@gmail.com"; val ej = 19
                 var contadorAux = 0
+                var linea = ""
+
                 MainActivity.user?.let { usuario -> //para cargar el nombre de cada usuario
                     db.collection("users").document(camilo) //abre la base de datos
                         .get().addOnSuccessListener {
@@ -81,14 +93,24 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                             for(puntos in it){
                                 puntosUser += (puntos.get("puntos") as Long).toInt()
                                 //Toast.makeText(this, "Puntos : "+(puntos.get("puntos") as Long).toString(), Toast.LENGTH_SHORT).show()
+
                                 contadorAux += 1
-                                if(contadorAux >= 19){////////////////////////////////////////////////
-                                    Toast.makeText(this, "Tienen en total: "+puntosUser+" puntos", Toast.LENGTH_SHORT).show()////
-                                    Toast.makeText(this, "Nombre: "+nombreUser, Toast.LENGTH_SHORT).show()////
+                                if(contadorAux >= ej){
+                                    linea = puntosUser.toString()
+                                    linea += " - - - - - - - - - - - - - - - - "
+                                    linea += nombreUser
+
+
+                                    if(camilo == (MainActivity.user).toString()){
+                                        linea += " ✰"
+                                    }
+
+                                    Toast.makeText(this, ""+linea, Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
                 }
+                 */
 
 
             }
@@ -101,7 +123,73 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         initToolbar()
         initNavigationView()
 
-        CargarRanking()
+        listViewRanking = findViewById(R.id.listViewRanking)
+        buttonRanking = findViewById(R.id.buttonRanking)//////////////////////
+
+        setup()
+        //CargarRanking()
+
+        buttonRanking!!.setOnClickListener{////////////////////////////////////
+            //val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listaRanking)
+            //listViewRanking!!.setAdapter(adapter) //La lista se adapta en la text view
+        }
+    }
+
+    private fun setup() {
+        /*val progresDialog = ProgressDialog(this)
+        progresDialog.setMessage("Cargando Ranking")
+        progresDialog.setTitle("Title")
+        progresDialog.setCancelable(false)
+        progresDialog.show()
+         */
+
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setTitle("Kotlin Progress Bar")
+        progressDialog.setMessage("Application is loading, please wait")
+        progressDialog.show()
+
+        //val camilo = "grafica@hotmail.com"
+        //val camilo = "nuevo@hotmail.com"
+        val camilo = "camilo@gmail.com"
+        var linea = ""
+
+        var puntosUser = 0
+        var nombreUser = ""
+
+        if(progressDialog.isShowing){
+            progressDialog.dismiss()
+            try {
+                MainActivity.user?.let { usuario -> //para cargar el nombre de cada usuario
+                    db.collection("users").document(camilo) //abre la base de datos
+                        .get().addOnSuccessListener {
+                            nombreUser = it.get("Name") as String
+                        }
+                }
+
+                MainActivity.user?.let { usuario ->
+                    db.collection("users").document(camilo).collection("tiempos") //abre la base de datos
+                        .get().addOnSuccessListener {
+                            puntosUser = 0
+                            for(puntos in it){
+                                puntosUser += (puntos.get("puntos") as Long).toInt()
+                            }
+                        }
+                }
+
+                linea = puntosUser.toString()
+                linea += " - - - - - - - - - - - - - - - - "
+                linea += nombreUser
+                if(camilo == (MainActivity.user).toString()){
+                    linea += " ✰"
+                }
+                Toast.makeText(this, ""+linea, Toast.LENGTH_SHORT).show()
+
+
+                CargarRanking()
+            } catch(e: Exception) {
+                Toast.makeText(this, "Ha habido un error", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun initToolbar() {
