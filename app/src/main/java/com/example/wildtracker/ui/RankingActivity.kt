@@ -185,8 +185,9 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 Toast.makeText(this, ""+linea, Toast.LENGTH_SHORT).show()
 
 
-                CargarRanking()
+
                 Handler().postDelayed({
+                    CargarRanking()
                     progressDialog.dismiss()
                 }, 2000)
             } catch(e: Exception) {
