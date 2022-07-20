@@ -324,7 +324,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_perfil -> callPerfilActivity()
-            R.id.nav_inicio -> callInicioActivity()
             R.id.nav_plantillas -> callPlantillasActivity()
             R.id.nav_ejercicio -> callEjercicioActivity()
             R.id.nav_maps -> callMapsActivity()
@@ -342,11 +341,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun callInicioActivity() {
-        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 

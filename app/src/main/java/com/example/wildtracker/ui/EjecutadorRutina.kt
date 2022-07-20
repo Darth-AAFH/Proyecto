@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.provider.MediaStore
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -386,7 +387,6 @@ class EjecutadorRutina : AppCompatActivity() {
             }
 
             val alertaEjExtra = AlertDialog.Builder(this) //se crea la alarma
-            val alertaFoto = AlertDialog.Builder(this) //Alerta para la foto
             alertaEjExtra.setTitle("Puntos extra!") //y se ponen los textos para preguntar si quiere un ejercicio extra
             alertaEjExtra.setMessage("¿Quiere hacer un ejercicio extra?")
 
@@ -404,53 +404,13 @@ class EjecutadorRutina : AppCompatActivity() {
                 inciarTimer()
                 terminar2 = true
             }
-
-            alertaFoto.setPositiveButton("Si"){dialogInterface, i ->
-                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                photofile = getPhotoFile("foto_${ SimpleDateFormat("yyyMMdd_HHmmss").format(Date())}")
-                val fileProvider = FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile)
-                Toast.makeText(this,"File:${photofile}",Toast.LENGTH_SHORT).show()
-
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
-                if (takePictureIntent.resolveActivity(this.packageManager) != null) {
-                    startActivityForResult(takePictureIntent, REQUEST_CODE)
-
-                } else {
-                    Toast.makeText(this, "Unable to open camera", Toast.LENGTH_SHORT).show()
-                }
-                mandarPuntos(puntos*2, horas, minutos, segundos)
-                val intent = Intent(this, MainActivity::class.java) // Cuando se termina la rutina y toma o no foto, te manda al inicio
-                startActivity(intent)
-            }
-            alertaFoto.setNegativeButton("No"){dialogInterface, i ->
-                mandarPuntos(puntos*2, horas, minutos, segundos)
-                dialogInterface.cancel()
-                val intent = Intent(this, MainActivity::class.java) // Cuando se termina la rutina y toma o no foto, te manda al inicio
-                startActivity(intent)
-            }
             alertaEjExtra.setNegativeButton("No") { dialogInterface, i -> //en caso de que no
-                mandarPuntos(puntos, horas, minutos, segundos)
+                foto(puntos, horas, minutos, segundos)
+            }
 
-                val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java)
-                startActivity(intent) //te va a devolver a ejercicio
-            }
-            alertaEjExtra.setNegativeButton("No") { dialogInterface, i -> //en caso de que no
-                //mandar puntos y tiempo a la base de datos
-                sleep(1000)
-                alertaFoto.setTitle("Registro de entrenamiento?") //y se ponen los textos para preguntar si quiere un ejercicio extra
-                alertaFoto.setMessage("¿Deseas tomarte una foto como registro de ejercicio?")
-                alertaFoto.show()
-                Toast.makeText(this, "Usted obtuvo: "+puntos+" puntos", Toast.LENGTH_SHORT).show()
-                Toast.makeText(this, "y: "+horas+" horas, "+minutos+" minutos y "+segundos+" segundos", Toast.LENGTH_SHORT).show()
-                // val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java)
-                // startActivity(intent) //te va a devolver a ejercicio
-            }
             alertaEjExtra.show() //se muestra la alerta
         }else{ //en caso que no
-            val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java)
-            startActivity(intent) //te va a devolver a ejercicio
-
-            mandarPuntos(puntos, horas, minutos, segundos)
+            foto(puntos, horas, minutos, segundos)
         }
     }
 
@@ -463,14 +423,38 @@ class EjecutadorRutina : AppCompatActivity() {
         val minutos = redondeo % 86400 % 3600 / 60
         val segundos = redondeo % 86400 % 3600 % 60
 
-        mandarPuntos(puntos, horas, minutos, segundos)
-
-        val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java)
-        startActivity(intent) //te va a devolver a ejercicio
+        foto(puntos, horas, minutos, segundos)
     }
 
+    private fun foto(puntos: Int, horas: Int, minutos: Int, segundos: Int) {
+        val alertaFoto = AlertDialog.Builder(this) //Alerta para la foto
+
+        alertaFoto.setPositiveButton("Si"){dialogInterface, i ->
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            photofile = getPhotoFile("foto_${ SimpleDateFormat("yyyMMdd_HHmmss").format(Date())}")
+            val fileProvider = FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile)
+
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
+            if (takePictureIntent.resolveActivity(this.packageManager) != null) {
+                startActivityForResult(takePictureIntent, REQUEST_CODE)
+            } else {
+                Toast.makeText(this, "Unable to open camera", Toast.LENGTH_SHORT).show()
+            }
+
+            mandarPuntos(puntos, horas, minutos, segundos)
+        }
+        alertaFoto.setNegativeButton("No"){dialogInterface, i ->
+            dialogInterface.cancel()
+
+            mandarPuntos(puntos, horas, minutos, segundos)
+            //val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
+            //startActivity(intent)
+        }
+
+        alertaFoto.show()
+    }
     @SuppressLint("SimpleDateFormat")
-    private fun mandarPuntos(puntos: Int, horasF: Int, minutosF: Int, segundosF: Int){
+    private fun mandarPuntos(puntos: Int, horasF: Int, minutosF: Int, segundosF: Int){ //F de finales
         puntosE += puntos
 
         val sdf = SimpleDateFormat("dd-MM-yyyy")
