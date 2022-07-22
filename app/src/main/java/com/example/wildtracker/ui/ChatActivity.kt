@@ -44,7 +44,9 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val name = FirebaseFirestore.getInstance()
     private  var userName:String = ""
     private val openDocument = registerForActivityResult(MyOpenDocumentContract()) { uri ->
-        onImageSelected(uri)
+        if (uri != null) {
+            onImageSelected(uri)
+        }
     }
 
     // TODO: implement Firebase instance variables
