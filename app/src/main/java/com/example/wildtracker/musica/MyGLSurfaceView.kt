@@ -10,7 +10,7 @@ class MyGLSurfaceView : GLSurfaceView {
 
     constructor(context: Context, attributes: AttributeSet? = null): super(context) {
         setEGLContextClientVersion(2)
-        val backgroundColor = context.resources.getColor(R.color.color_04)
+        val backgroundColor = context.resources.getColor(R.color.gray_dark)
         val primaryColor = context.resources.getColor(R.color.color_02)
         renderer = MyGLRenderer(backgroundColor, primaryColor)
         setRenderer(renderer)
