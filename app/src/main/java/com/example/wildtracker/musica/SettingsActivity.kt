@@ -1,4 +1,4 @@
-package com.example.wildtracker.musica.musica
+package com.example.wildtracker.musica
 
 import android.app.ActionBar
 import android.content.Intent
@@ -15,7 +15,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.wildtracker.R
-import com.example.wildtracker.musica.musica.BroadcastMessage
+import com.example.wildtracker.musica.Utils
 
 
 class SettingsActivity : AppCompatActivity() {

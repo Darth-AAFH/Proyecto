@@ -1,4 +1,4 @@
-package com.example.wildtracker.musica.musica
+package com.example.wildtracker.musica
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -23,12 +23,12 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.wildtracker.R
-import com.example.wildtracker.musica.musica.BroadcastMessage
+import com.example.wildtracker.musica.Utils
 import java.io.File
 import java.util.Collections.shuffle
 
-class MinichainsPlayerService : Service() {
-    private lateinit var minichainsPlayerBroadcastReceiver: MinichainsPlayerServiceBroadcastReceiver
+class mPlayerService : Service() {
+    private lateinit var mPlayerBroadcastReceiver: mPlayerServiceBroadcastReceiver
 
     private var mediaPlayer: MediaPlayer? = null
     private var updateActivityVariables01 = false
@@ -45,23 +45,23 @@ class MinichainsPlayerService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        Log.l("MinichainsPlayerServiceLog:: onCreate service")
+        Log.l("mPlayerServiceLog:: onCreate service")
         init()
     }
 
     override fun onBind(p0: Intent?): IBinder? {
-        Log.l("MinichainsPlayerServiceLog:: onBind service")
+        Log.l("mPlayerServiceLog:: onBind service")
         return null
     }
 
     override fun onDestroy() {
-        Log.l("MinichainsPlayerServiceLog:: onDestroy $this")
+        Log.l("mPlayerServiceLog:: onDestroy $this")
         updateActivityInfoThread.interrupt()
 
         if (mediaPlayer != null) stopAndRelease()
 
-        unregisterReceiver(minichainsPlayerBroadcastReceiver)
-        removeMinichainsPlayerServiceNotification()
+        unregisterReceiver(mPlayerBroadcastReceiver)
+        removemPlayerServiceNotification()
         mediaSession.release()
     }
 
@@ -90,14 +90,14 @@ class MinichainsPlayerService : Service() {
         }
         updateCurrentSongInfo()
 
-        minichainsPlayerBroadcastReceiver = MinichainsPlayerServiceBroadcastReceiver()
-        registerMinichainsPlayerServiceBroadcastReceiver()
+        mPlayerBroadcastReceiver = mPlayerServiceBroadcastReceiver()
+        registermPlayerServiceBroadcastReceiver()
 
         initUpdateActivityThread()
 
         initMediaSessions()
 
-        createMinichainsPlayerServiceNotification()
+        createmPlayerServiceNotification()
     }
 
     /**
@@ -107,7 +107,7 @@ class MinichainsPlayerService : Service() {
     private lateinit var mediaSession: MediaSessionCompat
 
     private fun initMediaSessions() {
-        mediaSession = MediaSessionCompat(applicationContext, MinichainsPlayerService::class.java.simpleName)
+        mediaSession = MediaSessionCompat(applicationContext, mPlayerService::class.java.simpleName)
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
         mediaSession.setMediaButtonReceiver(null)
         mediaSession.setPlaybackState(PlaybackStateCompat.Builder().setActions(
@@ -491,7 +491,7 @@ class MinichainsPlayerService : Service() {
     }
 
     private fun sendBroadcastToActivity(broadcastMessage: BroadcastMessage, bundle: Bundle?) {
-//        Log.l("MinichainsPlayerServiceLog:: sending broadcast $broadcastMessage")
+//        Log.l("mPlayerServiceLog:: sending broadcast $broadcastMessage")
         try {
             val broadCastIntent = Intent()
             broadCastIntent.action = broadcastMessage.toString()
@@ -508,18 +508,18 @@ class MinichainsPlayerService : Service() {
      * BROADCAST RECEIVER
      **/
 
-    inner class MinichainsPlayerServiceBroadcastReceiver : BroadcastReceiver() {
+    inner class mPlayerServiceBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-//            Log.l("MinichainsPlayerServiceLog:: Broadcast received. Context: " + context + ", intent:" + intent.action)
+//            Log.l("mPlayerServiceLog:: Broadcast received. Context: " + context + ", intent:" + intent.action)
             try {
                 val broadcast = intent.action
                 val extras = intent.extras
                 if (broadcast != null) {
                     if (broadcast == BroadcastMessage.START_PLAYING.toString()) {
-                        Log.l("MinichainsPlayerServiceLog:: START_PLAYING")
+                        Log.l("mPlayerServiceLog:: START_PLAYING")
                         play()
                     } else if (broadcast == BroadcastMessage.START_PLAYING_SONG.toString()) {
-                        Log.l("MinichainsPlayerServiceLog:: START_PLAYING_SONG")
+                        Log.l("mPlayerServiceLog:: START_PLAYING_SONG")
                         mediaPlayer?.pause()
                         setCurrentSongName(extras?.getString("currentSongName").toString())
                         setCurrentSongInteger(getSongInteger(currentSong.currentSongName))
@@ -531,43 +531,43 @@ class MinichainsPlayerService : Service() {
                         setCurrentSongTime(0)
                         play()
                     } else if (broadcast == BroadcastMessage.STOP_PLAYING.toString()) {
-                        Log.l("MinichainsPlayerServiceLog:: STOP_PLAYING")
+                        Log.l("mPlayerServiceLog:: STOP_PLAYING")
                         pause()
                     } else if (broadcast == BroadcastMessage.START_STOP_PLAYING_NOTIFICATION.toString()) {
-                        Log.l("MinichainsPlayerServiceLog:: START_STOP_PLAYING_NOTIFICATION")
+                        Log.l("mPlayerServiceLog:: START_STOP_PLAYING_NOTIFICATION")
                         if (mediaPlayer != null && !mediaPlayer?.isPlaying!!) {
                             play()
                         } else {
                             pause()
                         }
                     } else if (broadcast == BroadcastMessage.PREVIOUS_SONG.toString()) {
-                        Log.l("MinichainsPlayerServiceLog:: PREVIOUS_SONG")
+                        Log.l("mPlayerServiceLog:: PREVIOUS_SONG")
                         previous()
                     } else if (broadcast == BroadcastMessage.NEXT_SONG.toString()) {
-                        Log.l("MinichainsPlayerServiceLog:: NEXT_SONG")
+                        Log.l("mPlayerServiceLog:: NEXT_SONG")
                         next()
                     } else if (broadcast == BroadcastMessage.SHUFFLE.toString()) {
-                        Log.l("MinichainsPlayerServiceLog:: SHUFFLE")
+                        Log.l("mPlayerServiceLog:: SHUFFLE")
                         setShuffle(!Parameter.shuffle)
                     } else if (broadcast == BroadcastMessage.SET_CURRENT_SONG_TIME.toString()) {
-                        Log.l("MinichainsPlayerServiceLog:: SET_CURRENT_SONG_TIME")
+                        Log.l("mPlayerServiceLog:: SET_CURRENT_SONG_TIME")
                         if (extras != null) {
                             setCurrentSongTime(extras.getInt("currentSongTime"))
                             mediaPlayer?.seekTo(currentSong.currentSongTime)
                         }
                     } else if (broadcast == Intent.ACTION_MEDIA_BUTTON) {
-                        Log.l("MinichainsPlayerServiceLog:: ACTION_MEDIA_BUTTON")
+                        Log.l("mPlayerServiceLog:: ACTION_MEDIA_BUTTON")
                     } else if (broadcast == Intent.ACTION_HEADSET_PLUG) {
-                        Log.l("MinichainsPlayerServiceLog:: ACTION_HEADSET_PLUG")
+                        Log.l("mPlayerServiceLog:: ACTION_HEADSET_PLUG")
                         pause()
                     } else if (broadcast == BroadcastMessage.FILL_PLAYLIST.toString()) {
-                        Log.l("MinichainsPlayerServiceLog:: FILL_PLAYLIST")
+                        Log.l("mPlayerServiceLog:: FILL_PLAYLIST")
                         fillPlayList()
                     } else if (broadcast == BroadcastMessage.CLEAR_PLAYLIST.toString()) {
-                        Log.l("MinichainsPlayerServiceLog:: CLEAR_PLAYLIST")
+                        Log.l("mPlayerServiceLog:: CLEAR_PLAYLIST")
                         clearPlayList()
                     } else {
-//                        Log.l("MinichainsPlayerServiceLog:: Unregistered broadcast received. $broadcast")
+//                        Log.l("mPlayerServiceLog:: Unregistered broadcast received. $broadcast")
                     }
                 }
             } catch (ex: Exception) {
@@ -576,7 +576,7 @@ class MinichainsPlayerService : Service() {
         }
     }
 
-    private fun registerMinichainsPlayerServiceBroadcastReceiver() {
+    private fun registermPlayerServiceBroadcastReceiver() {
         try {
             val intentFilter = IntentFilter()
             for (i in BroadcastMessage.values().indices) {
@@ -586,7 +586,7 @@ class MinichainsPlayerService : Service() {
 //            intentFilter.addAction(Intent.ACTION_MEDIA_BUTTON)
             intentFilter.addAction(Intent.ACTION_HEADSET_PLUG)
 
-            registerReceiver(minichainsPlayerBroadcastReceiver, intentFilter)
+            registerReceiver(mPlayerBroadcastReceiver, intentFilter)
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -602,10 +602,10 @@ class MinichainsPlayerService : Service() {
     private var notificationPlaying = false
     private var notificationManager: NotificationManager? = null
     private var notificationManagerCompat: NotificationManagerCompat? = null
-    private val serviceNotificationStringId = "MINICHAINS_PLAYER_SERVICE_NOTIFICATION"
+    private val serviceNotificationStringId = "m_PLAYER_SERVICE_NOTIFICATION"
     private val serviceNotificationId = 1
 
-    private fun createMinichainsPlayerServiceNotification() {
+    private fun createmPlayerServiceNotification() {
         //Service notification
         notificationName = resources.getString(R.string.app_name)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -622,7 +622,7 @@ class MinichainsPlayerService : Service() {
 
         /** Open Main Activity **/
 //        //Notification intent to open the activity when pressing the notification
-        val intent = Intent(this, MinichainsPlayerActivity::class.java).apply {
+        val intent = Intent(this, mPlayerActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT
         }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -691,7 +691,7 @@ class MinichainsPlayerService : Service() {
         }
     }
 
-    private fun removeMinichainsPlayerServiceNotification() {
+    private fun removemPlayerServiceNotification() {
         if (notificationManagerCompat != null) {
             notificationManagerCompat!!.cancel(serviceNotificationId)
         }

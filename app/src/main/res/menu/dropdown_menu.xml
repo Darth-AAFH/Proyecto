@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="10dp"
     android:layout_width="10dp"
-    tools:context=".musica.musica.MinichainsPlayerActivity">
+    tools:context=".musica.mPlayerActivity">
 
     <item android:id="@+id/settings_option"
         android:title="@string/settings"

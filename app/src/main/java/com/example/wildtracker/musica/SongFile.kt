@@ -1,4 +1,4 @@
-package com.example.wildtracker.musica.musica
+package com.example.wildtracker.musica
 
 class SongFile {
     var path: String

@@ -1,4 +1,4 @@
-package com.example.wildtracker.musica.musica
+package com.example.wildtracker.musica
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -13,7 +13,7 @@ import androidx.core.view.get
 import androidx.core.view.size
 import androidx.core.widget.addTextChangedListener
 import com.example.wildtracker.R
-import com.example.wildtracker.musica.musica.BroadcastMessage
+import com.example.wildtracker.musica.BroadcastMessage
 
 class PlayListActivity : AppCompatActivity() {
     private lateinit var playListBroadcastReceiver: PlayListActivityBroadcastReceiver

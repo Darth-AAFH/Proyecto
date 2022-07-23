@@ -1,13 +1,13 @@
-package com.example.wildtracker.musica.musica
+package com.example.wildtracker.musica
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns
-import com.example.wildtracker.musica.musica.FeedReaderContract.LasSongPlayed.LAST_SONG_PLAYED_TABLE_NAME
-import com.example.wildtracker.musica.musica.FeedReaderContract.MusicPathsTable.MUSIC_PATHS_TABLE_NAME
-import com.example.wildtracker.musica.musica.FeedReaderContract.ParametersTable.PARAMETERS_TABLE_NAME
-import com.example.wildtracker.musica.musica.FeedReaderContract.SongListTable.SONG_LIST_TABLE_NAME
+import com.example.wildtracker.musica.FeedReaderContract.LasSongPlayed.LAST_SONG_PLAYED_TABLE_NAME
+import com.example.wildtracker.musica.FeedReaderContract.MusicPathsTable.MUSIC_PATHS_TABLE_NAME
+import com.example.wildtracker.musica.FeedReaderContract.ParametersTable.PARAMETERS_TABLE_NAME
+import com.example.wildtracker.musica.FeedReaderContract.SongListTable.SONG_LIST_TABLE_NAME
 
 object FeedReaderContract {
     // Table contents are grouped together in an anonymous object.
@@ -91,6 +91,6 @@ class FeedReaderDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
     companion object {
         // If you change the database schema, you must increment the database version.
         const val DATABASE_VERSION = 4
-        const val DATABASE_NAME = "MinichainsPlayer.db"
+        const val DATABASE_NAME = "mPlayer.db"
     }
 }

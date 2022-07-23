@@ -1,9 +1,9 @@
-package com.example.wildtracker.musica.musica
+package com.example.wildtracker.musica
 
 import android.util.Log
 
 object Log {
-    const val LOG_TAG = "MinichainsPlayerLog"
+    const val LOG_TAG = "mPlayerLog"
 
     fun l(string: String?) {
         Log.v(LOG_TAG, string!!)

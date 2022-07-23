@@ -101,42 +101,39 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".musica.musica.MinichainsPlayerActivity"
+            android:name=".musica.mPlayerActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
 
         <activity
-            android:name=".musica.musica.SettingsActivity"
+            android:name=".musica.SettingsActivity"
             android:label="Settings"
-            android:parentActivityName=".musica.musica.MinichainsPlayerActivity"
+            android:parentActivityName=".musica.mPlayerActivity"
             android:screenOrientation="portrait"
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".musica.musica.MinichainsPlayerActivity"
+                android:value=".musica.mPlayerActivity"
                 />
         </activity>
 
-        <activity android:name=".musica.musica.PlayListActivity"
+        <activity android:name=".musica.PlayListActivity"
             android:label="Playlist"
-            android:parentActivityName=".musica.musica.MinichainsPlayerActivity"
+            android:parentActivityName=".musica.mPlayerActivity"
             android:screenOrientation="portrait"
             >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".musica.musica.MinichainsPlayerActivity"
+                android:value=".musica.mPlayerActivity"
                 />
         </activity>
 
         <service
-            android:name=".musica.musica.MinichainsPlayerService"
+            android:name=".musica.mPlayerService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />

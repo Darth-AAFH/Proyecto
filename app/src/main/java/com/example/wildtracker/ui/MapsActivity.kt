@@ -24,7 +24,7 @@ import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
-import com.example.wildtracker.musica.musica.MinichainsPlayerActivity
+import com.example.wildtracker.musica.mPlayerActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.location.LocationServices
@@ -543,7 +543,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
 
     private fun callMetasActivity() {
-        val intent = Intent(this, MinichainsPlayerActivity::class.java)
+        val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
     }
 

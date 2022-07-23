@@ -1,22 +1,22 @@
-package com.example.wildtracker.musica.musica
+package com.example.wildtracker.musica
 
 import android.content.ContentValues
 import android.content.Context
 import android.widget.Toast
 import com.example.wildtracker.R
-import com.example.wildtracker.musica.musica.FeedReaderContract.LasSongPlayed.COLUMN_LAST_SONG_NAME
-import com.example.wildtracker.musica.musica.FeedReaderContract.LasSongPlayed.LAST_SONG_PLAYED_TABLE_NAME
-import com.example.wildtracker.musica.musica.FeedReaderContract.MusicPathsTable.COLUMN_MUSIC_PATH
-import com.example.wildtracker.musica.musica.FeedReaderContract.MusicPathsTable.COLUMN_MUSIC_PATH_VALUE
-import com.example.wildtracker.musica.musica.FeedReaderContract.MusicPathsTable.MUSIC_PATHS_TABLE_NAME
-import com.example.wildtracker.musica.musica.FeedReaderContract.ParametersTable.COLUMN_PARAMETER
-import com.example.wildtracker.musica.musica.FeedReaderContract.ParametersTable.COLUMN_PARAMETER_VALUE
-import com.example.wildtracker.musica.musica.FeedReaderContract.ParametersTable.PARAMETERS_TABLE_NAME
-import com.example.wildtracker.musica.musica.FeedReaderContract.SongListTable.COLUMN_FORMAT
-import com.example.wildtracker.musica.musica.FeedReaderContract.SongListTable.COLUMN_LENGTH
-import com.example.wildtracker.musica.musica.FeedReaderContract.SongListTable.COLUMN_PATH
-import com.example.wildtracker.musica.musica.FeedReaderContract.SongListTable.COLUMN_SONG
-import com.example.wildtracker.musica.musica.FeedReaderContract.SongListTable.SONG_LIST_TABLE_NAME
+import com.example.wildtracker.musica.FeedReaderContract.LasSongPlayed.COLUMN_LAST_SONG_NAME
+import com.example.wildtracker.musica.FeedReaderContract.LasSongPlayed.LAST_SONG_PLAYED_TABLE_NAME
+import com.example.wildtracker.musica.FeedReaderContract.MusicPathsTable.COLUMN_MUSIC_PATH
+import com.example.wildtracker.musica.FeedReaderContract.MusicPathsTable.COLUMN_MUSIC_PATH_VALUE
+import com.example.wildtracker.musica.FeedReaderContract.MusicPathsTable.MUSIC_PATHS_TABLE_NAME
+import com.example.wildtracker.musica.FeedReaderContract.ParametersTable.COLUMN_PARAMETER
+import com.example.wildtracker.musica.FeedReaderContract.ParametersTable.COLUMN_PARAMETER_VALUE
+import com.example.wildtracker.musica.FeedReaderContract.ParametersTable.PARAMETERS_TABLE_NAME
+import com.example.wildtracker.musica.FeedReaderContract.SongListTable.COLUMN_FORMAT
+import com.example.wildtracker.musica.FeedReaderContract.SongListTable.COLUMN_LENGTH
+import com.example.wildtracker.musica.FeedReaderContract.SongListTable.COLUMN_PATH
+import com.example.wildtracker.musica.FeedReaderContract.SongListTable.COLUMN_SONG
+import com.example.wildtracker.musica.FeedReaderContract.SongListTable.SONG_LIST_TABLE_NAME
 
 class DataBase {
     companion object {

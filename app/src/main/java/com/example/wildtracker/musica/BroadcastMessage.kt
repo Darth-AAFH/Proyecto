@@ -1,4 +1,4 @@
-package com.example.wildtracker.musica.musica
+package com.example.wildtracker.musica
 
 enum class BroadcastMessage {
     START_PLAYING,

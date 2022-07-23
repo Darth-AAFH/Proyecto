@@ -1,4 +1,4 @@
-package com.example.wildtracker.musica.musica
+package com.example.wildtracker.musica
 
 import android.Manifest
 import android.content.BroadcastReceiver
@@ -18,12 +18,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.wildtracker.R
-import com.example.wildtracker.musica.musica.BroadcastMessage
+import com.example.wildtracker.musica.Utils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlin.system.exitProcess
 
-class MinichainsPlayerActivity : AppCompatActivity() {
-    private lateinit var minichainsPlayerBroadcastReceiver: MinichainsPlayerActivityBroadcastReceiver
+class mPlayerActivity : AppCompatActivity() {
+    private lateinit var mPlayerBroadcastReceiver: mPlayerActivityBroadcastReceiver
 
     private var gLView: MyGLSurfaceView? = null
     private lateinit var playFloatingButton: FloatingActionButton
@@ -50,30 +50,30 @@ class MinichainsPlayerActivity : AppCompatActivity() {
     }
 
     override fun onStart() {
-        Log.l("MinichainsPlayerActivityLog:: onStart")
+        Log.l("mPlayerActivityLog:: onStart")
         super.onStart()
-        registerMinichainsPlayerActivityBroadcastReceiver()
+        registermPlayerActivityBroadcastReceiver()
     }
 
     override fun onResume() {
-        Log.l("MinichainsPlayerActivityLog:: onResume")
+        Log.l("mPlayerActivityLog:: onResume")
         super.onResume()
     }
 
     override fun onPause() {
-        Log.l("MinichainsPlayerActivityLog:: onPause")
+        Log.l("mPlayerActivityLog:: onPause")
         super.onPause()
         try {
-            unregisterReceiver(minichainsPlayerBroadcastReceiver)
+            unregisterReceiver(mPlayerBroadcastReceiver)
         } catch (e: IllegalArgumentException) {
-            Log.e("MinichainsPlayerActivityLog:: error un-registering receiver $e")
+            Log.e("mPlayerActivityLog:: error un-registering receiver $e")
         }
     }
 
-    override fun onStop() {
-        Log.l("MinichainsPlayerActivityLog:: onStop")
+    /*override fun onStop() {
+        Log.l("mPlayerActivityLog:: onStop")
         super.onStop()
-    }
+    }*/
 
     private val REQUEST_ID_MULTIPLE_PERMISSIONS: Int = 1
 
@@ -111,10 +111,10 @@ class MinichainsPlayerActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        Log.l("Init MinichainsPlayerActivity!")
+        Log.l("Init mPlayerActivity!")
 
-        setContentView(R.layout.minichains_player_activity)
-        val serviceIntent = Intent(applicationContext, MinichainsPlayerService::class.java)
+        setContentView(R.layout.m_player_activity)
+        val serviceIntent = Intent(applicationContext, mPlayerService::class.java)
 
         //Start service:
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -146,7 +146,7 @@ class MinichainsPlayerActivity : AppCompatActivity() {
         numberOfSongsTextView = this.findViewById(R.id.number_of_songs)
         showPlayListImageButton = this.findViewById(R.id.show_play_list)
 
-        registerMinichainsPlayerActivityBroadcastReceiver()
+        registermPlayerActivityBroadcastReceiver()
 
         playFloatingButton.setOnClickListener {
             if (currentSong.currentSongName != "") {
@@ -179,12 +179,16 @@ class MinichainsPlayerActivity : AppCompatActivity() {
 
         showPlayListImageButton.setOnClickListener {
             this.onPause()
-            intent = Intent(applicationContext, PlayListActivity::class.java)
+            intent = Intent(applicationContext, SettingsActivity::class.java)
+           // intent = Intent(applicationContext, PlayListActivity::class.java)
+            /*
             intent.putExtra("CURRENT_SONG_INTEGER", currentSong.currentSongInteger)
             intent.putExtra("PLAYING", currentSong.playing)
             intent.putExtra("CURRENT_SONG_NAME", currentSong.currentSongName)
             intent.putExtra("CURRENT_SONG_TIME", currentSong.currentSongTime)
             intent.putExtra("CURRENT_SONG_LENGTH", currentSong.currentSongLength)
+            */
+
             startActivity(intent)
         }
 
@@ -274,20 +278,20 @@ class MinichainsPlayerActivity : AppCompatActivity() {
         exitProcess(-1)
     }
 
-    override fun onDestroy() {
+   /* override fun onDestroy() {
         Log.l("onDestroy $this")
         super.onDestroy()
         //If there is a Service running...
-        val serviceIntent = Intent(applicationContext, MinichainsPlayerService::class.java)
+        val serviceIntent = Intent(applicationContext, mPlayerService::class.java)
         applicationContext.stopService(serviceIntent)
-    }
+    }*/
 
     private fun sendBroadcastToService(broadcastMessage: BroadcastMessage) {
         sendBroadcastToService(broadcastMessage, null)
     }
 
     private fun sendBroadcastToService(broadcastMessage: BroadcastMessage, bundle: Bundle?) {
-        Log.l("MinichainsPlayerActivityLog:: sending broadcast $broadcastMessage")
+        Log.l("mPlayerActivityLog:: sending broadcast $broadcastMessage")
         try {
             val broadCastIntent = Intent()
             broadCastIntent.action = broadcastMessage.toString()
@@ -300,25 +304,25 @@ class MinichainsPlayerActivity : AppCompatActivity() {
         }
     }
 
-    inner class MinichainsPlayerActivityBroadcastReceiver : BroadcastReceiver() {
+    inner class mPlayerActivityBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-//            Log.l("MinichainsPlayerActivityLog:: Broadcast received. Context: " + context + ", intent:" + intent.action)
+//            Log.l("mPlayerActivityLog:: Broadcast received. Context: " + context + ", intent:" + intent.action)
             try {
                 val broadcast = intent.action
                 val extras = intent.extras
                 if (broadcast != null) {
                     if (broadcast == BroadcastMessage.START_PLAYING.toString()) {
-                        Log.l("MinichainsPlayerActivityLog:: START_PLAYING")
+                        Log.l("mPlayerActivityLog:: START_PLAYING")
                     } else if (broadcast == BroadcastMessage.STOP_PLAYING.toString()) {
-                        Log.l("MinichainsPlayerActivityLog:: STOP_PLAYING")
+                        Log.l("mPlayerActivityLog:: STOP_PLAYING")
                     } else if (broadcast == BroadcastMessage.START_STOP_PLAYING_NOTIFICATION.toString()) {
-                        Log.l("MinichainsPlayerActivityLog:: START_STOP_PLAYING_NOTIFICATION")
+                        Log.l("mPlayerActivityLog:: START_STOP_PLAYING_NOTIFICATION")
                     } else if (broadcast == BroadcastMessage.PREVIOUS_SONG.toString()) {
-                        Log.l("MinichainsPlayerActivityLog:: PREVIOUS_SONG")
+                        Log.l("mPlayerActivityLog:: PREVIOUS_SONG")
                     } else if (broadcast == BroadcastMessage.NEXT_SONG.toString()) {
-                        Log.l("MinichainsPlayerActivityLog:: NEXT_SONG")
+                        Log.l("mPlayerActivityLog:: NEXT_SONG")
                     } else if (broadcast == BroadcastMessage.UPDATE_ACTIVITY_VARIABLES_01.toString()) {
-                        Log.l("MinichainsPlayerActivityLog:: UPDATE_ACTIVITY_VARIABLES_01")
+                        Log.l("mPlayerActivityLog:: UPDATE_ACTIVITY_VARIABLES_01")
                         if (extras != null) {
                             currentSong.playing = extras.getBoolean("playing")
                             currentSong.currentSongPath = extras.getString("currentSongPath").toString()
@@ -330,7 +334,7 @@ class MinichainsPlayerActivity : AppCompatActivity() {
                         }
                         updateViews()
                     } else if (broadcast == BroadcastMessage.UPDATE_ACTIVITY_VARIABLES_02.toString()) {
-                        Log.l("MinichainsPlayerActivityLog:: UPDATE_ACTIVITY_VARIABLES_02")
+                        Log.l("mPlayerActivityLog:: UPDATE_ACTIVITY_VARIABLES_02")
                         if (extras != null) {
                             currentSong.currentSongTime = extras.getInt("currentSongTime")
                         }
@@ -343,7 +347,7 @@ class MinichainsPlayerActivity : AppCompatActivity() {
                             }
                         }
                     } else {
-                        Log.l("MinichainsPlayerActivityLog:: Unknown broadcast received")
+                        Log.l("mPlayerActivityLog:: Unknown broadcast received")
                     }
                 }
             } catch (ex: java.lang.Exception) {
@@ -352,14 +356,14 @@ class MinichainsPlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun registerMinichainsPlayerActivityBroadcastReceiver() {
-        minichainsPlayerBroadcastReceiver = MinichainsPlayerActivityBroadcastReceiver()
+    private fun registermPlayerActivityBroadcastReceiver() {
+        mPlayerBroadcastReceiver = mPlayerActivityBroadcastReceiver()
         try {
             val intentFilter = IntentFilter()
             for (i in BroadcastMessage.values().indices) {
                 intentFilter.addAction(BroadcastMessage.values()[i].toString())
             }
-            registerReceiver(minichainsPlayerBroadcastReceiver, intentFilter)
+            registerReceiver(mPlayerBroadcastReceiver, intentFilter)
         } catch (ex: java.lang.Exception) {
             ex.printStackTrace()
         }

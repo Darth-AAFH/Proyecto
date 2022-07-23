@@ -1,4 +1,4 @@
-package com.example.wildtracker.musica.musica
+package com.example.wildtracker.musica
 
 import android.graphics.Color
 import javax.microedition.khronos.egl.EGLConfig
