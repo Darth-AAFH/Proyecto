@@ -12,6 +12,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
+import com.example.wildtracker.musica.mPlayerActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
@@ -69,6 +70,8 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
             R.id.nav_metas -> callMetasActivity()
+            R.id.nav_musica ->callMusica()
+
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
@@ -76,6 +79,10 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         return true
     }
 
+    private fun callMusica() {
+        val intent = Intent(this, mPlayerActivity::class.java)
+        startActivity(intent)
+    }
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)

@@ -484,6 +484,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
             R.id.nav_metas -> callMetasActivity()
+            R.id.nav_musica ->callMusica()
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
@@ -543,6 +544,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
 
     private fun callMetasActivity() {
+        val intent = Intent(this, callMetasActivity()::class.java)
+        startActivity(intent)
+    }
+    private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
     }

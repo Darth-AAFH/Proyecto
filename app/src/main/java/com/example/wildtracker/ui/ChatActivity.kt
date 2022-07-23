@@ -21,6 +21,7 @@ import com.example.wildtracker.R
 import com.example.wildtracker.SignInActivity
 import com.example.wildtracker.databinding.ActivityChatBinding
 import com.example.wildtracker.model.*
+import com.example.wildtracker.musica.mPlayerActivity
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -278,6 +279,8 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
             R.id.nav_metas -> callMetasActivity()
+            R.id.nav_musica ->callMusica()
+
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
@@ -327,6 +330,10 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun callMetasActivity() {
         val intent = Intent(this, RecordActivity::class.java)
+        startActivity(intent)
+    }
+    private fun callMusica() {
+        val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
     }
 

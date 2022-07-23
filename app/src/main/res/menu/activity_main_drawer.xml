@@ -46,6 +46,12 @@
             android:id="@+id/nav_metas"
             android:icon="@drawable/medalgold"
             android:title="Metas" />
+        <item
+            android:id="@+id/nav_musica"
+            android:title="Musica"
+            android:icon="@drawable/baseline_music_note_24"
+            />
+
     </group>
 
     <item android:title="Aplicación">

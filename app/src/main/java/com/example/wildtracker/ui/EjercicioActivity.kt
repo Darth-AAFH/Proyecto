@@ -18,6 +18,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
+import com.example.wildtracker.musica.mPlayerActivity
 import com.google.firebase.firestore.FirebaseFirestore
 
 class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -132,6 +133,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
             R.id.nav_metas -> callMetasActivity()
+            R.id.nav_musica ->callMusica()
+
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
@@ -176,6 +179,10 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun callMetasActivity() {
         val intent = Intent(this, RecordActivity::class.java)
+        startActivity(intent)
+    }
+    private fun callMusica() {
+        val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
     }
 
