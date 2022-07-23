@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -21,6 +22,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import org.achartengine.ChartFactory
 import org.achartengine.GraphicalView
 import org.achartengine.model.XYMultipleSeriesDataset
@@ -45,9 +53,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     private fun clasificarRutinas() {
-        var nivel = 0
-        var nombre = ""
-        var tiempo = 0
+        var nivel: Int
+        var nombre: String
+        var tiempo: Int
 
         user?.let { usuario -> //para cargar las rutinas de manera ordenada (de mayor a menor nivel y poniendole las insignias)
             db.collection("users").document(usuario).collection("rutinas") //abre la base de datos
@@ -71,6 +79,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val auth: String? = FirebaseAuth.getInstance().currentUser?.email
         var user =  auth
 
+        val listaRanking = ArrayList<String>()
+
         var listaRutinas1 = ArrayList<String>()
         var listaRutinas2 = ArrayList<String>()
         var listaEjercicios1 = ArrayList<String>()
@@ -89,9 +99,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initToolbar()
         initNavigationView()
 
-        CargarTiempos()
+        CargarTiempos() //checar
         buttonPruebaBD = findViewById(R.id.buttonPruebaBD)//////////////////////
 
+        CargarRanking()
         CargarEjercicios()
         CargarRutinas()
 
@@ -203,16 +214,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                 }
         }
-
-        /*
-        var a = 1
-        for(i in 0 until 500) { //va a recorrer los ejercicios de la rutina
-            a += a
-        }
-
-         */
-
-        //StartChart()
     }
     private fun diaSemana(dia: Int, mes: Int, ano: Int): Int {
         val c = Calendar.getInstance()
@@ -444,6 +445,36 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         startActivity(intent)
     }
 
+    data class userData (
+        val Name: String? = "",
+        var puntosTotales: Int? = 0
+    )
+    private fun CargarRanking () {
+        listaRanking.clear() //limpiar la lista del ranking para poder recargarla
+
+        user?.let { usuario -> //para cargar el ranking
+            db.collection("users").get().addOnSuccessListener {
+
+                GlobalScope.launch(Dispatchers.IO) { //para trer los datos correctamente por pausas
+
+                    for (userIt in it) { //para cada usuario
+                        val userEmail = userIt.get("email") as String? //va a tomar el correo
+                        val nameDocument = Firebase.firestore.collection("users").document(userEmail.toString()) //la ruta en la base de datos
+                        val user1 = nameDocument.get().await().toObject(userData::class.java) //y se va a traer los datos
+
+                        withContext(Dispatchers.Main){
+                            if(user == userEmail){ //si es el usuario en uso
+                                listaRanking.add((user1!!.puntosTotales).toString() + " -- -- -- -- -- -- -- -- -- -- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
+                            }else{
+                                listaRanking.add((user1!!.puntosTotales).toString() + " -- -- -- -- -- -- -- -- -- -- " + user1.Name) //y si no los va a agregar pero sin la estrellita
+                            }
+                        }
+                    }
+                }
+            }
+        }
+   }
+
     private fun callRankingActivity() {
         val intent = Intent(this, RankingActivity::class.java)
         startActivity(intent)
@@ -458,6 +489,4 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val intent = Intent(this, RecordActivity::class.java)
         startActivity(intent)
     }
-
-
 }

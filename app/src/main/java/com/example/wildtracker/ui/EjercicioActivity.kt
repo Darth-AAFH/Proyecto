@@ -126,7 +126,6 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.nav_perfil -> callPerfilActivity()
             R.id.nav_inicio -> callInicioActivity()
             R.id.nav_plantillas -> callPlantillasActivity()
-            R.id.nav_ejercicio -> callEjercicioActivity()
             R.id.nav_maps -> callMapsActivity()
             R.id.nav_seguimiento -> callSeguimientoActivity()
             R.id.nav_ranking -> callRankingActivity()
@@ -152,11 +151,6 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun callPlantillasActivity() {
         val intent = Intent(this, PlantillasActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun callEjercicioActivity() {
-        val intent = Intent(this, EjercicioActivity::class.java)
         startActivity(intent)
     }
 
