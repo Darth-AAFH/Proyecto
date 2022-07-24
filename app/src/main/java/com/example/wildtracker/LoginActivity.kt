@@ -114,11 +114,7 @@ class LoginActivity : AppCompatActivity() {
                     mAuth.signInWithCredential(credential).addOnCompleteListener {
                         if (it.isSuccessful) {
                             val firebaseUser = firebaseAuth.currentUser
-                            if (firebaseUser != null) {
-                                //user is LoggedIn
-                                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                                finish()
-                            } else {
+
                                 dbRegister.collection("users").document(email).set(
                                     hashMapOf(
 
@@ -130,7 +126,7 @@ class LoginActivity : AppCompatActivity() {
 
                                 goHome(email, "email")
                                 goHome(email, "Google")
-                            }
+
                         }
                         else Toast.makeText(
                             this,
