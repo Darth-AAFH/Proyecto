@@ -20,6 +20,13 @@ import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import com.example.wildtracker.musica.mPlayerActivity
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -45,6 +52,32 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         listViewRutinas2!!.setAdapter(adapter) //La tabla se adapta en la text view
     }
 
+    private fun CargarRanking() {
+        MainActivity.listaRanking.clear() //limpiar la lista del ranking para poder recargarla
+
+        MainActivity.user?.let { usuario -> //para cargar el ranking
+            db.collection("users").get().addOnSuccessListener {
+
+                GlobalScope.launch(Dispatchers.IO) { //para trer los datos correctamente por pausas
+
+                    for (userIt in it) { //para cada usuario
+                        val userEmail = userIt.get("email") as String? //va a tomar el correo
+                        val nameDocument = Firebase.firestore.collection("users").document(userEmail.toString()) //la ruta en la base de datos
+                        val user1 = nameDocument.get().await().toObject(MainActivity.userData::class.java) //y se va a traer los datos
+
+                        withContext(Dispatchers.Main){
+                            if(MainActivity.user == userEmail){ //si es el usuario en uso
+                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " -- -- -- -- -- -- -- -- -- -- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
+                            }else{
+                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " -- -- -- -- -- -- -- -- -- -- " + user1.Name) //y si no los va a agregar pero sin la estrellita
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private lateinit var drawer: DrawerLayout
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +92,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         Toast.makeText(this, "Seleccione la rutina", Toast.LENGTH_SHORT).show()
         CargarListas()
+        CargarRanking()
 
         listViewRutinas2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
