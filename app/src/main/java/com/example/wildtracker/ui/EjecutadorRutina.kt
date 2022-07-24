@@ -80,11 +80,11 @@ class EjecutadorRutina : AppCompatActivity() {
         listViewEjerciciosPorHacer!!.setAdapter(adapter) //La rutina se adapta en la text view
     }
 
-    var Name = ""; var dateRegister = ""; var email = ""
+    var Name = ""; var birthDay = ""; var email = ""
     var puntosTotales: Int = 0
     data class puntosTotalesClass (
         val Name: String? = "",
-        val dateRegister: String? = "",
+        val birthDay: String? = "",
         val email: String = "",
         val puntosTotales: Int? = 0
     )
@@ -101,7 +101,7 @@ class EjecutadorRutina : AppCompatActivity() {
 
                         withContext(Dispatchers.Main) {
                             Name = puntosTaux.Name!!
-                            dateRegister = puntosTaux.dateRegister!!
+                            birthDay = puntosTaux.birthDay!!
                             email = puntosTaux.email!!
                             puntosTotales = puntosTaux.puntosTotales!! //se guarda en la variable global
 
@@ -117,7 +117,7 @@ class EjecutadorRutina : AppCompatActivity() {
                 db.collection("users").document(usuario).set(
                     hashMapOf(
                         "Name" to Name, //se colocan los datos a mandar
-                        "dateRegister" to dateRegister,
+                        "birthDay" to birthDay,
                         "email" to email,
                         "puntosTotales" to puntosTotales
                     )
