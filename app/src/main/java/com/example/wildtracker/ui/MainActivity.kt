@@ -1,8 +1,12 @@
 package com.example.wildtracker.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.text.method.TextKeyListener.clear
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -15,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
+import com.example.wildtracker.LoginActivity.Companion.starts
 import com.example.wildtracker.LoginActivity.Companion.useremail
 import com.example.wildtracker.R
 import com.example.wildtracker.musica.mPlayerActivity
@@ -22,9 +27,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.core.RepoManager.clear
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.android.synthetic.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -38,6 +45,8 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer
 import org.achartengine.renderer.XYSeriesRenderer
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.system.exitProcess
+
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
@@ -320,20 +329,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
         googleSignInClient.signOut()
         //Cierra sesion y manda devuelta al login
-        startActivity(Intent(this, LoginActivity::class.java))
+        deleteAppData()
     }
-
+    private fun deleteAppData() {
+        try {
+            // clearing app data
+            val packageName = applicationContext.packageName
+            val runtime = Runtime.getRuntime()
+            runtime.exec("pm clear $packageName")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_perfil -> callPerfilActivity()
             R.id.nav_plantillas -> callPlantillasActivity()
             R.id.nav_ejercicio -> callEjercicioActivity()
             R.id.nav_maps -> callMapsActivity()
-            R.id.nav_seguimiento -> callSeguimientoActivity()
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            R.id.nav_metas -> callMetasActivity()
             R.id.nav_musica ->callMusica()
 
         }

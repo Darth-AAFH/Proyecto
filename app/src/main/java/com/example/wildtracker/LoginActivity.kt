@@ -6,6 +6,7 @@ package com.example.wildtracker
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -27,11 +28,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.properties.Delegates
 import kotlin.random.Random
+import kotlin.system.exitProcess
 
 
 class LoginActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityLoginBinding
     private lateinit var firebaseAuth: FirebaseAuth
+    private val db = FirebaseFirestore.getInstance()
 
 
     companion object {
@@ -39,9 +43,10 @@ class LoginActivity : AppCompatActivity() {
         lateinit var providerSession: String
         private const val RC_SIGN_IN = 100
         private const val TAG = "GOOGLE_SIGN_IN_TAG"
+        var starts: Boolean = false
 
     }
-
+     var nombreCuenta : String? = ""
     private var email by Delegates.notNull<String>()
     private var password by Delegates.notNull<String>()
     //private var ConfirmPassword by Delegates.notNull<String>()
@@ -55,6 +60,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(R.layout.activity_login)
@@ -72,7 +78,6 @@ class LoginActivity : AppCompatActivity() {
         etEmail.doOnTextChanged { text, start, before, count -> manageButtonLogin() }
         etPassword.doOnTextChanged { text, start, before, count -> manageButtonLogin() }
         // etconfirmPassword.doOnTextChanged { text, start, before, count ->  manageButtonLogin() }
-
 
 
 
@@ -99,13 +104,34 @@ class LoginActivity : AppCompatActivity() {
             try {
                 val accountTask = GoogleSignIn.getSignedInAccountFromIntent(data)
                 val account = accountTask.getResult(ApiException::class.java)
+                val dateRegister = SimpleDateFormat("dd/MM/yyyy").format(Date())
+                val dbRegister = FirebaseFirestore.getInstance()
 
                 if (account != null) {
                     email = account.email.toString()
                     val credential = GoogleAuthProvider.getCredential(account.idToken, null)
                     //usar el proveedor para las auth de firebaseUser
                     mAuth.signInWithCredential(credential).addOnCompleteListener {
-                        if (it.isSuccessful) goHome(email, "Google")
+                        if (it.isSuccessful) {
+                            val firebaseUser = firebaseAuth.currentUser
+                            if (firebaseUser != null) {
+                                //user is LoggedIn
+                                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                                finish()
+                            } else {
+                                dbRegister.collection("users").document(email).set(
+                                    hashMapOf(
+
+                                        "Name" to "U" + (System.nanoTime()),
+                                        "email" to email,
+                                        "dateRegister" to dateRegister
+                                    )
+                                )
+
+                                goHome(email, "email")
+                                goHome(email, "Google")
+                            }
+                        }
                         else Toast.makeText(
                             this,
                             "Error en la conexión con Google",
@@ -150,17 +176,20 @@ class LoginActivity : AppCompatActivity() {
             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
             finish()
         }
+
     }
 
 
     public override fun onStart() {
         super.onStart()
+
         //Comprueba si hay usuario con sesión iniciada
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser != null) goHome(currentUser.email.toString(), currentUser.providerId)
 
     }
     public override fun onResume() {
+
         super.onResume()
         //Comprueba si hay usuario con sesión iniciada
         val currentUser = FirebaseAuth.getInstance().currentUser
@@ -215,6 +244,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginUser() {
+
         email = etEmail.text.toString()
         password = etPassword.text.toString()
         //  ConfirmPassword = etconfirmPassword.text.toString()
@@ -241,32 +271,35 @@ class LoginActivity : AppCompatActivity() {
 
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+
     }
 
     @SuppressLint("SimpleDateFormat")
     private fun register() {
-    var random = Random.nextInt(1000,99999)
-        email = etEmail.text.toString()
-        password = etPassword.text.toString()
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
 
-                    val dateRegister = SimpleDateFormat("dd/MM/yyyy").format(Date())
-                    val dbRegister = FirebaseFirestore.getInstance()
+            var random = Random.nextInt(1000, 99999)
+            email = etEmail.text.toString()
+            password = etPassword.text.toString()
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener {
+                    if (it.isSuccessful) {
 
-                    dbRegister.collection("users").document(email).set(
-                        hashMapOf(
+                        val dateRegister = SimpleDateFormat("dd/MM/yyyy").format(Date())
+                        val dbRegister = FirebaseFirestore.getInstance()
 
-                            "Name" to "U"+(System.nanoTime()),
-                            "email" to email,
-                            "dateRegister" to dateRegister
+                        dbRegister.collection("users").document(email).set(
+                            hashMapOf(
+
+                                "Name" to "U" + (System.nanoTime()),
+                                "email" to email,
+                                "dateRegister" to dateRegister
+                            )
                         )
-                    )
+                        goHome(email, "email")
+                    } else Toast.makeText(this, "Error, algo ha ido mal :(", Toast.LENGTH_SHORT)
+                        .show()
+                }
 
-                    goHome(email, "email")
-                } else Toast.makeText(this, "Error, algo ha ido mal :(", Toast.LENGTH_SHORT).show()
-            }
     }
 
     fun goTerms(v: View){

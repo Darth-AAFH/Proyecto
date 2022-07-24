@@ -29,10 +29,7 @@
             android:id="@+id/nav_maps"
             android:icon="@drawable/maps_icon"
             android:title="@string/menu_maps" />
-        <item
-            android:id="@+id/nav_seguimiento"
-            android:icon="@drawable/plantillas_icon"
-            android:title="@string/menu_seguimiento" />
+
 
         <item
             android:id="@+id/nav_ranking"
@@ -42,10 +39,7 @@
             android:id="@+id/nav_chat"
             android:icon="@drawable/chat_icon"
             android:title="@string/menu_chat" />
-        <item
-            android:id="@+id/nav_metas"
-            android:icon="@drawable/medalgold"
-            android:title="Metas" />
+
         <item
             android:id="@+id/nav_musica"
             android:title="Musica"

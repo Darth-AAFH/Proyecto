@@ -66,11 +66,11 @@ class RecordActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             R.id.nav_plantillas -> callPlantillasActivity()
             R.id.nav_ejercicio -> callEjercicioActivity()
             R.id.nav_maps -> callMapsActivity()
-            R.id.nav_seguimiento -> callSeguimientoActivity()
+            
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            R.id.nav_metas -> callMetasActivity()
+            
             R.id.nav_musica ->callMusica()
 
         }
@@ -129,16 +129,29 @@ class RecordActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         startActivity(intent)
     }
 
-    private fun signOut() {
+    fun signOut() {
+
         LoginActivity.useremail = ""
         FirebaseAuth.getInstance().signOut()
+
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("727481893022-adct709pnvj5tlihh532i6gjgm26thh6.apps.googleusercontent.com")
             .requestEmail()
             .build()
+
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
         googleSignInClient.signOut()
         //Cierra sesion y manda devuelta al login
-        startActivity(Intent(this, LoginActivity::class.java))
+        deleteAppData()
+    }
+    private fun deleteAppData() {
+        try {
+            // clearing app data
+            val packageName = applicationContext.packageName
+            val runtime = Runtime.getRuntime()
+            runtime.exec("pm clear $packageName")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
