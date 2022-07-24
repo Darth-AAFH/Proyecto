@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.os.Handler
 import android.provider.MediaStore
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -17,9 +16,15 @@ import androidx.core.content.FileProvider
 import com.example.wildtracker.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.io.File
-import java.lang.Thread.sleep
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
@@ -73,6 +78,52 @@ class EjecutadorRutina : AppCompatActivity() {
         listado = datos
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
         listViewEjerciciosPorHacer!!.setAdapter(adapter) //La rutina se adapta en la text view
+    }
+
+    var Name = ""; var dateRegister = ""; var email = ""
+    var puntosTotales: Int = 0
+    data class puntosTotalesClass (
+        val Name: String? = "",
+        val dateRegister: String? = "",
+        val email: String = "",
+        val puntosTotales: Int? = 0
+    )
+    private fun puntosTotalesFun(bool: Boolean) {
+        if(bool) {
+            var puntosTaux: puntosTotalesClass
+            MainActivity.user?.let { usuario -> //para cargar los puntos totales del usuario
+                db.collection("users").document(usuario).get().addOnSuccessListener {
+                    GlobalScope.launch(Dispatchers.IO) {
+                        val puntosTDocument = Firebase.firestore
+                            .collection("users").document(usuario) //se toma la ruta del documento del usuario
+
+                        puntosTaux = puntosTDocument.get().await().toObject(puntosTotalesClass::class.java)!! //se toma puntosTotales
+
+                        withContext(Dispatchers.Main) {
+                            Name = puntosTaux.Name!!
+                            dateRegister = puntosTaux.dateRegister!!
+                            email = puntosTaux.email!!
+                            puntosTotales = puntosTaux.puntosTotales!! //se guarda en la variable global
+
+                            if (puntosTotales == null) { //en caso de que sea null se guarda como 0
+                                puntosTotales = 0
+                            }
+                        }
+                    }
+                }
+            }
+        } else{
+            MainActivity.user?.let { usuario -> //se abre la base de datos para subir los datos
+                db.collection("users").document(usuario).set(
+                    hashMapOf(
+                        "Name" to Name, //se colocan los datos a mandar
+                        "dateRegister" to dateRegister,
+                        "email" to email,
+                        "puntosTotales" to puntosTotales
+                    )
+                )
+            }
+        }
     }
 
     @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables", "SimpleDateFormat")
@@ -150,6 +201,8 @@ class EjecutadorRutina : AppCompatActivity() {
         val arreglo: Array<String?>
         arreglo = ejercicios.split(",").toTypedArray() //toma los ids de los ejercicios
         CargarRutina(arreglo) //carga la rutina
+
+        puntosTotalesFun(true)
 
         Toast.makeText(this, "Presione > para iniciar", Toast.LENGTH_SHORT).show()
         timer = Timer()
@@ -459,6 +512,8 @@ class EjecutadorRutina : AppCompatActivity() {
     @SuppressLint("SimpleDateFormat")
     private fun mandarPuntos(puntos: Int, horasF: Int, minutosF: Int, segundosF: Int){ //F de finales
         puntosE += puntos
+        puntosTotales += puntos
+        puntosTotalesFun(false)
 
         val sdf = SimpleDateFormat("dd-MM-yyyy")
         val currentDate = sdf.format(Date())

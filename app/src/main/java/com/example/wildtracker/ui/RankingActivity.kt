@@ -28,7 +28,30 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     private fun CargarRanking () {
         MainActivity.listaRanking.sort()
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRanking)
+
+        //val array = ArrayList<String>()
+        val array = ArrayList<String>()
+
+        //array.add("3 a"); array.add("6 b"); array.add("1 c"); array.add("0 d"); array.add("10 e"); array.add("25 f")
+        //array.add("23 g"); array.add("2 h"); array.add("2 i"); array.add("5 j"); array.add("7 k")
+
+        //array.sort()
+
+        //for(item in array.size..array[0]) {
+           //array2.add(item)
+        //}
+
+        var i = MainActivity.listaRanking.size - 1
+        while (i != -1) {
+            array.add(MainActivity.listaRanking[i])
+
+            i--
+        }
+
+        //Toast.makeText(applicationContext, "array[0] = "+array[0], Toast.LENGTH_SHORT).show()
+        //Toast.makeText(applicationContext, "array size = "+array.size, Toast.LENGTH_SHORT).show()
+
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array)
         listViewRanking!!.setAdapter(adapter) //La lista se adapta en la text view
     }
 
