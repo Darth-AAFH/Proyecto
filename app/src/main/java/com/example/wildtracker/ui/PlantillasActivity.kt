@@ -111,53 +111,60 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
     private fun validadorPredeterDB(){
         if(ejerciciosPredeterminados) {
-            var id = 1; var nombre = "Sentadillas"; var tipo = "Piernas"; var peso = true
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
-            id = 2; nombre = "Saltos de tijera"; tipo = "Piernas"; peso = false
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
-            id = 3; nombre = "Elevación de talones"; tipo = "Piernas"; peso = false
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
+            var id = 1; var nombre = "Sentadillas"; var tipo = "Piernas"; var peso = true; var url =".youtube.com/embed/VRKdOsad3HQ"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 2; nombre = "Saltos de tijera"; tipo = "Piernas"; peso = false; url=".youtube.com/embed/95j1mH27eXc"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 3; nombre = "Elevación de talones"; tipo = "Piernas"; peso = false; url=".youtube.com/embed/igRyr2jWRTs"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
 
-            id = 4; nombre = "Abdominales"; tipo = "Abdomen"; peso = false
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
-            id = 5; nombre = "Plancha"; tipo = "Abdomen"; peso = false
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
-            id = 6; nombre = "Escaladores"; tipo = "Abdomen"; peso = false
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
+            id = 4; nombre = "Abdominales"; tipo = "Abdomen"; peso = false; url=".youtube.com/embed/OsUz898onTE"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 5; nombre = "Plancha"; tipo = "Abdomen"; peso = false; url=".youtube.com/embed/OuFDY0fwlvk"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 6; nombre = "Escaladores"; tipo = "Abdomen"; peso = false; url=".youtube.com/embed/lD_gfTofg4A"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
 
-            id = 7; nombre = "Dominadas"; tipo = "Pecho"; peso = false
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
-            id = 8; nombre = "Press de pecho"; tipo = "Pecho"; peso = true
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
+            id = 7; nombre = "Dominadas"; tipo = "Pecho"; peso = false; url=".youtube.com/embed/A2thchjoWkI"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 8; nombre = "Press de pecho"; tipo = "Pecho"; peso = true; url=".youtube.com/embed/NfJqRwAlZY8"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
 
-            id = 9; nombre = "Peso muerto"; tipo = "Espalda"; peso = true
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
+            id = 9; nombre = "Peso muerto"; tipo = "Espalda"; peso = true; url=".youtube.com/embed/gBY5Se4apXc"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
 
-            id = 10; nombre = "Punches"; tipo = "Brazos"; peso = false
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
-            id = 11; nombre = "Dips de tríceps"; tipo = "Brazos"; peso = false
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
+            id = 10; nombre = "Punches"; tipo = "Brazos"; peso = false; url=".youtube.com/embed/b0ZeY-j5T1w"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 11; nombre = "Dips de tríceps"; tipo = "Brazos"; peso = false; url="youtube.com/embed/EtPHEAOIxUU"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
 
-            id = 12; nombre = "Press de hombros"; tipo = "Hombros"; peso = true
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
-            id = 13; nombre = "Elevaciones laterales"; tipo = "Hombros"; peso = true
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
+            id = 12; nombre = "Press de hombros"; tipo = "Hombros"; peso = true; url=".youtube.com/embed/UFKqIoAbUBg?start=9"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 13; nombre = "Elevaciones laterales"; tipo = "Hombros"; peso = true; url=".youtube.com/embed/dT6Q3NHtSjw"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
 
-            id = 14; nombre = "Flexiones"; tipo = "Otro"; peso = false
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
-            id = 15; nombre = "Burpees"; tipo = "Otro"; peso = false
-            ejerciciosPredeterDB(id, nombre, tipo, peso)
+            id = 14; nombre = "Flexiones"; tipo = "Otro"; peso = false; url=".youtube.com/embed/nOFk-PYAvwI"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 15; nombre = "Burpees"; tipo = "Otro"; peso = false; url=".youtube.com/embed/auBLPXO8Fww"
+            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
         }
     }
 
-    private fun ejerciciosPredeterDB(Id: Int, Nombre: String, Tipo: String, Peso: Boolean){
+    private fun ejerciciosPredeterDB(
+        Id: Int,
+        Nombre: String,
+        Tipo: String,
+        Peso: Boolean,
+        url: String
+    ){
         MainActivity.user?.let{ usuario ->
             db.collection("users").document(usuario).collection("ejercicios").document(Id.toString()).set(
                 hashMapOf(
                     "id" to Id,
                     "nombre" to Nombre,
                     "tipo" to Tipo,
-                    "peso" to Peso
+                    "peso" to Peso,
+                "url" to url
                 )
             )
         }

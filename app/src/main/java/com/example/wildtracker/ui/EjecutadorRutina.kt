@@ -137,6 +137,7 @@ class EjecutadorRutina : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
         youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www" +
                 ".youtube.com/embed/VRKdOsad3HQ\" frameborder=\"0\" allowfullscreen></iframe>"))
 
