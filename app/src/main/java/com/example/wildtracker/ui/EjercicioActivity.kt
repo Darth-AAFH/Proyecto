@@ -37,7 +37,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private val db = FirebaseFirestore.getInstance()
     var num = 0; var nombre  = ""; var xp: Int? = null
 
-    private fun CargarListas(){
+    private fun CargarListas(){ //ayuda a organizar las listas de rutinas y los ejercicios
         if(MainActivity.validadorAcomodo){ //esto debe ir en plantillas y ejercicios
             MainActivity.listaRutinas = MainActivity.listaRutinas1
             MainActivity.listaRutinas.addAll(MainActivity.listaRutinas2)

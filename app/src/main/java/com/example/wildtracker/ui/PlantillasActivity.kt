@@ -30,7 +30,7 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
     private val db = FirebaseFirestore.getInstance()
     var ejerciciosPredeterminados = false
 
-    private fun CargarListas(){
+    private fun CargarListas(){ //ayuda a organizar las listas de rutinas y los ejercicios
         if(MainActivity.validadorAcomodo){ //esto debe ir en plantillas y ejercicios
             MainActivity.listaRutinas = MainActivity.listaRutinas1
             MainActivity.listaRutinas.addAll(MainActivity.listaRutinas2)

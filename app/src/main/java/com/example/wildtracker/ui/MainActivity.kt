@@ -1,25 +1,15 @@
 package com.example.wildtracker.ui
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.text.method.TextKeyListener.clear
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.wildtracker.LoginActivity
-import com.example.wildtracker.LoginActivity.Companion.starts
 import com.example.wildtracker.LoginActivity.Companion.useremail
 import com.example.wildtracker.R
 import com.example.wildtracker.musica.mPlayerActivity
@@ -27,33 +17,19 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.core.RepoManager.clear
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import org.achartengine.ChartFactory
 import org.achartengine.GraphicalView
 import org.achartengine.model.XYMultipleSeriesDataset
 import org.achartengine.model.XYSeries
 import org.achartengine.renderer.XYMultipleSeriesRenderer
 import org.achartengine.renderer.XYSeriesRenderer
-import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.system.exitProcess
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
 
-    private val db = FirebaseFirestore.getInstance()
-
-    var buttonPruebaBD: Button?= null ////////////////////////
+    var listViewInsignias: ListView?= null
 
     private var grafica: GraphicalView? = null
     private var datosGrafica: XYSeries? = null
@@ -61,29 +37,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private val renderGrafica = XYMultipleSeriesRenderer()
     private var seriesRendererGrafica: XYSeriesRenderer? = null
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    private fun insigniasRutinas() {
-        var nivel: Int
-        var nombre: String
-        var tiempo: Int
-
-        user?.let { usuario -> //para cargar las rutinas de manera ordenada (de mayor a menor nivel y poniendole las insignias)
-            db.collection("users").document(usuario).collection("rutinas") //abre la base de datos
-                .get().addOnSuccessListener {
-                    for (rutina in it) { //para cada rutina
-
-                        nivel = (rutina.get("nivel") as Long).toInt()
-                        nombre = rutina.get("nombre") as String
-                        tiempo = (rutina.get("minutos") as Long).toInt()
-                        tiempo += (rutina.get("horas") as Long).toInt() / 60
-                        tiempo += (rutina.get("segundos") as Long).toInt() * 60
-
-                        var cadena = "Nivel: " + nivel + " | " + nombre + " | Tiempo: " + tiempo
-                    }
-                }
-        }
-    }
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     companion object{
         val auth: String? = FirebaseAuth.getInstance().currentUser?.email
@@ -97,7 +50,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var validadorListas = true
         //
         var lunes: Double = 0.0; var martes: Double = 0.0; var miercoles: Double = 0.0; var jueves : Double = 0.0
-        var viernes: Double = 0.0; var sabado: Double = 0.0; var domingo: Double = 0.0;
+        var viernes: Double = 0.0; var sabado: Double = 0.0; var domingo: Double = 0.0
         //
 
         var listaRutinas = ArrayList<String>()
@@ -106,20 +59,76 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val listaRanking = ArrayList<String>()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+    private fun CargarListas(){
+        if(validadorAcomodo){ //ayuda a organizar las listas de rutinas y los ejercicios
+            listaRutinas = listaRutinas1
+            listaRutinas.addAll(listaRutinas2)
 
-        initToolbar()
-        initNavigationView()
+            listaEjercicios = listaEjercicios1
+            listaEjercicios.addAll(listaEjercicios2)
 
-        iniciarGrafica()
-
-        buttonPruebaBD = findViewById(R.id.buttonPruebaBD)//////////////////////
-
-        buttonPruebaBD!!.setOnClickListener{////////////////////////////////////
-            insigniasRutinas()
+            validadorAcomodo = false
         }
+    }
+
+    private fun insigniasRutinas() {
+        var listaRutinasInsignias = listOf<insignias>()
+
+        for (j in listaRutinas) { //para todas las rutinas
+            val nombre = j.split(" | ").toTypedArray()[1] //toma el nombre
+            val nivelAux = j.split("Nivel:").toTypedArray()[1] //toma el nombre
+            val nivel = (nivelAux.split(" ").toTypedArray()[1]).toInt()
+
+            var rutina: insignias
+
+            if(nivel == 100){
+                rutina = insignias(nombre, nivel, R.drawable.insignia11)
+            }else{
+                if(nivel > 90){
+                    rutina = insignias(nombre, nivel, R.drawable.insignia10)
+                }else{
+                    if(nivel > 80){
+                        rutina = insignias(nombre, nivel, R.drawable.insignia9)
+                    }else{
+                        if(nivel > 70){
+                            rutina = insignias(nombre, nivel, R.drawable.insignia8)
+                        }else{
+                            if(nivel > 60){
+                                rutina = insignias(nombre, nivel, R.drawable.insignia7)
+                            }else{
+                                if(nivel > 50){
+                                    rutina = insignias(nombre, nivel, R.drawable.insignia6)
+                                }else{
+                                    if(nivel > 40){
+                                        rutina = insignias(nombre, nivel, R.drawable.insignia5)
+                                    }else{
+                                        if(nivel > 30){
+                                            rutina = insignias(nombre, nivel, R.drawable.insignia4)
+                                        }else{
+                                            if(nivel > 20){
+                                                rutina = insignias(nombre, nivel, R.drawable.insignia3)
+                                            }else{
+                                                if(nivel > 10){
+                                                    rutina = insignias(nombre, nivel, R.drawable.insignia2)
+                                                }else{
+                                                    rutina = insignias(nombre, nivel, R.drawable.insignia1)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            val listaRutinasAux3 = listOf(rutina)
+            listaRutinasInsignias += listaRutinasAux3
+        }
+
+        val adapter = insigniaAdapter(this, listaRutinasInsignias)
+        listViewInsignias!!.adapter = adapter
     }
 
     private fun cargarGrafica() {
@@ -148,7 +157,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        initToolbar()
+        initNavigationView()
+
+        listViewInsignias = findViewById(R.id.listViewInsignias)
+
+        iniciarGrafica()
+        CargarListas()
+        insigniasRutinas()
+    }
+
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         setSupportActionBar(toolbar)
