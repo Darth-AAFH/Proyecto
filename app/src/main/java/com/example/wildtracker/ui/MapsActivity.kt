@@ -185,6 +185,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         * para asi poder mostrarlos en el mapa       * */
         db.collection("locations").get().addOnSuccessListener {
             var ultimo = it.last().get("ID")
+            try {
+
+
             for (document in it) { // Entra a las propiedades de cada "locations"
                 val lat = document.get("latitud") as Double
                 val lng = document.get("longitud") as Double
@@ -225,10 +228,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         db.collection("locations").document("${marker.snippet}").delete()
                         markers.remove(marker)
                     }
+
                 }
+            }
+            }
+            catch (ex:Exception){
 
             }
         }
+
 
     }
 

@@ -13,6 +13,8 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.wildtracker.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,7 +33,8 @@ import kotlin.math.roundToInt
 
 @Suppress("NAME_SHADOWING")
 class EjecutadorRutina : AppCompatActivity() {
-
+    private lateinit var recyclerView: RecyclerView
+    private var youtubeVideos = Vector<youTubeVideos>()
     var textViewActividadEnFoco: TextView?= null; var textViewReloj: TextView?= null
     var buttonParar: Button?= null; var buttonPausar: Button?= null; var buttonSaltar: Button?= null
     var listViewEjerciciosPorHacer: ListView?= null; var buttonSiguiente: Button?= null
@@ -130,6 +133,18 @@ class EjecutadorRutina : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ejecutador_rutina)
+        title = "KotlinApp"
+        recyclerView = findViewById(R.id.recyclerView)
+        recyclerView.setHasFixedSize(true)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www" +
+                ".youtube.com/embed/X7SiuQxhAjg\" frameborder=\"0\" allowfullscreen></iframe>"))
+
+        val videoAdapter = VideoAdapter(youtubeVideos)
+        recyclerView.adapter = videoAdapter
+
+
+
 
         val b = intent.extras //b toma el id de la rutina a trabajar
         if (b != null) {
@@ -600,5 +615,6 @@ class EjecutadorRutina : AppCompatActivity() {
         val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
         startActivity(intent)
     }
+
 
 }
