@@ -63,7 +63,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     for (userIt in it) { //para cada usuario
                         val userEmail = userIt.get("email") as String? //va a tomar el correo
                         val nameDocument = Firebase.firestore.collection("users").document(userEmail.toString()) //la ruta en la base de datos
-                        val user1 = nameDocument.get().await().toObject(MainActivity.userData::class.java) //y se va a traer los datos
+                        val user1 = nameDocument.get().await().toObject(PerfilActivity.userData::class.java) //y se va a traer los datos
 
                         withContext(Dispatchers.Main){
                             if(MainActivity.user == userEmail){ //si es el usuario en uso
