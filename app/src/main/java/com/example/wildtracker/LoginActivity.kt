@@ -6,7 +6,6 @@ package com.example.wildtracker
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -15,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import com.example.wildtracker.databinding.ActivityLoginBinding
-import com.example.wildtracker.ui.MainActivity
 import com.example.wildtracker.ui.PerfilActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -23,20 +21,16 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
-import java.lang.Math.abs
-import java.lang.Math.random
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.properties.Delegates
 import kotlin.random.Random
-import kotlin.system.exitProcess
 
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private lateinit var firebaseAuth: FirebaseAuth
-    private val db = FirebaseFirestore.getInstance()
 
 
     companion object {
@@ -44,10 +38,8 @@ class LoginActivity : AppCompatActivity() {
         lateinit var providerSession: String
         private const val RC_SIGN_IN = 100
         private const val TAG = "GOOGLE_SIGN_IN_TAG"
-        var starts: Boolean = false
 
     }
-     var nombreCuenta : String? = ""
     private var email by Delegates.notNull<String>()
     private var password by Delegates.notNull<String>()
     //private var ConfirmPassword by Delegates.notNull<String>()
@@ -114,7 +106,6 @@ class LoginActivity : AppCompatActivity() {
                     //usar el proveedor para las auth de firebaseUser
                     mAuth.signInWithCredential(credential).addOnCompleteListener {
                         if (it.isSuccessful) {
-                            val firebaseUser = firebaseAuth.currentUser
 
                                 dbRegister.collection("users").document(email).set(
                                     hashMapOf(
