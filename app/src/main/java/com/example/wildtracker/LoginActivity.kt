@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import com.example.wildtracker.databinding.ActivityLoginBinding
 import com.example.wildtracker.ui.MainActivity
+import com.example.wildtracker.ui.PerfilActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -169,7 +170,7 @@ class LoginActivity : AppCompatActivity() {
         val firebaseUser = firebaseAuth.currentUser
         if (firebaseUser != null) {
             //user is LoggedIn
-            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+            startActivity(Intent(this@LoginActivity, PerfilActivity::class.java))
             finish()
         }
 
@@ -265,7 +266,7 @@ class LoginActivity : AppCompatActivity() {
         useremail = email
         providerSession = provider
 
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
 
     }
