@@ -12,6 +12,7 @@ import android.provider.MediaStore
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -133,12 +134,11 @@ class EjecutadorRutina : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ejecutador_rutina)
-        title = "KotlinApp"
+
         recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
         youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www" +
-                ".youtube.com/embed/X7SiuQxhAjg\" frameborder=\"0\" allowfullscreen></iframe>"))
+                ".youtube.com/embed/VRKdOsad3HQ\" frameborder=\"0\" allowfullscreen></iframe>"))
 
         val videoAdapter = VideoAdapter(youtubeVideos)
         recyclerView.adapter = videoAdapter
