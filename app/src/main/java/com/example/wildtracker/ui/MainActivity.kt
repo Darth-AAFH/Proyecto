@@ -129,6 +129,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         val adapter = insigniaAdapter(this, listaRutinasInsignias)
         listViewInsignias!!.adapter = adapter
+
     }
 
     private fun cargarGrafica() {

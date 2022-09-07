@@ -95,6 +95,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         CargarRanking()
 
         listViewRutinas2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+
             num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
             nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
 
