@@ -1,5 +1,6 @@
 package com.example.wildtracker.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -17,15 +18,30 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_metas.*
 
 class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_metas)
-        initToolbar()
-        initNavigationView()
+        //initToolbar()
+        //initNavigationView()
+
+        editTextDate.setOnClickListener{ showDatePickerDialog() }
     }
+
+    private fun showDatePickerDialog() {
+        val datePicker = DatePickerFragment{ day, month, year -> onDateSelected(day, month, year) }
+        datePicker.show(supportFragmentManager, "datePicker")
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun onDateSelected(day: Int, month: Int, year: Int) {
+        editTextDate.setText("Fecha de finalización seleccionada: $day del mes $month de $year")
+    }
+
+    /////////////////////////////////////////////////////
 
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
@@ -123,6 +139,7 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         val intent = Intent(this, RecordActivity::class.java)
         startActivity(intent)
     }
+
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
@@ -153,4 +170,5 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             e.printStackTrace()
         }
     }
+
 }

@@ -68,7 +68,7 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         CargarListas()
 
         buttonAdd!!.setOnClickListener{
-            if(validadorMostar == 0) {
+            /*if(validadorMostar == 0) {
                 buttonRutina!!.setVisibility(View.VISIBLE); buttonRutina!!.setEnabled(true)
                 buttonEjercicio!!.setVisibility(View.VISIBLE); buttonEjercicio!!.setEnabled(true)
                 validadorMostar = 1
@@ -77,7 +77,11 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 buttonEjercicio!!.setVisibility(View.INVISIBLE); buttonEjercicio!!.setEnabled(false)
                 validadorMostar = 0
             }
+             */
             validadorPredeterDB()
+
+            val intent = Intent(this, MetasActivity::class.java)
+            startActivity(intent)
         }
 
         buttonRutina!!.setOnClickListener{
