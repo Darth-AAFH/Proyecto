@@ -278,6 +278,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
             R.id.nav_musica ->callMusica()
+            R.id.nav_metas -> callMetasActivity()
 
         }
 
@@ -327,7 +328,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun callMetasActivity() {
-        val intent = Intent(this, RecordActivity::class.java)
+        val intent = Intent(this, MetasActivity::class.java)
         startActivity(intent)
     }
     private fun callMusica() {

@@ -81,7 +81,6 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             R.id.nav_plantillas -> callPlantillasActivity()
             R.id.nav_ejercicio -> callEjercicioActivity()
             R.id.nav_maps -> callMapsActivity()
-            
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
@@ -132,11 +131,6 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
     private fun callChatActivity() {
         val intent = Intent(this, ChatActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun callMetasActivity() {
-        val intent = Intent(this, RecordActivity::class.java)
         startActivity(intent)
     }
 

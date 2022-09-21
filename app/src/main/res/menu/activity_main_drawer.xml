@@ -26,6 +26,10 @@
             android:icon="@drawable/excersice_icon"
             android:title="@string/menu_ejercicio" />
         <item
+            android:id="@+id/nav_metas"
+            android:icon="@drawable/ic_calendar"
+            android:title="@string/menu_metas" />
+        <item
             android:id="@+id/nav_maps"
             android:icon="@drawable/maps_icon"
             android:title="@string/menu_maps" />

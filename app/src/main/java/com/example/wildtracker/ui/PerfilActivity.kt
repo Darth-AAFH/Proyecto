@@ -118,11 +118,10 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             R.id.nav_plantillas -> callPlantillasActivity()
             R.id.nav_ejercicio -> callEjercicioActivity()
             R.id.nav_maps -> callMapsActivity()
-            
+            R.id.nav_metas -> callMetasActivity()
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            
             R.id.nav_musica ->callMusica()
 
         }
@@ -419,15 +418,11 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     }
 
     private fun callMetasActivity() {
-        val intent = Intent(this, RecordActivity::class.java)
+        val intent = Intent(this, MetasActivity::class.java)
         startActivity(intent)
     }
 
     private fun setup(){
-
-
-
-
 
         val EditProfileDataButton = findViewById<Button>(R.id.EditProfileDataButton)
         val recoverProfileDataButton = findViewById<Button>(R.id.recoverProfileDataButton)

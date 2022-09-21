@@ -65,7 +65,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             R.id.nav_plantillas -> callPlantillasActivity()
             R.id.nav_ejercicio -> callEjercicioActivity()
             R.id.nav_maps -> callMapsActivity()
-            
+            R.id.nav_maps -> callMetasActivity()
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()

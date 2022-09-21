@@ -16,7 +16,15 @@
         <entry key="..\:/Users/Santi Asaf/AndroidStudioProjects/Proyecto/app/src/main/res/layout/activity_ranking.xml" value="0.33" />
         <entry key="..\:/Users/Santi Asaf/AndroidStudioProjects/Proyecto/app/src/main/res/layout/activity_seguimiento.xml" value="0.21145833333333333" />
         <entry key="..\:/Users/Santi Asaf/AndroidStudioProjects/Proyecto/app/src/main/res/layout/activity_ver_ejercicios.xml" value="0.25" />
+        <entry key="..\:/Users/Usuario/StudioProjects/Proyecto/app/src/main/res/layout/activity_calendario.xml" value="0.358695652173913" />
         <entry key="..\:/Users/Usuario/StudioProjects/Proyecto/app/src/main/res/layout/activity_main.xml" value="0.3625" />
+        <entry key="..\:/Users/Usuario/StudioProjects/Proyecto/app/src/main/res/layout/activity_metas.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/Usuario/StudioProjects/Proyecto/app/src/main/res/layout/activity_record.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/Usuario/StudioProjects/Proyecto/app/src/main/res/layout/activity_seguimiento.xml" value="0.2677083333333333" />
+        <entry key="..\:/Users/Usuario/StudioProjects/Proyecto/app/src/main/res/menu/activity_main_drawer.xml" value="0.3625" />
+        <entry key="..\:/Users/Usuario/StudioProjects/Proyecto/app/src/main/res/menu/dropdown_menu.xml" value="0.3625" />
+        <entry key="..\:/Users/Usuario/StudioProjects/Proyecto/app/src/main/res/menu/main_menu.xml" value="0.3625" />
+        <entry key="..\:/Users/Usuario/StudioProjects/Proyecto/app/src/main/res/menu/navigation.xml" value="0.3625" />
         <entry key="..\:/Users/aalex/AppData/Local/Android/Sdk/platforms/android-32/data/res/layout/simple_list_item_1.xml" value="0.1546875" />
         <entry key="..\:/Users/aalex/StudioProjects/Proyecto/app/src/main/res/drawable-hdpi/edit_text_shadow.xml" value="0.168" />
         <entry key="..\:/Users/aalex/StudioProjects/Proyecto/app/src/main/res/drawable-hdpi/outline_add_photo_alternate_24.xml" value="0.168" />
