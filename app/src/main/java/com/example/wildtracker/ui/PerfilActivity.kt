@@ -49,6 +49,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     companion object{
         lateinit var usernameDb : String
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_perfil)
@@ -56,11 +57,27 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         initNavigationView()
         setup()
 
+        ValidadorNombres()
+
         CargarTiempos()
         CargarRanking()
 
         CargarEjercicios()
         CargarRutinas()
+    }
+
+    val listaNombres = ArrayList<String>()
+
+    private fun ValidadorNombres(){
+        var cadena: String
+        MainActivity.user?.let { usuario -> //para cargar el ranking
+            db.collection("users").get().addOnSuccessListener {
+                for (user in it) { //para cada usuario
+                    cadena = user.get("Name").toString()
+                    listaNombres.add(cadena)
+                }
+            }
+        }
     }
 
     private fun initToolbar() {
@@ -161,8 +178,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 }
 
                 if((mesAux - 1) < 10){//fallo para cambio de año
-                    val mesAux2 = (mesHoy.toInt() - 1).toString()
-                    mesHoy = "0" + mesAux2
+                    mesHoy = "0" + (mesHoy.toInt() - 1).toString()
                 }else{
                     mesHoy = (mesHoy.toInt() - 1).toString()
                 }
@@ -503,20 +519,34 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
 
         saveProfileButton.setOnClickListener{
-            MainActivity.user?.let { usuario ->
-                db.collection("users").document(usuario).set(
-                    hashMapOf( "birthDay"  to  findViewById<EditText>(R.id.Perfil_birthday).text.toString(),
-                        "email" to findViewById<EditText>(R.id.Perfil_mail).text.toString(),
-                        "Name" to findViewById<EditText>(R.id.Perfil_name).text.toString(),
-                    )
-                )
+            var Name = findViewById<EditText>(R.id.Perfil_name).text.toString()
+            var NombreDisponible: Boolean = true
+
+            for(item in listaNombres){
+                if (Name == item){
+                    NombreDisponible = false
+                }
             }
+
+            if(NombreDisponible) {
+                MainActivity.user?.let { usuario ->
+                    db.collection("users").document(usuario).set(
+                        hashMapOf(
+                            "birthDay" to findViewById<EditText>(R.id.Perfil_birthday).text.toString(),
+                            "email" to findViewById<EditText>(R.id.Perfil_mail).text.toString(),
+                            "Name" to findViewById<EditText>(R.id.Perfil_name).text.toString(),
+                        )
+                    )
+                }
+            }else {
+                Toast.makeText(this, "Nombre de usuario no disponible", Toast.LENGTH_SHORT).show()
+            }
+
             saveProfileButton.isVisible = false
             edBirthDay.isEnabled = false
             edEmail.isEnabled = false
             edName.isEnabled = false
             EditProfileDataButton.isVisible = true
-
         }
 
         EditProfileDataButton.setOnClickListener {
