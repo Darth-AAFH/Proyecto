@@ -85,7 +85,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCl2rT3RiBkDBFRunLs5ucKfVOjCyPNnKU" />
+            android:value="AIzaSyDLFbigjJ6jKaNHQZG5jiPhLBJzyD8Utt4" />
 
         <activity
             android:name=".TermsActivity"

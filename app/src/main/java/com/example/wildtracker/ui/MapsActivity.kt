@@ -2,7 +2,9 @@ package com.example.wildtracker.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -17,8 +19,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.green
-import androidx.core.graphics.red
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
@@ -39,6 +39,8 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.internal.Sleeper
+import kotlinx.coroutines.delay
 import com.google.android.gms.maps.model.LatLng as LatLng1
 
 
@@ -164,15 +166,101 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
      *
      * @param map Instancia de un mapa de Google
      */
+
+     fun alertScrollView(markerToDelete: Marker, snippet: String?) {
+        val progresDialog = ProgressDialog(this)
+        progresDialog.setMessage("Cargando Imagen")
+        progresDialog.setCancelable(false)
+        progresDialog.show()
+
+
+
+        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val myScrollView: View = inflater.inflate(R.layout.maps_place_info, null, false)
+
+        val tv = myScrollView
+            .findViewById<View>(R.id.textViewWithScroll) as TextView
+
+        // Initializing a blank textview so that we can just append a text later
+        tv.text = ""
+        var descripcion = " "
+
+        for (x in 0..10) {
+            if (snippet != null) {
+
+                db.collection("locations").document(snippet).collection("Comentarios").document(x.toString()).get().addOnSuccessListener{
+                    try {
+
+                       var descripcion = it.get("Descripcion")
+                    Toast.makeText(this,descripcion.toString(),Toast.LENGTH_LONG).show()
+                    }
+                    catch (e:Exception){
+
+                    }
+                    if(progresDialog.isShowing) {
+                        Thread.sleep(1000)  // wait for 1 second
+                        progresDialog.dismiss()
+                    }
+
+                    tv.append("Usuario X:\n")
+                    tv.append("${descripcion}\n")
+                    tv.append("Descripcion\n")
+                    tv.append("${descripcion}\n")
+                    tv.append("Abajo\n")
+
+
+
+                }
+            }
+
+        }
+        AlertDialog.Builder(this).setView(myScrollView)
+            .setTitle("Informacion del lugar")
+            .setPositiveButton(
+                "OK"
+            ) { dialog, id -> dialog.cancel() }.show()
+
+            Toast.makeText(this,snippet,Toast.LENGTH_LONG).show()
+        if (snippet != null) {
+
+
+        }
+
+            /*try {
+                var ultimo = it.last().get("ID")
+                for (document in it) { // Entra a las propiedades de cada "locations"
+                    val lat = document.get("latitud") as Double
+                    val lng = document.get("longitud") as Double
+                    val latLng: LatLng1 = LatLng1(lat, lng)
+                    val placeType = document.get("tipo") as String
+                    val contadorAñadido = document.get("contador añadir") as Long
+                    val contadorEliminar = document.get("contador eliminar") as Long
+        */
+
+
+
+    }
+
+
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         map.setOnMapLongClickListener { latLng ->
-            showAlertAddDialog(latLng)
+            AlertaMap(latLng)
         }
         map.setOnInfoWindowLongClickListener { markerToDelete ->
-
-            showAlertDeleteDialog(markerToDelete,markerToDelete.snippet )
+            AlertaModificarMapa(markerToDelete,markerToDelete.snippet )
         }
+        map.setOnInfoWindowClickListener {
+
+             markerToDelete ->
+            alertScrollView(markerToDelete,markerToDelete.snippet )
+
+        }
+
+
+
+
+
        /* map.setOnMarkerClickListener {
             askForAddOrDelete(markers.snippet)
         }*/
@@ -244,7 +332,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
      *    No || ?
      * 2. Para verificar que se desea añadir
      */
-    private fun showAlertAddDialog(latLng: LatLng1) {
+    private fun AlertaMap(latLng: LatLng1) {
         //Inicializa el primer AlertDialog
         builder = AlertDialog.Builder(this)
         val dialogBuilder = AlertDialog.Builder(this)
@@ -313,7 +401,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 btCancell.setOnClickListener { alertDialog.dismiss() }
 
             }
-            .setNegativeButton("No") { dialogInterface, it -> dialogInterface.cancel() }
+            .setNegativeButton("No") { dialogInterface, it -> dialogInterface.cancel() //Se cancela el agregar un lugar
+                 }
             .setNeutralButton("Ayuda") { dialogInterface, it ->
                 Toast.makeText(
                     this@MapsActivity,
@@ -378,8 +467,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     }
 
     /**AlertDialog para preguntar si se desea eliminar un marcador en el mapa o sumar puntos a añadirlo*/
-    private fun showAlertDeleteDialog(markerToDelete: Marker, snippet: String?) {
+    private fun AlertaModificarMapa(markerToDelete: Marker, snippet: String?) {
+
         Toast.makeText(this,snippet,Toast.LENGTH_SHORT).show()
+
         val markerRef = db.collection("locations").document("$snippet")
         builder = AlertDialog.Builder(this)
         builder.setTitle("Punto en el mapa")
@@ -397,7 +488,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 startActivity(getIntent());
             }
             .show()
-
+        alertScrollView(markerToDelete, snippet)
     }
 
     /**Funcion para eliminar el marcador seleccionado en el mapa*/

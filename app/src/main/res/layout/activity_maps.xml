@@ -16,7 +16,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.MapsActivity"
-    />
+    tools:layout="@layout/activity_maps" />
 
     <include
         layout="@layout/app_bar_main"

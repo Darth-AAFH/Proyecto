@@ -1,5 +1,6 @@
 package com.example.wildtracker.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -217,6 +218,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return user?.photoUrl?.toString()
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun getUserName(): String? {
         var nombre: String = ""
 
