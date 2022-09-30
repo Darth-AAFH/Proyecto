@@ -40,6 +40,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.internal.Sleeper
+import kotlinx.android.synthetic.main.map_coment.*
 import kotlinx.coroutines.delay
 import com.google.android.gms.maps.model.LatLng as LatLng1
 
@@ -221,6 +222,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         AlertDialog.Builder(this).setView(myScrollView)
             .setTitle("Informacion del lugar")
             .setNeutralButton("Agregar Comentario") { _, _ -> Toast.makeText(this, "Intentas agregar un comentario", Toast.LENGTH_LONG).show()
+                alertAddComent()
             }
             .setPositiveButton(
                 "OK"
@@ -242,6 +244,47 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     val contadorAñadido = document.get("contador añadir") as Long
                     val contadorEliminar = document.get("contador eliminar") as Long
         */
+
+
+
+    }
+    fun alertAddComent() {
+        val progresDialog = ProgressDialog(this)
+        progresDialog.setMessage("Cargando Imagen")
+        progresDialog.setCancelable(false)
+        progresDialog.show()
+
+        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val myScrollView: View = inflater.inflate(R.layout.map_coment, null, false)
+
+        val etMapComment = myScrollView.findViewById<View>(R.id.MapsComent) as EditText
+        // Initializing a blank textview so that we can just append a text later
+
+/*
+  btAddMarkerAlertDialog.setOnClickListener {
+                    /**Obtiene la descripción del marcador a colocar en el mapa*/
+                    var edDescripction = etMarkerDescription.text.toString()
+                    if (edDescripction.isEmpty())
+                        etMarkerDescription.error = "Añade una descripción al lugar"
+                    else {
+                        addMarker(latLng, edDescripction, selectedPlace)
+                        alertDialog.dismiss()
+                    }
+                }
+
+*/
+
+
+        AlertDialog.Builder(this).setView(myScrollView)
+            .setTitle("Comentario del lugar")
+            .show()
+
+        val btAddMarkerAlertDialog = myScrollView.findViewById<Button>(R.id.buttonAddCommentAlert)
+        btAddMarkerAlertDialog.setOnClickListener {
+            Toast.makeText(this,"Añadiendo comentario con ${ etMapComment.text.toString()}",Toast.LENGTH_LONG).show()
+        }
+
+
 
 
 
