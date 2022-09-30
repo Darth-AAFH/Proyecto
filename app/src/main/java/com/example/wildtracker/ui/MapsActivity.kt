@@ -192,8 +192,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 db.collection("locations").document(snippet).collection("Comentarios").document(x.toString()).get().addOnSuccessListener{
                     try {
                         descripcion = it.get("Descripcion").toString()
-                    Toast.makeText(this,descripcion.toString() +x ,Toast.LENGTH_LONG).show()
-
                         if((it.get("Descripcion").toString() != null) && (it.get("Descripcion")
                                 .toString() != "null") && descripcion.length>6
                         ){
@@ -273,15 +271,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 }
 
 */
+        val dialogBuilder = AlertDialog.Builder(this)
 
-
-        AlertDialog.Builder(this).setView(myScrollView)
+        val alertDialog: AlertDialog = dialogBuilder.create()
+        dialogBuilder.setView(myScrollView)
             .setTitle("Comentario del lugar")
             .show()
 
         val btAddMarkerAlertDialog = myScrollView.findViewById<Button>(R.id.buttonAddCommentAlert)
+        val btCancelMarkerAlertDialog = myScrollView.findViewById<Button>(R.id.buttonCancelAlert)
         btAddMarkerAlertDialog.setOnClickListener {
             Toast.makeText(this,"Añadiendo comentario con ${ etMapComment.text.toString()}",Toast.LENGTH_LONG).show()
+        }
+        btCancelMarkerAlertDialog.setOnClickListener {
+            Toast.makeText(this,"Intentando cerrar",Toast.LENGTH_LONG).show()
+            callMapsActivity()
         }
 
 
