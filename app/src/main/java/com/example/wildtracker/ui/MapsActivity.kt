@@ -190,23 +190,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
                 db.collection("locations").document(snippet).collection("Comentarios").document(x.toString()).get().addOnSuccessListener{
                     try {
+                        descripcion = it.get("Descripcion").toString()
+                    Toast.makeText(this,descripcion.toString() +x ,Toast.LENGTH_LONG).show()
 
-                       var descripcion = it.get("Descripcion")
-                    Toast.makeText(this,descripcion.toString(),Toast.LENGTH_LONG).show()
+                        if((it.get("Descripcion").toString() != null) && (it.get("Descripcion")
+                                .toString() != "null") && descripcion.length>6
+                        ){
+                        tv.append("Comentario :\n")
+                        tv.append("${descripcion}\n")
+                        tv.append("Descripcion\n")
+                        tv.append("${descripcion}\n")
+                        tv.append("Abajo\n")
+                        }
                     }
                     catch (e:Exception){
 
                     }
                     if(progresDialog.isShowing) {
-                        Thread.sleep(1000)  // wait for 1 second
+
                         progresDialog.dismiss()
                     }
 
-                    tv.append("Usuario X:\n")
-                    tv.append("${descripcion}\n")
-                    tv.append("Descripcion\n")
-                    tv.append("${descripcion}\n")
-                    tv.append("Abajo\n")
 
 
 
@@ -216,6 +220,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         }
         AlertDialog.Builder(this).setView(myScrollView)
             .setTitle("Informacion del lugar")
+            .setNeutralButton("Agregar Comentario") { _, _ -> Toast.makeText(this, "Intentas agregar un comentario", Toast.LENGTH_LONG).show()
+            }
             .setPositiveButton(
                 "OK"
             ) { dialog, id -> dialog.cancel() }.show()
