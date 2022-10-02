@@ -39,9 +39,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.internal.Sleeper
 import kotlinx.android.synthetic.main.map_coment.*
-import kotlinx.coroutines.delay
 import com.google.android.gms.maps.model.LatLng as LatLng1
 
 
@@ -186,27 +184,29 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         tv.text = ""
         var descripcion = " "
 
-        for (x in 0..10) {
+
             if (snippet != null) {
 
-                db.collection("locations").document(snippet).collection("Comentarios").document(x.toString()).get().addOnSuccessListener{
-                    try {
-                        descripcion = it.get("Descripcion").toString()
-                        if((it.get("Descripcion").toString() != null) && (it.get("Descripcion")
-                                .toString() != "null") && descripcion.length>6
-                        ){
-                        tv.append("Comentario :\n")
-                        tv.append("${descripcion}\n")
-                        tv.append("Descripcion\n")
-                        tv.append("${descripcion}\n")
-                        tv.append("Abajo\n")
+                db.collection("locations").document(snippet).collection("Comentarios").get().addOnSuccessListener{ result->
+                    for (document in result){
+                        try {
+                            descripcion = document.get("Descripcion").toString()
+                            if((document.get("Descripcion").toString() != null) && (document.get("Descripcion")
+                                    .toString() != "null") && descripcion.length>4
+                            ){
+                                myScrollView.setVisibility(View.GONE);
+                                myScrollView.setVisibility(View.VISIBLE);
+                                tv.append("Comentario :\n")
+                                tv.append("${descripcion}\n")
+
+                            }
+                        }
+                        catch (e:Exception){
+
                         }
                     }
-                    catch (e:Exception){
 
-                    }
                     if(progresDialog.isShowing) {
-
                         progresDialog.dismiss()
                     }
 
@@ -216,11 +216,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 }
             }
 
-        }
+
         AlertDialog.Builder(this).setView(myScrollView)
             .setTitle("Informacion del lugar")
             .setNeutralButton("Agregar Comentario") { _, _ -> Toast.makeText(this, "Intentas agregar un comentario", Toast.LENGTH_LONG).show()
-                alertAddComent()
+                alertAddComent(snippet)
             }
             .setPositiveButton(
                 "OK"
@@ -246,7 +246,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
 
     }
-    fun alertAddComent() {
+    fun alertAddComent(snippet: String?) {
         val progresDialog = ProgressDialog(this)
         progresDialog.setMessage("Cargando Imagen")
         progresDialog.setCancelable(false)
@@ -282,7 +282,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         val btCancelMarkerAlertDialog = myScrollView.findViewById<Button>(R.id.buttonCancelAlert)
         btAddMarkerAlertDialog.setOnClickListener {
             Toast.makeText(this,"Añadiendo comentario con ${ etMapComment.text.toString()}",Toast.LENGTH_LONG).show()
+            //Funcion para agregar el comentario en firebase
+            etMapComment.text
+            // db.collection("locations").document(snippet).collection("Comentarios").get().addOnSuccessListener{ result->
+            if (snippet != null) {
+                db.collection("locations").document(snippet).collection("Comentarios").document().set(
+                    hashMapOf(
+                        "Descripcion" to etMapComment.text.toString()
+                    )
+
+                )
+            }
+            callMapsActivity()
         }
+
         btCancelMarkerAlertDialog.setOnClickListener {
             Toast.makeText(this,"Intentando cerrar",Toast.LENGTH_LONG).show()
             callMapsActivity()
