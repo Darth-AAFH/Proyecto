@@ -166,7 +166,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
      * @param map Instancia de un mapa de Google
      */
 
-     fun alertScrollView(markerToDelete: Marker, snippet: String?) {
+    @SuppressLint("SuspiciousIndentation")
+    fun alertScrollView(markerToDelete: Marker, snippet: String?) {
         val progresDialog = ProgressDialog(this)
         progresDialog.setMessage("Cargando Imagen")
         progresDialog.setCancelable(false)
@@ -191,7 +192,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     for (document in result){
                         try {
                             descripcion = document.get("Descripcion").toString()
-                            if((document.get("Descripcion").toString() != null) && (document.get("Descripcion")
+                            if((document.get("Descripcion")
                                     .toString() != "null") && descripcion.length>4
                             ){
                                 myScrollView.setVisibility(View.GONE);
