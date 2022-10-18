@@ -9,11 +9,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.MediaStore.Video
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.wildtracker.R
@@ -34,7 +36,7 @@ import kotlin.math.roundToInt
 
 @Suppress("NAME_SHADOWING")
 class EjecutadorRutina : AppCompatActivity() {
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var VideosEjercicios: RecyclerView
     private var youtubeVideos = Vector<youTubeVideos>()
     var textViewActividadEnFoco: TextView?= null; var textViewReloj: TextView?= null
     var buttonParar: Button?= null; var buttonPausar: Button?= null; var buttonSaltar: Button?= null
@@ -135,16 +137,24 @@ class EjecutadorRutina : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ejecutador_rutina)
 
-        recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        VideosEjercicios = findViewById(R.id.VideosEjercicios)
+        VideosEjercicios.layoutManager = LinearLayoutManager(this)
+        val BotonMostrar: Button = (findViewById(R.id.buttonMostrarVideo))
 
         youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www" +
                 ".youtube.com/embed/VRKdOsad3HQ\" frameborder=\"0\" allowfullscreen></iframe>"))
 
         val videoAdapter = VideoAdapter(youtubeVideos)
-        recyclerView.adapter = videoAdapter
-
-
+        BotonMostrar.setOnClickListener {
+            if(VideosEjercicios.isVisible){
+                VideosEjercicios.isVisible=false
+            }
+            else{
+            VideosEjercicios.isVisible=true
+        VideosEjercicios.adapter = videoAdapter
+            }
+            
+        }
 
 
         val b = intent.extras //b toma el id de la rutina a trabajar

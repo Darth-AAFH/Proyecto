@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -10,10 +11,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:hint="Comentario"
         android:inputType="textPersonName"
-        android:hint="Comentario" />
+        android:minHeight="48dp" />
 
 
+    <RatingBar
+        android:id="@+id/rBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:numStars="5"
+        android:stepSize="0.5"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+
+    <TextView
+        android:id="@+id/editTextTextPersonName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:focusable="false"
+        android:gravity="center"
+        android:hint="Calificacion del lugar"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        android:textSize="15dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,5 +60,7 @@
             android:backgroundTint="@color/chrono_running"
             android:text="Cancelar" />
     </LinearLayout>
+
+
 
 </LinearLayout>

@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import android.widget.RatingBar.OnRatingBarChangeListener
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -40,6 +41,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.map_coment.*
+import java.text.SimpleDateFormat
+import java.util.*
 import com.google.android.gms.maps.model.LatLng as LatLng1
 
 
@@ -67,7 +70,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
      * @param spippet Descripcion del marcador : String
      */
     private var markers: MutableList<Marker> = mutableListOf<Marker>()
-
+    var date =" "
     companion object {
         const val REQUEST_CODE_LOCATION = 0
     }
@@ -192,12 +195,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     for (document in result){
                         try {
                             descripcion = document.get("Descripcion").toString()
+                            date = document.get("Fecha").toString()
                             if((document.get("Descripcion")
                                     .toString() != "null") && descripcion.length>4
                             ){
                                 myScrollView.setVisibility(View.GONE);
                                 myScrollView.setVisibility(View.VISIBLE);
-                                tv.append("Comentario :\n")
+                                tv.append("Comentario : $date\n")
                                 tv.append("${descripcion}\n")
 
                             }
@@ -281,15 +285,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
         val btAddMarkerAlertDialog = myScrollView.findViewById<Button>(R.id.buttonAddCommentAlert)
         val btCancelMarkerAlertDialog = myScrollView.findViewById<Button>(R.id.buttonCancelAlert)
+        var RatingPlace = findViewById<RatingBar?>(R.id.rBar)
+
+
         btAddMarkerAlertDialog.setOnClickListener {
-            Toast.makeText(this,"Añadiendo comentario con ${ etMapComment.text.toString()}",Toast.LENGTH_LONG).show()
+            var rating: String? = RatingPlace?.rating.toString()
+            Toast.makeText(this,"Añadiendo comentario con ${ etMapComment.text.toString() + RatingPlace?.rating}",Toast.LENGTH_LONG).show()
+
             //Funcion para agregar el comentario en firebase
             etMapComment.text
+            val pattern = "yyyy-MM-dd HH:mm"
+            val simpleDateFormat = SimpleDateFormat(pattern)
+             date = simpleDateFormat.format(Date().time)
+
             // db.collection("locations").document(snippet).collection("Comentarios").get().addOnSuccessListener{ result->
             if (snippet != null) {
                 db.collection("locations").document(snippet).collection("Comentarios").document().set(
                     hashMapOf(
-                        "Descripcion" to etMapComment.text.toString()
+                        "Descripcion" to etMapComment.text.toString(),
+                         "Fecha" to date,
+                        "Calificacion" to rating
+
                     )
 
                 )

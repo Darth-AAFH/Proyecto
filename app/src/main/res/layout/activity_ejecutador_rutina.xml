@@ -91,16 +91,26 @@
             app:layout_constraintTop_toBottomOf="@+id/listViewEjerciciosPorHacer"
             app:layout_constraintVertical_bias="0.0" />
 
+        <Button
+            android:id="@+id/buttonMostrarVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mostrar/Ocultar Video"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/listViewEjerciciosPorHacer"
+            app:layout_constraintVertical_bias="0.25" />
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/VideosEjercicios"
             android:layout_width="367dp"
             android:layout_height="160dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.995" />
     </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
