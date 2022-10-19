@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -17,14 +18,171 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.*
 
 class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
+
+    private val db = FirebaseFirestore.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_seguimiento)
         initToolbar()
         initNavigationView()
+
+        cargarMetas()
+    }
+
+    private fun cargarMetas() {
+        //var peso= false
+
+        var sdf = SimpleDateFormat("dd")
+        var diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
+        sdf = SimpleDateFormat("MM")
+        var mesHoy2 = sdf.format(Date()) //se obtiene el mes actual
+        sdf = SimpleDateFormat("yyyy")
+        var anoHoy2 = sdf.format(Date()) //se obiene el año actual
+        var diaHoy = diaHoy2.toInt(); var mesHoy = mesHoy2.toInt(); var anoHoy = anoHoy2.toInt()
+
+        var fechaFinal = ""
+        var diaF = 0; var mesF = 0; var anoF = 0
+
+        var diasTotales = 0; var diasxSemana = 0; var diasATrabajar = 0
+
+        var datoDeSuma = 0
+
+        MainActivity.user?.let { usuario -> //para cargar las metas
+            db.collection("users").document(usuario)
+                .collection("metas") //abre la base de datos
+                .get().addOnSuccessListener {
+                    for (meta in it) { //para cada meta
+
+                        //fechaFinal = meta.get("fechaFinal") as String
+                        diaF = fechaFinal.split("/").toTypedArray()[0].toInt()
+                        mesF = fechaFinal.split("/").toTypedArray()[1].toInt()
+                        anoF = fechaFinal.split("/").toTypedArray()[2].toInt()
+
+                        //primero se obtiene la diferencia de dias entre las dos fechas
+                        if(anoF == anoHoy){ //se comparan los años
+                            if(mesF == mesHoy){ //se comparan los meses
+                                diasTotales = diaF - diaHoy //y si son los mismos solo se obtiene la diferencia entre los días
+                            }else{ //si no, se le suman los días del mes inicial
+                                if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
+                                    diasTotales = 31 - diaHoy
+                                }else{
+                                    if(mesHoy == 2){
+                                        diasTotales = 28 - diaHoy
+                                    }else{
+                                        diasTotales = 30 - diaHoy
+                                    }
+                                }
+
+                                var i = mesF - 1
+                                while (mesHoy !== i) { //se le suman los días de los meses intermedios
+                                    diasTotales += if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
+                                        31
+                                    } else {
+                                        if (i == 2) {
+                                            28
+                                        } else {
+                                            30
+                                        }
+                                    }
+                                    i--
+                                }
+
+                                diasTotales += diaF //y se le suman los días del mes final
+                            }
+                        }else{ //para años diferentes
+                            diasTotales = (anoF - anoHoy)*365 //se obtienen los años en días
+
+                            if(mesF == mesHoy){ //si el mes es igual se resta o suma la diferencia de dias
+                                if(diaF > diaHoy){
+                                    diasTotales += (diaF - diaHoy)
+                                } else{
+                                    diasTotales -= (diaHoy - diaF)
+                                }
+
+                            }else{
+                                if(mesF > mesHoy){ //si el mes es mayor
+
+                                    //se le suman los dias del mes inicial
+                                    if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
+                                        diasTotales += 31 - diaHoy
+                                    }else{
+                                        if(mesHoy == 2){
+                                            diasTotales += 28 - diaHoy
+                                        }else{
+                                            diasTotales += 30 - diaHoy
+                                        }
+                                    }
+
+                                    var i = mesF - 1
+                                    while (mesHoy !== i) { //se le suman los días de los meses intermedios
+                                        diasTotales += if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
+                                            31
+                                        } else {
+                                            if (i == 2) {
+                                                28
+                                            } else {
+                                                30
+                                            }
+                                        }
+                                        i--
+                                    }
+
+                                    diasTotales += diaF //y se le suman los días del mes final
+
+                                } else{ //y si el mes es menor
+                                    //se le restan los dias del mes inicial
+                                    diasTotales -= diaHoy
+
+                                    var i = mesHoy - 1
+                                    while (mesF !== i) { //se le restan los días de los meses intermedios
+                                        diasTotales -= if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
+                                            31
+                                        } else {
+                                            if (i == 2) {
+                                                28
+                                            } else {
+                                                30
+                                            }
+                                        }
+                                        i--
+                                    }
+
+                                    //y se le restan los días del mes final
+                                    if(mesF == 1 || mesF == 3 || mesF == 5 || mesF == 7 || mesF == 8 || mesF == 10 || mesF == 12){
+                                        diasTotales -= 31 - diaHoy
+                                    }else{
+                                        if(mesHoy == 2){
+                                            diasTotales -= 28 - diaHoy
+                                        }else{
+                                            diasTotales -= 30 - diaHoy
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        if(meta.get("lunes") as Boolean){diasxSemana += 1}
+                        if(meta.get("martes") as Boolean){diasxSemana += 1}
+                        if(meta.get("miercoles") as Boolean){diasxSemana += 1}
+                        if(meta.get("jueves") as Boolean){diasxSemana += 1}
+                        if(meta.get("viernes") as Boolean){diasxSemana += 1}
+                        if(meta.get("sabado") as Boolean){diasxSemana += 1}
+                        if(meta.get("domingo") as Boolean){diasxSemana += 1}
+
+                        diasATrabajar = diasTotales/diasxSemana
+
+                        datoDeSuma = ((meta.get("datoFinal") as Long).toInt() - (meta.get("datoInicial") as Long).toInt())/diasATrabajar
+                    }
+                }
+        }
+
     }
 
     private fun initToolbar() {
