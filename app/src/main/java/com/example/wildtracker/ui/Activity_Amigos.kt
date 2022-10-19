@@ -30,7 +30,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private var listViewRanking: ListView?= null
     private var buttonRecargar: Button?= null
     private lateinit var builder: AlertDialog.Builder
-    private fun CargarRanking () {
+    private fun CargarSeguidores () {
         //Accesar a la coleccion de amigos del usuario
         val listaSeguidores = ArrayList<String>()
         var perfilGet =""
@@ -47,7 +47,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
                 Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
                 Thread.sleep(1_00)  // wait for 1 second
-                listaSeguidores.add(perfilGet)
+                MainActivity.listaSeguidores.add(perfilGet)
             }
 
         }
@@ -56,7 +56,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         }
 
-        listaSeguidores.sort()
+        MainActivity.listaSeguidores.sort()
         val array = ArrayList<String>()
         var i = listaSeguidores.size - 1
         while (i != -1) {
@@ -68,12 +68,11 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         listViewRanking!!.setAdapter(adapter) //La lista se adapta en la text view
         listaSeguidores.sort()
         listViewRanking!!.setOnItemClickListener  { parent, view, position, id ->
-            var Perfil:String  =  listaSeguidores[(listaSeguidores!!.size.toInt()- position.toInt())-1]
+            var Perfil:String  =   MainActivity.listaSeguidores[(listaSeguidores!!.size.toInt()- position.toInt())-1]
             Perfil = Perfil.substringAfter("-")
             //  Toast.makeText(this,MainActivity.listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]+"$Perfil",Toast.LENGTH_SHORT).show()
            // AlertaSeguir(Perfil )
         }
-
     }
 
 
@@ -146,10 +145,10 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         buttonRecargar = findViewById(R.id.buttonRecargar)
         listViewRanking = findViewById(R.id.listViewRanking)
 
-        CargarRanking()
+        CargarSeguidores()
 
         buttonRecargar!!.setOnClickListener{////////////////////////////////////
-            CargarRanking()
+            CargarSeguidores()
         }
     }
 

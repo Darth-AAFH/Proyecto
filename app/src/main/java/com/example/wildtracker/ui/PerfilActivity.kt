@@ -20,6 +20,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
 import com.example.wildtracker.musica.mPlayerActivity
+import com.example.wildtracker.ui.MainActivity.Companion.listaSeguidores
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
@@ -65,6 +66,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         CargarEjercicios()
         CargarRutinas()
+        CargarSeguidores()
     }
 
     val listaNombres = ArrayList<String>()
@@ -409,6 +411,32 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     }
                 }
             }
+        }
+    }
+    private fun CargarSeguidores(){
+        listaSeguidores.clear()
+        val listaSeguidores = ArrayList<String>()
+        var perfilGet =""
+        val progresDialog = ProgressDialog(this)
+        progresDialog.setMessage("Cargando Datos")
+        progresDialog.setCancelable(false)
+        progresDialog.show()
+        db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
+            for (document in result) {
+
+                perfilGet = document.get("Nombre").toString()
+
+                if(progresDialog.isShowing) {
+                    //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
+                    Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
+                    Thread.sleep(1_00)  // wait for 1 second
+                    listaSeguidores.add(perfilGet)
+                }
+
+            }
+            Thread.sleep(1_00)  // wait for 1 second
+            progresDialog.dismiss()
+
         }
     }
 
