@@ -77,15 +77,27 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     Toast.makeText(this,"Encontrado! "+document.get("Name").toString(),Toast.LENGTH_LONG).show()
                         //Si encuentro que coincide en firebase lo añado a amigos para desde ahi cargar sus datos de actividad fisica.
                       //  listaSeguidores.add(perfilGet)
+                        builder = AlertDialog.Builder(this)
+                        builder.setTitle("Seguir usuario")
+                            .setMessage("Este es usuario al cual puedes comenzar a seguir")
+                            .setCancelable(true)
+                            .setPositiveButton("Seguir") { dialogInterface, it ->
+                                MainActivity.user?.let {
+                                    db.collection("users").document(it).collection("Seguidores").document().set(
+                                        hashMapOf(
+                                            "Nombre" to perfilGet
+                                        )
 
-                        MainActivity.user?.let {
-                            db.collection("users").document(it).collection("Seguidores").document().set(
-                                hashMapOf(
-                                    "Nombre" to perfilGet
-                                )
+                                    )
+                                }
+                            }
+                            .setNegativeButton(
+                                "Cancel",
+                            ) { dialog, whichButton ->
+                                dialog.dismiss()
+                            }
+                            .show()
 
-                            )
-                        }
                     }
                     else{
 
@@ -100,17 +112,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     Thread.sleep(1_000)  // wait for 1 second
                     progresDialog.dismiss()
                 }
-                builder = AlertDialog.Builder(this)
-                builder.setTitle("Seguir usuario")
-                    .setMessage("Este es usuario al cual puedes comenzar a seguir")
-                    .setCancelable(true)
-                    .setPositiveButton("Seguir") { dialogInterface, it ->
 
-                    }
-                    .setNegativeButton("Cancelar") { dialogInterface, it -> //dialogInterface.cancel()
-                        dialogInterface.dismiss()
-                    }
-                    .show()
 
             }
         }
