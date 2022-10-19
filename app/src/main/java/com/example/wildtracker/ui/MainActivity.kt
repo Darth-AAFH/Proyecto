@@ -24,6 +24,7 @@ import org.achartengine.model.XYSeries
 import org.achartengine.renderer.XYMultipleSeriesRenderer
 import org.achartengine.renderer.XYSeriesRenderer
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -57,6 +58,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var listaEjercicios = ArrayList<String>()
         var validadorAcomodo = true
         val listaRanking = ArrayList<String>()
+        val listaSeguidores = ArrayList<String>()
     }
 
     private fun CargarListas(){
@@ -243,13 +245,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.logOut -> signOut()
             R.id.nav_musica ->callMusica()
             R.id.nav_metas -> callMetasActivity()
+            R.id.nav_amigos ->callAmigosActivity()
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
 
         return true
     }
-
+    private fun callAmigosActivity() {
+        val intent = Intent(this, Activity_Amigos::class.java)
+        startActivity(intent)
+    }
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)

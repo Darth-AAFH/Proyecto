@@ -281,14 +281,17 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.logOut -> signOut()
             R.id.nav_musica ->callMusica()
             R.id.nav_metas -> callMetasActivity()
-
+            R.id.nav_amigos ->callAmigosActivity()
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
 
         return true
     }
-
+    private fun callAmigosActivity() {
+        val intent = Intent(this, Activity_Amigos::class.java)
+        startActivity(intent)
+    }
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)

@@ -72,6 +72,7 @@ class RecordActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             R.id.logOut -> signOut()
             
             R.id.nav_musica ->callMusica()
+            R.id.nav_amigos ->callAmigosActivity()
 
         }
 
@@ -79,7 +80,10 @@ class RecordActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         return true
     }
-
+    private fun callAmigosActivity() {
+        val intent = Intent(this, Activity_Amigos::class.java)
+        startActivity(intent)
+    }
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)

@@ -6,7 +6,7 @@
     android:id="@+id/drawerlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.RankingActivity"
+    tools:context=".ui.Activity_Amigos"
     tools:openDrawer="start">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,7 +16,7 @@
 
 
         <ListView
-            android:id="@+id/listViewRanking"
+            android:id="@+id/listViewRankingAmigos"
             android:layout_width="326dp"
             android:layout_height="470dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="47dp"
             android:layout_marginBottom="36dp"
-            android:text="Actualizar Ranking"
+            android:text="Actualizar Amigos"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

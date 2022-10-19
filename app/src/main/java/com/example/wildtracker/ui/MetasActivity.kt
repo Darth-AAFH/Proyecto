@@ -86,6 +86,8 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             R.id.logOut -> signOut()
             
             R.id.nav_musica ->callMusica()
+            R.id.nav_amigos ->callAmigosActivity()
+
 
         }
 
@@ -93,7 +95,10 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         return true
     }
-
+    private fun callAmigosActivity() {
+        val intent = Intent(this, Activity_Amigos::class.java)
+        startActivity(intent)
+    }
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)

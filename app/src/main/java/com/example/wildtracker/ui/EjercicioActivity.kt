@@ -37,18 +37,18 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private val db = FirebaseFirestore.getInstance()
     var num = 0; var nombre  = ""; var xp: Int? = null
 
-    private fun CargarListas(){ //ayuda a organizar las listas de rutinas y los ejercicios
+    private fun CargarListas(){
+        //ayuda a organizar las listas de rutinas y los ejercicios
         if(MainActivity.validadorAcomodo){ //esto debe ir en plantillas y ejercicios
             MainActivity.listaRutinas = MainActivity.listaRutinas1
             MainActivity.listaRutinas.addAll(MainActivity.listaRutinas2)
-
             MainActivity.listaEjercicios = MainActivity.listaEjercicios1
             MainActivity.listaEjercicios.addAll(MainActivity.listaEjercicios2)
-
             MainActivity.validadorAcomodo = false
         }
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinas)
+
         listViewRutinas2!!.setAdapter(adapter) //La tabla se adapta en la text view
     }
 
@@ -67,9 +67,11 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
                         withContext(Dispatchers.Main){
                             if(MainActivity.user == userEmail){ //si es el usuario en uso
-                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " -- -- -- -- -- -- -- -- -- -- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
+                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " -- -- -- -- -- -- -- -- -- -- :" + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
                             }else{
-                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " -- -- -- -- -- -- -- -- -- -- " + user1.Name) //y si no los va a agregar pero sin la estrellita
+                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " -- -- -- -- -- -- -- -- -- -- :" + user1.Name) //y si no los va a agregar pero sin la estrellita
+                            //Añadir el boton de seguir usuario
+
                             }
                         }
                     }
@@ -112,7 +114,6 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                             xp = (rutinas.get("xp") as Long).toInt() //guardara la xp que tiene
                         }
                     }
-
                 }
             }
         }
@@ -169,12 +170,17 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.logOut -> signOut()
             
             R.id.nav_musica ->callMusica()
-
+            R.id.nav_amigos ->callAmigosActivity()
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
 
         return true
+    }
+
+    private fun callAmigosActivity() {
+        val intent = Intent(this, Activity_Amigos::class.java)
+        startActivity(intent)
     }
 
     private fun callPerfilActivity() {

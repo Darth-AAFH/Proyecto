@@ -28,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.android.synthetic.main.activity_perfil.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -123,6 +124,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
             R.id.nav_musica ->callMusica()
+            R.id.nav_amigos ->callAmigosActivity()
 
         }
 
@@ -130,7 +132,10 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         return true
     }
-
+    private fun callAmigosActivity() {
+        val intent = Intent(this, Activity_Amigos::class.java)
+        startActivity(intent)
+    }
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
@@ -396,9 +401,9 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                         withContext(Dispatchers.Main){
                             if(MainActivity.user == userEmail){ //si es el usuario en uso
-                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " -- -- -- -- -- -- -- -- -- -- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
+                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
                             }else{
-                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " -- -- -- -- -- -- -- -- -- -- " + user1.Name) //y si no los va a agregar pero sin la estrellita
+                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
                             }
                         }
                     }
@@ -423,7 +428,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     }
 
     private fun setup(){
-
+        val AlturaProfileEt = findViewById<EditText>(R.id.Perfil_altura)
+        val PesoProfileEt = findViewById<EditText>(R.id.Perfil_peso)
         val EditProfileDataButton = findViewById<Button>(R.id.EditProfileDataButton)
         val recoverProfileDataButton = findViewById<Button>(R.id.recoverProfileDataButton)
         val saveProfileButton = findViewById<Button>(R.id.saveProfileButton)
@@ -432,10 +438,11 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val edEmail =   findViewById<EditText>(R.id.Perfil_mail)
         val edName =   findViewById<EditText>(R.id.Perfil_name)
         val ivProfilePic = findViewById<ImageView>(R.id.Perfil_pic)
-
+        PesoProfileEt.isEnabled=false
         edBirthDay.isEnabled = false
         edEmail.isEnabled = false
         edName.isEnabled = false
+        AlturaProfileEt.isEnabled =false
         saveProfileButton.isVisible = false
         ChangeProfilePicButton.isVisible = false
         EditProfileDataButton.isVisible = false
@@ -448,7 +455,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 edName.setText (it.get("Name") as String?)
                 edEmail.setText(it.get("email") as String?)
                 edBirthDay.setText(it.get("birthDay") as String?)
-
+                    AlturaProfileEt.setText(it.get("altura") as String?)
+                    PesoProfileEt.setText(it.get("peso") as String?)
             }
 
         }
@@ -530,24 +538,30 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             "birthDay" to findViewById<EditText>(R.id.Perfil_birthday).text.toString(),
                             "email" to findViewById<EditText>(R.id.Perfil_mail).text.toString(),
                             "Name" to findViewById<EditText>(R.id.Perfil_name).text.toString(),
+                            "altura" to findViewById<EditText>(R.id.Perfil_altura).text.toString(),
+                            "peso" to findViewById<EditText>(R.id.Perfil_peso).text.toString()
                         )
                     )
                 }
             }else {
                 Toast.makeText(this, "Nombre de usuario no disponible", Toast.LENGTH_SHORT).show()
             }
-
+            callPerfilActivity()
+            AlturaProfileEt.isEnabled =false
             saveProfileButton.isVisible = false
             edBirthDay.isEnabled = false
             edEmail.isEnabled = false
             edName.isEnabled = false
+            PesoProfileEt.isEnabled=false
             EditProfileDataButton.isVisible = true
         }
 
         EditProfileDataButton.setOnClickListener {
+            AlturaProfileEt.isEnabled =true
             saveProfileButton.isVisible = true
               edBirthDay.isEnabled = true
             edName.isEnabled = true
+            PesoProfileEt.isEnabled=true
             EditProfileDataButton.isVisible = false
 
         }

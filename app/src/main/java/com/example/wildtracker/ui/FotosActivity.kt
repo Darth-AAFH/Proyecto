@@ -36,18 +36,6 @@ class FotosActivity : AppCompatActivity() {
                 try {
 
 
-
-
-
-
-
-
-
-
-
-
-
-
                     MainActivity.user?.let { it1 ->
                         db.collection("users").document(MainActivity.user!!).get()
                             .addOnSuccessListener {

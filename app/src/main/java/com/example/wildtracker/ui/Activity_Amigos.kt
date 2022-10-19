@@ -2,8 +2,8 @@ package com.example.wildtracker.ui
 
 import android.app.ProgressDialog
 import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.system.Os.remove
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -11,48 +11,67 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.core.view.size
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
 import com.example.wildtracker.musica.mPlayerActivity
-import com.example.wildtracker.ui.MainActivity.Companion.listaRanking
-import com.example.wildtracker.ui.MainActivity.Companion.listaSeguidores
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
-import com.google.errorprone.annotations.Var
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
-@Suppress("DEPRECATION")
-class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+ @Suppress("DEPRECATION")
+class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawer: DrawerLayout
     private val db = FirebaseFirestore.getInstance()
     private var listViewRanking: ListView?= null
-    private var buttonRecargar: Button ?= null
+    private var buttonRecargar: Button?= null
     private lateinit var builder: AlertDialog.Builder
     private fun CargarRanking () {
-        MainActivity.listaRanking.sort()
+        //Accesar a la coleccion de amigos del usuario
+        val listaSeguidores = ArrayList<String>()
+        var perfilGet =""
+        val progresDialog = ProgressDialog(this)
+        progresDialog.setMessage("Cargando Datos")
+        progresDialog.setCancelable(false)
+        progresDialog.show()
+        db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
+        for (document in result) {
+
+            perfilGet = document.get("Nombre").toString()
+
+            if(progresDialog.isShowing) {
+                //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
+                Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
+                Thread.sleep(1_00)  // wait for 1 second
+                listaSeguidores.add(perfilGet)
+            }
+
+        }
+            Thread.sleep(1_00)  // wait for 1 second
+            progresDialog.dismiss()
+
+        }
+
+        listaSeguidores.sort()
         val array = ArrayList<String>()
-        var i = MainActivity.listaRanking.size - 1
+        var i = listaSeguidores.size - 1
         while (i != -1) {
-            array.add(MainActivity.listaRanking[i])
+            array.add(listaSeguidores[i])
             i--
         }
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array)
         listViewRanking!!.setAdapter(adapter) //La lista se adapta en la text view
-        MainActivity.listaRanking.sort()
+        listaSeguidores.sort()
         listViewRanking!!.setOnItemClickListener  { parent, view, position, id ->
-            var Perfil:String  =  MainActivity.listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]
+            var Perfil:String  =  listaSeguidores[(listaSeguidores!!.size.toInt()- position.toInt())-1]
             Perfil = Perfil.substringAfter("-")
-          //  Toast.makeText(this,MainActivity.listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]+"$Perfil",Toast.LENGTH_SHORT).show()
-            AlertaSeguir(Perfil )
+            //  Toast.makeText(this,MainActivity.listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]+"$Perfil",Toast.LENGTH_SHORT).show()
+           // AlertaSeguir(Perfil )
         }
 
     }
@@ -69,29 +88,29 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         db.collection("users").get().addOnSuccessListener { result ->
             for (document in result) {
 
-                    perfilGet = document.get("Name").toString()
-                    var correo = document.get("email").toString()
+                perfilGet = document.get("Name").toString()
+                var correo = document.get("email").toString()
 
-                    if (perfil2 == perfilGet) {
+                if (perfil2 == perfilGet) {
 
-                    Toast.makeText(this,"Encontrado! "+document.get("Name").toString(),Toast.LENGTH_LONG).show()
-                        //Si encuentro que coincide en firebase lo añado a amigos para desde ahi cargar sus datos de actividad fisica.
-                      //  listaSeguidores.add(perfilGet)
+                    Toast.makeText(this,"Encontrado! "+document.get("Name").toString(), Toast.LENGTH_LONG).show()
+                    //Si encuentro que coincide en firebase lo añado a amigos para desde ahi cargar sus datos de actividad fisica.
+                    //  listaSeguidores.add(perfilGet)
 
-                        MainActivity.user?.let {
-                            db.collection("users").document(it).collection("Seguidores").document().set(
-                                hashMapOf(
-                                    "Nombre" to perfilGet
-                                )
-
+                    MainActivity.user?.let {
+                        db.collection("users").document(it).collection("Seguidores").document().set(
+                            hashMapOf(
+                                "Nombre" to perfilGet
                             )
-                        }
-                    }
-                    else{
 
-                        Toast.makeText(this,"No se encontro... "+ perfilGet.length,Toast.LENGTH_LONG).show()
-                        Toast.makeText(this,"Buscaba..."+ perfil2.length,Toast.LENGTH_LONG).show()
+                        )
                     }
+                }
+                else{
+
+                    Toast.makeText(this,"No se encontro... "+ perfilGet.length, Toast.LENGTH_LONG).show()
+                    Toast.makeText(this,"Buscaba..."+ perfil2.length, Toast.LENGTH_LONG).show()
+                }
                 Log.d("myTag", "Encontre:$perfilGet");
                 Log.d("myTag", "Buscaba:$perfil2");
 
@@ -175,7 +194,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             R.id.nav_metas -> callMetasActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            
+
             R.id.nav_musica ->callMusica()
             R.id.nav_amigos ->callAmigosActivity()
 
