@@ -1,12 +1,12 @@
 package com.example.wildtracker.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -36,21 +36,22 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         cargarMetas()
     }
 
+    @SuppressLint("SimpleDateFormat")
     private fun cargarMetas() {
         //var peso= false
 
         var sdf = SimpleDateFormat("dd")
-        var diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
+        val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
         sdf = SimpleDateFormat("MM")
-        var mesHoy2 = sdf.format(Date()) //se obtiene el mes actual
+        val mesHoy2 = sdf.format(Date()) //se obtiene el mes actual
         sdf = SimpleDateFormat("yyyy")
-        var anoHoy2 = sdf.format(Date()) //se obiene el año actual
-        var diaHoy = diaHoy2.toInt(); var mesHoy = mesHoy2.toInt(); var anoHoy = anoHoy2.toInt()
+        val anoHoy2 = sdf.format(Date()) //se obiene el año actual
+        val diaHoy = diaHoy2.toInt(); val mesHoy = mesHoy2.toInt(); val anoHoy = anoHoy2.toInt()
 
-        var fechaFinal = ""
-        var diaF = 0; var mesF = 0; var anoF = 0
+        var fechaFinal: String
+        var diaF: Int; var mesF: Int; var anoF: Int
 
-        var diasTotales = 0; var diasxSemana = 0; var diasATrabajar = 0
+        var diasTotales: Int; var diasxSemana = 0; var diasATrabajar: Int
 
         var datoDeSuma = 0
 
@@ -60,7 +61,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 .get().addOnSuccessListener {
                     for (meta in it) { //para cada meta
 
-                        //fechaFinal = meta.get("fechaFinal") as String
+                        fechaFinal = meta.get("fechaFinal") as String
                         diaF = fechaFinal.split("/").toTypedArray()[0].toInt()
                         mesF = fechaFinal.split("/").toTypedArray()[1].toInt()
                         anoF = fechaFinal.split("/").toTypedArray()[2].toInt()
@@ -81,7 +82,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                                 }
 
                                 var i = mesF - 1
-                                while (mesHoy !== i) { //se le suman los días de los meses intermedios
+                                while (mesHoy != i) { //se le suman los días de los meses intermedios
                                     diasTotales += if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
                                         31
                                     } else {
@@ -121,7 +122,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                                     }
 
                                     var i = mesF - 1
-                                    while (mesHoy !== i) { //se le suman los días de los meses intermedios
+                                    while (mesHoy != i) { //se le suman los días de los meses intermedios
                                         diasTotales += if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
                                             31
                                         } else {
@@ -141,7 +142,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                                     diasTotales -= diaHoy
 
                                     var i = mesHoy - 1
-                                    while (mesF !== i) { //se le restan los días de los meses intermedios
+                                    while (mesF != i) { //se le restan los días de los meses intermedios
                                         diasTotales -= if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
                                             31
                                         } else {
