@@ -32,7 +32,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private lateinit var builder: AlertDialog.Builder
     private fun CargarSeguidores () {
         //Accesar a la coleccion de amigos del usuario
-        val listaSeguidores = ArrayList<String>()
+        var listaSeguidores = ArrayList<String>()
         var perfilGet =""
         val progresDialog = ProgressDialog(this)
         progresDialog.setMessage("Cargando Datos")
@@ -51,9 +51,18 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             }
 
         }
+
             Thread.sleep(1_00)  // wait for 1 second
             progresDialog.dismiss()
+            val arrayAdapter: ArrayAdapter<*>
+            val users = MainActivity.listaSeguidores
 
+            // access the listView from xml file
+            var mListView = findViewById<ListView>(R.id.userlist)
+            mListView.emptyView
+            arrayAdapter = ArrayAdapter(this,
+                android.R.layout.simple_list_item_1, users)
+            mListView.adapter = arrayAdapter
         }
 
         MainActivity.listaSeguidores.sort()
@@ -64,15 +73,10 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             i--
         }
 
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array)
-        listViewRanking!!.setAdapter(adapter) //La lista se adapta en la text view
-        listaSeguidores.sort()
-        listViewRanking!!.setOnItemClickListener  { parent, view, position, id ->
-            var Perfil:String  =   MainActivity.listaSeguidores[(listaSeguidores!!.size.toInt()- position.toInt())-1]
-            Perfil = Perfil.substringAfter("-")
-            //  Toast.makeText(this,MainActivity.listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]+"$Perfil",Toast.LENGTH_SHORT).show()
-           // AlertaSeguir(Perfil )
-        }
+
+
+
+
     }
 
 
@@ -138,14 +142,21 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_ranking)
-        initToolbar()
-        initNavigationView()
+        setContentView(R.layout.lista_amigos)
+       // initToolbar()
+       // initNavigationView()
+        val arrayAdapter: ArrayAdapter<*>
+        val users = MainActivity.listaSeguidores
 
+        // access the listView from xml file
+        var mListView = findViewById<ListView>(R.id.userlist)
+        arrayAdapter = ArrayAdapter(this,
+            android.R.layout.simple_list_item_1, users)
+        mListView.adapter = arrayAdapter
         buttonRecargar = findViewById(R.id.buttonRecargar)
-        listViewRanking = findViewById(R.id.listViewRanking)
+       // listViewRanking = findViewById(R.id.listViewRanking)
 
-        CargarSeguidores()
+      //  CargarSeguidores()
 
         buttonRecargar!!.setOnClickListener{////////////////////////////////////
             CargarSeguidores()

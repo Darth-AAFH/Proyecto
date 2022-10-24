@@ -73,7 +73,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     var correo = document.get("email").toString()
 
                     if (perfil2 == perfilGet) {
-
+                    val usuario =perfilGet
                     Toast.makeText(this,"Encontrado! "+document.get("Name").toString(),Toast.LENGTH_LONG).show()
                         //Si encuentro que coincide en firebase lo añado a amigos para desde ahi cargar sus datos de actividad fisica.
                       //  listaSeguidores.add(perfilGet)
@@ -85,7 +85,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                                 MainActivity.user?.let {
                                     db.collection("users").document(it).collection("Seguidores").document().set(
                                         hashMapOf(
-                                            "Nombre" to perfilGet
+                                            "Nombre" to usuario
                                         )
 
                                     )
@@ -101,8 +101,8 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     }
                     else{
 
-                        Toast.makeText(this,"No se encontro... "+ perfilGet.length,Toast.LENGTH_LONG).show()
-                        Toast.makeText(this,"Buscaba..."+ perfil2.length,Toast.LENGTH_LONG).show()
+                       // Toast.makeText(this,"No se encontro... "+ perfilGet.length,Toast.LENGTH_LONG).show()
+                      //  Toast.makeText(this,"Buscaba..."+ perfil2.length,Toast.LENGTH_LONG).show()
                     }
                 Log.d("myTag", "Encontre:$perfilGet");
                 Log.d("myTag", "Buscaba:$perfil2");
