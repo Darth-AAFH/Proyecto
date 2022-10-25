@@ -2,8 +2,8 @@ package com.example.wildtracker.ui
 
 import android.app.ProgressDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.method.TextKeyListener.clear
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -11,18 +11,21 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
 import com.example.wildtracker.musica.mPlayerActivity
+import com.example.wildtracker.ui.MainActivity.Companion.listaSeguidores
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.core.RepoManager.clear
 import com.google.firebase.firestore.FirebaseFirestore
 
- @Suppress("DEPRECATION")
+@Suppress("DEPRECATION")
 class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawer: DrawerLayout
@@ -31,6 +34,12 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private var buttonRecargar: Button?= null
     private lateinit var builder: AlertDialog.Builder
     private fun CargarSeguidores () {
+        val values = ArrayList<String>()
+        values.clear()
+        var mListView = findViewById<ListView>(R.id.userlist)
+        mListView.emptyView
+        mListView.adapter = ArrayAdapter(this,
+            android.R.layout.simple_list_item_1, values)
         //Accesar a la coleccion de amigos del usuario
         var listaSeguidores = ArrayList<String>()
         var perfilGet =""
@@ -38,6 +47,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         progresDialog.setMessage("Cargando Datos")
         progresDialog.setCancelable(false)
         progresDialog.show()
+        MainActivity.listaSeguidores.clear()
         db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
         for (document in result) {
 
@@ -51,19 +61,19 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             }
 
         }
-
             Thread.sleep(1_00)  // wait for 1 second
             progresDialog.dismiss()
             val arrayAdapter: ArrayAdapter<*>
             val users = MainActivity.listaSeguidores
 
             // access the listView from xml file
-            var mListView = findViewById<ListView>(R.id.userlist)
-            mListView.emptyView
+
             arrayAdapter = ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, users)
             mListView.adapter = arrayAdapter
+
         }
+
 
         MainActivity.listaSeguidores.sort()
         val array = ArrayList<String>()
@@ -85,7 +95,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         val progresDialog = ProgressDialog(this)
         Toast.makeText(this, perfil2, Toast.LENGTH_SHORT).show()
         var perfilGet: String
-        progresDialog.setMessage("Cargando Datos")
+      /*  progresDialog.setMessage("Cargando Datos")
         progresDialog.setCancelable(false)
         progresDialog.show()
         db.collection("users").get().addOnSuccessListener { result ->
@@ -136,6 +146,9 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
             }
         }
+
+       */
+Toast.makeText(this,perfil,Toast.LENGTH_SHORT).show()
     }
 
 
@@ -161,6 +174,14 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         buttonRecargar!!.setOnClickListener{////////////////////////////////////
             CargarSeguidores()
         }
+        mListView!!.setOnItemClickListener  { parent, view, position, id ->
+            var Perfil:String  =  MainActivity.listaSeguidores[(MainActivity.listaSeguidores!!.size.toInt()- position.toInt())-1]
+
+            AlertaSeguir(Perfil )
+        }
+
+
+
     }
 
     private fun initToolbar() {
