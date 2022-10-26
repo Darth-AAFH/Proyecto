@@ -428,7 +428,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                 if(progresDialog.isShowing) {
                     //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
-                    Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
+                   // Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
                     Thread.sleep(1_00)  // wait for 1 second
                     listaSeguidores.add(perfilGet)
                 }

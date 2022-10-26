@@ -55,13 +55,21 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
             if(progresDialog.isShowing) {
                 //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
-                Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
+                //Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
                 Thread.sleep(1_00)  // wait for 1 second
                 MainActivity.listaSeguidores.add(perfilGet)
             }
 
         }
             Thread.sleep(1_00)  // wait for 1 second
+            MainActivity.listaSeguidores.sort()
+            val array = ArrayList<String>()
+            var i = MainActivity.listaSeguidores.size - 1
+            while (i != -1) {
+                array.add(MainActivity.listaSeguidores[i])
+                i--
+            }
+
             progresDialog.dismiss()
             val arrayAdapter: ArrayAdapter<*>
             val users = MainActivity.listaSeguidores
@@ -69,19 +77,12 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             // access the listView from xml file
 
             arrayAdapter = ArrayAdapter(this,
-                android.R.layout.simple_list_item_1, users)
+                android.R.layout.simple_list_item_1, array)
             mListView.adapter = arrayAdapter
 
         }
 
 
-        MainActivity.listaSeguidores.sort()
-        val array = ArrayList<String>()
-        var i = listaSeguidores.size - 1
-        while (i != -1) {
-            array.add(listaSeguidores[i])
-            i--
-        }
 
 
 
@@ -93,62 +94,28 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private fun AlertaSeguir(perfil: String) {
         var perfil2 = perfil.substringAfter(" ")
         val progresDialog = ProgressDialog(this)
-        Toast.makeText(this, perfil2, Toast.LENGTH_SHORT).show()
+       // Toast.makeText(this, perfil2, Toast.LENGTH_SHORT).show()
         var perfilGet: String
-      /*  progresDialog.setMessage("Cargando Datos")
+        progresDialog.setMessage("Cargando Datos")
         progresDialog.setCancelable(false)
         progresDialog.show()
-        db.collection("users").get().addOnSuccessListener { result ->
-            for (document in result) {
 
-                perfilGet = document.get("Name").toString()
-                var correo = document.get("email").toString()
 
-                if (perfil2 == perfilGet) {
-
-                    Toast.makeText(this,"Encontrado! "+document.get("Name").toString(), Toast.LENGTH_LONG).show()
-                    //Si encuentro que coincide en firebase lo añado a amigos para desde ahi cargar sus datos de actividad fisica.
-                    //  listaSeguidores.add(perfilGet)
-
-                    MainActivity.user?.let {
-                        db.collection("users").document(it).collection("Seguidores").document().set(
-                            hashMapOf(
-                                "Nombre" to perfilGet
-                            )
-
-                        )
-                    }
-                }
-                else{
-
-                    Toast.makeText(this,"No se encontro... "+ perfilGet.length, Toast.LENGTH_LONG).show()
-                    Toast.makeText(this,"Buscaba..."+ perfil2.length, Toast.LENGTH_LONG).show()
-                }
-                Log.d("myTag", "Encontre:$perfilGet");
-                Log.d("myTag", "Buscaba:$perfil2");
-
-                if(progresDialog.isShowing) {
-                    //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
-                    Thread.sleep(1_000)  // wait for 1 second
-                    progresDialog.dismiss()
-                }
                 builder = AlertDialog.Builder(this)
-                builder.setTitle("Seguir usuario")
-                    .setMessage("Este es usuario al cual puedes comenzar a seguir")
+                builder.setTitle("Siguiendo a ${perfil}")
+                    .setMessage("Que deseas hacer con este usuario")
                     .setCancelable(true)
-                    .setPositiveButton("Seguir") { dialogInterface, it ->
+                    .setPositiveButton("Dejar de seguir") { dialogInterface, it ->
 
+                    }
+                    .setNeutralButton("Ver estadisticas") { dialogInterface, it ->
                     }
                     .setNegativeButton("Cancelar") { dialogInterface, it -> //dialogInterface.cancel()
                         dialogInterface.dismiss()
                     }
                     .show()
-
-            }
-        }
-
-       */
-Toast.makeText(this,perfil,Toast.LENGTH_SHORT).show()
+//Toast.makeText(this,perfil,Toast.LENGTH_SHORT).show()
+        progresDialog.dismiss()
     }
 
 
