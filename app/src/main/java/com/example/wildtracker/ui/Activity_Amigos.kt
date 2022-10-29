@@ -133,6 +133,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         arrayAdapter = ArrayAdapter(this,
             android.R.layout.simple_list_item_1, users)
         mListView.adapter = arrayAdapter
+        CargarSeguidores()
         buttonRecargar = findViewById(R.id.buttonRecargar)
        // listViewRanking = findViewById(R.id.listViewRanking)
 
