@@ -1,13 +1,18 @@
 package com.example.wildtracker.ui
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
+import android.widget.CalendarView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -22,19 +27,33 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CalendarView.OnDateChangeListener{
     private lateinit var drawer: DrawerLayout
 
     private val db = FirebaseFirestore.getInstance()
 
+    private lateinit var vistaCalendario: CalendarView
+    //private var buttonTest2: Button ?= null///////////////////////////////////////////////////////////////
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_seguimiento)
-        initToolbar()
-        initNavigationView()
+        //initToolbar()
+        //initNavigationView()
+
+        vistaCalendario = findViewById(R.id.vistaCalendario)
+        //buttonTest2 = findViewById(R.id.buttonTest2)////////////////////////////////////////////////////
 
         cargarMetas()
+
+        vistaCalendario.setOnDateChangeListener(this)
+
+        //buttonTest2!!.setOnClickListener{
+            //Toast.makeText(this, "Dato de suma:" + datoDeSuma, Toast.LENGTH_SHORT).show()
+        //}
     }
+
+    var datoDeSuma = 0
 
     @SuppressLint("SimpleDateFormat")
     private fun cargarMetas() {
@@ -53,7 +72,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         var diasTotales: Int; var diasxSemana = 0; var diasATrabajar: Int
 
-        var datoDeSuma = 0
+        //var datoDeSuma = 0
 
         MainActivity.user?.let { usuario -> //para cargar las metas
             db.collection("users").document(usuario)
@@ -186,6 +205,45 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     }
 
+    override fun onSelectedDayChange(p0: CalendarView, p1: Int, p2: Int, p3: Int) {
+
+        val builder = AlertDialog.Builder(this) //alertaTareas
+        val items = arrayOfNulls<CharSequence>(3)
+        items[0] = "Agregar rutina única"; items[1] = "Ver eventos"; items[2] = "Cancelar"
+
+        var dia: Int = p1; var mes: Int = p2 + 1; var ano: Int = p3
+
+        val alertaTareas = AlertDialog.Builder(this)
+        alertaTareas.setTitle("Seleccionar una tarea")
+
+        alertaTareas.setItems(items, DialogInterface.OnClickListener() { dialogInterface, i ->
+            if(i == 0){ //mandar a lista de rutinas
+                val intent = Intent(this@SeguimientoActivity, SeleccionadorRutina::class.java)
+
+                //val bundle = Bundle()
+                //bundle.putInt("dia", dia); bundle.putInt("mes", mes); bundle.putInt("ano", ano)
+
+                //intent.putExtras(bundle)
+                startActivity(intent)
+            }else{
+                if(i == 1){ //muestra la rutina de ese día y la puede quitar
+                    val intent = Intent(this@SeguimientoActivity, MetasActivity::class.java)
+
+                    val bundle = Bundle()
+                    bundle.putInt("dia", dia); bundle.putInt("mes", mes); bundle.putInt("ano", ano)
+
+                    intent.putExtras(bundle)
+                    startActivity(intent)
+                }else{}
+            }
+        })
+
+        val mostrarAlerta = alertaTareas.create()
+        mostrarAlerta.show()
+
+
+    }
+
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         toolbar.title = "Seguimiento"
@@ -238,14 +296,17 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         return true
     }
+
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
     }
+
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
     }
+
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
