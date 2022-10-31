@@ -10,9 +10,11 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.preference.PreferenceManager
 import com.example.wildtracker.LoginActivity.Companion.useremail
 import com.example.wildtracker.R
 import com.example.wildtracker.musica.mPlayerActivity
+import com.example.wildtracker.ui.MainActivity.Companion.InsigniasSwitch
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
@@ -40,6 +42,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     companion object{
+        var InsigniasSwitch = true
         val auth: String? = FirebaseAuth.getInstance().currentUser?.email
         var user =  auth
 
@@ -65,6 +68,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var listaRutinasATrabajar = ArrayList<String>()
     }
 
+
+
+
     private fun CargarListas(){
         if(validadorAcomodo){ //ayuda a organizar las listas de rutinas y los ejercicios
             listaRutinas = listaRutinas1
@@ -76,6 +82,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             validadorAcomodo = false
         }
     }
+private fun myPreferences() {
+    val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+    val switch = prefs.getBoolean("switch_preference_insignias", true)
+    if(switch){
+        InsigniasSwitch = switch
+    }
+    else{
+        InsigniasSwitch = false
+    }
+}
 
     private fun insigniasRutinas() {
         var listaRutinasInsignias = listOf<insignias>()
@@ -86,7 +102,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val nivel = (nivelAux.split(" ").toTypedArray()[1]).toInt()
 
             var rutina: insignias
-
+            if(InsigniasSwitch){
             if(nivel == 100){
                 rutina = insignias(nombre, nivel, R.drawable.insignia11)
             }else{
@@ -128,9 +144,54 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                 }
             }
-
-            val listaRutinasAux3 = listOf(rutina)
-            listaRutinasInsignias += listaRutinasAux3
+                val listaRutinasAux3 = listOf(rutina)
+                listaRutinasInsignias += listaRutinasAux3
+            }
+            else if(InsigniasSwitch==false){
+                    if(nivel == 100){
+                        rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
+                    }else{
+                        if(nivel > 90){
+                            rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
+                        }else{
+                            if(nivel > 80){
+                                rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
+                            }else{
+                                if(nivel > 70){
+                                    rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
+                                }else{
+                                    if(nivel > 60){
+                                        rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
+                                    }else{
+                                        if(nivel > 50){
+                                            rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
+                                        }else{
+                                            if(nivel > 40){
+                                                rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
+                                            }else{
+                                                if(nivel > 30){
+                                                    rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
+                                                }else{
+                                                    if(nivel > 20){
+                                                        rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
+                                                    }else{
+                                                        if(nivel > 10){
+                                                            rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
+                                                        }else{
+                                                            rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                val listaRutinasAux3 = listOf(rutina)
+                listaRutinasInsignias += listaRutinasAux3
+            }
         }
 
         val adapter = insigniaAdapter(this, listaRutinasInsignias)
@@ -169,12 +230,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main)
         initToolbar()
         initNavigationView()
-
+        myPreferences()
         listViewInsignias = findViewById(R.id.listViewInsignias)
 
         iniciarGrafica()
         CargarListas()
-        insigniasRutinas()
+
+            insigniasRutinas()
+
     }
 
     private fun initToolbar() {
@@ -304,4 +367,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val intent = Intent(this, MetasActivity::class.java)
         startActivity(intent)
     }
+
 }

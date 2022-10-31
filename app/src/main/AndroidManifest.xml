@@ -29,6 +29,14 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".ui.Activity_Amigos"
             android:exported="false">
             <meta-data
