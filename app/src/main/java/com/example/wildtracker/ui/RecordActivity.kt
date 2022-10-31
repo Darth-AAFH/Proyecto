@@ -72,7 +72,7 @@ class RecordActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             R.id.logOut -> signOut()
             
             R.id.nav_musica ->callMusica()
-            R.id.nav_amigos ->callAmigosActivity()
+           R.id.nav_amigos->callAmigosActivity()
 
         }
 

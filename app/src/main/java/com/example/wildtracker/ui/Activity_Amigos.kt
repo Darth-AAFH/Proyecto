@@ -123,8 +123,8 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.lista_amigos)
-       // initToolbar()
-       // initNavigationView()
+        initToolbar()
+        initNavigationView()
         val arrayAdapter: ArrayAdapter<*>
         val users = MainActivity.listaSeguidores
 
@@ -154,7 +154,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
-        toolbar.title = "Ranking"
+        toolbar.title = "Seguidores"
         setSupportActionBar(toolbar)
 
         drawer = findViewById(R.id.drawerlayout)!!
@@ -196,12 +196,16 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
             R.id.nav_musica ->callMusica()
             R.id.nav_amigos ->callAmigosActivity()
-
+            R.id.Settings->callAjustesActivity()
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
 
         return true
+    }
+    private fun callAjustesActivity() {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
     }
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)

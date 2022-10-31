@@ -666,6 +666,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             
             R.id.nav_musica ->callMusica()
             R.id.nav_amigos ->callAmigosActivity()
+            R.id.Settings->callAjustesActivity()
 
         }
 
@@ -677,6 +678,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     /**
      * Llamada de actividades
      */
+    private fun callAjustesActivity() {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
+    }
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)

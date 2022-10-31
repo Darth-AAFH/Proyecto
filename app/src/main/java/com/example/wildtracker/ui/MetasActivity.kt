@@ -45,8 +45,8 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_metas)
-        //initToolbar()
-        //initNavigationView()
+        initToolbar()
+        initNavigationView()
 
         editTextNombreMeta = findViewById<View>(R.id.editTextNombreMeta) as EditText
         switchPeso = findViewById<View>(R.id.idSwitch1) as Switch
@@ -244,6 +244,7 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             
             R.id.nav_musica ->callMusica()
             R.id.nav_amigos ->callAmigosActivity()
+            R.id.Settings->callAjustesActivity()
 
 
         }
@@ -251,6 +252,10 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
 
         return true
+    }
+    private fun callAjustesActivity() {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
     }
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)

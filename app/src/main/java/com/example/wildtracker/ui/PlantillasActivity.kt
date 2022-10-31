@@ -222,12 +222,16 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             
             R.id.nav_musica ->callMusica()
             R.id.nav_amigos ->callAmigosActivity()
-
+            R.id.Settings->callAjustesActivity()
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
 
         return true
+    }
+    private fun callAjustesActivity() {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
     }
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
