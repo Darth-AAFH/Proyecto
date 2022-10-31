@@ -467,6 +467,9 @@ class EjecutadorRutina : AppCompatActivity() {
                 linea = num.toString() + " | " + nombre + " | Nivel: "+ nuevoNivel + " | " + ejercicios
                 MainActivity.listaRutinas.set(posicion, linea) //se actualiza con el nuevo nivel
 
+                val linea2 = num.toString() + " | " + nombre + " | Nivel: "+ nuevoNivel
+                MainActivity.listaRutinasVista.set(posicion, linea2) //se actualiza con el nuevo nivel
+
                 Toast.makeText(this, "Felicidades, la rutina subio a nivel "+ nuevoNivel +"!!!!", Toast.LENGTH_LONG).show() //se le hace saber al usuario que subio el nivel
                 if(nuevoNivel == 100)
                     Toast.makeText(this, "Felicidades ha halcanzado el nivel máximo en la rútina, gracias por ejercitarse <3", Toast.LENGTH_LONG).show()

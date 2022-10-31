@@ -171,6 +171,8 @@ class CreadorRutinas : AppCompatActivity() {
         val rutina: String
         rutina = (Rutina.id).toString() + " | " + Rutina.nombre + " | Nivel: 0 | " + Rutina.ejercicios
         MainActivity.listaRutinas.add(rutina)
+        val rutina2 = (Rutina.id).toString() + " | " + Rutina.nombre + " | Nivel: 0"
+        MainActivity.listaRutinasVista.add(rutina2)
 
         Toast.makeText(this, "Se ha guardado la rutina", Toast.LENGTH_SHORT).show()
     }

@@ -46,6 +46,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //
         var listaRutinas1 = ArrayList<String>()
         var listaRutinas2 = ArrayList<String>()
+        var listaRutinasVista1 = ArrayList<String>()
+        var listaRutinasVista2 = ArrayList<String>()
         var listaEjercicios1 = ArrayList<String>()
         var listaEjercicios2 = ArrayList<String>()
         var validadorListas = true
@@ -55,10 +57,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //
 
         var listaRutinas = ArrayList<String>()
+        var listaRutinasVista = ArrayList<String>()
         var listaEjercicios = ArrayList<String>()
         var validadorAcomodo = true
         val listaRanking = ArrayList<String>()
         val listaSeguidores = ArrayList<String>()
+        var listaRutinasATrabajar = ArrayList<String>()
     }
 
     private fun CargarListas(){

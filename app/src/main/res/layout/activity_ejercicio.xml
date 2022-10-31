@@ -17,11 +17,21 @@
     <ListView
         android:id="@+id/listViewRutinas2"
         android:layout_width="326dp"
-        android:layout_height="350dp"
+        android:layout_height="200dp"
         android:layout_marginTop="75dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+        <ListView
+            android:id="@+id/listViewRutinas3"
+            android:layout_width="326dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="36dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.505"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/listViewRutinas2" />
 
         <Button
             android:id="@+id/buttonIniciar"
@@ -33,17 +43,40 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+        <TextView
         android:id="@+id/textViewRutina"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
         android:textColor="@color/black"
         android:textSize="15dp"
-        android:layout_marginTop="50dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonIniciar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listViewRutinas2" />
+        app:layout_constraintTop_toBottomOf="@+id/listViewRutinas3" />
+
+        <TextView
+            android:id="@+id/textViewRutina2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rutinas programadas"
+            android:textColor="@color/black"
+            android:textSize="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/listViewRutinas2" />
+
+        <TextView
+            android:id="@+id/textViewRutina3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:text="No hay rutinas programadas hoy"
+            android:textSize="15dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/listViewRutinas2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

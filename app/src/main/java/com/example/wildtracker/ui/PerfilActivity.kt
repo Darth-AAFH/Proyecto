@@ -66,6 +66,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         CargarEjercicios()
         CargarRutinas()
+        CargarRutinasATrabajar()
         CargarSeguidores()
     }
 
@@ -343,6 +344,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                 cadena += rutina.get("nombre").toString() //toma el nombre de la rutina
                                 cadena += " | Nivel: " //le pone un texto para darle orden
                                 cadena += (rutina.get("nivel") as Long).toString() //toma el nivel de la rutina
+                                MainActivity.listaRutinasVista1.add(cadena)
                                 cadena += " | " //le pone un texto para darle orden
                                 cadena += rutina.get("ejercicios").toString() //toma los ejercicios
                                 MainActivity.listaRutinas1.add(cadena)
@@ -352,6 +354,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                 cadena += rutina.get("nombre").toString() //toma el nombre de la rutina
                                 cadena += " | Nivel: " //le pone un texto para darle orden
                                 cadena += (rutina.get("nivel") as Long).toString() //toma el nivel de la rutina
+                                MainActivity.listaRutinasVista1.add(cadena)
                                 cadena += " | " //le pone un texto para darle orden
                                 cadena += rutina.get("ejercicios").toString() //toma los ejercicios
                                 MainActivity.listaRutinas2.add(cadena)
@@ -360,7 +363,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     }
             }
             MainActivity.listaRutinas1.sort(); MainActivity.listaRutinas2.sort()// acomoda las listas
-            MainActivity.validadorListas = false //cambia el validador para que esto no se vuelva a hacer
+            MainActivity.listaRutinasVista1.sort(); MainActivity.listaRutinasVista2.sort()// acomoda las listas
         }
     }
 
@@ -377,6 +380,50 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private fun callMapsActivity() {
         val intent = Intent(this, MapsActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun CargarRutinasATrabajar(){
+        var sdf = SimpleDateFormat("dd")
+        val diaHoy = sdf.format(Date()) //se obtiene el dia actual
+        sdf = SimpleDateFormat("MM")
+        val mesHoy = sdf.format(Date()) //se obtiene el mes actual
+        sdf = SimpleDateFormat("yyyy")
+        val anoHoy = sdf.format(Date()) //se obiene el año actual
+        var fechaHoy: String
+        fechaHoy = diaHoy + "-" + mesHoy + "-" + anoHoy
+
+        var cadena: String; var fecha: String
+
+        if(MainActivity.validadorListas) {
+            MainActivity.user?.let { usuario -> //para cargar las rutinas
+                db.collection("users").document(usuario)
+                    .collection("rutinasAtrabajar") //abre la base de datos
+                    .get().addOnSuccessListener {
+                        for (rutina in it) { //para cada rutina
+                            cadena = (rutina.get("idRutina") as Long).toString() //toma el id de la rutina
+                            cadena += " | " //le pone un texto para darle orden
+                            cadena += rutina.get("nombre").toString() //toma el nombre de la rutina
+                            cadena += " | Fecha: " //le pone un texto para darle orden
+                            cadena += rutina.get("dia").toString()
+                            cadena += "-" //le pone un texto para darle orden
+                            cadena += rutina.get("mes").toString()
+                            cadena += "-" //le pone un texto para darle orden
+                            cadena += rutina.get("ano").toString()
+
+                            fecha = rutina.get("dia").toString()
+                            fecha += "-" //le pone un texto para darle orden
+                            fecha += rutina.get("mes").toString()
+                            fecha += "-" //le pone un texto para darle orden
+                            fecha += rutina.get("ano").toString()
+
+                            if(fecha == fechaHoy) {
+                                MainActivity.listaRutinasATrabajar.add(cadena)
+                            }
+                        }
+                    }
+            }
+            MainActivity.validadorListas = false //cambia el validador para que esto no se vuelva a hacer
+        }
     }
 
     private fun callSeguimientoActivity() {

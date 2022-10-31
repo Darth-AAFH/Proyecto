@@ -22,6 +22,7 @@ import com.example.wildtracker.musica.mPlayerActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.android.synthetic.main.activity_ejercicio.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -31,6 +32,7 @@ import kotlinx.coroutines.withContext
 class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     var listViewRutinas2: ListView?= null
+    var listViewRutinas3: ListView?= null
     var textViewRutina: TextView?= null
     var buttonIniciar: Button?= null
 
@@ -46,10 +48,18 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             MainActivity.listaEjercicios.addAll(MainActivity.listaEjercicios2)
             MainActivity.validadorAcomodo = false
         }
+        MainActivity.listaRutinasVista = MainActivity.listaRutinasVista1
+        MainActivity.listaRutinasVista.addAll(MainActivity.listaRutinasVista2)
 
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinas)
-
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinasVista)
         listViewRutinas2!!.setAdapter(adapter) //La tabla se adapta en la text view
+
+        val adapter2: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinasATrabajar)
+        listViewRutinas3!!.setAdapter(adapter2) //La tabla se adapta en la text view
+
+        if(MainActivity.listaRutinasATrabajar.isEmpty()){
+            textViewRutina3.setVisibility(View.VISIBLE)
+        }
     }
 
     private fun CargarRanking() {
@@ -89,6 +99,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         initNavigationView()
 
         listViewRutinas2 = findViewById(R.id.listViewRutinas2)
+        listViewRutinas3 = findViewById(R.id.listViewRutinas3)
         textViewRutina = findViewById(R.id.textViewRutina)
         buttonIniciar = findViewById(R.id.buttonIniciar); buttonIniciar!!.setVisibility(View.INVISIBLE); buttonIniciar!!.setEnabled(false)
 
@@ -97,9 +108,29 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         CargarRanking()
 
         listViewRutinas2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-
             num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
             nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
+
+            textViewRutina!!.setText("Rutina seleccionada: "+nombre)
+
+            buttonIniciar!!.setVisibility(View.VISIBLE); buttonIniciar!!.setEnabled(true)
+
+            var idRutina: Int
+            MainActivity.user?.let { usuario -> //abre la base de datos
+                db.collection("users").document(usuario).collection("rutinas").get().addOnSuccessListener {
+                    for(rutinas in it){ //para cada rutina
+                        idRutina = (rutinas.get("id") as Long).toInt() //toma el id de la rutina
+                        if(idRutina == num){ //al encontrar la seleccionada
+                            xp = (rutinas.get("xp") as Long).toInt() //guardara la xp que tiene
+                        }
+                    }
+                }
+            }
+        }
+
+        listViewRutinas3!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
+            num = MainActivity.listaRutinasATrabajar[position].split(" ").toTypedArray()[0].toInt()
+            nombre = MainActivity.listaRutinasATrabajar[position].split(" | ").toTypedArray()[1]
 
             textViewRutina!!.setText("Rutina seleccionada: "+nombre)
 

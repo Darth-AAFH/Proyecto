@@ -220,10 +220,10 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             if(i == 0){ //mandar a lista de rutinas
                 val intent = Intent(this@SeguimientoActivity, SeleccionadorRutina::class.java)
 
-                //val bundle = Bundle()
-                //bundle.putInt("dia", dia); bundle.putInt("mes", mes); bundle.putInt("ano", ano)
+                val bundle = Bundle()
+                bundle.putInt("dia", dia); bundle.putInt("mes", mes); bundle.putInt("ano", ano)
 
-                //intent.putExtras(bundle)
+                intent.putExtras(bundle)
                 startActivity(intent)
             }else{
                 if(i == 1){ //muestra la rutina de ese día y la puede quitar
@@ -240,8 +240,6 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         val mostrarAlerta = alertaTareas.create()
         mostrarAlerta.show()
-
-
     }
 
     private fun initToolbar() {

@@ -8,10 +8,17 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import com.example.wildtracker.R
+import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.*
 
 class SeleccionadorRutina : AppCompatActivity() {
 
+    private val db = FirebaseFirestore.getInstance()
+
     var listViewRutinas2: ListView?= null
+
+    var dia = 0; var mes  = 0; var ano = 0
 
     private fun CargarListas(){ //ayuda a organizar las listas de rutinas y los ejercicios
         if(MainActivity.validadorAcomodo){ //esto debe ir en plantillas y ejercicios
@@ -32,6 +39,13 @@ class SeleccionadorRutina : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_seleccionador_rutina)
 
+        val b = intent.extras //b toma la fecha en que se trabajara la rutina
+        if (b != null) {
+            ano = b.getInt("dia")
+            mes = b.getInt("mes")
+            dia = b.getInt("ano")
+        }
+
         listViewRutinas2 = findViewById(R.id.listViewRutinas2)
 
         CargarListas()
@@ -47,9 +61,34 @@ class SeleccionadorRutina : AppCompatActivity() {
             arreglo = nivelAux.split(" ").toTypedArray()
             val nivel = arreglo[1]!!.toInt()
 
+            val fecha = dia.toString() + "-" + mes.toString() + "-" + ano.toString()
 
-            Toast.makeText(this, "Se ha seleccionado la rutina: "+num+", nombre: "+nombre, Toast.LENGTH_SHORT).show()
-            Toast.makeText(this, "ejercicios: "+ejercicios+", nivel: "+nivel, Toast.LENGTH_SHORT).show()
+            MainActivity.user?.let{ usuario ->
+                db.collection("users").document(usuario).collection("rutinasAtrabajar")
+                    .document(fecha).set(
+                        hashMapOf(
+                            "dia" to dia,
+                            "mes" to mes,
+                            "ano" to ano,
+                            "idRutina" to num,
+                            "nombre" to nombre
+                        )
+                    )
+            }
+
+            var sdf = SimpleDateFormat("dd")
+            val diaHoy = sdf.format(Date()) //se obtiene el dia actual
+            sdf = SimpleDateFormat("MM")
+            val mesHoy = sdf.format(Date()) //se obtiene el mes actual
+            sdf = SimpleDateFormat("yyyy")
+            val anoHoy = sdf.format(Date()) //se obiene el año actual
+            var fechaHoy: String
+            fechaHoy = diaHoy + "-" + mesHoy + "-" + anoHoy
+
+            if(fecha == fechaHoy) {
+                var cadena = num.toString() + " | " + nombre + " | Fecha: " + dia.toString() + "-" + mes.toString() + "-" + ano.toString()
+                MainActivity.listaRutinasATrabajar.add(cadena)
+            }
 
             Toast.makeText(this, "Se añadio correctamente la rutina", Toast.LENGTH_SHORT).show()
 
