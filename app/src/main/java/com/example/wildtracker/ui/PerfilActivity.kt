@@ -425,10 +425,36 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             if(fecha == fechaHoy) {
                                 MainActivity.listaRutinasATrabajar.add(cadena)
                             }
+
+                            borrarRutinasAnteriores((rutina.get("dia") as Long).toInt(), (rutina.get("mes") as Long).toInt(), (rutina.get("ano") as Long).toInt(), diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt(), fecha)
                         }
                     }
             }
             MainActivity.validadorListas = false //cambia el validador para que esto no se vuelva a hacer
+        }
+    }
+
+    private fun borrarRutinasAnteriores(dia: Int, mes: Int, ano: Int, diaHoy: Int, mesHoy: Int, anoHoy: Int, fecha: String) {
+        if(anoHoy >= ano){
+            if(anoHoy > ano){
+                MainActivity.user?.let{ usuario ->
+                    db.collection("users").document(usuario).collection("rutinasAtrabajar").document(fecha).delete()
+                }
+            }else{
+                if(mesHoy >= mes){
+                    if(mesHoy > mes){
+                        MainActivity.user?.let{ usuario ->
+                            db.collection("users").document(usuario).collection("rutinasAtrabajar").document(fecha).delete()
+                        }
+                    }else{
+                        if(diaHoy > dia){
+                            MainActivity.user?.let{ usuario ->
+                                db.collection("users").document(usuario).collection("rutinasAtrabajar").document(fecha).delete()
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

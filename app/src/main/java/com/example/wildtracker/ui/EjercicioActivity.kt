@@ -38,6 +38,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private val db = FirebaseFirestore.getInstance()
     var num = 0; var nombre  = ""; var xp: Int? = null
+    var fecha = ""
 
     private fun CargarListas(){
         //ayuda a organizar las listas de rutinas y los ejercicios
@@ -110,6 +111,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         listViewRutinas2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
             nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
+            fecha = "0"
 
             textViewRutina!!.setText("Rutina seleccionada: "+nombre)
 
@@ -131,6 +133,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         listViewRutinas3!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             num = MainActivity.listaRutinasATrabajar[position].split(" ").toTypedArray()[0].toInt()
             nombre = MainActivity.listaRutinasATrabajar[position].split(" | ").toTypedArray()[1]
+            fecha = MainActivity.listaRutinasATrabajar[position].split("Fecha: ").toTypedArray()[1]
 
             textViewRutina!!.setText("Rutina seleccionada: "+nombre)
 
@@ -154,6 +157,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             intent.putExtra("Num", num)
             intent.putExtra("Nombre", nombre)
             intent.putExtra("XP", xp)
+            intent.putExtra("Fecha", fecha)
             startActivity(intent)
         }
     }

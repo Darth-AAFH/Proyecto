@@ -53,6 +53,7 @@ class EjecutadorRutina : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
     var num = 0; var nombre  = ""; var puntos = 0; var xp = 0; var nivel = 0; var ejercicios = ""
+    var fecha = ""
     var terminar2 = false
     var horasE = 0; var minutosE = 0; var segundosE = 0; var puntosE = 0 //E de extras
     var horasR = 0; var minutosR = 0; var segundosR = 0 //R de rutina
@@ -130,6 +131,21 @@ class EjecutadorRutina : AppCompatActivity() {
         }
     }
 
+
+    private fun BorrarRutinaDelDia(fecha: String) {
+        val linea: String
+        linea = num.toString() + " | " + nombre + " | Fecha:" + fecha
+
+        val posicion: Int
+        posicion = MainActivity.listaRutinasATrabajar.indexOf(linea)
+
+        MainActivity.listaRutinasATrabajar.removeAt(posicion+1)
+
+        MainActivity.user?.let{ usuario ->
+            db.collection("users").document(usuario).collection("rutinasAtrabajar").document(fecha).delete()
+        }
+    }
+
     @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables", "SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -160,6 +176,7 @@ class EjecutadorRutina : AppCompatActivity() {
             num = b.getInt("Num")
             nombre = b.getString("Nombre").toString()
             xp = b.getInt("XP")
+            fecha = b.getString("Fecha").toString()
         }
 
         textViewActividadEnFoco = findViewById(R.id.textViewActividadEnFoco)
@@ -227,6 +244,8 @@ class EjecutadorRutina : AppCompatActivity() {
         CargarRutina(arreglo) //carga la rutina
 
         puntosTotalesFun(true)
+
+        BorrarRutinaDelDia(fecha)
 
         Toast.makeText(this, "Presione > para iniciar", Toast.LENGTH_SHORT).show()
         timer = Timer()
