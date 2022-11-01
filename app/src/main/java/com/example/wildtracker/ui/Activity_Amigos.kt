@@ -1,10 +1,9 @@
 package com.example.wildtracker.ui
 
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.method.TextKeyListener.clear
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -17,12 +16,10 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
 import com.example.wildtracker.musica.mPlayerActivity
-import com.example.wildtracker.ui.MainActivity.Companion.listaSeguidores
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.core.RepoManager.clear
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Suppress("DEPRECATION")
@@ -33,6 +30,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private var listViewRanking: ListView?= null
     private var buttonRecargar: Button?= null
     private lateinit var builder: AlertDialog.Builder
+    private lateinit var builderStadistics: AlertDialog.Builder
     private fun CargarSeguidores () {
         val values = ArrayList<String>()
         values.clear()
@@ -50,9 +48,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         MainActivity.listaSeguidores.clear()
         db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
         for (document in result) {
-
             perfilGet = document.get("Nombre").toString()
-
             if(progresDialog.isShowing) {
                 //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
                 //Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
@@ -106,9 +102,38 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     .setMessage("Que deseas hacer con este usuario")
                     .setCancelable(true)
                     .setPositiveButton("Dejar de seguir") { dialogInterface, it ->
+                        //Funcion para eliminar al usuario de mis amigos
+                        db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
+                            for (document in result) {
 
+                                perfilGet = document.get("Nombre").toString()
+
+                                if(perfilGet==perfil){
+                                    document.reference.delete()
+                                }
+                            }
+
+                            }
                     }
                     .setNeutralButton("Ver estadisticas") { dialogInterface, it ->
+                        //Buscar al usuario y traerse sus estadisticas
+                        db.collection("users").get().addOnSuccessListener { result ->
+                            for (document in result) {
+
+                                perfilGet = document.get("Name").toString()
+                                if(perfilGet==perfil){
+                                   //Traerse los datos necesarios
+                                 /*   builderStadistics = AlertDialog.Builder(this)
+                                    builderStadistics.setTitle("Estadisticas de $perfil")
+                                        .setCancelable(true)
+                                        .setNeutralButton("OK"){
+                                            dialogInterface,it->*/
+                                            alertScrollView(perfil)
+
+                                        }
+                            }
+                                }
+
                     }
                     .setNegativeButton("Cancelar") { dialogInterface, it -> //dialogInterface.cancel()
                         dialogInterface.dismiss()
@@ -280,4 +305,63 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             e.printStackTrace()
         }
     }
+
+
+
+    fun alertScrollView(perfil: String) {
+        val progresDialog = ProgressDialog(this)
+        progresDialog.setMessage("Cargando Datos")
+        progresDialog.setCancelable(false)
+        progresDialog.show()
+
+
+
+        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val myScrollView: View = inflater.inflate(R.layout.seguidores_estadisticas, null, false)
+
+        val tv = myScrollView.findViewById<View>(R.id.textViewWithScrollSta) as TextView
+
+        // Initializing a blank textview so that we can just append a text later
+        tv.text = ""
+        var nombre = perfil
+        var puntos = " "
+        var altura =" "
+        var peso = ""
+        var contador =1
+        db.collection("users").get().addOnSuccessListener { result ->
+            for (document in result) {
+                    try {
+                        if(perfil==document.get("Name"))
+                            contador++
+                        if(perfil==document.get("Name")&& contador<=2) {
+                            puntos = document.get("puntosTotales").toString()
+                            peso = document.get("peso").toString()
+                            altura = document.get("altura").toString()
+                            // myScrollView.setVisibility(View.GONE);
+                            myScrollView.setVisibility(View.VISIBLE);
+                            tv.append("Nombre : ${document.get("Name").toString()}\n")
+                            tv.append("Puntos Totales : $puntos\n")
+                            tv.append("Peso : ${peso}\n")
+                            tv.append("Altura : ${altura}\n")
+                        }
+
+                    }
+                    catch (e:Exception){
+
+                    }
+                }
+                if(progresDialog.isShowing) {
+                    progresDialog.dismiss()
+                }
+            }
+        AlertDialog.Builder(this).setView(myScrollView)
+            .setTitle("Informacion de personas")
+            .setNeutralButton("Ok") {  dialog, id -> dialog.cancel() }.show()
+
+
+
+    }
+
+
+
 }

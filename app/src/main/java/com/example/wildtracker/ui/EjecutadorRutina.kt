@@ -85,13 +85,15 @@ class EjecutadorRutina : AppCompatActivity() {
         listViewEjerciciosPorHacer!!.setAdapter(adapter) //La rutina se adapta en la text view
     }
 
-    var Name = ""; var birthDay = ""; var email = ""
+    var Name = ""; var birthDay = ""; var email = ""; var peso = ""
     var puntosTotales: Int = 0
+
     data class puntosTotalesClass (
         val Name: String? = "",
         val birthDay: String? = "",
         val email: String = "",
-        val puntosTotales: Int? = 0
+        val puntosTotales: Int? = 0,
+        val peso:String =""
     )
     private fun puntosTotalesFun(bool: Boolean) {
         if(bool) {
@@ -109,7 +111,7 @@ class EjecutadorRutina : AppCompatActivity() {
                             birthDay = puntosTaux.birthDay!!
                             email = puntosTaux.email!!
                             puntosTotales = puntosTaux.puntosTotales!! //se guarda en la variable global
-
+                            peso = puntosTaux.peso!!
                             if (puntosTotales == null) { //en caso de que sea null se guarda como 0
                                 puntosTotales = 0
                             }
@@ -119,12 +121,13 @@ class EjecutadorRutina : AppCompatActivity() {
             }
         } else{
             MainActivity.user?.let { usuario -> //se abre la base de datos para subir los datos
-                db.collection("users").document(usuario).set(
-                    hashMapOf(
+                db.collection("users").document(usuario).update(
+                    mapOf(
                         "Name" to Name, //se colocan los datos a mandar
                         "birthDay" to birthDay,
                         "email" to email,
-                        "puntosTotales" to puntosTotales
+                        "puntosTotales" to puntosTotales,
+                        "peso" to peso
                     )
                 )
             }

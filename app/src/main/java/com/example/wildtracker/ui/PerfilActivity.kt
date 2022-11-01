@@ -640,8 +640,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
             if(NombreDisponible) {
                 MainActivity.user?.let { usuario ->
-                    db.collection("users").document(usuario).set(
-                        hashMapOf(
+                    db.collection("users").document(usuario).update(
+                        mapOf(
                             "birthDay" to findViewById<EditText>(R.id.Perfil_birthday).text.toString(),
                             "email" to findViewById<EditText>(R.id.Perfil_mail).text.toString(),
                             "Name" to findViewById<EditText>(R.id.Perfil_name).text.toString(),

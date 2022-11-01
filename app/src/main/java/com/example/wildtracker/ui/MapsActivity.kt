@@ -642,7 +642,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 startActivity(getIntent());
             }
             .show()
-        alertScrollView(markerToDelete, snippet)
+        //alertScrollView(markerToDelete, snippet)
     }
 
     /**Funcion para eliminar el marcador seleccionado en el mapa*/
