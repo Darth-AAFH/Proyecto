@@ -203,21 +203,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                                 myScrollView.setVisibility(View.VISIBLE);
                                 tv.append("Comentario : $date\n")
                                 tv.append("${descripcion}\n")
-
                             }
                         }
                         catch (e:Exception){
 
                         }
                     }
-
                     if(progresDialog.isShowing) {
                         progresDialog.dismiss()
                     }
-
-
-
-
                 }
             }
 
@@ -546,27 +540,104 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         )
         val markerRef = db.collection("locations").document("$descripcion")
 
+       // markerRef.update("contador añadir", FieldValue.increment(1))
+        db.collection("locations").document(descripcion).collection("eliminan").document().set(
+            hashMapOf(
+                "userID" to ("Empty")
+            )
+
+        )
+
+
         markerRef.update("contador añadir", FieldValue.increment(1))
+        db.collection("locations").document(descripcion).collection("añaden").document().set(
+            hashMapOf(
+                "userID" to (FirebaseAuth.getInstance().currentUser?.uid ?: LoginActivity)
+            )
+
+        )
+
+
+
     }
 
     /**AlertDialog para preguntar si se desea eliminar un marcador en el mapa o sumar puntos a añadirlo*/
     private fun AlertaModificarMapa(markerToDelete: Marker, snippet: String?) {
-
+        var userID = ""
         Toast.makeText(this,snippet,Toast.LENGTH_SHORT).show()
-
+        var contador=1
         val markerRef = db.collection("locations").document("$snippet")
         builder = AlertDialog.Builder(this)
         builder.setTitle("Punto en el mapa")
             .setMessage("Este es un marcador a añadir, puedes ayudar para añadirlo o eliminarlo!")
             .setCancelable(true)
             .setPositiveButton("Añadir") { dialogInterface, it ->
-                //deleteMarker(markerToDelete)
-                markerRef.update("contador añadir", FieldValue.increment(1))
+
+
+                //Quien lo manda
+
+                if (snippet != null) {
+                    db.collection("locations").document(snippet).collection("añaden").get().addOnSuccessListener{ result->
+                        for (document in result){
+                            if((document.get("userID")).toString() == (FirebaseAuth.getInstance().currentUser?.uid ?: LoginActivity)){
+                                ++contador
+                                // Toast.makeText(this,"Contador validado $contador",Toast.LENGTH_SHORT).show()
+                            }
+                            if((document.get("userID")).toString() != (FirebaseAuth.getInstance().currentUser?.uid ?: LoginActivity)&&contador<=1){
+                               // Toast.makeText(this,"Contador validado $contador",Toast.LENGTH_SHORT).show()
+                                db.collection("locations").document(snippet).collection("añaden").document().set(
+                                    hashMapOf(
+                                        "userID" to (FirebaseAuth.getInstance().currentUser?.uid ?: LoginActivity)
+                                    )
+                                )
+                                markerRef.update("contador añadir", FieldValue.increment(1))
+
+                            }
+                        }
+                    }
+                    if(contador>1){
+                        Toast.makeText(this,"Ya has votado",Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+                        Toast.makeText(this,"Contador $contador",Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+
+
+
                 finish();
                 startActivity(getIntent());
             }
             .setNegativeButton("Eliminar") { dialogInterface, it -> //dialogInterface.cancel()
-                markerRef.update("contador eliminar", FieldValue.increment(-1))
+                contador = 1
+                //Quien lo manda
+                if (snippet != null) {
+                    db.collection("locations").document(snippet).collection("eliminan").get().addOnSuccessListener{ result->
+                        for (document in result){
+                            if((document.get("userID")).toString() == (FirebaseAuth.getInstance().currentUser?.uid ?: LoginActivity)){
+                                ++contador
+                               // Toast.makeText(this,"Contador validado $contador",Toast.LENGTH_SHORT).show()
+                            }
+                            if((document.get("userID")).toString() != (FirebaseAuth.getInstance().currentUser?.uid ?: LoginActivity)&&contador<=1){
+                               // Toast.makeText(this,"Contador validado $contador",Toast.LENGTH_SHORT).show()
+                                db.collection("locations").document(snippet).collection("eliminan").document().set(
+                                    hashMapOf(
+                                        "userID" to (FirebaseAuth.getInstance().currentUser?.uid ?: LoginActivity)
+                                    )
+                                )
+                                markerRef.update("contador eliminar", FieldValue.increment(-1))
+                            }
+                        }
+                    }
+                    if(contador>1){
+                        Toast.makeText(this,"Ya has votado",Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+                        Toast.makeText(this,"Contador $contador",Toast.LENGTH_SHORT).show()
+                    }
+                }
+
                 finish();
                 startActivity(getIntent());
             }
