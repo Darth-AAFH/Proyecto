@@ -133,16 +133,19 @@ class EjecutadorRutina : AppCompatActivity() {
 
 
     private fun BorrarRutinaDelDia(fecha: String) {
-        val linea: String
-        linea = num.toString() + " | " + nombre + " | Fecha:" + fecha
+        if(fecha != "0") {
+            val linea: String
+            linea = num.toString() + " | " + nombre + " | Fecha:" + fecha
 
-        val posicion: Int
-        posicion = MainActivity.listaRutinasATrabajar.indexOf(linea)
+            val posicion: Int
+            posicion = MainActivity.listaRutinasATrabajar.indexOf(linea)
 
-        MainActivity.listaRutinasATrabajar.removeAt(posicion+1)
+            MainActivity.listaRutinasATrabajar.removeAt(posicion + 1)
 
-        MainActivity.user?.let{ usuario ->
-            db.collection("users").document(usuario).collection("rutinasAtrabajar").document(fecha).delete()
+            MainActivity.user?.let { usuario ->
+                db.collection("users").document(usuario).collection("rutinasAtrabajar")
+                    .document(fecha).delete()
+            }
         }
     }
 
