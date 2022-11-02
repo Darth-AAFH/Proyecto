@@ -37,19 +37,22 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private var buttonRecargar: Button ?= null
     private lateinit var builder: AlertDialog.Builder
     private fun CargarRanking () {
-        MainActivity.listaRanking.sort()
+        listaRanking.clear()
+        listaRanking.addAll(MainActivity.listaRanking1); listaRanking.addAll(MainActivity.listaRanking2)
+        listaRanking.addAll(MainActivity.listaRanking3); listaRanking.addAll(MainActivity.listaRanking4)
+
         val array = ArrayList<String>()
-        var i = MainActivity.listaRanking.size - 1
+        var i = listaRanking.size - 1
         while (i != -1) {
-            array.add(MainActivity.listaRanking[i])
+            array.add(listaRanking[i])
             i--
         }
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array)
         listViewRanking!!.setAdapter(adapter) //La lista se adapta en la text view
-        MainActivity.listaRanking.sort()
+        listaRanking.sort()
         listViewRanking!!.setOnItemClickListener  { parent, view, position, id ->
-            var Perfil:String  =  MainActivity.listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]
+            var Perfil:String  =  listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]
             Perfil = Perfil.substringAfter("-")
           //  Toast.makeText(this,MainActivity.listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]+"$Perfil",Toast.LENGTH_SHORT).show()
             AlertaSeguir(Perfil )

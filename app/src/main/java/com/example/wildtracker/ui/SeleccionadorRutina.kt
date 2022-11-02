@@ -54,12 +54,10 @@ class SeleccionadorRutina : AppCompatActivity() {
         listViewRutinas2!!.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
             val num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
             val nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
-            val ejercicios = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[3]
             val nivelAux = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[2]
 
             val arreglo: Array<String?>
             arreglo = nivelAux.split(" ").toTypedArray()
-            val nivel = arreglo[1]!!.toInt()
 
             val fecha = dia.toString() + "-" + mes.toString() + "-" + ano.toString()
 
@@ -83,9 +81,13 @@ class SeleccionadorRutina : AppCompatActivity() {
             sdf = SimpleDateFormat("yyyy")
             val anoHoy = sdf.format(Date()) //se obiene el año actual
             var fechaHoy: String
-            fechaHoy = diaHoy + "-" + mesHoy + "-" + anoHoy
+
+            val diaHoy2 = diaHoy.toInt()
+            val mesHoy2 = mesHoy.toInt()
+            fechaHoy = diaHoy2.toString() + "-" + mesHoy2.toString() + "-" + anoHoy
 
             if(fecha == fechaHoy) {
+                MainActivity.listaRutinasATrabajar.clear()
                 var cadena = num.toString() + " | " + nombre + " | Fecha: " + dia.toString() + "-" + mes.toString() + "-" + ano.toString()
                 MainActivity.listaRutinasATrabajar.add(cadena)
             }

@@ -263,25 +263,25 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val diaSem =  c.get(Calendar.DAY_OF_WEEK)
 
         if(diaSem == 4){
-            return 7 //domingo
-        }
-        if(diaSem == 5){
             return 1 //lunes
         }
-        if(diaSem == 6){
+        if(diaSem == 5){
             return 2 //martes
         }
-        if(diaSem == 7){
+        if(diaSem == 6){
             return 3 //miercoles
         }
-        if(diaSem == 1){
+        if(diaSem == 7){
             return 4 //jueves
         }
-        if(diaSem == 2){
+        if(diaSem == 1){
             return 5 //viernes
         }
-        if(diaSem == 3){
+        if(diaSem == 2){
             return 6 //sabado
+        }
+        if(diaSem == 3){
+            return 7 //domingo
         }
         return 0
     }
@@ -396,7 +396,9 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         sdf = SimpleDateFormat("yyyy")
         val anoHoy = sdf.format(Date()) //se obiene el año actual
         var fechaHoy: String
-        fechaHoy = diaHoy + "-" + mesHoy + "-" + anoHoy
+        val diaHoy2 = diaHoy.toInt()
+        val mesHoy2 = mesHoy.toInt()
+        fechaHoy = diaHoy2.toString() + "-" + mesHoy2.toString() + "-" + anoHoy
 
         var cadena: String; var fecha: String
 
@@ -468,7 +470,9 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         var puntosTotales: Int? = 0
     )
     private fun CargarRanking () {
-        MainActivity.listaRanking.clear() //limpiar la lista del ranking para poder recargarla
+        MainActivity.listaRanking.clear() //limpia las listas del ranking para poder recargarlas
+        MainActivity.listaRanking1.clear(); MainActivity.listaRanking2.clear()
+        MainActivity.listaRanking3.clear(); MainActivity.listaRanking4.clear()
 
         MainActivity.user?.let { usuario -> //para cargar el ranking
             db.collection("users").get().addOnSuccessListener {
@@ -481,16 +485,52 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                         val user1 = nameDocument.get().await().toObject(userData::class.java) //y se va a traer los datos
 
                         withContext(Dispatchers.Main){
+
+                            if((user1!!.puntosTotales)!!.toInt() < 10){
+                                if(MainActivity.user == userEmail){ //si es el usuario en uso
+                                    MainActivity.listaRanking1.add((user1!!.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
+                                }else{
+                                    MainActivity.listaRanking1.add((user1!!.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
+                                }
+                            }else{
+                                if((user1!!.puntosTotales)!!.toInt() < 100){
+                                    if(MainActivity.user == userEmail){ //si es el usuario en uso
+                                        MainActivity.listaRanking2.add((user1!!.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
+                                    }else{
+                                        MainActivity.listaRanking2.add((user1!!.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
+                                    }
+                                }else{
+                                    if((user1!!.puntosTotales)!!.toInt() < 1000){
+                                        if(MainActivity.user == userEmail){ //si es el usuario en uso
+                                            MainActivity.listaRanking3.add((user1!!.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
+                                        }else{
+                                            MainActivity.listaRanking3.add((user1!!.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
+                                        }
+                                    }else{
+                                        if(MainActivity.user == userEmail){ //si es el usuario en uso
+                                            MainActivity.listaRanking4.add((user1!!.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
+                                        }else{
+                                            MainActivity.listaRanking4.add((user1!!.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
+                                        }
+                                    }
+                                }
+                            }
+
+                            /*
                             if(MainActivity.user == userEmail){ //si es el usuario en uso
                                 MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
                             }else{
                                 MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
                             }
+                             */
                         }
                     }
                 }
             }
         }
+
+        MainActivity.listaRanking1.sort(); MainActivity.listaRanking2.sort()// acomoda las listas
+        MainActivity.listaRanking3.sort(); MainActivity.listaRanking4.sort()
     }
     private fun CargarSeguidores(){
         listaSeguidores.clear()

@@ -53,6 +53,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var listaRutinasVista2 = ArrayList<String>()
         var listaEjercicios1 = ArrayList<String>()
         var listaEjercicios2 = ArrayList<String>()
+        val listaRanking1 = ArrayList<String>()
+        val listaRanking2 = ArrayList<String>()
+        val listaRanking3 = ArrayList<String>()
+        val listaRanking4 = ArrayList<String>()
         var validadorListas = true
         //
         var lunes: Double = 0.0; var martes: Double = 0.0; var miercoles: Double = 0.0; var jueves : Double = 0.0
@@ -63,7 +67,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var listaRutinasVista = ArrayList<String>()
         var listaEjercicios = ArrayList<String>()
         var validadorAcomodo = true
-        val listaRanking = ArrayList<String>()
+        var listaRanking = ArrayList<String>()
         val listaSeguidores = ArrayList<String>()
         var listaRutinasATrabajar = ArrayList<String>()
     }

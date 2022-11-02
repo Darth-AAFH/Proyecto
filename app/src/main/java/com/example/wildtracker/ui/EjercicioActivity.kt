@@ -61,6 +61,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if(MainActivity.listaRutinasATrabajar.isEmpty()){
             textViewRutina3.setVisibility(View.VISIBLE)
         }
+
+        //poner una lista auxiliar para que carge las rutinasAtrabajar y las metas, y lo ppone en la listview3
     }
 
     private fun CargarRanking() {
