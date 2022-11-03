@@ -131,6 +131,32 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                                             alertScrollView(perfil)
 
                                         }
+                               /* else{
+                                    builder = AlertDialog.Builder(this)
+                                    builder.setTitle("Alerta")
+                                        .setMessage("No se encontro el usuario es posible que haya cambiado de nombre")
+                                        .setCancelable(true)
+                                        .setPositiveButton("Dejar de seguir") { dialogInterface, it ->
+                                            //Funcion para eliminar al usuario de mis amigos
+                                            db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
+                                                for (document in result) {
+
+                                                    perfilGet = document.get("Nombre").toString()
+
+                                                    if(perfilGet==perfil){
+                                                        document.reference.delete()
+                                                    }
+                                                }
+
+                                            }
+                                            dialogInterface.dismiss()
+                                        }
+                                        .setNegativeButton("Cancelar") { dialogInterface, it -> //dialogInterface.cancel()
+                                            dialogInterface.dismiss()
+                                        }
+                                        .show()
+                                } */
+
                             }
                                 }
 
@@ -338,8 +364,18 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                             peso = document.get("peso").toString()
                             altura = document.get("altura").toString()
                             // myScrollView.setVisibility(View.GONE);
-                            myScrollView.setVisibility(View.VISIBLE);
+                           Thread.sleep(200)
                             tv.append("Nombre : ${document.get("Name").toString()}\n")
+                            myScrollView.setVisibility(View.VISIBLE);
+                            if(puntos==null||puntos=="null"){
+                                puntos ="NR"
+                            }
+                            if(peso==null||peso=="null"){
+                                peso ="NR"
+                            }
+                            if(altura==null||altura=="null"){
+                                altura ="NR"
+                            }
                             tv.append("Puntos Totales : $puntos\n")
                             tv.append("Peso : ${peso}\n")
                             tv.append("Altura : ${altura}\n")
