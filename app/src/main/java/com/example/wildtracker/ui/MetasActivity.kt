@@ -37,8 +37,6 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
     private val db = FirebaseFirestore.getInstance()
 
-    var sdf = SimpleDateFormat("dd/MM/yyy")
-    var fechaHoy = sdf.format(Date())
     var dia = 0; var mes = 0; var ano = 0
     var D1 = false; var D2 = false; var D3 = false; var D4 = false; var D5 = false; var D6 = false; var D7 = false
 
@@ -62,40 +60,59 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         editTextDate.setOnClickListener{ tomarFecha() }
 
+        switchPeso!!.setChecked(true)
+
         buttonGuardar!!.setOnClickListener{
             val nombre = editTextNombreMeta!!.text.toString(); val peso = switchPeso!!.isChecked(); val repeticion = switchRepeticion!!.isChecked()
-            val datoInicial = (editTextInicio!!.text.toString()).toInt(); val datoFinal = (editTextFinal!!.text.toString()).toInt()
+
+            var datoInicial = 0; var datoFinal = 0
+
+            if(editTextInicio!!.text.toString() != ""){
+                datoInicial = (editTextInicio!!.text.toString()).toInt()
+            }
+            if(editTextFinal!!.text.toString() != ""){
+                datoFinal = (editTextFinal!!.text.toString()).toInt()
+            }
+
             D1 = d1!!.isChecked(); D2 = d2!!.isChecked(); D3 = d3!!.isChecked(); D4 = d4!!.isChecked(); D5 = d5!!.isChecked(); D6 = d6!!.isChecked(); D7 = d7!!.isChecked()
 
-            if(D1 == false && D2 == false && D3 == false && D4 == false && D5 == false && D6 == false && D7 == false){
-                Toast.makeText(this, "Debe de seleccionar por lo menos un día", Toast.LENGTH_LONG).show()
+            if(nombre == ""){
+                Toast.makeText(this, "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
             }else{
-                var sdf = SimpleDateFormat("dd")
-                var diaHoy = sdf.format(Date()) //se obtiene el dia actual
-                sdf = SimpleDateFormat("MM")
-                var mesHoy = sdf.format(Date()) //se obtiene el mes actual
-                sdf = SimpleDateFormat("yyyy")
-                val anoHoy = sdf.format(Date()) //se obiene el año actual
-
-                if(anoHoy.toInt() > ano){
-                    Toast.makeText(this, "La fecha seleccionada es una fecha pasada", Toast.LENGTH_LONG).show()
+                if(datoFinal == 0){
+                    Toast.makeText(this, "El dato final no puede ser igual a 0", Toast.LENGTH_SHORT).show()
                 }else{
-                    if(anoHoy.toInt() == ano){
-                        if(mesHoy.toInt() > mes){
-                            Toast.makeText(this, "La fecha seleccionada es una fecha pasada", Toast.LENGTH_LONG).show()
+                    if(D1 == false && D2 == false && D3 == false && D4 == false && D5 == false && D6 == false && D7 == false){
+                        Toast.makeText(this, "Debe de seleccionar por lo menos un día", Toast.LENGTH_LONG).show()
+                    }else{
+                        var sdf = SimpleDateFormat("dd")
+                        var diaHoy = sdf.format(Date()) //se obtiene el dia actual
+                        sdf = SimpleDateFormat("MM")
+                        var mesHoy = sdf.format(Date()) //se obtiene el mes actual
+                        sdf = SimpleDateFormat("yyyy")
+                        val anoHoy = sdf.format(Date()) //se obiene el año actual
+
+                        if(anoHoy.toInt() > ano){
+                            Toast.makeText(this, "La fecha de finalizacion seleccionada es una fecha pasada", Toast.LENGTH_LONG).show()
                         }else{
-                            if(mesHoy.toInt() == mes){
-                                if(diaHoy.toInt() > dia){
+                            if(anoHoy.toInt() == ano){
+                                if(mesHoy.toInt() > mes){
                                     Toast.makeText(this, "La fecha seleccionada es una fecha pasada", Toast.LENGTH_LONG).show()
                                 }else{
-                                    guardarMeta(nombre, peso, repeticion, datoInicial, datoFinal)
+                                    if(mesHoy.toInt() == mes){
+                                        if(diaHoy.toInt() > dia){
+                                            Toast.makeText(this, "La fecha seleccionada es una fecha pasada", Toast.LENGTH_LONG).show()
+                                        }else{
+                                            guardarMeta(nombre, peso, repeticion, datoInicial, datoFinal, diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt())
+                                        }
+                                    }else{
+                                        guardarMeta(nombre, peso, repeticion, datoInicial, datoFinal, diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt())
+                                    }
                                 }
                             }else{
-                                guardarMeta(nombre, peso, repeticion, datoInicial, datoFinal)
+                                guardarMeta(nombre, peso, repeticion, datoInicial, datoFinal, diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt())
                             }
                         }
-                    }else{
-                        guardarMeta(nombre, peso, repeticion, datoInicial, datoFinal)
                     }
                 }
             }
@@ -104,6 +121,28 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         buttonTest!!.setOnClickListener{
             val intent = Intent(this@MetasActivity, SeguimientoActivity::class.java)
             startActivity(intent)
+        }
+
+        switchPeso!!.setOnClickListener {
+            switchRepeticion!!.setChecked(true)
+            editTextInicio!!.setHint("Cantidad de repeticiones iniciales")
+            editTextFinal!!.setHint("Cantidad de repeticiones finales")
+            if(switchPeso!!.isChecked()){
+                switchRepeticion!!.setChecked(false)
+                editTextInicio!!.setHint("Peso inicial (kg)")
+                editTextFinal!!.setHint("Peso inicial (kg)")
+            }
+        }
+
+        switchRepeticion!!.setOnClickListener {
+            switchPeso!!.setChecked(true)
+            editTextInicio!!.setHint("Peso inicial (kg)")
+            editTextFinal!!.setHint("Peso inicial (kg)")
+            if(switchRepeticion!!.isChecked()){
+                switchPeso!!.setChecked(false)
+                editTextInicio!!.setHint("Cantidad de repeticiones iniciales")
+                editTextFinal!!.setHint("Cantidad de repeticiones finales")
+            }
         }
     }
 
@@ -115,65 +154,11 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
     @SuppressLint("SetTextI18n")
     fun acomodarFecha(day: Int, month: Int, year: Int) {
         var month2 = month + 1
-        editTextDate.setText("Fecha de finalización seleccionada: $day del mes $month2 de $year")
+        editTextDate.setText("Fecha de finalización: $day del mes $month2 de $year")
         dia = day; mes = month2; ano = year
     }
 
-    /*
-    public void onclick(View view) {
-        if(view.getId() ==R.id.idSwitch){
-            if(switchPeso.isChecked){
-                switchRepeticion = false
-
-                editTextInicio.setTect("Introduzca peso inicial")
-                editTextFinal.setText("Introduzca peso final")
-            }
-        }
-
-        if(view.getId() ==R.id.idSwitch2){
-            if(switchRepeticion.isChecked){
-                switchPeso = false
-
-                editTextInicio.setTect("Introduzca cantidad de repetinciones inicial")
-                editTextFinal.setText("Introduzca cantidad de repetinciones final")
-            }
-        }
-    }
-     */
-
-
-    private fun guardarMeta(Nombre: String, Peso: Boolean, Repeticion: Boolean, DatoInicial: Int, DatoFinal: Int) {
-
-        /*
-        Toast.makeText(this, "nombre: "+Nombre, Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, "peso: "+Peso, Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, "repeticion: "+Repeticion, Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, "lunes: "+D1, Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, "martes: "+D2, Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, "miercoles: "+D3, Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, "jueves: "+D4, Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, "viernes: "+D5, Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, "sabado: "+D6, Toast.LENGTH_SHORT).show()
-        Toast.makeText(this, "domingo: "+D7, Toast.LENGTH_SHORT).show()
-         */
-
-
-        var diaF = ""; var mesF = ""; var fechaFin = ""
-        if(dia < 10)
-            diaF = "0"
-        diaF += dia.toString()
-        if(mes < 10)
-            mesF = "0"
-        mesF += mes.toString()
-        fechaFin = diaF + "/" + mesF + "/" + ano.toString()
-
-        //Toast.makeText(this, "fecha inicio: "+fechaHoy, Toast.LENGTH_SHORT).show()
-        //Toast.makeText(this, "fecha final: "+fechaFin, Toast.LENGTH_SHORT).show()
-
-        //poner una funcion similar a la de crear de Creador Ejercicios (para )
-
-        //falta peso o repeticion inicial y final
-
+    private fun guardarMeta(Nombre: String, Peso: Boolean, Repeticion: Boolean, DatoInicial: Int, DatoFinal: Int, diaHoy: Int, mesHoy: Int, anoHoy: Int) {
         MainActivity.user?.let{ usuario ->
             db.collection("users").document(usuario).collection("metas")
                 .document(Nombre).set(
@@ -188,14 +173,102 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                         "viernes" to D5,
                         "sabado" to D6,
                         "domingo" to D7,
-                        "fechaFinal" to fechaFin,
+                        "diaFinal" to dia,
+                        "mesFinal" to mes,
+                        "anoFinal" to ano,
                         "datoInicial" to DatoInicial,
-                        "datoFinal" to DatoFinal
+                        "datoFinal" to DatoFinal,
+                        "diaSeg" to diaHoy, //dia de seguimiento (para llevar un orden a los datos que se le suman)
+                        "mesSeg" to mesHoy,
+                        "anoSeg" to anoHoy,
+                        "ultDia" to diaHoy - 1, //ultima fecha en que se trabajo la meta (esto para que no la repita dos veces en un día)
+                        "ultMes" to mesHoy,
+                        "ultAno" to anoHoy
                     )
                 )
         }
 
-        Toast.makeText(this, "Se ha guardado la meta", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Se ha guardado la meta", Toast.LENGTH_LONG).show()
+
+        var sdf = SimpleDateFormat("dd")
+        val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
+        sdf = SimpleDateFormat("MM")
+        val mesHoy2 = sdf.format(Date()) //se obtiene el mes actual
+        sdf = SimpleDateFormat("yyyy")
+        val anoHoy2 = sdf.format(Date()) //se obiene el año actual
+
+        val diaHoy = diaHoy2.toInt()
+        val mesHoy = mesHoy2.toInt()
+        val anoHoy = anoHoy2.toInt()
+
+        val diaSemHoy = diaSemana(diaHoy, mesHoy, anoHoy) //se obtiene el numero de dia de la semana (lunes = 1, martes = 2, miercoles = 3, etc)
+
+        var lun = 0; var mar = 0; var mier = 0; var juev = 0
+        var vier = 0; var sab = 0; var dom = 0
+
+        if(D1) lun = 1; if(D2) mar = 2; if(D3) mier = 3; if(D4) juev = 4
+        if(D5) vier = 5; if(D6) sab = 6; if(D7) dom = 7
+
+        if(diaSemHoy == lun || diaSemHoy == mar || diaSemHoy == mier || diaSemHoy == juev || diaSemHoy == vier || diaSemHoy == sab || diaSemHoy == dom){
+            var cadena = Nombre //toma el nombre de la meta
+            cadena += " | " //se le agraga texto de formato
+            if(D1){cadena += "lun "} //se le agregan los dias a trabajar
+            if(D2){cadena += "mar "}
+            if(D3){cadena += "mier "}
+            if(D4){cadena += "juev "}
+            if(D5){cadena += "vier "}
+            if(D6){cadena += "sab "}
+            if(D7){cadena += "dom "}
+            cadena += "| " //se le agraga texto de formato
+            //se le agrega las repeticiones o peso a levantar
+            if(Peso){ //con un texto que diferencie peso o repeticiones
+                cadena += "Levantar: "
+                cadena += DatoInicial //se le agrega las repeticiones o peso a levantar
+                cadena += "kg"
+            }
+            if(Repeticion){ //con un texto que diferencie peso o repeticiones
+                cadena += "Repeticiones: "
+                cadena += DatoInicial //se le agrega las repeticiones o peso a levantar
+            }
+            //se le agrega la fecha de finalizacion
+            cadena += " | Fecha de finalización: "
+            cadena += dia; cadena += "-"; cadena += mes; cadena += "-"; cadena += ano
+
+            MainActivity.listaMetas.add(cadena)
+        }
+
+        editTextNombreMeta!!.setText("")
+        editTextDate!!.setText("")
+        switchPeso!!.setChecked(true)
+        switchRepeticion!!.setChecked(false)
+        editTextInicio!!.setText("")
+        editTextFinal!!.setText("")
+        d1!!.setChecked(false); d2!!.setChecked(false); d3!!.setChecked(false)
+        d4!!.setChecked(false); d5!!.setChecked(false); d6!!.setChecked(false)
+        d7!!.setChecked(false)
+    }
+
+    private fun diaSemana(dia: Int, mes: Int, ano: Int): Int {  ///// revisar esto
+        val c = Calendar.getInstance()
+        c.set(ano, mes, dia)
+        val diaSem =  c.get(Calendar.DAY_OF_WEEK)
+
+        if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12){
+            if(diaSem == 5) return 1; if(diaSem == 6) return 2; if(diaSem == 7) return 3
+            if(diaSem == 1) return 4; if(diaSem == 2) return 5; if(diaSem == 3) return 6
+            if(diaSem == 4) return 7
+        }else{
+            if(mes == 2){
+                if(diaSem == 2) return 1; if(diaSem == 3) return 2; if(diaSem == 4) return 3
+                if(diaSem == 5) return 4; if(diaSem == 6) return 5; if(diaSem == 7) return 6
+                if(diaSem == 1) return 7
+            }else{
+                if(diaSem == 4) return 1; if(diaSem == 5) return 2; if(diaSem == 6) return 3
+                if(diaSem == 7) return 4; if(diaSem == 1) return 5; if(diaSem == 2) return 6
+                if(diaSem == 3) return 7
+            }
+        }
+        return 0
     }
 
     /////////////////////////////////////////////////////

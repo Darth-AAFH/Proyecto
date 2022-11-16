@@ -52,8 +52,9 @@ class EjecutadorRutina : AppCompatActivity() {
     var final = false
 
     private val db = FirebaseFirestore.getInstance()
-    var num = 0; var nombre  = ""; var puntos = 0; var xp = 0; var nivel = 0; var ejercicios = ""
+    var num = 0; var nombre  = ""; var puntos = 0; var xp = 0; var nivel = 0; var ejercicios = ""; var meta = ""
     var fecha = ""
+    var ultDia = 0; var ultMes = 0; var ultAno = 0
     var terminar2 = false
     var horasE = 0; var minutosE = 0; var segundosE = 0; var puntosE = 0 //E de extras
     var horasR = 0; var minutosR = 0; var segundosR = 0 //R de rutina
@@ -134,7 +135,6 @@ class EjecutadorRutina : AppCompatActivity() {
         }
     }
 
-
     private fun BorrarRutinaDelDia(fecha: String) {
         if(fecha != "0") {
             val linea: String
@@ -149,6 +149,94 @@ class EjecutadorRutina : AppCompatActivity() {
                 db.collection("users").document(usuario).collection("rutinasAtrabajar")
                     .document(fecha).delete()
             }
+        }
+    }
+
+    var Peso = false; var Repeticion = false
+    var D1 = false ; var D2 = false; var D3 = false; var D4 = false;
+    var D5 = false; var D6 = false; var D7 = false
+    var diaF = 0; var mesF = 0; var anoF = 0
+    var DatoInicial = 0; var DatoFinal = 0
+    var diaSeg = 0; var mesSeg = 0; var anoSeg = 0
+
+    private fun BorrarMetaDelDia(paso: Int) {
+        if(paso == 1) {
+            MainActivity.user?.let { usuario -> //para cargar la meta
+                db.collection("users").document(usuario)
+                    .collection("metas")
+                    .document(nombre) //abre la base de datos con la meta que ya tenemos
+                    .get().addOnSuccessListener {
+                        Peso = it.get("peso") as Boolean
+                        Repeticion = it.get("repeticion") as Boolean
+                        D1 = it.get("lunes") as Boolean
+                        D2 = it.get("martes") as Boolean
+                        D3 = it.get("miercoles") as Boolean
+                        D4 = it.get("jueves") as Boolean
+                        D5 = it.get("viernes") as Boolean
+                        D6 = it.get("sabado") as Boolean
+                        D7 = it.get("domingo") as Boolean
+                        diaF = (it.get("diaFinal") as Long).toInt()
+                        mesF = (it.get("mesFinal") as Long).toInt()
+                        anoF = (it.get("anoFinal") as Long).toInt()
+                        DatoInicial = (it.get("datoInicial") as Long).toInt()
+                        DatoFinal = (it.get("datoFinal") as Long).toInt()
+                        diaSeg = (it.get("diaSeg") as Long).toInt()
+                        mesSeg = (it.get("mesSeg") as Long).toInt()
+                        anoSeg = (it.get("anoSeg") as Long).toInt()
+                    }
+            }
+        }else {
+            MainActivity.user?.let { usuario ->
+                db.collection("users").document(usuario).collection("metas")
+                    .document(nombre).set(
+                        hashMapOf(
+                            "nombre" to nombre,
+                            "peso" to Peso,
+                            "repeticion" to Repeticion,
+                            "lunes" to D1,
+                            "martes" to D2,
+                            "miercoles" to D3,
+                            "jueves" to D4,
+                            "viernes" to D5,
+                            "sabado" to D6,
+                            "domingo" to D7,
+                            "diaFinal" to diaF,
+                            "mesFinal" to mesF,
+                            "anoFinal" to anoF,
+                            "datoInicial" to DatoInicial,
+                            "datoFinal" to DatoFinal,
+                            "diaSeg" to diaSeg, //dia de seguimiento (para llevar un orden a los datos que se le suman)
+                            "mesSeg" to mesSeg,
+                            "anoSeg" to anoSeg,
+                            "ultDia" to ultDia, //ultima fecha en que se trabajo la meta (esto para que no la repita dos veces en un día)
+                            "ultMes" to ultMes,
+                            "ultAno" to ultAno
+                        )
+                    )
+            }
+
+            var linea: String //linea de texto para borrar la meta de la lista de metas
+            linea = nombre + " | " //se le agrega el nombre
+
+            if(D1){linea += "lun "} //se le agregan los dias a trabajar
+            if(D2){linea += "mar "}; if(D3){linea += "mier "}; if(D4){linea += "juev "}
+            if(D5){linea += "vier "}; if(D6){linea += "sab "}; if(D7){linea += "dom "}
+
+            linea += "| " //se le agraga texto de formato
+
+            if(Peso){ //con un texto que diferencie peso o repeticiones
+                linea += "Levantar: " + DatoInicial + "kg"
+            }else{
+                linea += "Repeticiones: " + DatoInicial
+            }
+
+            //se le agrega la fecha de finalizacion
+            linea += " | Fecha de finalización: "
+            linea += diaF; linea += "-"; linea += mesF; linea += "-"; linea += anoF
+
+            val posicion: Int
+            posicion = MainActivity.listaMetas.indexOf(linea) //la busca en la lista
+            MainActivity.listaMetas.removeAt(posicion) //y la borra
         }
     }
 
@@ -183,6 +271,10 @@ class EjecutadorRutina : AppCompatActivity() {
             nombre = b.getString("Nombre").toString()
             xp = b.getInt("XP")
             fecha = b.getString("Fecha").toString()
+            meta = b.getString("Meta").toString()
+            ultDia = b.getInt("Dia")
+            ultMes = b.getInt("Mes")
+            ultAno = b.getInt("Ano")
         }
 
         textViewActividadEnFoco = findViewById(R.id.textViewActividadEnFoco)
@@ -251,7 +343,13 @@ class EjecutadorRutina : AppCompatActivity() {
 
         puntosTotalesFun(true)
 
-        BorrarRutinaDelDia(fecha)
+        if(num != -1) {
+            BorrarRutinaDelDia(fecha)
+        }else{
+            BorrarMetaDelDia(1)
+            textViewActividadEnFoco!!.setText(nombre + ", " +meta)
+            listado.add(" ")
+        }
 
         Toast.makeText(this, "Presione > para iniciar", Toast.LENGTH_SHORT).show()
         timer = Timer()
@@ -281,13 +379,16 @@ class EjecutadorRutina : AppCompatActivity() {
 
         buttonPausar!!.setOnClickListener{
             if(firstclick == false){
-                val ejercicio1 = listado[0]
-                textViewActividadEnFoco!!.setText(""+ejercicio1)
-                listado.removeAt(0) //Remueve el primer ejercicio de la lista
-                val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
-                listViewEjerciciosPorHacer!!.setAdapter(adapter)
+                if(num != -1) {
+                    val ejercicio1 = listado[0]
+                    textViewActividadEnFoco!!.setText("" + ejercicio1)
+                    listado.removeAt(0) //Remueve el primer ejercicio de la lista
+                    val adapter: ArrayAdapter<String> =
+                        ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
+                    listViewEjerciciosPorHacer!!.setAdapter(adapter)
+                }
 
-                if(listado[0] == " ") {
+                if (listado[0] == " ") {
                     buttonSiguiente!!.setText("Terminar")
                     final = true
                 }
@@ -456,91 +557,114 @@ class EjecutadorRutina : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun fin(completado: Boolean){
-        val redondeo = tiempo.roundToInt()
-        val horas = redondeo % 86400 / 3600
-        val minutos = redondeo % 86400 % 3600 / 60
-        val segundos = redondeo % 86400 % 3600 % 60
+        if(num != -1) {
+            val redondeo = tiempo.roundToInt()
+            val horas = redondeo % 86400 / 3600
+            val minutos = redondeo % 86400 % 3600 / 60
+            val segundos = redondeo % 86400 % 3600 % 60
 
-        if(completado == true) { //en caso de SI completar la rutina
-            Toast.makeText(this, "Felicidades, completó la rutina!!", Toast.LENGTH_LONG).show() //se mandara mensaje de felicidades
+            if (completado == true) { //en caso de SI completar la rutina
+                Toast.makeText(this, "Felicidades, completó la rutina!!", Toast.LENGTH_LONG).show() //se mandara mensaje de felicidades
 
-            xp += 1 //se le suma uno de experiencia
-            if((2*nivel)+1 == xp && nivel != 100){ //si la xp llega iguala a lo que pide el nivel
-                xp = 0 //se reinicia la xp
-                MainActivity.user?.let{ usuario ->
-                    db.collection("users").document(usuario).collection("rutinas").document(num.toString()).set(
-                        hashMapOf( //y se actualiza el ejercicio con un nivel más
-                            "id" to num,
-                            "nombre" to nombre,
-                            "nivel" to nivel+1,
-                            "ejercicios" to ejercicios,
-                            "xp" to 0,
-                            "horas" to horasR + horas,
-                            "minutos" to minutosR + minutos,
-                            "segundos" to segundosR + segundos
+                xp += 1 //se le suma uno de experiencia
+                if ((2 * nivel) + 1 == xp && nivel != 100) { //si la xp llega iguala a lo que pide el nivel
+                    xp = 0 //se reinicia la xp
+                    MainActivity.user?.let { usuario ->
+                        db.collection("users").document(usuario).collection("rutinas")
+                            .document(num.toString()).set(
+                            hashMapOf( //y se actualiza el ejercicio con un nivel más
+                                "id" to num,
+                                "nombre" to nombre,
+                                "nivel" to nivel + 1,
+                                "ejercicios" to ejercicios,
+                                "xp" to 0,
+                                "horas" to horasR + horas,
+                                "minutos" to minutosR + minutos,
+                                "segundos" to segundosR + segundos
+                            )
                         )
-                    )
-                }
+                    }
 
-                var linea: String
-                linea = num.toString() + " | " + nombre + " | Nivel: "+ nivel + " | " + ejercicios //se toma la linea de rutina
+                    var linea: String
+                    linea =
+                        num.toString() + " | " + nombre + " | Nivel: " + nivel + " | " + ejercicios //se toma la linea de rutina
 
-                val posicion: Int
-                posicion = MainActivity.listaRutinas.indexOf(linea) //se obtiene la posición de la rutina en la lista
+                    val posicion: Int
+                    posicion =
+                        MainActivity.listaRutinas.indexOf(linea) //se obtiene la posición de la rutina en la lista
 
-                val nuevoNivel = nivel + 1
-                linea = num.toString() + " | " + nombre + " | Nivel: "+ nuevoNivel + " | " + ejercicios
-                MainActivity.listaRutinas.set(posicion, linea) //se actualiza con el nuevo nivel
+                    val nuevoNivel = nivel + 1
+                    linea =
+                        num.toString() + " | " + nombre + " | Nivel: " + nuevoNivel + " | " + ejercicios
+                    MainActivity.listaRutinas.set(posicion, linea) //se actualiza con el nuevo nivel
 
-                val linea2 = num.toString() + " | " + nombre + " | Nivel: "+ nuevoNivel
-                MainActivity.listaRutinasVista.set(posicion, linea2) //se actualiza con el nuevo nivel
+                    val linea2 = num.toString() + " | " + nombre + " | Nivel: " + nuevoNivel
+                    MainActivity.listaRutinasVista.set(
+                        posicion,
+                        linea2
+                    ) //se actualiza con el nuevo nivel
 
-                Toast.makeText(this, "Felicidades, la rutina subio a nivel "+ nuevoNivel +"!!!!", Toast.LENGTH_LONG).show() //se le hace saber al usuario que subio el nivel
-                if(nuevoNivel == 100)
-                    Toast.makeText(this, "Felicidades ha halcanzado el nivel máximo en la rútina, gracias por ejercitarse <3", Toast.LENGTH_LONG).show()
-            }else {
-                MainActivity.user?.let { usuario -> //si no se tiene la xp suficiente para subir de nivel
-                    db.collection("users").document(usuario).collection("rutinas")
-                        .document(num.toString()).set(
-                        hashMapOf( //se guardan todos los datos en la base de datos como ya estaban pero sumando uno en xp
-                            "id" to num,
-                            "nombre" to nombre,
-                            "nivel" to nivel,
-                            "ejercicios" to ejercicios,
-                            "xp" to xp,
-                            "horas" to horasR + horas,
-                            "minutos" to minutosR + minutos,
-                            "segundos" to segundosR + segundos
-                        )
-                    )
-                }
-            }
-
-            val alertaEjExtra = AlertDialog.Builder(this) //se crea la alarma
-            alertaEjExtra.setTitle("Puntos extra!") //y se ponen los textos para preguntar si quiere un ejercicio extra
-            alertaEjExtra.setMessage("¿Quiere hacer un ejercicio extra?")
-
-            alertaEjExtra.setPositiveButton("Sí") { dialogInterface, i -> //en caso de que sí
-                val idRandom = (0..15).random() //toma un numero random
-
-                for (j in MainActivity.listaEjercicios) { //para todos los ejercicios
-                    val id = j.split(" ").toTypedArray()[0] //toma el id
-                    if(idRandom == id.toInt()){ //si esta el ejercicio en la rutina
-                        val nombre = j.split(" | ").toTypedArray()[1] //va a tomar el nombre
-                        textViewActividadEnFoco!!.setText("" + nombre) //y lo va a poner en la actividad en foco
+                    Toast.makeText(
+                        this,
+                        "Felicidades, la rutina subio a nivel " + nuevoNivel + "!!!!",
+                        Toast.LENGTH_LONG
+                    ).show() //se le hace saber al usuario que subio el nivel
+                    if (nuevoNivel == 100)
+                        Toast.makeText(
+                            this,
+                            "Felicidades ha halcanzado el nivel máximo en la rútina, gracias por ejercitarse <3",
+                            Toast.LENGTH_LONG
+                        ).show()
+                } else {
+                    MainActivity.user?.let { usuario -> //si no se tiene la xp suficiente para subir de nivel
+                        db.collection("users").document(usuario).collection("rutinas")
+                            .document(num.toString()).set(
+                                hashMapOf( //se guardan todos los datos en la base de datos como ya estaban pero sumando uno en xp
+                                    "id" to num,
+                                    "nombre" to nombre,
+                                    "nivel" to nivel,
+                                    "ejercicios" to ejercicios,
+                                    "xp" to xp,
+                                    "horas" to horasR + horas,
+                                    "minutos" to minutosR + minutos,
+                                    "segundos" to segundosR + segundos
+                                )
+                            )
                     }
                 }
 
-                inciarTimer()
-                terminar2 = true
-            }
-            alertaEjExtra.setNegativeButton("No") { dialogInterface, i -> //en caso de que no
+                val alertaEjExtra = AlertDialog.Builder(this) //se crea la alarma
+                alertaEjExtra.setTitle("Puntos extra!") //y se ponen los textos para preguntar si quiere un ejercicio extra
+                alertaEjExtra.setMessage("¿Quiere hacer un ejercicio extra?")
+
+                alertaEjExtra.setPositiveButton("Sí") { dialogInterface, i -> //en caso de que sí
+                    val idRandom = (0..15).random() //toma un numero random
+
+                    for (j in MainActivity.listaEjercicios) { //para todos los ejercicios
+                        val id = j.split(" ").toTypedArray()[0] //toma el id
+                        if (idRandom == id.toInt()) { //si esta el ejercicio en la rutina
+                            val nombre = j.split(" | ").toTypedArray()[1] //va a tomar el nombre
+                            textViewActividadEnFoco!!.setText("" + nombre) //y lo va a poner en la actividad en foco
+                        }
+                    }
+
+                    inciarTimer()
+                    terminar2 = true
+                }
+                alertaEjExtra.setNegativeButton("No") { dialogInterface, i -> //en caso de que no
+                    foto(puntos, horas, minutos, segundos)
+                }
+
+                alertaEjExtra.show() //se muestra la alerta
+            } else { //en caso que no
                 foto(puntos, horas, minutos, segundos)
             }
-
-            alertaEjExtra.show() //se muestra la alerta
-        }else{ //en caso que no
-            foto(puntos, horas, minutos, segundos)
+        } else{
+            if (completado == true) {
+                Toast.makeText(this, "Felicidades, completó la meta!!", Toast.LENGTH_LONG).show()
+                BorrarMetaDelDia(2)
+            }
+            terminar()
         }
     }
 
@@ -553,7 +677,13 @@ class EjecutadorRutina : AppCompatActivity() {
         val minutos = redondeo % 86400 % 3600 / 60
         val segundos = redondeo % 86400 % 3600 % 60
 
-        foto(puntos, horas, minutos, segundos)
+        if(num != -1) {
+            foto(puntos, horas, minutos, segundos)
+        }else{
+            mandarPuntos(16, horas, minutos, segundos)
+            val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
+            startActivity(intent)
+        }
     }
 
     private fun foto(puntos: Int, horas: Int, minutos: Int, segundos: Int) {

@@ -1,13 +1,11 @@
 package com.example.wildtracker.ui
 
-import android.annotation.SuppressLint
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
 import android.widget.CalendarView
 import android.widget.TextView
 import android.widget.Toast
@@ -24,16 +22,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import java.text.SimpleDateFormat
-import java.util.*
 
 class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CalendarView.OnDateChangeListener{
     private lateinit var drawer: DrawerLayout
 
-    private val db = FirebaseFirestore.getInstance()
-
     private lateinit var vistaCalendario: CalendarView
-    //private var buttonTest2: Button ?= null///////////////////////////////////////////////////////////////
+
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,176 +37,15 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         //initNavigationView()
 
         vistaCalendario = findViewById(R.id.vistaCalendario)
-        //buttonTest2 = findViewById(R.id.buttonTest2)////////////////////////////////////////////////////
-
-        cargarMetas()
 
         vistaCalendario.setOnDateChangeListener(this)
-
-        //buttonTest2!!.setOnClickListener{
-            //Toast.makeText(this, "Dato de suma:" + datoDeSuma, Toast.LENGTH_SHORT).show()
-        //}
-    }
-
-    var datoDeSuma = 0
-
-    @SuppressLint("SimpleDateFormat")
-    private fun cargarMetas() {
-        //var peso= false
-
-        var sdf = SimpleDateFormat("dd")
-        val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
-        sdf = SimpleDateFormat("MM")
-        val mesHoy2 = sdf.format(Date()) //se obtiene el mes actual
-        sdf = SimpleDateFormat("yyyy")
-        val anoHoy2 = sdf.format(Date()) //se obiene el año actual
-        val diaHoy = diaHoy2.toInt(); val mesHoy = mesHoy2.toInt(); val anoHoy = anoHoy2.toInt()
-
-        var fechaFinal: String
-        var diaF: Int; var mesF: Int; var anoF: Int
-
-        var diasTotales: Int; var diasxSemana = 0; var diasATrabajar: Int
-
-        //var datoDeSuma = 0
-
-        MainActivity.user?.let { usuario -> //para cargar las metas
-            db.collection("users").document(usuario)
-                .collection("metas") //abre la base de datos
-                .get().addOnSuccessListener {
-                    for (meta in it) { //para cada meta
-
-                        fechaFinal = meta.get("fechaFinal") as String
-                        diaF = fechaFinal.split("/").toTypedArray()[0].toInt()
-                        mesF = fechaFinal.split("/").toTypedArray()[1].toInt()
-                        anoF = fechaFinal.split("/").toTypedArray()[2].toInt()
-
-                        //primero se obtiene la diferencia de dias entre las dos fechas
-                        if(anoF == anoHoy){ //se comparan los años
-                            if(mesF == mesHoy){ //se comparan los meses
-                                diasTotales = diaF - diaHoy //y si son los mismos solo se obtiene la diferencia entre los días
-                            }else{ //si no, se le suman los días del mes inicial
-                                if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
-                                    diasTotales = 31 - diaHoy
-                                }else{
-                                    if(mesHoy == 2){
-                                        diasTotales = 28 - diaHoy
-                                    }else{
-                                        diasTotales = 30 - diaHoy
-                                    }
-                                }
-
-                                var i = mesF - 1
-                                while (mesHoy != i) { //se le suman los días de los meses intermedios
-                                    diasTotales += if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
-                                        31
-                                    } else {
-                                        if (i == 2) {
-                                            28
-                                        } else {
-                                            30
-                                        }
-                                    }
-                                    i--
-                                }
-
-                                diasTotales += diaF //y se le suman los días del mes final
-                            }
-                        }else{ //para años diferentes
-                            diasTotales = (anoF - anoHoy)*365 //se obtienen los años en días
-
-                            if(mesF == mesHoy){ //si el mes es igual se resta o suma la diferencia de dias
-                                if(diaF > diaHoy){
-                                    diasTotales += (diaF - diaHoy)
-                                } else{
-                                    diasTotales -= (diaHoy - diaF)
-                                }
-
-                            }else{
-                                if(mesF > mesHoy){ //si el mes es mayor
-
-                                    //se le suman los dias del mes inicial
-                                    if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
-                                        diasTotales += 31 - diaHoy
-                                    }else{
-                                        if(mesHoy == 2){
-                                            diasTotales += 28 - diaHoy
-                                        }else{
-                                            diasTotales += 30 - diaHoy
-                                        }
-                                    }
-
-                                    var i = mesF - 1
-                                    while (mesHoy != i) { //se le suman los días de los meses intermedios
-                                        diasTotales += if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
-                                            31
-                                        } else {
-                                            if (i == 2) {
-                                                28
-                                            } else {
-                                                30
-                                            }
-                                        }
-                                        i--
-                                    }
-
-                                    diasTotales += diaF //y se le suman los días del mes final
-
-                                } else{ //y si el mes es menor
-                                    //se le restan los dias del mes inicial
-                                    diasTotales -= diaHoy
-
-                                    var i = mesHoy - 1
-                                    while (mesF != i) { //se le restan los días de los meses intermedios
-                                        diasTotales -= if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
-                                            31
-                                        } else {
-                                            if (i == 2) {
-                                                28
-                                            } else {
-                                                30
-                                            }
-                                        }
-                                        i--
-                                    }
-
-                                    //y se le restan los días del mes final
-                                    if(mesF == 1 || mesF == 3 || mesF == 5 || mesF == 7 || mesF == 8 || mesF == 10 || mesF == 12){
-                                        diasTotales -= 31 - diaHoy
-                                    }else{
-                                        if(mesHoy == 2){
-                                            diasTotales -= 28 - diaHoy
-                                        }else{
-                                            diasTotales -= 30 - diaHoy
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if(meta.get("lunes") as Boolean){diasxSemana += 1}
-                        if(meta.get("martes") as Boolean){diasxSemana += 1}
-                        if(meta.get("miercoles") as Boolean){diasxSemana += 1}
-                        if(meta.get("jueves") as Boolean){diasxSemana += 1}
-                        if(meta.get("viernes") as Boolean){diasxSemana += 1}
-                        if(meta.get("sabado") as Boolean){diasxSemana += 1}
-                        if(meta.get("domingo") as Boolean){diasxSemana += 1}
-
-                        diasATrabajar = diasTotales/diasxSemana
-
-                        datoDeSuma = ((meta.get("datoFinal") as Long).toInt() - (meta.get("datoInicial") as Long).toInt())/diasATrabajar
-                    }
-                }
-        }
-
     }
 
     override fun onSelectedDayChange(p0: CalendarView, p1: Int, p2: Int, p3: Int) {
-
-        val builder = AlertDialog.Builder(this) //alertaTareas
         val items = arrayOfNulls<CharSequence>(3)
-        items[0] = "Agregar rutina única"; items[1] = "Ver eventos"; items[2] = "Cancelar"
+        items[0] = "Agregar rutina única"; items[1] = "Borrar eventos"; items[2] = "Cancelar"
 
-        var dia: Int = p1; var mes: Int = p2 + 1; var ano: Int = p3
+        val dia: Int = p3; val mes: Int = p2 + 1; val ano: Int = p1
 
         val alertaTareas = AlertDialog.Builder(this)
         alertaTareas.setTitle("Seleccionar una tarea")
@@ -226,14 +60,14 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 intent.putExtras(bundle)
                 startActivity(intent)
             }else{
-                if(i == 1){ //muestra la rutina de ese día y la puede quitar
-                    val intent = Intent(this@SeguimientoActivity, MetasActivity::class.java)
+                if(i == 1){ //elimina la rutina programada de ese dia
+                    var fecha = dia.toString() + "-" + mes.toString() + "-" + ano.toString()
 
-                    val bundle = Bundle()
-                    bundle.putInt("dia", dia); bundle.putInt("mes", mes); bundle.putInt("ano", ano)
+                    MainActivity.user?.let { usuario ->
+                        db.collection("users").document(usuario).collection("rutinasAtrabajar")
+                            .document(fecha).delete()
+                    }
 
-                    intent.putExtras(bundle)
-                    startActivity(intent)
                 }else{}
             }
         })
@@ -280,7 +114,6 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             R.id.nav_plantillas -> callPlantillasActivity()
             R.id.nav_ejercicio -> callEjercicioActivity()
             R.id.nav_maps -> callMapsActivity()
-            R.id.nav_maps -> callMetasActivity()
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
@@ -332,11 +165,6 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     private fun callMapsActivity() {
         val intent = Intent(this, MapsActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun callSeguimientoActivity() {
-        val intent = Intent(this, SeguimientoActivity::class.java)
         startActivity(intent)
     }
 

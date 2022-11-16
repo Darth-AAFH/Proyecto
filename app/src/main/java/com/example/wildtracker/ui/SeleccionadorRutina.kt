@@ -41,9 +41,9 @@ class SeleccionadorRutina : AppCompatActivity() {
 
         val b = intent.extras //b toma la fecha en que se trabajara la rutina
         if (b != null) {
-            ano = b.getInt("dia")
+            dia = b.getInt("dia")
             mes = b.getInt("mes")
-            dia = b.getInt("ano")
+            ano = b.getInt("ano")
         }
 
         listViewRutinas2 = findViewById(R.id.listViewRutinas2)

@@ -48,7 +48,8 @@
             android:layout_marginStart="76dp"
             android:layout_marginTop="40dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editTextDate" />
+            app:layout_constraintTop_toBottomOf="@+id/editTextDate"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         <Switch
             android:id="@+id/idSwitch2"
@@ -57,7 +58,8 @@
             android:layout_marginStart="125dp"
             android:layout_marginTop="40dp"
             app:layout_constraintStart_toEndOf="@+id/idSwitch1"
-            app:layout_constraintTop_toBottomOf="@+id/editTextDate" />
+            app:layout_constraintTop_toBottomOf="@+id/editTextDate"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
 
         <EditText
             android:id="@+id/editTextInicio"
@@ -66,6 +68,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="24dp"
             android:ems="10"
+            android:hint="Peso inicial (kg)"
             android:inputType="number"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/idSwitch1" />
@@ -77,6 +80,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="24dp"
             android:ems="10"
+            android:hint="Peso final (kg)"
             android:inputType="number"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextInicio" />
@@ -157,8 +161,8 @@
             android:id="@+id/buttonGuardarMeta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
             android:text="Crear"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
@@ -172,6 +176,24 @@
             android:layout_marginEnd="47dp"
             android:text="Test"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/idSwitch2" />
+
+        <TextView
+            android:id="@+id/textViewPeso"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="76dp"
+            android:text="Peso(kg)"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/idSwitch1" />
+
+        <TextView
+            android:id="@+id/textViewRepeticion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="125dp"
+            android:text="Repeticion"
+            app:layout_constraintStart_toEndOf="@+id/idSwitch1"
             app:layout_constraintTop_toBottomOf="@+id/idSwitch2" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

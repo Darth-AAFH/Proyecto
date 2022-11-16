@@ -28,6 +28,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.*
 
 class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -39,6 +41,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private val db = FirebaseFirestore.getInstance()
     var num = 0; var nombre  = ""; var xp: Int? = null
     var fecha = ""
+    var dia = 0; var mes = 0; var ano = 0
+    var meta = ""
 
     private fun CargarListas(){
         //ayuda a organizar las listas de rutinas y los ejercicios
@@ -55,41 +59,11 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinasVista)
         listViewRutinas2!!.setAdapter(adapter) //La tabla se adapta en la text view
 
-        val adapter2: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinasATrabajar)
+        val adapter2: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinasATrabajar + MainActivity.listaMetas)
         listViewRutinas3!!.setAdapter(adapter2) //La tabla se adapta en la text view
 
-        if(MainActivity.listaRutinasATrabajar.isEmpty()){
+        if(MainActivity.listaRutinasATrabajar.isEmpty() && MainActivity.listaMetas.isEmpty()){
             textViewRutina3.setVisibility(View.VISIBLE)
-        }
-
-        //poner una lista auxiliar para que carge las rutinasAtrabajar y las metas, y lo ppone en la listview3
-    }
-
-    private fun CargarRanking() {
-        MainActivity.listaRanking.clear() //limpiar la lista del ranking para poder recargarla
-
-        MainActivity.user?.let { usuario -> //para cargar el ranking
-            db.collection("users").get().addOnSuccessListener {
-
-                GlobalScope.launch(Dispatchers.IO) { //para trer los datos correctamente por pausas
-
-                    for (userIt in it) { //para cada usuario
-                        val userEmail = userIt.get("email") as String? //va a tomar el correo
-                        val nameDocument = Firebase.firestore.collection("users").document(userEmail.toString()) //la ruta en la base de datos
-                        val user1 = nameDocument.get().await().toObject(PerfilActivity.userData::class.java) //y se va a traer los datos
-
-                        withContext(Dispatchers.Main){
-                            if(MainActivity.user == userEmail){ //si es el usuario en uso
-                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " -- -- -- -- -- -- -- -- -- -- :" + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
-                            }else{
-                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " -- -- -- -- -- -- -- -- -- -- :" + user1.Name) //y si no los va a agregar pero sin la estrellita
-                            //Añadir el boton de seguir usuario
-
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -108,7 +82,6 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         Toast.makeText(this, "Seleccione la rutina", Toast.LENGTH_SHORT).show()
         CargarListas()
-        CargarRanking()
 
         listViewRutinas2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
@@ -133,24 +106,66 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
 
         listViewRutinas3!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-            num = MainActivity.listaRutinasATrabajar[position].split(" ").toTypedArray()[0].toInt()
-            nombre = MainActivity.listaRutinasATrabajar[position].split(" | ").toTypedArray()[1]
-            fecha = MainActivity.listaRutinasATrabajar[position].split("Fecha: ").toTypedArray()[1]
+            var aux = ""
 
-            textViewRutina!!.setText("Rutina seleccionada: "+nombre)
+            if(MainActivity.listaRutinasATrabajar.isEmpty()) {
+                aux = MainActivity.listaMetas[position].split(" | ").toTypedArray()[2]
+            }else{
+                if(MainActivity.listaMetas.isEmpty()){
+                    aux = MainActivity.listaRutinasATrabajar[position].split(" | ").toTypedArray()[2]
+                }else{
+                    var listaAux = MainActivity.listaRutinasATrabajar + MainActivity.listaMetas
+                    aux = listaAux[position].split(" | ").toTypedArray()[2]
+                }
+            }
 
-            buttonIniciar!!.setVisibility(View.VISIBLE); buttonIniciar!!.setEnabled(true)
+            val arreglo: Array<String?>
+            arreglo = aux.split(" ").toTypedArray()
 
-            var idRutina: Int
-            MainActivity.user?.let { usuario -> //abre la base de datos
-                db.collection("users").document(usuario).collection("rutinas").get().addOnSuccessListener {
-                    for(rutinas in it){ //para cada rutina
-                        idRutina = (rutinas.get("id") as Long).toInt() //toma el id de la rutina
-                        if(idRutina == num){ //al encontrar la seleccionada
-                            xp = (rutinas.get("xp") as Long).toInt() //guardara la xp que tiene
+            if(arreglo[0].toString() == "Fecha:"){ //para las rutinas unicas
+                num = MainActivity.listaRutinasATrabajar[position].split(" ").toTypedArray()[0].toInt()
+                nombre = MainActivity.listaRutinasATrabajar[position].split(" | ").toTypedArray()[1]
+                fecha = MainActivity.listaRutinasATrabajar[position].split("Fecha: ").toTypedArray()[1]
+
+                textViewRutina!!.setText("Rutina seleccionada: "+nombre)
+
+                buttonIniciar!!.setVisibility(View.VISIBLE); buttonIniciar!!.setEnabled(true)
+
+                var idRutina: Int
+                MainActivity.user?.let { usuario -> //abre la base de datos
+                    db.collection("users").document(usuario).collection("rutinas").get().addOnSuccessListener {
+                        for(rutinas in it){ //para cada rutina
+                            idRutina = (rutinas.get("id") as Long).toInt() //toma el id de la rutina
+                            if(idRutina == num){ //al encontrar la seleccionada
+                                xp = (rutinas.get("xp") as Long).toInt() //guardara la xp que tiene
+                            }
                         }
                     }
                 }
+            }else{ //para las metas
+                if(MainActivity.listaRutinasATrabajar.isEmpty()){
+                    nombre = MainActivity.listaMetas[position].split(" | ").toTypedArray()[0]
+                    meta = MainActivity.listaMetas[position].split(" | ").toTypedArray()[2]
+                }else{
+                    nombre = MainActivity.listaMetas[position - 1].split(" | ").toTypedArray()[0]
+                    meta = MainActivity.listaMetas[position - 1].split(" | ").toTypedArray()[2]
+                }
+                num = -1; xp = 0; fecha = "0"
+
+                var sdf = SimpleDateFormat("dd")
+                val diaHoy = sdf.format(Date()) //se obtiene el dia actual
+                sdf = SimpleDateFormat("MM")
+                val mesHoy = sdf.format(Date()) //se obtiene el mes actual
+                sdf = SimpleDateFormat("yyyy")
+                val anoHoy = sdf.format(Date()) //se obiene el año actual
+
+                dia = diaHoy.toInt()
+                mes = mesHoy.toInt()
+                ano = anoHoy.toInt()
+
+                textViewRutina!!.setText("Meta seleccionada: "+nombre)
+
+                buttonIniciar!!.setVisibility(View.VISIBLE); buttonIniciar!!.setEnabled(true)
             }
         }
 
@@ -159,7 +174,11 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             intent.putExtra("Num", num)
             intent.putExtra("Nombre", nombre)
             intent.putExtra("XP", xp)
-            intent.putExtra("Fecha", fecha)
+            intent.putExtra("Fecha", fecha) //para las rutinas programadas
+            intent.putExtra("Meta", meta) //para las metas
+            intent.putExtra("Dia", dia)
+            intent.putExtra("Mes", mes)
+            intent.putExtra("Ano", ano)
             startActivity(intent)
         }
     }

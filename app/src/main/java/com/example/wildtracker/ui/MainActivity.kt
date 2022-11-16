@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var listaRanking = ArrayList<String>()
         val listaSeguidores = ArrayList<String>()
         var listaRutinasATrabajar = ArrayList<String>()
+        var listaMetas = ArrayList<String>()
     }
 
 

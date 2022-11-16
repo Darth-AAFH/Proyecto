@@ -67,6 +67,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         CargarEjercicios()
         CargarRutinas()
         CargarRutinasATrabajar()
+        CargarMetas()
+
         CargarSeguidores()
     }
 
@@ -256,32 +258,26 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 }
         }
     }
-    private fun diaSemana(dia: Int, mes: Int, ano: Int): Int {
+
+    private fun diaSemana(dia: Int, mes: Int, ano: Int): Int {  ///// revisar esto
         val c = Calendar.getInstance()
         c.set(ano, mes, dia)
-
         val diaSem =  c.get(Calendar.DAY_OF_WEEK)
 
-        if(diaSem == 4){
-            return 1 //lunes
-        }
-        if(diaSem == 5){
-            return 2 //martes
-        }
-        if(diaSem == 6){
-            return 3 //miercoles
-        }
-        if(diaSem == 7){
-            return 4 //jueves
-        }
-        if(diaSem == 1){
-            return 5 //viernes
-        }
-        if(diaSem == 2){
-            return 6 //sabado
-        }
-        if(diaSem == 3){
-            return 7 //domingo
+        if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12){
+            if(diaSem == 5) return 1; if(diaSem == 6) return 2; if(diaSem == 7) return 3
+            if(diaSem == 1) return 4; if(diaSem == 2) return 5; if(diaSem == 3) return 6
+            if(diaSem == 4) return 7
+        }else{
+            if(mes == 2){
+                if(diaSem == 2) return 1; if(diaSem == 3) return 2; if(diaSem == 4) return 3
+                if(diaSem == 5) return 4; if(diaSem == 6) return 5; if(diaSem == 7) return 6
+                if(diaSem == 1) return 7
+            }else{
+                if(diaSem == 4) return 1; if(diaSem == 5) return 2; if(diaSem == 6) return 3
+                if(diaSem == 7) return 4; if(diaSem == 1) return 5; if(diaSem == 2) return 6
+                if(diaSem == 3) return 7
+            }
         }
         return 0
     }
@@ -432,7 +428,6 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                         }
                     }
             }
-            MainActivity.validadorListas = false //cambia el validador para que esto no se vuelva a hacer
         }
     }
 
@@ -515,14 +510,6 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                     }
                                 }
                             }
-
-                            /*
-                            if(MainActivity.user == userEmail){ //si es el usuario en uso
-                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
-                            }else{
-                                MainActivity.listaRanking.add((user1!!.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
-                            }
-                             */
                         }
                     }
                 }
@@ -567,6 +554,290 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private fun callChatActivity() {
         val intent = Intent(this, ChatActivity::class.java)
         startActivity(intent)
+    }
+    private fun CargarMetas(){
+        var sdf = SimpleDateFormat("dd")
+        val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
+        sdf = SimpleDateFormat("MM")
+        val mesHoy2 = sdf.format(Date()) //se obtiene el mes actual
+        sdf = SimpleDateFormat("yyyy")
+        val anoHoy2 = sdf.format(Date()) //se obiene el año actual
+
+        val diaHoy = diaHoy2.toInt()
+        val mesHoy = mesHoy2.toInt()
+        val anoHoy = anoHoy2.toInt()
+
+        val diaSemHoy = diaSemana(diaHoy, mesHoy, anoHoy) //se obtiene el numero de dia de la semana (lunes = 1, martes = 2, miercoles = 3, etc)
+
+        var diaF: Int; var mesF: Int; var anoF: Int
+        var diasTotales: Int; var diasxSemana = 0; var diasATrabajar: Int
+
+        var datoDeSuma = 0
+
+        var lun = 0; var mar = 0; var mier = 0; var juev = 0; var vier = 0; var sab = 0; var dom = 0
+
+        var cadena: String
+
+        if(MainActivity.validadorListas) {
+            MainActivity.user?.let { usuario -> //para cargar las metas
+                db.collection("users").document(usuario)
+                    .collection("metas") //abre la base de datos
+                    .get().addOnSuccessListener {
+                        for (meta in it) { //para cada meta
+                            lun = 0; mar = 0; mier = 0; juev = 0; vier = 0; sab = 0; dom = 0
+
+                            diaF = (meta.get("diaFinal") as Long).toInt()
+                            mesF = (meta.get("mesFinal") as Long).toInt()
+                            anoF = (meta.get("anoFinal") as Long).toInt()
+
+                            //primero se obtiene la diferencia de dias entre las dos fechas (diasTotales)
+                            if(anoF == anoHoy){ //se comparan los años
+                                if(mesF == mesHoy){ //se comparan los meses
+                                    diasTotales = diaF - diaHoy //y si son los mismos solo se obtiene la diferencia entre los días
+                                }else{ //si no, se le suman los días del mes inicial
+                                    if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
+                                        diasTotales = 31 - diaHoy
+                                    }else{
+                                        if(mesHoy == 2){
+                                            diasTotales = 28 - diaHoy
+                                        }else{
+                                            diasTotales = 30 - diaHoy
+                                        }
+                                    }
+
+                                    var i = mesF - 1
+                                    while (mesHoy != i) { //se le suman los días de los meses intermedios
+                                        diasTotales += if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
+                                            31
+                                        } else {
+                                            if (i == 2) {
+                                                28
+                                            } else {
+                                                30
+                                            }
+                                        }
+                                        i--
+                                    }
+
+                                    diasTotales += diaF //y se le suman los días del mes final
+                                }
+                            }else{ //para años diferentes
+                                diasTotales = (anoF - anoHoy)*365 //se obtienen los años en días
+
+                                if(mesF == mesHoy){ //si el mes es igual se resta o suma la diferencia de dias
+                                    if(diaF > diaHoy){
+                                        diasTotales += (diaF - diaHoy)
+                                    } else{
+                                        diasTotales -= (diaHoy - diaF)
+                                    }
+
+                                }else{
+                                    if(mesF > mesHoy){ //si el mes es mayor
+
+                                        //se le suman los dias del mes inicial
+                                        if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
+                                            diasTotales += 31 - diaHoy
+                                        }else{
+                                            if(mesHoy == 2){
+                                                diasTotales += 28 - diaHoy
+                                            }else{
+                                                diasTotales += 30 - diaHoy
+                                            }
+                                        }
+
+                                        var i = mesF - 1
+                                        while (mesHoy != i) { //se le suman los días de los meses intermedios
+                                            diasTotales += if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
+                                                31
+                                            } else {
+                                                if (i == 2) {
+                                                    28
+                                                } else {
+                                                    30
+                                                }
+                                            }
+                                            i--
+                                        }
+
+                                        diasTotales += diaF //y se le suman los días del mes final
+
+                                    } else{ //y si el mes es menor
+                                        //se le restan los dias del mes inicial
+                                        diasTotales -= diaHoy
+
+                                        var i = mesHoy - 1
+                                        while (mesF != i) { //se le restan los días de los meses intermedios
+                                            diasTotales -= if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
+                                                31
+                                            } else {
+                                                if (i == 2) {
+                                                    28
+                                                } else {
+                                                    30
+                                                }
+                                            }
+                                            i--
+                                        }
+
+                                        //y se le restan los días del mes final
+                                        if(mesF == 1 || mesF == 3 || mesF == 5 || mesF == 7 || mesF == 8 || mesF == 10 || mesF == 12){
+                                            diasTotales -= 31 - diaHoy
+                                        }else{
+                                            if(mesHoy == 2){
+                                                diasTotales -= 28 - diaHoy
+                                            }else{
+                                                diasTotales -= 30 - diaHoy
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            //ahora se obtienen los dias que se trabaja por semana (diasxSemana)
+                            if(meta.get("lunes") as Boolean){diasxSemana += 1; lun = 1}
+                            if(meta.get("martes") as Boolean){diasxSemana += 1; mar = 2}
+                            if(meta.get("miercoles") as Boolean){diasxSemana += 1; mier = 3}
+                            if(meta.get("jueves") as Boolean){diasxSemana += 1; juev = 4}
+                            if(meta.get("viernes") as Boolean){diasxSemana += 1; vier = 5}
+                            if(meta.get("sabado") as Boolean){diasxSemana += 1; sab = 6}
+                            if(meta.get("domingo") as Boolean){diasxSemana += 1; dom = 7}
+
+                            //los dias a trabajar
+                            //diasATrabajar = diasTotales/diasxSemana
+                            diasATrabajar = (diasTotales/7)*diasxSemana
+
+                            //el dato para sumar al dato inicial
+                            if(diasATrabajar == 0)
+                                diasATrabajar = 1
+                            datoDeSuma = ((meta.get("datoFinal") as Long).toInt() - (meta.get("datoInicial") as Long).toInt())/diasATrabajar
+
+                            cadena = meta.get("nombre").toString() //toma el nombre de la meta
+                            cadena += " | " //se le agraga texto de formato
+                            if(meta.get("lunes") as Boolean){cadena += "lun "} //se le agregan los dias a trabajar
+                            if(meta.get("martes") as Boolean){cadena += "mar "}
+                            if(meta.get("miercoles") as Boolean){cadena += "mier "}
+                            if(meta.get("jueves") as Boolean){cadena += "juev "}
+                            if(meta.get("viernes") as Boolean){cadena += "vier "}
+                            if(meta.get("sabado") as Boolean){cadena += "sab "}
+                            if(meta.get("domingo") as Boolean){cadena += "dom "}
+                            cadena += "| " //se le agraga texto de formato
+
+                            var suma = true
+                            //para ver si es necesario sumarle dato hoy
+                            if((meta.get("diaSeg") as Long).toInt() == diaHoy && (meta.get("mesSeg") as Long).toInt() == mesHoy && (meta.get("anoSeg") as Long).toInt() == anoHoy){
+                                suma = false //para no actualizar los datos
+                            }
+
+                            //se le agrega las repeticiones o peso a levantar
+                            if(meta.get("peso") as Boolean){ //con un texto que diferencie peso o repeticiones
+                                cadena += "Levantar: "
+                                if(suma) {
+                                    cadena += ((meta.get("datoInicial") as Long).toInt() + datoDeSuma).toString() //se le agrega las repeticiones o peso a levantar
+                                }else{
+                                    cadena += ((meta.get("datoInicial") as Long).toInt()).toString()
+                                }
+                                cadena += "kg"
+                            }
+                            if(meta.get("repeticion") as Boolean){ //con un texto que diferencie peso o repeticiones
+                                cadena += "Repeticiones: "
+                                if(suma) {
+                                    cadena += ((meta.get("datoInicial") as Long).toInt() + datoDeSuma).toString() //se le agrega las repeticiones o peso a levantar
+                                }else{
+                                    cadena += ((meta.get("datoInicial") as Long).toInt()).toString()
+                                }
+                            }
+                            //se le agrega la fecha de finalizacion
+                            cadena += " | Fecha de finalización: "
+                            cadena += diaF; cadena += "-"; cadena += mesF; cadena += "-"; cadena += anoF
+
+                            if(diaSemHoy == lun || diaSemHoy == mar || diaSemHoy == mier || diaSemHoy == juev || diaSemHoy == vier || diaSemHoy == sab || diaSemHoy == dom){//dia coincide
+                                if(borrarMetas(diaF, mesF, anoF, meta.id)){
+                                    if(suma){ //si no ha actualizado datos hoy
+                                    //poner el dia de la actualizacion con la nueva fecha de seguimiento
+                                    actualizarMetas(meta.get("nombre").toString(), (datoDeSuma + meta.get("datoInicial") as Long).toInt(), (meta.get("datoFinal") as Long).toInt(),
+                                        diaF, mesF, anoF, meta.get("peso") as Boolean, meta.get("repeticion") as Boolean, meta.get("lunes") as Boolean, meta.get("martes") as Boolean, meta.get("miercoles") as Boolean, meta.get("jueves") as Boolean, meta.get("viernes") as Boolean, meta.get("sabado") as Boolean, meta.get("domingo") as Boolean, diaHoy, mesHoy, anoHoy,
+                                        (meta.get("ultDia") as Long).toInt(), (meta.get("ultMes") as Long).toInt(), (meta.get("ultAno") as Long).toInt())
+                                    }
+
+                                    if((meta.get("ultDia") as Long).toInt() != diaHoy || (meta.get("ultMes") as Long).toInt() != mesHoy || (meta.get("ultAno") as Long).toInt() != anoHoy){
+                                        MainActivity.listaMetas.add(cadena)
+                                    }
+                                }
+                            }
+                        }
+                    }
+            }
+            MainActivity.validadorListas = false //cambia el validador para que esto no se vuelva a hacer
+        }
+    }
+
+    private fun borrarMetas(dia: Int, mes: Int, ano: Int, id: String): Boolean {
+        var sdf = SimpleDateFormat("dd")
+        val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
+        sdf = SimpleDateFormat("MM")
+        val mesHoy2 = sdf.format(Date()) //se obtiene el mes actual
+        sdf = SimpleDateFormat("yyyy")
+        val anoHoy2 = sdf.format(Date()) //se obiene el año actual
+
+        val diaHoy = diaHoy2.toInt(); val mesHoy = mesHoy2.toInt(); val anoHoy = anoHoy2.toInt()
+
+        //var dia: Int; var mes: Int; var ano: Int
+        if(anoHoy >= ano){
+            if(anoHoy > ano){
+                MainActivity.user?.let { usuario -> //abre la base de datos
+                    db.collection("users").document(usuario).collection("metas").document(id).delete()
+                    return false
+                }
+            }else{
+                if(mesHoy >= mes){
+                    if(mesHoy > mes){
+                        MainActivity.user?.let { usuario -> //abre la base de datos
+                            db.collection("users").document(usuario).collection("metas").document(id).delete()
+                            return false
+                        }
+                    }else{
+                        if(diaHoy > dia){
+                            MainActivity.user?.let { usuario -> //abre la base de datos
+                                db.collection("users").document(usuario).collection("metas").document(id).delete()
+                                return false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return true
+    }
+
+    private fun actualizarMetas(Nombre: String, DatoInicial: Int, DatoFinal: Int, dia: Int, mes: Int, ano: Int, Peso: Boolean, Repeticion: Boolean, D1: Boolean, D2: Boolean, D3: Boolean, D4: Boolean, D5: Boolean, D6: Boolean, D7: Boolean, diaSeg: Int, mesSeg: Int, anoSeg: Int, ultDia: Int, ultMes: Int, ultAno: Int){
+        MainActivity.user?.let{ usuario ->
+            db.collection("users").document(usuario).collection("metas")
+                .document(Nombre).set(
+                    hashMapOf(
+                        "nombre" to Nombre,
+                        "peso" to Peso,
+                        "repeticion" to Repeticion,
+                        "lunes" to D1,
+                        "martes" to D2,
+                        "miercoles" to D3,
+                        "jueves" to D4,
+                        "viernes" to D5,
+                        "sabado" to D6,
+                        "domingo" to D7,
+                        "diaFinal" to dia,
+                        "mesFinal" to mes,
+                        "anoFinal" to ano,
+                        "datoInicial" to DatoInicial,
+                        "datoFinal" to DatoFinal,
+                        "diaSeg" to diaSeg,
+                        "mesSeg" to mesSeg,
+                        "anoSeg" to anoSeg,
+                        "ultDia" to ultDia,
+                        "ultMes" to ultMes,
+                        "ultAno" to ultAno
+                    )
+                )
+        }
     }
 
     private fun callMetasActivity() {
