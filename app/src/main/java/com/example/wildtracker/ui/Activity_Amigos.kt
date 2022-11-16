@@ -26,26 +26,28 @@ import com.google.firebase.firestore.FirebaseFirestore
 class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawer: DrawerLayout
-    private val db = FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance() //Instancia de firebase para traerse los datos
     private var listViewRanking: ListView?= null
-    private var buttonRecargar: Button?= null
-    private lateinit var builder: AlertDialog.Builder
+    private var buttonRecargar: Button?= null //Boton para recargar los datos del activity
+    private lateinit var builder: AlertDialog.Builder //Dialogo de alerta para interactuar en el activity
     private lateinit var builderStadistics: AlertDialog.Builder
     private fun CargarSeguidores () {
-        val values = ArrayList<String>()
-        values.clear()
-        var mListView = findViewById<ListView>(R.id.userlist)
-        mListView.emptyView
+        //Funcion que se trae los datos de la lista de personas a las que el usuario esta siguiendo
+        val values = ArrayList<String>() //Values es la lista de seguidores a que será llenada con datos de firebase
+        values.clear() // Limpiamos la vista cada que se presione el boton para evitar escribir mas de alguna vez el dato
+        var mListView = findViewById<ListView>(R.id.userlist) //Seteamos la lista de usuarios en una variable para poder manipularla
+        mListView.emptyView //Vaciamos la lista
         mListView.adapter = ArrayAdapter(this,
-            android.R.layout.simple_list_item_1, values)
+            android.R.layout.simple_list_item_1, values) //Seteamos los valores de la lista a que se adapten con los valores que se cargue de la lista de usuarios
         //Accesar a la coleccion de amigos del usuario
         var listaSeguidores = ArrayList<String>()
-        var perfilGet =""
+        var perfilGet ="" //Variable para el nombre de usuario
         val progresDialog = ProgressDialog(this)
         progresDialog.setMessage("Cargando Datos")
         progresDialog.setCancelable(false)
         progresDialog.show()
-        MainActivity.listaSeguidores.clear()
+        MainActivity.listaSeguidores.clear() //Cada que se traiga los datos de firebase actualizara la lista de seguidores global
+        //Sentencia para consultar los datos de firebase en la ruta de usuarios, el usuario actual loggeado y en sus seguidores
         db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
         for (document in result) {
             perfilGet = document.get("Nombre").toString()
@@ -53,27 +55,29 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
                 //Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
                 Thread.sleep(1_00)  // wait for 1 second
-                MainActivity.listaSeguidores.add(perfilGet)
+                MainActivity.listaSeguidores.add(perfilGet)//Añade a la lista de seguidores los nombres encontrados en firebase
             }
 
         }
             Thread.sleep(1_00)  // wait for 1 second
-            MainActivity.listaSeguidores.sort()
+            MainActivity.listaSeguidores.sort() // Acomoda la lista de seguidores numericamente 0,1,2....
             val array = ArrayList<String>()
             var i = MainActivity.listaSeguidores.size - 1
             while (i != -1) {
+                //Acomoda el arreglo para mostrar en orden a los seguidores
                 array.add(MainActivity.listaSeguidores[i])
                 i--
             }
 
             progresDialog.dismiss()
             val arrayAdapter: ArrayAdapter<*>
-            val users = MainActivity.listaSeguidores
+           // val users = MainActivity.listaSeguidores
 
             // access the listView from xml file
 
             arrayAdapter = ArrayAdapter(this,
                 android.R.layout.simple_list_item_1, array)
+            //Pinta la lista de seguidores en orden
             mListView.adapter = arrayAdapter
 
         }
@@ -87,7 +91,8 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
 
-    private fun AlertaSeguir(perfil: String) {
+    private fun AlertaSeguidor(perfil: String) {
+        //Alert dialog para interactuar sobre un usuario ya elegido
         var perfil2 = perfil.substringAfter(" ")
         val progresDialog = ProgressDialog(this)
        // Toast.makeText(this, perfil2, Toast.LENGTH_SHORT).show()
@@ -96,7 +101,6 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         progresDialog.setCancelable(false)
         progresDialog.show()
 
-
                 builder = AlertDialog.Builder(this)
                 builder.setTitle("Siguiendo a ${perfil}")
                     .setMessage("Que deseas hacer con este usuario")
@@ -104,6 +108,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     .setPositiveButton("Dejar de seguir") { dialogInterface, it ->
                         //Funcion para eliminar al usuario de mis amigos
                         db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
+                            //Consulta en la base de datos los usuarios que coicidan con el nombre de usuario a dejar de seguir, cuando lo encuentra lo elimina
                             for (document in result) {
 
                                 perfilGet = document.get("Nombre").toString()
@@ -128,9 +133,35 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                                         .setCancelable(true)
                                         .setNeutralButton("OK"){
                                             dialogInterface,it->*/
-                                            alertScrollView(perfil)
+                                            alertScrollView(perfil) //Muestra las estadisticas del usuario seleccionado
 
                                         }
+                               /* else{
+                                    builder = AlertDialog.Builder(this)
+                                    builder.setTitle("Alerta")
+                                        .setMessage("No se encontro el usuario es posible que haya cambiado de nombre")
+                                        .setCancelable(true)
+                                        .setPositiveButton("Dejar de seguir") { dialogInterface, it ->
+                                            //Funcion para eliminar al usuario de mis amigos
+                                            db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
+                                                for (document in result) {
+
+                                                    perfilGet = document.get("Nombre").toString()
+
+                                                    if(perfilGet==perfil){
+                                                        document.reference.delete()
+                                                    }
+                                                }
+
+                                            }
+                                            dialogInterface.dismiss()
+                                        }
+                                        .setNegativeButton("Cancelar") { dialogInterface, it -> //dialogInterface.cancel()
+                                            dialogInterface.dismiss()
+                                        }
+                                        .show()
+                                } */
+
                             }
                                 }
 
@@ -147,19 +178,19 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //Carga la barra de navegacion de la app y la lista de seguidores del mainActivity
         setContentView(R.layout.lista_amigos)
         initToolbar()
         initNavigationView()
         val arrayAdapter: ArrayAdapter<*>
         val users = MainActivity.listaSeguidores
-
-        // access the listView from xml file
+        //Seteamos la mListView como la lista de seguidores
         var mListView = findViewById<ListView>(R.id.userlist)
         arrayAdapter = ArrayAdapter(this,
             android.R.layout.simple_list_item_1, users)
         mListView.adapter = arrayAdapter
-        CargarSeguidores()
-        buttonRecargar = findViewById(R.id.buttonRecargar)
+        CargarSeguidores() //Cargamos a los seguidores
+        buttonRecargar = findViewById(R.id.buttonRecargar) //Boton para recargar la lista
        // listViewRanking = findViewById(R.id.listViewRanking)
 
       //  CargarSeguidores()
@@ -168,9 +199,10 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             CargarSeguidores()
         }
         mListView!!.setOnItemClickListener  { parent, view, position, id ->
+            //Al dar click en un elemento de la vista se traere el texto que se clickeo y mandara llamar a AlertaSeguidor para interactuar con ese elemento
             var Perfil:String  =  MainActivity.listaSeguidores[(MainActivity.listaSeguidores!!.size.toInt()- position.toInt())-1]
 
-            AlertaSeguir(Perfil )
+            AlertaSeguidor(Perfil )
         }
 
 
@@ -178,6 +210,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     private fun initToolbar() {
+        //Inicia el toolbar para el activity Seguidores
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         toolbar.title = "Seguidores"
         setSupportActionBar(toolbar)
@@ -281,7 +314,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     fun signOut() {
-
+        //Cierra sesion del usuario actual
         LoginActivity.useremail = ""
         FirebaseAuth.getInstance().signOut()
 
@@ -293,7 +326,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
         googleSignInClient.signOut()
         //Cierra sesion y manda devuelta al login
-        deleteAppData()
+        deleteAppData() //Elimina los datos de la app
     }
     private fun deleteAppData() {
         try {
@@ -309,12 +342,11 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
 
     fun alertScrollView(perfil: String) {
+        //Estadisticas del usuario seleccionado
         val progresDialog = ProgressDialog(this)
         progresDialog.setMessage("Cargando Datos")
         progresDialog.setCancelable(false)
         progresDialog.show()
-
-
 
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val myScrollView: View = inflater.inflate(R.layout.seguidores_estadisticas, null, false)
@@ -338,8 +370,18 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                             peso = document.get("peso").toString()
                             altura = document.get("altura").toString()
                             // myScrollView.setVisibility(View.GONE);
-                            myScrollView.setVisibility(View.VISIBLE);
+                           Thread.sleep(200)
                             tv.append("Nombre : ${document.get("Name").toString()}\n")
+                            myScrollView.setVisibility(View.VISIBLE);
+                            if(puntos==null||puntos=="null"){
+                                puntos ="NR"
+                            }
+                            if(peso==null||peso=="null"){
+                                peso ="NR"
+                            }
+                            if(altura==null||altura=="null"){
+                                altura ="NR"
+                            }
                             tv.append("Puntos Totales : $puntos\n")
                             tv.append("Peso : ${peso}\n")
                             tv.append("Altura : ${altura}\n")
