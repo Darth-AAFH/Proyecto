@@ -22,7 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 
-private lateinit var drawer: DrawerLayout
+lateinit var drawer: DrawerLayout
 class SettingsActivity : AppCompatActivity(),
     SharedPreferences.OnSharedPreferenceChangeListener, NavigationView.OnNavigationItemSelectedListener {
 

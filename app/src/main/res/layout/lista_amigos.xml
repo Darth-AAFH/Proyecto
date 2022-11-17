@@ -16,6 +16,7 @@
         tools:context=".ui.Activity_Amigos"
         tools:openDrawer="start">
         <ListView
+            android:layout_marginTop="60dp"
             android:id="@+id/userlist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >

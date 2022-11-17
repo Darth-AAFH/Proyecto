@@ -3,6 +3,8 @@ package com.example.wildtracker.ui
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.system.Os.remove
 import android.util.Log
 import android.view.LayoutInflater
@@ -37,10 +39,12 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private var buttonRecargar: Button ?= null
     private lateinit var builder: AlertDialog.Builder
     private fun CargarRanking () {
+
+
         listaRanking.clear()
         listaRanking.addAll(MainActivity.listaRanking1); listaRanking.addAll(MainActivity.listaRanking2)
         listaRanking.addAll(MainActivity.listaRanking3); listaRanking.addAll(MainActivity.listaRanking4)
-
+        listaRanking.sort()
         val array = ArrayList<String>()
         var i = listaRanking.size - 1
         while (i != -1) {
@@ -64,7 +68,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private fun AlertaSeguir(perfil: String) {
         var perfil2 = perfil.substringAfter(" ")
         val progresDialog = ProgressDialog(this)
-        Toast.makeText(this, perfil2, Toast.LENGTH_SHORT).show()
+       // Toast.makeText(this, perfil2, Toast.LENGTH_SHORT).show()
         var perfilGet: String
         progresDialog.setMessage("Cargando Datos")
         progresDialog.setCancelable(false)
@@ -77,7 +81,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
                     if (perfil2 == perfilGet) {
                     val usuario =perfilGet
-                    Toast.makeText(this,"Encontrado! "+document.get("Name").toString(),Toast.LENGTH_LONG).show()
+                  //  Toast.makeText(this,"Encontrado! "+document.get("Name").toString(),Toast.LENGTH_LONG).show()
                         //Si encuentro que coincide en firebase lo añado a amigos para desde ahi cargar sus datos de actividad fisica.
                       //  listaSeguidores.add(perfilGet)
                         builder = AlertDialog.Builder(this)
@@ -124,6 +128,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val progresDialog = ProgressDialog(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ranking)
         initToolbar()
@@ -131,12 +136,39 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         buttonRecargar = findViewById(R.id.buttonRecargar)
         listViewRanking = findViewById(R.id.listViewRanking)
-
+        progresDialog.setMessage("Cargando Datos")
+        progresDialog.setCancelable(false)
+        progresDialog.show()
         CargarRanking()
 
         buttonRecargar!!.setOnClickListener{////////////////////////////////////
+            progresDialog.setMessage("Cargando Datos")
+            progresDialog.setCancelable(false)
+            progresDialog.show()
             CargarRanking()
+            if(progresDialog.isShowing){
+                Handler(Looper.getMainLooper()).postDelayed(
+                    {
+                        // This method will be executed once the timer is over
+                        progresDialog.dismiss()
+                    },
+                    1000 // value in milliseconds
+                )
+
+            }
         }
+
+        if(progresDialog.isShowing){
+            Handler(Looper.getMainLooper()).postDelayed(
+                {
+                    // This method will be executed once the timer is over
+                    progresDialog.dismiss()
+                },
+                1200 // value in milliseconds
+            )
+
+        }
+
     }
 
     private fun initToolbar() {

@@ -212,7 +212,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private fun initToolbar() {
         //Inicia el toolbar para el activity Seguidores
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
-        toolbar.title = "Seguidores"
+        toolbar.title = "Siguiendo"
         setSupportActionBar(toolbar)
 
         drawer = findViewById(R.id.drawerlayout)!!
@@ -251,7 +251,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             R.id.nav_metas -> callMetasActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-
+            R.id.nav_ranking->callRankingActivity()
             R.id.nav_musica ->callMusica()
             R.id.nav_amigos ->callAmigosActivity()
             R.id.Settings->callAjustesActivity()
@@ -261,6 +261,11 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         return true
     }
+    private fun callRankingActivity() {
+        val intent = Intent(this, RankingActivity::class.java)
+        startActivity(intent)
+    }
+
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)

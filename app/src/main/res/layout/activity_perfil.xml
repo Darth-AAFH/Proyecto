@@ -17,6 +17,8 @@ tools:openDrawer="start">
         android:orientation="vertical"
         android:paddingTop="100dp"
         android:gravity="center_horizontal">
+
+
         <Button
             android:id="@+id/recoverProfileDataButton"
             android:layout_width="150dp"

@@ -29,7 +29,7 @@ class CreadorEjercicios : AppCompatActivity() {
         editTextNombre = findViewById<View>(R.id.editTextNombre) as EditText
         switchPeso = findViewById<View>(R.id.switchPeso) as Switch
         buttonCrear = findViewById(R.id.buttonCrear)
-        buttonEditar = findViewById(R.id.buttonEditar)
+        buttonEditar = findViewById(R.id.buttonEditarEjercicio)
         val spinnerTipos: Spinner = findViewById(R.id.spinnerTipos)
 
         val listaSpinner = listOf("Piernas", "Abdomen", "Pecho", "Espalda", "Brazos", "Hombros", "Otro")
