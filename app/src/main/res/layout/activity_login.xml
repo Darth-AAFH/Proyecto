@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/gray_dark">
+    android:background="@color/blue">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/gray_dark">
+            android:background="@color/blue">
 
             <ImageView
                 android:paddingTop="20dp"
@@ -81,7 +81,7 @@
                 android:id="@+id/lyTerms"
                 style="@style/viewCustom"
                 android:orientation="horizontal"
-                android:background="@color/gray_dark">
+                android:background="@color/blue">
 
                 <CheckBox
                     android:id="@+id/cbAcept"

@@ -7,12 +7,12 @@
         <deviceKey>
           <Key>
             <type value="SERIAL_NUMBER" />
-            <value value="adb-R5CT407S17L-crMGMR._adb-tls-connect._tcp" />
+            <value value="R52M40L89RR" />
           </Key>
         </deviceKey>
       </Target>
     </runningDeviceTargetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2022-11-17T05:50:20.483951900Z" />
+    <timeTargetWasSelectedWithDropDown value="2022-11-17T06:13:34.451550900Z" />
     <targetsSelectedWithDialog>
       <Target>
         <type value="QUICK_BOOT_TARGET" />
