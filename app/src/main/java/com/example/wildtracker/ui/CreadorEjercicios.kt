@@ -116,6 +116,7 @@ class CreadorEjercicios : AppCompatActivity() {
         }else{
             cadena += " | Sin peso"
         }
+        MainActivity.listaEjercicios.add(cadena)
 
         Toast.makeText(this, "Se ha guardado el ejercicio", Toast.LENGTH_SHORT).show()
     }

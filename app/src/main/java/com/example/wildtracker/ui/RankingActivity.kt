@@ -40,14 +40,16 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private lateinit var builder: AlertDialog.Builder
     private fun CargarRanking () {
 
+        MainActivity.listaRanking1.sort(); MainActivity.listaRanking2.sort() //acomoda las listas de menor a mayor
+        MainActivity.listaRanking3.sort(); MainActivity.listaRanking4.sort()
 
         listaRanking.clear()
         listaRanking.addAll(MainActivity.listaRanking1); listaRanking.addAll(MainActivity.listaRanking2)
         listaRanking.addAll(MainActivity.listaRanking3); listaRanking.addAll(MainActivity.listaRanking4)
-        listaRanking.sort()
-        val array = ArrayList<String>()
+
+        val array = ArrayList<String>() //arreglo auxiliar para acomodar las lista
         var i = listaRanking.size - 1
-        while (i != -1) {
+        while (i != -1) { //va a tomar el dato de la lista de ranking y lo va a acomodar al reves
             array.add(listaRanking[i])
             i--
         }

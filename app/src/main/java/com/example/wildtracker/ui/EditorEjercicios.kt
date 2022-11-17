@@ -91,10 +91,30 @@ class EditorEjercicios : AppCompatActivity(), NavigationView.OnNavigationItemSel
         }
 
         buttonBorrar!!.setOnClickListener{
-            borrar(num)
-            val intent = Intent(this@EditorEjercicios, PlantillasActivity::class.java)
-            startActivity(intent)
+
+
+            builder = AlertDialog.Builder(this)
+            builder.setTitle("Borrar ejercicio")
+                .setMessage("Deseas borrar este ejercicio?")
+                .setCancelable(true)
+                .setPositiveButton("Si") { dialogInterface, it ->
+                    //Editar
+                    borrar(num)
+                    val intent = Intent(this@EditorEjercicios, PlantillasActivity::class.java)
+                    startActivity(intent)
+                }
+                .setNegativeButton("Cancelar") { dialogInterface, it -> //dialogInterface.cancel()
+                    dialogInterface.dismiss()
+                }
+                .show()
+
+
+
+
         }
+
+
+
     }
 
     private fun guardar(Id: String, Nombre: String, Tipo: String, Peso: Boolean): Boolean{
