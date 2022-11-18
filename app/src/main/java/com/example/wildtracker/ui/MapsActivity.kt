@@ -14,7 +14,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import android.widget.RatingBar.OnRatingBarChangeListener
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -40,6 +39,8 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.maps.android.SphericalUtil
+import com.google.type.LatLng
 import kotlinx.android.synthetic.main.map_coment.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -322,7 +323,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         map.setOnMapLongClickListener { latLng ->
-            AlertaMap(latLng)
+            //Validar ubicacion con los demas puntos de firebase
+            validarPuntoenMapa(latLng)
+            //AlertaMap(latLng)
         }
         map.setOnInfoWindowLongClickListener { markerToDelete ->
             AlertaModificarMapa(markerToDelete,markerToDelete.snippet )
@@ -410,9 +413,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
      * 2. Para verificar que se desea añadir
      */
     private fun AlertaMap(latLng: LatLng1) {
+
+
         //Inicializa el primer AlertDialog
         builder = AlertDialog.Builder(this)
         val dialogBuilder = AlertDialog.Builder(this)
+       // Toast.makeText(this,"",Toast.LENGTH_LONG).show()
+
+
         builder.setTitle("Añadir un nuevo lugar en mapa")
             .setMessage("Quieres Agregar un marcador en este punto?")
             .setCancelable(true)
@@ -487,6 +495,58 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 ).show()
             }
             .show()
+    }
+
+    private fun validarPuntoenMapa(latLng: LatLng1) {
+        var EstaCerca = false
+        var distance = 10.0
+        db.collection("locations").get().addOnSuccessListener { result ->
+            //Consulta en la base de datos los usuarios que coicidan con el nombre de usuario a dejar de seguir, cuando lo encuentra lo elimina
+            var latitudActual = latLng.latitude ;  var longitudActual = latLng.longitude
+            var latitud =""; var longitud=""
+            for (document in result) {
+                var descripcion = document.get("descripcion").toString()
+                latitud = document.get("latitud").toString()
+                latitud.toDouble()
+                longitud = document.get("longitud").toString()
+                longitud.toDouble()
+                //Obtener ubicaciones
+                val miPosicion = LatLng1(latitudActual, longitudActual)
+                var posicionCercana = LatLng1(  latitud.toDouble(),longitud.toDouble())
+
+                //Operacion para determinar la distancia entre 2 puntos
+                 distance = SphericalUtil.computeDistanceBetween(miPosicion,posicionCercana)
+                if(distance<101){
+                    EstaCerca=true
+                }
+
+               // Toast.makeText(this,"Distancia con $descripcion es: ${Math.round(distance*100)/100.0}",Toast.LENGTH_SHORT).show()
+
+               /* if(NombreValidador==usuario){
+                    Siguiendo=true
+                    Toast.makeText(this,"Siguiendolo ya!!",Toast.LENGTH_SHORT).show()
+                }*/
+            }
+           if(EstaCerca){
+               Toast.makeText(this,"No puedes añadir un marcador aqui, ya hay otro en 100m o menos",Toast.LENGTH_SHORT).show()
+           }
+            else{
+               AlertaMap(latLng)
+            }
+
+            /*  if(!Siguiendo){
+                  Toast.makeText(this,"Comenzaste a seguir a $usuario",Toast.LENGTH_SHORT).show()
+                  MainActivity.user?.let {
+                      db.collection("users").document(it).collection("Seguidores").document().set(
+                          hashMapOf(
+                              "Nombre" to usuario
+                          )
+
+                      )
+                  }
+              }*/
+
+        }
     }
 
     /**
