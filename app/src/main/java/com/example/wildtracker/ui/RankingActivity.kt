@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.system.Os.remove
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -15,19 +14,15 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.core.view.size
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
 import com.example.wildtracker.musica.mPlayerActivity
 import com.example.wildtracker.ui.MainActivity.Companion.listaRanking
-import com.example.wildtracker.ui.MainActivity.Companion.listaSeguidores
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
-import com.google.errorprone.annotations.Var
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Suppress("DEPRECATION")
@@ -56,7 +51,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array)
         listViewRanking!!.setAdapter(adapter) //La lista se adapta en la text view
-        listaRanking.sort()
+       // listaRanking.sort()
         listViewRanking!!.setOnItemClickListener  { parent, view, position, id ->
             var Perfil:String  =  listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]
             Perfil = Perfil.substringAfter("-")
@@ -83,22 +78,30 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
                     if (perfil2 == perfilGet) {
                     val usuario =perfilGet
+                       // validarSeguimiento(usuario)
                   //  Toast.makeText(this,"Encontrado! "+document.get("Name").toString(),Toast.LENGTH_LONG).show()
                         //Si encuentro que coincide en firebase lo añado a amigos para desde ahi cargar sus datos de actividad fisica.
                       //  listaSeguidores.add(perfilGet)
                         builder = AlertDialog.Builder(this)
-                        builder.setTitle("Seguir usuario")
+                        builder.setTitle("Seguir usuario $usuario")
                             .setMessage("Este es usuario al cual puedes comenzar a seguir")
                             .setCancelable(true)
                             .setPositiveButton("Seguir") { dialogInterface, it ->
-                                MainActivity.user?.let {
+                                //Validar si ya se sigue al usuario
+                                if(validarSeguimiento(usuario)){
+                                    Toast.makeText(this,"Haciendo validacion de usuario",Toast.LENGTH_SHORT).show()
+                                }
+
+
+                               /* MainActivity.user?.let {
                                     db.collection("users").document(it).collection("Seguidores").document().set(
                                         hashMapOf(
                                             "Nombre" to usuario
                                         )
 
                                     )
-                                }
+                                }*/
+
                             }
                             .setNegativeButton(
                                 "Cancel",
@@ -127,6 +130,33 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
     }
 
+    private fun validarSeguimiento(usuario: String): Boolean {
+        var Siguiendo = false
+        var NombreValidador =" "
+        db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
+            //Consulta en la base de datos los usuarios que coicidan con el nombre de usuario a dejar de seguir, cuando lo encuentra lo elimina
+            for (document in result) {
+                 NombreValidador = document.get("Nombre").toString()
+                if(NombreValidador==usuario){
+                     Siguiendo=true
+                    Toast.makeText(this,"Siguiendolo ya!!",Toast.LENGTH_SHORT).show()
+                }
+            }
+            if(!Siguiendo){
+            Toast.makeText(this,"Comenzaste a seguir a $usuario}",Toast.LENGTH_SHORT).show()
+            MainActivity.user?.let {
+                db.collection("users").document(it).collection("Seguidores").document().set(
+                    hashMapOf(
+                        "Nombre" to usuario
+                    )
+
+                )
+            }
+        }
+
+        }
+        return (Siguiendo)
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
