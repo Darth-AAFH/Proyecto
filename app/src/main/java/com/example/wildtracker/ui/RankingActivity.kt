@@ -51,11 +51,11 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array)
         listViewRanking!!.setAdapter(adapter) //La lista se adapta en la text view
-       // listaRanking.sort()
+        // listaRanking.sort()
         listViewRanking!!.setOnItemClickListener  { parent, view, position, id ->
             var Perfil:String  =  listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]
             Perfil = Perfil.substringAfter("-")
-          //  Toast.makeText(this,MainActivity.listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]+"$Perfil",Toast.LENGTH_SHORT).show()
+            //  Toast.makeText(this,MainActivity.listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]+"$Perfil",Toast.LENGTH_SHORT).show()
             AlertaSeguir(Perfil )
         }
 
@@ -65,7 +65,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private fun AlertaSeguir(perfil: String) {
         var perfil2 = perfil.substringAfter(" ")
         val progresDialog = ProgressDialog(this)
-       // Toast.makeText(this, perfil2, Toast.LENGTH_SHORT).show()
+        // Toast.makeText(this, perfil2, Toast.LENGTH_SHORT).show()
         var perfilGet: String
         progresDialog.setMessage("Cargando Datos")
         progresDialog.setCancelable(false)
@@ -73,49 +73,49 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         db.collection("users").get().addOnSuccessListener { result ->
             for (document in result) {
 
-                    perfilGet = document.get("Name").toString()
-                    var correo = document.get("email").toString()
+                perfilGet = document.get("Name").toString()
+                var correo = document.get("email").toString()
 
-                    if (perfil2 == perfilGet) {
+                if (perfil2 == perfilGet) {
                     val usuario =perfilGet
-                       // validarSeguimiento(usuario)
-                  //  Toast.makeText(this,"Encontrado! "+document.get("Name").toString(),Toast.LENGTH_LONG).show()
-                        //Si encuentro que coincide en firebase lo añado a amigos para desde ahi cargar sus datos de actividad fisica.
-                      //  listaSeguidores.add(perfilGet)
-                        builder = AlertDialog.Builder(this)
-                        builder.setTitle("Seguir usuario $usuario")
-                            .setMessage("Este es usuario al cual puedes comenzar a seguir")
-                            .setCancelable(true)
-                            .setPositiveButton("Seguir") { dialogInterface, it ->
-                                //Validar si ya se sigue al usuario
-                                if(validarSeguimiento(usuario)){
-                                    Toast.makeText(this,"Haciendo validacion de usuario",Toast.LENGTH_SHORT).show()
-                                }
-
-
-                               /* MainActivity.user?.let {
-                                    db.collection("users").document(it).collection("Seguidores").document().set(
-                                        hashMapOf(
-                                            "Nombre" to usuario
-                                        )
-
-                                    )
-                                }*/
-
+                    // validarSeguimiento(usuario)
+                    //  Toast.makeText(this,"Encontrado! "+document.get("Name").toString(),Toast.LENGTH_LONG).show()
+                    //Si encuentro que coincide en firebase lo añado a amigos para desde ahi cargar sus datos de actividad fisica.
+                    //  listaSeguidores.add(perfilGet)
+                    builder = AlertDialog.Builder(this)
+                    builder.setTitle("Seguir usuario $usuario")
+                        .setMessage("Este es usuario al cual puedes comenzar a seguir")
+                        .setCancelable(true)
+                        .setPositiveButton("Seguir") { dialogInterface, it ->
+                            //Validar si ya se sigue al usuario
+                            if(validarSeguimiento(usuario)){
+                                Toast.makeText(this,"Haciendo validacion de usuario",Toast.LENGTH_SHORT).show()
                             }
-                            .setNegativeButton(
-                                "Cancel",
-                            ) { dialog, whichButton ->
-                                dialog.dismiss()
-                            }
-                            .show()
 
-                    }
-                    else{
 
-                       // Toast.makeText(this,"No se encontro... "+ perfilGet.length,Toast.LENGTH_LONG).show()
-                      //  Toast.makeText(this,"Buscaba..."+ perfil2.length,Toast.LENGTH_LONG).show()
-                    }
+                            /* MainActivity.user?.let {
+                                 db.collection("users").document(it).collection("Seguidores").document().set(
+                                     hashMapOf(
+                                         "Nombre" to usuario
+                                     )
+
+                                 )
+                             }*/
+
+                        }
+                        .setNegativeButton(
+                            "Cancel",
+                        ) { dialog, whichButton ->
+                            dialog.dismiss()
+                        }
+                        .show()
+
+                }
+                else{
+
+                    // Toast.makeText(this,"No se encontro... "+ perfilGet.length,Toast.LENGTH_LONG).show()
+                    //  Toast.makeText(this,"Buscaba..."+ perfil2.length,Toast.LENGTH_LONG).show()
+                }
                 Log.d("myTag", "Encontre:$perfilGet");
                 Log.d("myTag", "Buscaba:$perfil2");
 
@@ -136,23 +136,23 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
             //Consulta en la base de datos los usuarios que coicidan con el nombre de usuario a dejar de seguir, cuando lo encuentra lo elimina
             for (document in result) {
-                 NombreValidador = document.get("Nombre").toString()
+                NombreValidador = document.get("Nombre").toString()
                 if(NombreValidador==usuario){
-                     Siguiendo=true
+                    Siguiendo=true
                     Toast.makeText(this,"Siguiendolo ya!!",Toast.LENGTH_SHORT).show()
                 }
             }
             if(!Siguiendo){
-            Toast.makeText(this,"Comenzaste a seguir a $usuario}",Toast.LENGTH_SHORT).show()
-            MainActivity.user?.let {
-                db.collection("users").document(it).collection("Seguidores").document().set(
-                    hashMapOf(
-                        "Nombre" to usuario
-                    )
+                Toast.makeText(this,"Comenzaste a seguir a $usuario",Toast.LENGTH_SHORT).show()
+                MainActivity.user?.let {
+                    db.collection("users").document(it).collection("Seguidores").document().set(
+                        hashMapOf(
+                            "Nombre" to usuario
+                        )
 
-                )
+                    )
+                }
             }
-        }
 
         }
         return (Siguiendo)
@@ -244,7 +244,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             R.id.nav_metas -> callMetasActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            
+
             R.id.nav_musica ->callMusica()
             R.id.nav_amigos ->callAmigosActivity()
             R.id.Settings->callAjustesActivity()
