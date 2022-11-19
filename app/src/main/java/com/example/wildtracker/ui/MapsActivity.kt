@@ -40,7 +40,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.maps.android.SphericalUtil
-import com.google.type.LatLng
 import kotlinx.android.synthetic.main.map_coment.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -54,7 +53,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     /** Instancia a la base de datos */
     private val db = FirebaseFirestore.getInstance()
     private lateinit var drawer: DrawerLayout
-
     /**
      * Variable para hacer referencia a la clase de Google Maps y ser la
      * entrada a los metodos relacionados con los mapas.
@@ -190,31 +188,31 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         var descripcion = " "
 
 
-            if (snippet != null) {
+        if (snippet != null) {
 
-                db.collection("locations").document(snippet).collection("Comentarios").get().addOnSuccessListener{ result->
-                    for (document in result){
-                        try {
-                            descripcion = document.get("Descripcion").toString()
-                            date = document.get("Fecha").toString()
-                            if((document.get("Descripcion")
-                                    .toString() != "null") && descripcion.length>4
-                            ){
-                                myScrollView.setVisibility(View.GONE);
-                                myScrollView.setVisibility(View.VISIBLE);
-                                tv.append("Comentario : $date\n")
-                                tv.append("${descripcion}\n")
-                            }
-                        }
-                        catch (e:Exception){
-
+            db.collection("locations").document(snippet).collection("Comentarios").get().addOnSuccessListener{ result->
+                for (document in result){
+                    try {
+                        descripcion = document.get("Descripcion").toString()
+                        date = document.get("Fecha").toString()
+                        if((document.get("Descripcion")
+                                .toString() != "null") && descripcion.length>4
+                        ){
+                            myScrollView.setVisibility(View.GONE);
+                            myScrollView.setVisibility(View.VISIBLE);
+                            tv.append("Comentario : $date\n")
+                            tv.append("${descripcion}\n")
                         }
                     }
-                    if(progresDialog.isShowing) {
-                        progresDialog.dismiss()
+                    catch (e:Exception){
+
                     }
                 }
+                if(progresDialog.isShowing) {
+                    progresDialog.dismiss()
+                }
             }
+        }
 
 
         AlertDialog.Builder(this).setView(myScrollView)
@@ -226,22 +224,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                 "OK"
             ) { dialog, id -> dialog.cancel() }.show()
 
-            Toast.makeText(this,snippet,Toast.LENGTH_LONG).show()
+        Toast.makeText(this,snippet,Toast.LENGTH_LONG).show()
         if (snippet != null) {
 
 
         }
 
-            /*try {
-                var ultimo = it.last().get("ID")
-                for (document in it) { // Entra a las propiedades de cada "locations"
-                    val lat = document.get("latitud") as Double
-                    val lng = document.get("longitud") as Double
-                    val latLng: LatLng1 = LatLng1(lat, lng)
-                    val placeType = document.get("tipo") as String
-                    val contadorAñadido = document.get("contador añadir") as Long
-                    val contadorEliminar = document.get("contador eliminar") as Long
-        */
+        /*try {
+            var ultimo = it.last().get("ID")
+            for (document in it) { // Entra a las propiedades de cada "locations"
+                val lat = document.get("latitud") as Double
+                val lng = document.get("longitud") as Double
+                val latLng: LatLng1 = LatLng1(lat, lng)
+                val placeType = document.get("tipo") as String
+                val contadorAñadido = document.get("contador añadir") as Long
+                val contadorEliminar = document.get("contador eliminar") as Long
+    */
 
 
 
@@ -291,14 +289,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             etMapComment.text
             val pattern = "yyyy-MM-dd HH:mm"
             val simpleDateFormat = SimpleDateFormat(pattern)
-             date = simpleDateFormat.format(Date().time)
+            date = simpleDateFormat.format(Date().time)
 
             // db.collection("locations").document(snippet).collection("Comentarios").get().addOnSuccessListener{ result->
             if (snippet != null) {
                 db.collection("locations").document(snippet).collection("Comentarios").document().set(
                     hashMapOf(
                         "Descripcion" to etMapComment.text.toString(),
-                         "Fecha" to date,
+                        "Fecha" to date,
                         "Calificacion" to rating
 
                     )
@@ -324,15 +322,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         map = googleMap
         map.setOnMapLongClickListener { latLng ->
             //Validar ubicacion con los demas puntos de firebase
-            validarPuntoenMapa(latLng)
-            //AlertaMap(latLng)
+            //validarPuntoenMapa(latLng)
+            AlertaMap(latLng)
         }
         map.setOnInfoWindowLongClickListener { markerToDelete ->
             AlertaModificarMapa(markerToDelete,markerToDelete.snippet )
         }
         map.setOnInfoWindowClickListener {
 
-             markerToDelete ->
+                markerToDelete ->
             alertScrollView(markerToDelete,markerToDelete.snippet )
 
         }
@@ -341,9 +339,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
 
 
-       /* map.setOnMarkerClickListener {
-            askForAddOrDelete(markers.snippet)
-        }*/
+        /* map.setOnMarkerClickListener {
+             askForAddOrDelete(markers.snippet)
+         }*/
         createMarker()
         enableMyLocation()
 
@@ -353,50 +351,50 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         * para asi poder mostrarlos en el mapa       * */
         db.collection("locations").get().addOnSuccessListener {
             try {
-            var ultimo = it.last().get("ID")
-            for (document in it) { // Entra a las propiedades de cada "locations"
-                val lat = document.get("latitud") as Double
-                val lng = document.get("longitud") as Double
-                val latLng: LatLng1 = LatLng1(lat, lng)
-                val placeType = document.get("tipo") as String
-                val contadorAñadido = document.get("contador añadir") as Long
-                val contadorEliminar = document.get("contador eliminar") as Long
+                var ultimo = it.last().get("ID")
+                for (document in it) { // Entra a las propiedades de cada "locations"
+                    val lat = document.get("latitud") as Double
+                    val lng = document.get("longitud") as Double
+                    val latLng: LatLng1 = LatLng1(lat, lng)
+                    val placeType = document.get("tipo") as String
+                    val contadorAñadido = document.get("contador añadir") as Long
+                    val contadorEliminar = document.get("contador eliminar") as Long
 
-                //Verifica que tipo de marcador es: Parque || Gimnasio para asi poder añadir cada marcador de cada "location"
+                    //Verifica que tipo de marcador es: Parque || Gimnasio para asi poder añadir cada marcador de cada "location"
 
 
-                if (placeType.equals("Parque") && contadorAñadido.toInt() >= 5 && contadorEliminar>-4) {
-                    val marker = map.addMarker(
-                        MarkerOptions().position(latLng)
-                            .title("${document.get("tipo") as String}")
-                            .snippet("${document.get("descripcion") as String}")
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.park))
-                    )
-                    markers.add(marker!!)
-                } else if (placeType.equals("Gimnasio") && contadorAñadido.toInt() >= 5 && contadorEliminar>-4) {
-                    val marker = map.addMarker(
-                        MarkerOptions().position(latLng)
-                            .title("${document.get("tipo") as String}")
-                            .snippet("${document.get("descripcion") as String}")
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.gym))
-                    )
-                    markers.add(marker!!)
-                } else {
-                    val marker = map.addMarker(
-                        MarkerOptions().position(latLng)
-                            .title("${document.get("tipo") as String}")
-                            .snippet("${document.get("descripcion") as String}")
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.fantasma))
-                    )
-                    markers.add(marker!!)
-                    if (contadorEliminar.toInt() < -4) {
-                        deleteMarker(marker)
-                        db.collection("locations").document("${marker.snippet}").delete()
-                        markers.remove(marker)
+                    if (placeType.equals("Parque") && contadorAñadido.toInt() >= 5 && contadorEliminar>-4) {
+                        val marker = map.addMarker(
+                            MarkerOptions().position(latLng)
+                                .title("${document.get("tipo") as String}")
+                                .snippet("${document.get("descripcion") as String}")
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.park))
+                        )
+                        markers.add(marker!!)
+                    } else if (placeType.equals("Gimnasio") && contadorAñadido.toInt() >= 5 && contadorEliminar>-4) {
+                        val marker = map.addMarker(
+                            MarkerOptions().position(latLng)
+                                .title("${document.get("tipo") as String}")
+                                .snippet("${document.get("descripcion") as String}")
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.gym))
+                        )
+                        markers.add(marker!!)
+                    } else {
+                        val marker = map.addMarker(
+                            MarkerOptions().position(latLng)
+                                .title("${document.get("tipo") as String}")
+                                .snippet("${document.get("descripcion") as String}")
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.fantasma))
+                        )
+                        markers.add(marker!!)
+                        if (contadorEliminar.toInt() < -4) {
+                            deleteMarker(marker)
+                            db.collection("locations").document("${marker.snippet}").delete()
+                            markers.remove(marker)
+                        }
+
                     }
-
                 }
-            }
             }
             catch (ex:Exception){
 
@@ -418,7 +416,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         //Inicializa el primer AlertDialog
         builder = AlertDialog.Builder(this)
         val dialogBuilder = AlertDialog.Builder(this)
-       // Toast.makeText(this,"",Toast.LENGTH_LONG).show()
+        // Toast.makeText(this,"",Toast.LENGTH_LONG).show()
 
 
         builder.setTitle("Añadir un nuevo lugar en mapa")
@@ -472,6 +470,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         else -> btAddMarkerAlertDialog.isVisible = false
 
                     }
+
                 }
                 btAddMarkerAlertDialog.setOnClickListener {
                     /**Obtiene la descripción del marcador a colocar en el mapa*/
@@ -479,15 +478,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                     if (edDescripction.isEmpty())
                         etMarkerDescription.error = "Añade una descripción al lugar"
                     else {
-                        addMarker(latLng, edDescripction, selectedPlace)
+                        validarPuntoenMapa(latLng,selectedPlace,edDescripction)
                         alertDialog.dismiss()
+
                     }
                 }
                 btCancell.setOnClickListener { alertDialog.dismiss() }
 
             }
             .setNegativeButton("No") { dialogInterface, it -> dialogInterface.cancel() //Se cancela el agregar un lugar
-                 }
+            }
             .setNeutralButton("Ayuda") { dialogInterface, it ->
                 Toast.makeText(
                     this@MapsActivity,
@@ -497,56 +497,47 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             .show()
     }
 
-    private fun validarPuntoenMapa(latLng: LatLng1) {
-        var EstaCerca = false
+    private fun validarPuntoenMapa(
+        latLng: com.google.android.gms.maps.model.LatLng,
+        selectedPlace: String,
+        edDescripction: String
+    ) {
+
         var distance = 10.0
         db.collection("locations").get().addOnSuccessListener { result ->
             //Consulta en la base de datos los usuarios que coicidan con el nombre de usuario a dejar de seguir, cuando lo encuentra lo elimina
             var latitudActual = latLng.latitude ;  var longitudActual = latLng.longitude
             var latitud =""; var longitud=""
+            var EstaCerca = false
             for (document in result) {
+                var tipo = document.get("tipo").toString()
                 var descripcion = document.get("descripcion").toString()
-                latitud = document.get("latitud").toString()
-                latitud.toDouble()
-                longitud = document.get("longitud").toString()
-                longitud.toDouble()
+                latitud = document.get("latitud").toString();  latitud.toDouble()
+                longitud = document.get("longitud").toString();longitud.toDouble()
+
                 //Obtener ubicaciones
                 val miPosicion = LatLng1(latitudActual, longitudActual)
                 var posicionCercana = LatLng1(  latitud.toDouble(),longitud.toDouble())
 
                 //Operacion para determinar la distancia entre 2 puntos
-                 distance = SphericalUtil.computeDistanceBetween(miPosicion,posicionCercana)
-                if(distance<101){
+                distance = SphericalUtil.computeDistanceBetween(miPosicion,posicionCercana)
+                if(distance<101&&tipo.equals(selectedPlace)){
                     EstaCerca=true
+
                 }
 
-               // Toast.makeText(this,"Distancia con $descripcion es: ${Math.round(distance*100)/100.0}",Toast.LENGTH_SHORT).show()
-
-               /* if(NombreValidador==usuario){
-                    Siguiendo=true
-                    Toast.makeText(this,"Siguiendolo ya!!",Toast.LENGTH_SHORT).show()
-                }*/
             }
-           if(EstaCerca){
-               Toast.makeText(this,"No puedes añadir un marcador aqui, ya hay otro en 100m o menos",Toast.LENGTH_SHORT).show()
+            if(!EstaCerca)
+                addMarker(latLng, edDescripction, selectedPlace)
+           else{
+                Toast.makeText(this,"No puedes añadir un marcador aqui, ya hay otro en 100m o menos",Toast.LENGTH_SHORT).show()
            }
-            else{
-               AlertaMap(latLng)
-            }
 
-            /*  if(!Siguiendo){
-                  Toast.makeText(this,"Comenzaste a seguir a $usuario",Toast.LENGTH_SHORT).show()
-                  MainActivity.user?.let {
-                      db.collection("users").document(it).collection("Seguidores").document().set(
-                          hashMapOf(
-                              "Nombre" to usuario
-                          )
 
-                      )
-                  }
-              }*/
 
         }
+       // Log.d("Estado:", EstaCerca.toString())
+
     }
 
     /**
@@ -600,7 +591,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
         )
         val markerRef = db.collection("locations").document("$descripcion")
 
-       // markerRef.update("contador añadir", FieldValue.increment(1))
+        // markerRef.update("contador añadir", FieldValue.increment(1))
         db.collection("locations").document(descripcion).collection("eliminan").document().set(
             hashMapOf(
                 "userID" to ("Empty")
@@ -644,7 +635,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                                 // Toast.makeText(this,"Contador validado $contador",Toast.LENGTH_SHORT).show()
                             }
                             if((document.get("userID")).toString() != (FirebaseAuth.getInstance().currentUser?.uid ?: LoginActivity)&&contador<=1){
-                               // Toast.makeText(this,"Contador validado $contador",Toast.LENGTH_SHORT).show()
+                                // Toast.makeText(this,"Contador validado $contador",Toast.LENGTH_SHORT).show()
                                 db.collection("locations").document(snippet).collection("añaden").document().set(
                                     hashMapOf(
                                         "userID" to (FirebaseAuth.getInstance().currentUser?.uid ?: LoginActivity)
@@ -677,10 +668,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
                         for (document in result){
                             if((document.get("userID")).toString() == (FirebaseAuth.getInstance().currentUser?.uid ?: LoginActivity)){
                                 ++contador
-                               // Toast.makeText(this,"Contador validado $contador",Toast.LENGTH_SHORT).show()
+                                // Toast.makeText(this,"Contador validado $contador",Toast.LENGTH_SHORT).show()
                             }
                             if((document.get("userID")).toString() != (FirebaseAuth.getInstance().currentUser?.uid ?: LoginActivity)&&contador<=1){
-                               // Toast.makeText(this,"Contador validado $contador",Toast.LENGTH_SHORT).show()
+                                // Toast.makeText(this,"Contador validado $contador",Toast.LENGTH_SHORT).show()
                                 db.collection("locations").document(snippet).collection("eliminan").document().set(
                                     hashMapOf(
                                         "userID" to (FirebaseAuth.getInstance().currentUser?.uid ?: LoginActivity)
@@ -794,7 +785,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            
+
             R.id.nav_musica ->callMusica()
             R.id.nav_amigos ->callAmigosActivity()
             R.id.Settings->callAjustesActivity()
@@ -904,7 +895,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
 
 }
-
 
 
 
