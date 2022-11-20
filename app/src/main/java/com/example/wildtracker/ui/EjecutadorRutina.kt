@@ -49,6 +49,7 @@ class EjecutadorRutina : AppCompatActivity() {
     var datos = ArrayList<String>()
     companion object {
         private const val REQUEST_CODE = 42
+
     }
     lateinit var timer: Timer
     lateinit var trabajoTimer: TimerTask
@@ -844,13 +845,13 @@ class EjecutadorRutina : AppCompatActivity() {
 
 
 
-           /* var imageRef =
+            /*var imageRef =
                 FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Rutina_$nombre/${photofile.name}")
             imageRef.putFile(takenImage)
                 .addOnSuccessListener { p0 ->
                     pd.dismiss()
                     Toast.makeText(applicationContext, "File Uploaded", Toast.LENGTH_SHORT).show()
-                    Toast.makeText(applicationContext, "${userID}", Toast.LENGTH_LONG).show()
+                  //  Toast.makeText(applicationContext, "${userID}", Toast.LENGTH_LONG).show()
 
                 }
                 .addOnFailureListener { p0 ->
@@ -860,8 +861,8 @@ class EjecutadorRutina : AppCompatActivity() {
                 .addOnProgressListener { p0 ->
                     var progress = (100.0 * p0.bytesTransferred) / p0.totalByteCount
                     pd.setMessage("Uploaded ${progress.toInt()}%")
-                }
-*/
+                }*/
+
             //Toast.makeText(this, "Subida", Toast.LENGTH_LONG).show()
         }
 
@@ -873,16 +874,14 @@ class EjecutadorRutina : AppCompatActivity() {
     fun listAllFiles(userID: String, name: String, takenImage: Uri) {
         val storage = FirebaseStorage.getInstance()
         // [START storage_list_all]
+
+
         val listRef = storage.reference.child("UsersTakenPictures/$userID/Rutina_$nombre/")
         listRef.listAll()
             .addOnSuccessListener { listResult ->
                 var Renombrar = false
                 var FotoFB =""
-                for (prefix in listResult.prefixes) {
-                    // All the prefixes under listRef.
-                    // You may call listAll() recursively on them.
-                  //  Toast.makeText(this,"Foto prefix:"+prefix.name,Toast.LENGTH_SHORT).show()
-                }
+
                 for (item in listResult.items) {
                     // All the items under listRef.
                     val FotoFirebaseSeparada= (item.name.split("-").toTypedArray())
@@ -909,6 +908,24 @@ class EjecutadorRutina : AppCompatActivity() {
                         .addOnFailureListener { p0 ->
                         }
                         .addOnProgressListener { p0 ->
+                        }
+                }
+                else{
+                    val FotoListInicial = (photofile.name.split("-").toTypedArray())
+                    val FotoInicial = FotoListInicial[0]
+
+                    var imageRef =
+                        FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Rutina_$nombre/${FotoInicial}")
+                    imageRef.putFile(takenImage)
+                        .addOnSuccessListener { p0 ->
+
+                            Toast.makeText(applicationContext, "File Uploaded", Toast.LENGTH_SHORT).show()
+                            //  Toast.makeText(applicationContext, "${userID}", Toast.LENGTH_LONG).show()
+
+                        }
+                        .addOnFailureListener { p0 ->
+
+                            Toast.makeText(applicationContext, p0.message, Toast.LENGTH_LONG).show()
                         }
                 }
             }

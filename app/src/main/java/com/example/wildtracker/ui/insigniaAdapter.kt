@@ -11,10 +11,15 @@ import com.example.wildtracker.R
 import kotlinx.android.synthetic.main.insigniasdiseno.view.*
 
 class insigniaAdapter(private val mContext: Context, private val listaRutinas: List<insignias>) : ArrayAdapter<insignias>(mContext, 0, listaRutinas) {
+    companion object {
+        private const val REQUEST_CODE = 42
+      var nombreCajaFotos =""
+    }
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val layout = LayoutInflater.from(mContext).inflate(R.layout.insigniasdiseno, parent, false)
         val intent = Intent(mContext, FotosActivity::class.java)
         val rutina = listaRutinas[position]
+
 
         layout.textViewNombre.text = rutina.nombre
         layout.textViewNivel.text = "Nivel: " + rutina.nivel.toString()
@@ -24,6 +29,7 @@ class insigniaAdapter(private val mContext: Context, private val listaRutinas: L
 
         layout.setOnClickListener {
             sequenceOf(Toast.makeText(mContext, "Rutina: ${rutina.nombre}", Toast.LENGTH_LONG).show())
+            nombreCajaFotos = rutina.nombre
             Utils.startActivity(mContext,FotosActivity::class.java,rutina.nombre)
         }
 
