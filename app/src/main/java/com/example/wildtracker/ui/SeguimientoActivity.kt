@@ -121,7 +121,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             R.id.nav_musica ->callMusica()
             R.id.nav_amigos ->callAmigosActivity()
             R.id.Settings->callAjustesActivity()
-
+            R.id.nav_seguimiento->callSeguimientoActivity()
 
         }
 
@@ -129,6 +129,11 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         return true
     }
+
+    private fun callSeguimientoActivity() {
+        val intent = Intent(this,SeguimientoActivity::class.java)
+        startActivity(intent)    }
+
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)

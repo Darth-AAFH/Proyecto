@@ -321,6 +321,7 @@ private fun myPreferences() {
             R.id.nav_metas -> callMetasActivity()
             R.id.nav_amigos ->callAmigosActivity()
             R.id.Settings->callAjustesActivity()
+            R.id.nav_seguimiento->callSeguimientoActivity()
 
         }
 

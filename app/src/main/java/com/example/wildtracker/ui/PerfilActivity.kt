@@ -132,6 +132,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             R.id.nav_musica ->callMusica()
             R.id.nav_amigos ->callAmigosActivity()
             R.id.Settings->callAjustesActivity()
+            R.id.nav_seguimiento->callSeguimientoActivity()
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
