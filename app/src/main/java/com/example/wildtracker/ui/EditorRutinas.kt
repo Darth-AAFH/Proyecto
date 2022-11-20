@@ -198,11 +198,14 @@ class EditorRutinas : AppCompatActivity() {
         }
 
         val linea: String
-        linea = num.toString() + " | " + nombre + " | Nivel: " + nivel.toString() + " | " + ejercicios
+        linea = num.toString() + " | " + nombre + " | Nivel: " + nivel.toString() + " | " + ejercicios //toma la rutina como está escrito
 
         val posicion: Int
-        posicion = MainActivity.listaRutinas.indexOf(linea)
-        MainActivity.listaRutinas.removeAt(posicion)
+        posicion = MainActivity.listaRutinas.indexOf(linea) //busca su posición en la lista
+        MainActivity.listaRutinas.removeAt(posicion) //y lo borra
+
+        //hace los mismo para la lista de vista
+        MainActivity.listaRutinasVista.removeAt(posicion)
 
         Toast.makeText(this, "Se ha BORRADO la rutina", Toast.LENGTH_SHORT).show()
     }

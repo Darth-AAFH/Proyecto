@@ -42,10 +42,10 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     override fun onSelectedDayChange(p0: CalendarView, p1: Int, p2: Int, p3: Int) {
+        val dia: Int = p3; val mes: Int = p2 + 1; val ano: Int = p1
+
         val items = arrayOfNulls<CharSequence>(3)
         items[0] = "Agregar rutina única"; items[1] = "Borrar eventos"; items[2] = "Cancelar"
-
-        val dia: Int = p3; val mes: Int = p2 + 1; val ano: Int = p1
 
         val alertaTareas = AlertDialog.Builder(this)
         alertaTareas.setTitle("Seleccionar una tarea")

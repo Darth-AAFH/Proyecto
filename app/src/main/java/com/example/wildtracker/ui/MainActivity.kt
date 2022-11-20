@@ -74,9 +74,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var listaMetas = ArrayList<String>()
     }
 
-
-
-
     private fun CargarListas(){
         if(validadorAcomodo){ //ayuda a organizar las listas de rutinas y los ejercicios
             listaRutinas = listaRutinas1
@@ -85,9 +82,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             listaEjercicios = listaEjercicios1
             listaEjercicios.addAll(listaEjercicios2)
 
+            listaRutinasVista = listaRutinasVista1
+            listaRutinasVista.addAll(listaRutinasVista2)
+
             validadorAcomodo = false
         }
     }
+
 private fun myPreferences() {
     val prefs = PreferenceManager.getDefaultSharedPreferences(this)
     val switch = prefs.getBoolean("switch_preference_insignias", true)

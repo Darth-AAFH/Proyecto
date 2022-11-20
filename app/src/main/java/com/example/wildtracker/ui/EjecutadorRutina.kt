@@ -3,6 +3,7 @@ package com.example.wildtracker.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -53,7 +54,7 @@ class EjecutadorRutina : AppCompatActivity() {
 
     private val db = FirebaseFirestore.getInstance()
     var num = 0; var nombre  = ""; var puntos = 0; var xp = 0; var nivel = 0; var ejercicios = ""; var meta = ""
-    var fecha = ""
+    var fecha = ""; var duracion = ""
     var ultDia = 0; var ultMes = 0; var ultAno = 0
     var terminar2 = false
     var horasE = 0; var minutosE = 0; var segundosE = 0; var puntosE = 0 //E de extras
@@ -152,7 +153,7 @@ class EjecutadorRutina : AppCompatActivity() {
         }
     }
 
-    var Peso = false; var Repeticion = false
+    var Peso = false; var Repeticion = false; var Tiempo = false
     var D1 = false ; var D2 = false; var D3 = false; var D4 = false;
     var D5 = false; var D6 = false; var D7 = false
     var diaF = 0; var mesF = 0; var anoF = 0
@@ -168,6 +169,7 @@ class EjecutadorRutina : AppCompatActivity() {
                     .get().addOnSuccessListener {
                         Peso = it.get("peso") as Boolean
                         Repeticion = it.get("repeticion") as Boolean
+                        Tiempo = it.get("tiempo") as Boolean
                         D1 = it.get("lunes") as Boolean
                         D2 = it.get("martes") as Boolean
                         D3 = it.get("miercoles") as Boolean
@@ -193,6 +195,7 @@ class EjecutadorRutina : AppCompatActivity() {
                             "nombre" to nombre,
                             "peso" to Peso,
                             "repeticion" to Repeticion,
+                            "tiempo" to Tiempo,
                             "lunes" to D1,
                             "martes" to D2,
                             "miercoles" to D3,
@@ -227,7 +230,26 @@ class EjecutadorRutina : AppCompatActivity() {
             if(Peso){ //con un texto que diferencie peso o repeticiones
                 linea += "Levantar: " + DatoInicial + "kg"
             }else{
-                linea += "Repeticiones: " + DatoInicial
+                if(Repeticion){
+                    linea += "Repeticiones: " + DatoInicial
+                }else{
+                    linea += "Completar: "
+
+                    var minutos = DatoInicial
+                    var horas = 0
+
+                    while(minutos >= 60){ //se obtienen las horas
+                        minutos -= 60
+                        horas += 1
+                    }
+
+                    if(horas != 0){
+                        linea += horas //se le agrega el tiempo con horas
+                        linea += "hr "
+                    }
+                    linea += minutos //se le agregan los minutos
+                    linea += "min"
+                }
             }
 
             //se le agrega la fecha de finalizacion
@@ -275,6 +297,7 @@ class EjecutadorRutina : AppCompatActivity() {
             ultDia = b.getInt("Dia")
             ultMes = b.getInt("Mes")
             ultAno = b.getInt("Ano")
+            duracion = b.getString("Tiempo").toString()
         }
 
         textViewActividadEnFoco = findViewById(R.id.textViewActividadEnFoco)
@@ -358,6 +381,7 @@ class EjecutadorRutina : AppCompatActivity() {
             if(firstclick == true && parar == false) {
                 if(pausar == true)
                     trabajoTimer.cancel()
+
                 val alertaParar = AlertDialog.Builder(this)
 
                 alertaParar.setTitle("Detener Rutina")
@@ -537,6 +561,17 @@ class EjecutadorRutina : AppCompatActivity() {
                 runOnUiThread {
                     tiempo++
                     textViewReloj!!.setText(tiempoATexto())
+
+                    //para las metas con tiempo
+                    if(duracion != "0") {
+                        if (tiempoATexto() == duracion) { //al llegar al tiempo seleccionado
+                            final = true
+                            parar = true
+                            trabajoTimer.cancel()
+                            fin(true) //se parara la rutina
+                        }
+                    }
+
                 }
             }
         }

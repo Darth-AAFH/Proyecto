@@ -45,8 +45,8 @@
             android:id="@+id/idSwitch1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="76dp"
             android:layout_marginTop="40dp"
+            app:layout_constraintEnd_toStartOf="@+id/idSwitch2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextDate"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
@@ -55,9 +55,19 @@
             android:id="@+id/idSwitch2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="125dp"
             android:layout_marginTop="40dp"
-            app:layout_constraintStart_toEndOf="@+id/idSwitch1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextDate"
+            tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+        <Switch
+            android:id="@+id/idSwitch3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/idSwitch2"
             app:layout_constraintTop_toBottomOf="@+id/editTextDate"
             tools:ignore="UseSwitchCompatOrMaterialXml" />
 
@@ -182,8 +192,8 @@
             android:id="@+id/textViewPeso"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="76dp"
-            android:text="Peso(kg)"
+            android:text="Peso"
+            app:layout_constraintEnd_toStartOf="@+id/textViewRepeticion"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/idSwitch1" />
 
@@ -191,10 +201,19 @@
             android:id="@+id/textViewRepeticion"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="125dp"
             android:text="Repeticion"
-            app:layout_constraintStart_toEndOf="@+id/idSwitch1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/idSwitch2" />
+
+        <TextView
+            android:id="@+id/textViewTiempo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tiempo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textViewRepeticion"
+            app:layout_constraintTop_toBottomOf="@+id/idSwitch3" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

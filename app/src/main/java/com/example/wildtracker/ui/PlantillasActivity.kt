@@ -38,6 +38,9 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             MainActivity.listaEjercicios = MainActivity.listaEjercicios1
             MainActivity.listaEjercicios.addAll(MainActivity.listaEjercicios2)
 
+            MainActivity.listaRutinasVista = MainActivity.listaRutinasVista1
+            MainActivity.listaRutinasVista.addAll(MainActivity.listaRutinasVista2)
+
             MainActivity.validadorAcomodo = false
         }
 

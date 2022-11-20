@@ -43,6 +43,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     var fecha = ""
     var dia = 0; var mes = 0; var ano = 0
     var meta = ""
+    var tiempo = ""
 
     private fun CargarListas(){
         //ayuda a organizar las listas de rutinas y los ejercicios
@@ -51,10 +52,10 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             MainActivity.listaRutinas.addAll(MainActivity.listaRutinas2)
             MainActivity.listaEjercicios = MainActivity.listaEjercicios1
             MainActivity.listaEjercicios.addAll(MainActivity.listaEjercicios2)
+            MainActivity.listaRutinasVista = MainActivity.listaRutinasVista1
+            MainActivity.listaRutinasVista.addAll(MainActivity.listaRutinasVista2)
             MainActivity.validadorAcomodo = false
         }
-        MainActivity.listaRutinasVista = MainActivity.listaRutinasVista1
-        MainActivity.listaRutinasVista.addAll(MainActivity.listaRutinasVista2)
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinasVista)
         listViewRutinas2!!.setAdapter(adapter) //La tabla se adapta en la text view
@@ -86,7 +87,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         listViewRutinas2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
             nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
-            fecha = "0"
+            fecha = "0"; tiempo = "0"
 
             textViewRutina!!.setText("Rutina seleccionada: "+nombre)
 
@@ -122,10 +123,11 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             val arreglo: Array<String?>
             arreglo = aux.split(" ").toTypedArray()
 
-            if(arreglo[0].toString() == "Fecha:"){ //para las rutinas unicas
+            if(arreglo[0].toString() == "Fecha:"){ //para identificar a las rutinas unicas
                 num = MainActivity.listaRutinasATrabajar[position].split(" ").toTypedArray()[0].toInt()
                 nombre = MainActivity.listaRutinasATrabajar[position].split(" | ").toTypedArray()[1]
                 fecha = MainActivity.listaRutinasATrabajar[position].split("Fecha: ").toTypedArray()[1]
+                tiempo = "0"
 
                 textViewRutina!!.setText("Rutina seleccionada: "+nombre)
 
@@ -143,14 +145,47 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     }
                 }
             }else{ //para las metas
-                if(MainActivity.listaRutinasATrabajar.isEmpty()){
-                    nombre = MainActivity.listaMetas[position].split(" | ").toTypedArray()[0]
-                    meta = MainActivity.listaMetas[position].split(" | ").toTypedArray()[2]
-                }else{
-                    nombre = MainActivity.listaMetas[position - 1].split(" | ").toTypedArray()[0]
-                    meta = MainActivity.listaMetas[position - 1].split(" | ").toTypedArray()[2]
+                var numDif = 0
+                if(!MainActivity.listaRutinasATrabajar.isEmpty()){ //en caso de que haya una rutina agragara un numero para cambiar la posicion de la lista (esto pq hay dos listas mostrandose)
+                    numDif = 1
                 }
+                nombre = MainActivity.listaMetas[position - numDif].split(" | ").toTypedArray()[0]
+                meta = MainActivity.listaMetas[position - numDif].split(" | ").toTypedArray()[2]
+
                 num = -1; xp = 0; fecha = "0"
+
+                if(arreglo[0].toString() == "Completar:") { //para tomar el tiempo (en caso de que la meta sea por tiempo)
+                    var minutos: Int; var horas = 0
+                    var minutosAux: String; var horasAux: String
+
+                    tiempo = aux.split("Completar: ").toTypedArray()[1] //toma solo los tiempos
+
+                    if(tiempo.length <= 5){ //si hay menos de 5 caracteres
+                        minutos = tiempo.split("min").toTypedArray()[0].toInt() //toma los minutos
+                    }else {
+                        horasAux = tiempo.split(" ").toTypedArray()[0] //separa las horas y minutos
+                        minutosAux = tiempo.split(" ").toTypedArray()[1]
+                        horas = horasAux.split("hr").toTypedArray()[0].toInt() //y los toma de manera separada
+                        minutos = minutosAux.split("min").toTypedArray()[0].toInt()
+                    }
+
+                    //forma la cadena de texto que enviará a ejercicios
+                    if(horas == 0){ //comienza con las horas
+                        tiempo = "00 : "
+                    }else{
+                        if(horas < 10){
+                            tiempo = "0" + horas.toString() + " : "
+                        }else{
+                            tiempo = horas.toString() + " : "
+                        }
+                    }
+
+                    if(minutos < 10){ //y despues con los minutos
+                        tiempo += "0" + minutos.toString() + " : 00"
+                    }else{
+                        tiempo += minutos.toString() + " : 00"
+                    }
+                }
 
                 var sdf = SimpleDateFormat("dd")
                 val diaHoy = sdf.format(Date()) //se obtiene el dia actual
@@ -179,6 +214,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             intent.putExtra("Dia", dia)
             intent.putExtra("Mes", mes)
             intent.putExtra("Ano", ano)
+            intent.putExtra("Tiempo", tiempo)
             startActivity(intent)
         }
     }

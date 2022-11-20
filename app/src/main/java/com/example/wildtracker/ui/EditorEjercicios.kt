@@ -91,8 +91,6 @@ class EditorEjercicios : AppCompatActivity(), NavigationView.OnNavigationItemSel
         }
 
         buttonBorrar!!.setOnClickListener{
-
-
             builder = AlertDialog.Builder(this)
             builder.setTitle("Borrar ejercicio")
                 .setMessage("Deseas borrar este ejercicio?")
@@ -107,10 +105,6 @@ class EditorEjercicios : AppCompatActivity(), NavigationView.OnNavigationItemSel
                     dialogInterface.dismiss()
                 }
                 .show()
-
-
-
-
         }
 
 

@@ -31,7 +31,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.android.synthetic.main.activity_perfil.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -358,7 +357,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                 cadena += rutina.get("nombre").toString() //toma el nombre de la rutina
                                 cadena += " | Nivel: " //le pone un texto para darle orden
                                 cadena += (rutina.get("nivel") as Long).toString() //toma el nivel de la rutina
-                                MainActivity.listaRutinasVista1.add(cadena)
+                                MainActivity.listaRutinasVista2.add(cadena)
                                 cadena += " | " //le pone un texto para darle orden
                                 cadena += rutina.get("ejercicios").toString() //toma los ejercicios
                                 MainActivity.listaRutinas2.add(cadena)
@@ -426,14 +425,13 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                 MainActivity.listaRutinasATrabajar.add(cadena)
                             }
 
-                            borrarRutinasAnteriores((rutina.get("dia") as Long).toInt(), (rutina.get("mes") as Long).toInt(), (rutina.get("ano") as Long).toInt(), diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt(), fecha)
+                            borrarRutinasCaducadas((rutina.get("dia") as Long).toInt(), (rutina.get("mes") as Long).toInt(), (rutina.get("ano") as Long).toInt(), diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt(), fecha)
                         }
                     }
             }
         }
     }
-
-    private fun borrarRutinasAnteriores(dia: Int, mes: Int, ano: Int, diaHoy: Int, mesHoy: Int, anoHoy: Int, fecha: String) {
+    private fun borrarRutinasCaducadas(dia: Int, mes: Int, ano: Int, diaHoy: Int, mesHoy: Int, anoHoy: Int, fecha: String) {
         if(anoHoy >= ano){
             if(anoHoy > ano){
                 MainActivity.user?.let{ usuario ->
@@ -466,6 +464,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val Name: String? = "",
         var puntosTotales: Int? = 0
     )
+
     private fun CargarRanking () {
         MainActivity.listaRanking.clear() //limpia las listas del ranking para poder recargarlas
         MainActivity.listaRanking1.clear(); MainActivity.listaRanking2.clear()
@@ -725,28 +724,52 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             cadena += "| " //se le agraga texto de formato
 
                             var suma = true
-                            //para ver si es necesario sumarle dato hoy
+                            //para ver si es necesario sumarle dato hoy (para que no repita esto el mismo dia varias veces)
                             if((meta.get("diaSeg") as Long).toInt() == diaHoy && (meta.get("mesSeg") as Long).toInt() == mesHoy && (meta.get("anoSeg") as Long).toInt() == anoHoy){
                                 suma = false //para no actualizar los datos
                             }
 
-                            //se le agrega las repeticiones o peso a levantar
-                            if(meta.get("peso") as Boolean){ //con un texto que diferencie peso o repeticiones
+                            //se le agrega las repeticiones, peso o tiempo a trabajar
+                            if(meta.get("peso") as Boolean){ //con un texto que diferencie
                                 cadena += "Levantar: "
                                 if(suma) {
-                                    cadena += ((meta.get("datoInicial") as Long).toInt() + datoDeSuma).toString() //se le agrega las repeticiones o peso a levantar
+                                    cadena += ((meta.get("datoInicial") as Long).toInt() + datoDeSuma).toString() //se le agrega las repeticiones o peso a levantar o tiempo
                                 }else{
                                     cadena += ((meta.get("datoInicial") as Long).toInt()).toString()
                                 }
                                 cadena += "kg"
                             }
-                            if(meta.get("repeticion") as Boolean){ //con un texto que diferencie peso o repeticiones
+                            if(meta.get("repeticion") as Boolean){ //con un texto que diferencie
                                 cadena += "Repeticiones: "
                                 if(suma) {
-                                    cadena += ((meta.get("datoInicial") as Long).toInt() + datoDeSuma).toString() //se le agrega las repeticiones o peso a levantar
+                                    cadena += ((meta.get("datoInicial") as Long).toInt() + datoDeSuma).toString() //se le agrega las repeticiones o peso a levantar o tiempo
                                 }else{
                                     cadena += ((meta.get("datoInicial") as Long).toInt()).toString()
                                 }
+                            }
+                            if(meta.get("tiempo") as Boolean){ //con un texto que diferencie
+                                cadena += "Completar: "
+
+                                var minutos = 0
+                                var horas = 0
+
+                                if(suma) {
+                                    minutos = (meta.get("datoInicial") as Long).toInt() + datoDeSuma
+                                }else{
+                                    minutos = (meta.get("datoInicial") as Long).toInt()
+                                }
+
+                                while(minutos >= 60){ //se obtienen las horas
+                                    minutos -= 60
+                                    horas += 1
+                                }
+
+                                if(horas != 0){
+                                    cadena += horas //se le agrega el tiempo con horas
+                                    cadena += "hr "
+                                }
+                                cadena += minutos //se le agregan los minutos
+                                cadena += "min"
                             }
                             //se le agrega la fecha de finalizacion
                             cadena += " | Fecha de finalización: "
@@ -757,7 +780,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                     if(suma){ //si no ha actualizado datos hoy
                                     //poner el dia de la actualizacion con la nueva fecha de seguimiento
                                     actualizarMetas(meta.get("nombre").toString(), (datoDeSuma + meta.get("datoInicial") as Long).toInt(), (meta.get("datoFinal") as Long).toInt(),
-                                        diaF, mesF, anoF, meta.get("peso") as Boolean, meta.get("repeticion") as Boolean, meta.get("lunes") as Boolean, meta.get("martes") as Boolean, meta.get("miercoles") as Boolean, meta.get("jueves") as Boolean, meta.get("viernes") as Boolean, meta.get("sabado") as Boolean, meta.get("domingo") as Boolean, diaHoy, mesHoy, anoHoy,
+                                        diaF, mesF, anoF, meta.get("peso") as Boolean, meta.get("repeticion") as Boolean, meta.get("tiempo") as Boolean, meta.get("lunes") as Boolean, meta.get("martes") as Boolean, meta.get("miercoles") as Boolean, meta.get("jueves") as Boolean, meta.get("viernes") as Boolean, meta.get("sabado") as Boolean, meta.get("domingo") as Boolean, diaHoy, mesHoy, anoHoy,
                                         (meta.get("ultDia") as Long).toInt(), (meta.get("ultMes") as Long).toInt(), (meta.get("ultAno") as Long).toInt())
                                     }
 
@@ -772,8 +795,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             MainActivity.validadorListas = false //cambia el validador para que esto no se vuelva a hacer
         }
     }
-
-    private fun borrarMetas(dia: Int, mes: Int, ano: Int, id: String): Boolean {
+    private fun borrarMetas(dia: Int, mes: Int, ano: Int, id: String): Boolean { //se encarga de borrar metas ya caducadas
         var sdf = SimpleDateFormat("dd")
         val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
         sdf = SimpleDateFormat("MM")
@@ -810,8 +832,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         }
         return true
     }
-
-    private fun actualizarMetas(Nombre: String, DatoInicial: Int, DatoFinal: Int, dia: Int, mes: Int, ano: Int, Peso: Boolean, Repeticion: Boolean, D1: Boolean, D2: Boolean, D3: Boolean, D4: Boolean, D5: Boolean, D6: Boolean, D7: Boolean, diaSeg: Int, mesSeg: Int, anoSeg: Int, ultDia: Int, ultMes: Int, ultAno: Int){
+    private fun actualizarMetas(Nombre: String, DatoInicial: Int, DatoFinal: Int, dia: Int, mes: Int, ano: Int, Peso: Boolean, Repeticion: Boolean, Tiempo: Boolean, D1: Boolean, D2: Boolean, D3: Boolean, D4: Boolean, D5: Boolean, D6: Boolean, D7: Boolean, diaSeg: Int, mesSeg: Int, anoSeg: Int, ultDia: Int, ultMes: Int, ultAno: Int){
         MainActivity.user?.let{ usuario ->
             db.collection("users").document(usuario).collection("metas")
                 .document(Nombre).set(
@@ -819,6 +840,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                         "nombre" to Nombre,
                         "peso" to Peso,
                         "repeticion" to Repeticion,
+                        "tiempo" to Tiempo,
                         "lunes" to D1,
                         "martes" to D2,
                         "miercoles" to D3,
