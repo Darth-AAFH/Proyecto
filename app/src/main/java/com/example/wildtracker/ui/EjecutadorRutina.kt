@@ -23,6 +23,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -33,8 +35,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
+
 @Suppress("NAME_SHADOWING")
 class EjecutadorRutina : AppCompatActivity() {
+    private lateinit var storage: FirebaseStorage
     private lateinit var VideosEjercicios: RecyclerView
     private var youtubeVideos = Vector<youTubeVideos>()
     var textViewActividadEnFoco: TextView?= null; var textViewReloj: TextView?= null
@@ -725,11 +729,17 @@ class EjecutadorRutina : AppCompatActivity() {
         val alertaFoto = AlertDialog.Builder(this) //Alerta para la foto
 
         alertaFoto.setTitle("Registro de entrenamiento") //Se ponen los textos para preguntar si quiere un ejercicio extra
-        alertaFoto.setMessage("¿Deseas tomarte una foto como registro de ejercicio?")
-
+        alertaFoto.setMessage("¿Deseas tomarte una foto como registro de ejercicio para la rutina $nombre?")
+        //nombre como ruta para la rutina en firebase
         alertaFoto.setPositiveButton("Si"){dialogInterface, i ->
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            photofile = getPhotoFile("foto_${ SimpleDateFormat("yyyMMdd_HHmmss").format(Date())}")
+            //Hacer validacion de la toma de foto para analizar si ya existe una foto
+
+          //Formato original de la foto
+            //  photofile = getPhotoFile("foto_${nombre}_${SimpleDateFormat("yyyMMdd").format(Date())}")
+
+            photofile = getPhotoFile("foto_${nombre}_1-")
+
             val fileProvider = FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile)
 
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
@@ -791,7 +801,6 @@ class EjecutadorRutina : AppCompatActivity() {
     private fun getPhotoFile(fileName: String): File {
         // Use `getExternalFilesDir` on Context to access package-specific directories.
         val storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-
         return File.createTempFile(fileName, ".jpg", storageDirectory)
     }
     override  fun onActivityResult(
@@ -802,7 +811,7 @@ class EjecutadorRutina : AppCompatActivity() {
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
 //            val takenImage = data?.extras?.get("data") as Bitmap
             val takenImage = BitmapFactory.decodeFile(photofile.absolutePath)
-            val fileProvider = FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile.absoluteFile)
+            val fileProvider = FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile)
             uploadFile(fileProvider)
             // foto?.setImageBitmap(takenImage)
 
@@ -819,8 +828,24 @@ class EjecutadorRutina : AppCompatActivity() {
             var pd = ProgressDialog(this)
             pd.setTitle("Uploading")
             pd.show()
-            var imageRef =
-                FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/${photofile.name}")
+            //Se guarda la rutina en la ruta de cada rutina
+
+// Child references can also take paths
+// spaceRef now points to "images/space.jpg
+// imagesRef still points to "images"
+            storage = Firebase.storage
+            var storageRef = storage.reference
+
+            var imagesRef: StorageReference? = storageRef.child("images")
+            var spaceRef = storageRef.child("UsersTakenPictures/$userID/Rutina_$nombre/${photofile.name}")
+            val FotoSeparada = photofile.name.split("-").toTypedArray()
+            Toast.makeText(this,"SEPARADA:${FotoSeparada[0]}",Toast.LENGTH_SHORT).show()
+            listAllFiles(userID,FotoSeparada[0],takenImage)
+
+
+
+           /* var imageRef =
+                FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Rutina_$nombre/${photofile.name}")
             imageRef.putFile(takenImage)
                 .addOnSuccessListener { p0 ->
                     pd.dismiss()
@@ -836,12 +861,66 @@ class EjecutadorRutina : AppCompatActivity() {
                     var progress = (100.0 * p0.bytesTransferred) / p0.totalByteCount
                     pd.setMessage("Uploaded ${progress.toInt()}%")
                 }
-            Toast.makeText(this, "Subida", Toast.LENGTH_LONG).show()
+*/
+            //Toast.makeText(this, "Subida", Toast.LENGTH_LONG).show()
         }
 
         val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
         startActivity(intent)
     }
+
+
+    fun listAllFiles(userID: String, name: String, takenImage: Uri) {
+        val storage = FirebaseStorage.getInstance()
+        // [START storage_list_all]
+        val listRef = storage.reference.child("UsersTakenPictures/$userID/Rutina_$nombre/")
+        listRef.listAll()
+            .addOnSuccessListener { listResult ->
+                var Renombrar = false
+                var FotoFB =""
+                for (prefix in listResult.prefixes) {
+                    // All the prefixes under listRef.
+                    // You may call listAll() recursively on them.
+                  //  Toast.makeText(this,"Foto prefix:"+prefix.name,Toast.LENGTH_SHORT).show()
+                }
+                for (item in listResult.items) {
+                    // All the items under listRef.
+                    val FotoFirebaseSeparada= (item.name.split("-").toTypedArray())
+                   //Toast.makeText(this,"SEPARADA:${FotoFirebaseSeparada[0]}",Toast.LENGTH_SHORT).show()
+
+                    var FotoFB = FotoFirebaseSeparada[0]
+                    if(FotoFB==name){
+                        Toast.makeText(this,"YA EXISTE UN ARCHIVO",Toast.LENGTH_SHORT).show()
+                        Renombrar=true
+                    }
+
+                    Toast.makeText(this,"Foto item:"+FotoFirebaseSeparada[0],Toast.LENGTH_SHORT).show()
+                }
+                if(Renombrar){
+                    FotoFB = ("foto_${nombre}_2")
+                    Toast.makeText(this,"SE CREO UNA NUEVA FOTO",Toast.LENGTH_SHORT).show()
+                    var imageRef =
+                        FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Rutina_$nombre/${FotoFB}")
+                    imageRef.putFile(takenImage)
+                        .addOnSuccessListener { p0 ->
+
+
+                        }
+                        .addOnFailureListener { p0 ->
+                        }
+                        .addOnProgressListener { p0 ->
+                        }
+                }
+            }
+            .addOnFailureListener {
+                // Uh-oh, an error occurred!
+                Toast.makeText(this,"No se que paso",Toast.LENGTH_SHORT).show()
+            }
+        // [END storage_list_all]
+
+    }
+
+
 
 
 }
