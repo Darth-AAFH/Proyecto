@@ -33,8 +33,8 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_seguimiento)
-        //initToolbar()
-        //initNavigationView()
+        initToolbar()
+        initNavigationView()
 
         vistaCalendario = findViewById(R.id.vistaCalendario)
 
@@ -75,21 +75,19 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val mostrarAlerta = alertaTareas.create()
         mostrarAlerta.show()
     }
-
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         toolbar.title = "Seguimiento"
         setSupportActionBar(toolbar)
 
-        drawer = findViewById(R.id.drawerlayout)!!
+        com.example.wildtracker.ui.drawer = findViewById(R.id.drawerlayout)!!
         val toggle = ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.bar_title,
+            this, com.example.wildtracker.ui.drawer, toolbar, R.string.bar_title,
             R.string.navigation_drawer_close
         )
-        drawer.addDrawerListener(toggle)
+        com.example.wildtracker.ui.drawer.addDrawerListener(toggle)
         toggle.syncState()
     }
-
     private fun initNavigationView() {
 
         val navigationView: NavigationView = findViewById(R.id.nav_view)
@@ -114,26 +112,24 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             R.id.nav_plantillas -> callPlantillasActivity()
             R.id.nav_ejercicio -> callEjercicioActivity()
             R.id.nav_maps -> callMapsActivity()
+            R.id.nav_metas -> callMetasActivity()
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            
             R.id.nav_musica ->callMusica()
             R.id.nav_amigos ->callAmigosActivity()
             R.id.Settings->callAjustesActivity()
             R.id.nav_seguimiento->callSeguimientoActivity()
-
         }
 
-        drawer.closeDrawer(GravityCompat.START) // cerrar menu
+        com.example.wildtracker.ui.drawer.closeDrawer(GravityCompat.START) // cerrar menu
 
         return true
     }
-
-    private fun callSeguimientoActivity() {
-        val intent = Intent(this,SeguimientoActivity::class.java)
-        startActivity(intent)    }
-
+    private fun callRankingActivity() {
+        val intent = Intent(this, RankingActivity::class.java)
+        startActivity(intent)
+    }
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
@@ -142,12 +138,10 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
     }
-
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
     }
-
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
@@ -173,8 +167,8 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         startActivity(intent)
     }
 
-    private fun callRankingActivity() {
-        val intent = Intent(this, RankingActivity::class.java)
+    private fun callSeguimientoActivity() {
+        val intent = Intent(this, SeguimientoActivity::class.java)
         startActivity(intent)
     }
 
@@ -184,7 +178,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     private fun callMetasActivity() {
-        val intent = Intent(this, RecordActivity::class.java)
+        val intent = Intent(this, MetasActivity::class.java)
         startActivity(intent)
     }
 
@@ -213,4 +207,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             e.printStackTrace()
         }
     }
+
+
+
 }
