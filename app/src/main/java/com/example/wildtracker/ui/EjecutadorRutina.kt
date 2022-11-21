@@ -873,7 +873,7 @@ class EjecutadorRutina : AppCompatActivity() {
 
     fun listAllFiles(userID: String, name: String, takenImage: Uri) {
         val storage = FirebaseStorage.getInstance()
-        // [START storage_list_all]
+        // Listamos las fotos en firebase
 
 
         val listRef = storage.reference.child("UsersTakenPictures/$userID/Rutina_$nombre/")
@@ -889,15 +889,15 @@ class EjecutadorRutina : AppCompatActivity() {
 
                     var FotoFB = FotoFirebaseSeparada[0]
                     if(FotoFB==name){
-                        Toast.makeText(this,"YA EXISTE UN ARCHIVO",Toast.LENGTH_SHORT).show()
+                     //   Toast.makeText(this,"YA EXISTE UN ARCHIVO",Toast.LENGTH_SHORT).show()
                         Renombrar=true
                     }
 
-                    Toast.makeText(this,"Foto item:"+FotoFirebaseSeparada[0],Toast.LENGTH_SHORT).show()
+                   // Toast.makeText(this,"Foto item:"+FotoFirebaseSeparada[0],Toast.LENGTH_SHORT).show()
                 }
                 if(Renombrar){
                     FotoFB = ("foto_${nombre}_2")
-                    Toast.makeText(this,"SE CREO UNA NUEVA FOTO",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"Se ha actualizado la foto de registro de actividad",Toast.LENGTH_SHORT).show()
                     var imageRef =
                         FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Rutina_$nombre/${FotoFB}")
                     imageRef.putFile(takenImage)
@@ -930,10 +930,10 @@ class EjecutadorRutina : AppCompatActivity() {
                 }
             }
             .addOnFailureListener {
-                // Uh-oh, an error occurred!
+
                 Toast.makeText(this,"No se que paso",Toast.LENGTH_SHORT).show()
             }
-        // [END storage_list_all]
+
 
     }
 
