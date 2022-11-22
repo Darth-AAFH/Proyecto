@@ -278,10 +278,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
 
         val btAddMarkerAlertDialog = myScrollView.findViewById<Button>(R.id.buttonAddCommentAlert)
         val btCancelMarkerAlertDialog = myScrollView.findViewById<Button>(R.id.buttonCancelAlert)
-        var RatingPlace = findViewById<RatingBar?>(R.id.rBar)
-
+        var RatingPlace = findViewById<RatingBar>(R.id.rBar)
 
         btAddMarkerAlertDialog.setOnClickListener {
+
+           // Toast.makeText(this,"ESTRELLAS ${   RatingPlace.rating}",Toast.LENGTH_LONG).show()
+
             var rating: String? = RatingPlace?.rating.toString()
             Toast.makeText(this,"Añadiendo comentario con ${ etMapComment.text.toString() + RatingPlace?.rating}",Toast.LENGTH_LONG).show()
 
