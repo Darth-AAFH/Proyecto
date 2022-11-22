@@ -1,8 +1,14 @@
 package com.example.wildtracker.ui
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -20,6 +26,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_metas.*
+import java.lang.String.format
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -45,7 +52,8 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         setContentView(R.layout.activity_metas)
         initToolbar()
         initNavigationView()
-
+        createNotificationChannel()
+       // cargarNotificaciones(false)
         editTextNombreMeta = findViewById<View>(R.id.editTextNombreMeta) as EditText
         switchPeso = findViewById<View>(R.id.idSwitch1) as Switch
         switchRepeticion = findViewById<View>(R.id.idSwitch2) as Switch
@@ -220,6 +228,7 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         val diaHoy = diaHoy2.toInt()
         val mesHoy = mesHoy2.toInt()
         val anoHoy = anoHoy2.toInt()
+        val notificar2Semanas = diaSemana(diaHoy+14,mesHoy,anoHoy)
 
         val diaSemHoy = diaSemana(diaHoy, mesHoy, anoHoy) //se obtiene el numero de dia de la semana (lunes = 1, martes = 2, miercoles = 3, etc)
 
@@ -272,9 +281,14 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             cadena += " | Fecha de finalización: "
             cadena += dia; cadena += "-"; cadena += mes; cadena += "-"; cadena += ano
 
+
+
+
+
             MainActivity.listaMetas.add(cadena)
         }
 
+        cargarNotificaciones(true)
         //para poner en blanco las cajas de datos
         editTextNombreMeta!!.setText("")
         editTextDate!!.setText("")
@@ -287,10 +301,34 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         d4!!.setChecked(false); d5!!.setChecked(false); d6!!.setChecked(false)
         d7!!.setChecked(false)
 
-        val intent = Intent(this, EjercicioActivity::class.java)
-        startActivity(intent)
+      /*  val intent = Intent(this, EjercicioActivity::class.java)
+        startActivity(intent)*/
     }
+    fun cargarNotificaciones(llamar:Boolean){
+        val currentDate = Date()
+        // convert date to calendar
+        val FechaNotificacion = Calendar.getInstance()
+        val FechaFinalizacion = Calendar.getInstance()
+        FechaFinalizacion.timeInMillis = currentDate.time
+        FechaNotificacion.timeInMillis = currentDate.time
+        // manipulate date
+        FechaFinalizacion.set(ano+0,mes-1,dia)
+        FechaNotificacion.set(ano+0,mes-1,dia-14)//Seteamos la fecha de finalizacion y le restamos 2 semanas
 
+        // convert calendar to date
+        // convert calendar to date
+        if(llamar){
+       // val currentDatePlusOne = FechaNotificacion.time
+        val curretnFechaNotificacion =  FechaNotificacion.timeInMillis
+        val currentFechaFinalizacion = FechaFinalizacion.timeInMillis
+        Log.d("FechaFinalizacion,",format(currentFechaFinalizacion.toString()))
+        Log.d("FechaNotificacion,",format(curretnFechaNotificacion.toString()))
+        //NotificacionRutinaPendiente(FechaNotificacion.time)
+        NotificacionRutinaPendiente(curretnFechaNotificacion)
+        }
+        Log.d("FechaActual,",format(currentDate.toString()))
+
+    }
     private fun diaSemana(dia: Int, mes: Int, ano: Int): Int {  ///// revisar esto
         val c = Calendar.getInstance()
         c.set(ano, mes, dia)
@@ -315,6 +353,52 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
     }
 
     /////////////////////////////////////////////////////
+
+    private fun createNotificationChannel()
+    {
+        val name = "Notif Channel"
+        val desc = "A Description of the Channel"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(channelID, name, importance)
+        channel.description = desc
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
+    private fun NotificacionRutinaPendiente(FechaCadudar: Long) {
+
+        val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
+        val title = "Rutina por caducar!!"
+        val message = "Oye ${MainActivity.user} tienes una rutina que caduda en 2 semanas, hazla ahora!"
+        intent.putExtra(titleExtra, title)
+        intent.putExtra(messageExtra, message)
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            this,
+            notificationID,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val alarmManager =  getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val time = FechaCadudar
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            FechaCadudar,
+            pendingIntent
+        )
+        Log.d("NextNotification",format(time.toString()))
+    }
+
+    private fun getTime(): Long {
+        val calendar = Calendar.getInstance()
+        val minute = calendar.get(Calendar.MINUTE)
+        val hour = calendar.get(Calendar.HOUR)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH)
+        val year =calendar.get(Calendar.YEAR)
+        calendar.set(year, month, day, hour, minute)
+        return calendar.timeInMillis
+    }
 
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
