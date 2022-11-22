@@ -268,6 +268,7 @@ class EjecutadorRutina : AppCompatActivity() {
             val posicion: Int
             posicion = MainActivity.listaMetas.indexOf(linea) //la busca en la lista
             MainActivity.listaMetas.removeAt(posicion) //y la borra
+            MainActivity.listaMetasAux.removeAt(posicion)
         }
     }
 

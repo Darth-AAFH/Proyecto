@@ -66,6 +66,78 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if(MainActivity.listaRutinasATrabajar.isEmpty() && MainActivity.listaMetas.isEmpty()){
             textViewRutina3.setVisibility(View.VISIBLE)
         }
+
+        var cadena = "["
+
+        if(!MainActivity.listaMetasAux.isEmpty()) { //para tomar las rutinas programadas que se estan usando
+            for (i in 0..MainActivity.listaMetasAux.size - 1) {
+                cadena += MainActivity.listaMetasAux[i]//.split("Fecha de finalización: ").toTypedArray()[1] //agrega las rutinas programadas
+                cadena += "," //y una coma
+            }
+
+            var contador = 0
+            for(i in 0 until cadena.length){
+                contador += 1
+            }
+            cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
+        }
+
+        val arreglo: Array<String?>
+        arreglo = cadena.split(",").toTypedArray() //toma los ids de las rutinas
+
+        notificacion(arreglo) //para las notificaciones si una meta no se trabaja hace dos semandas
+    }
+
+    fun notificacion(ultimasFechas: Array<String?>) {
+        var sdf = SimpleDateFormat("dd")
+        val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
+        sdf = SimpleDateFormat("MM")
+        val mesHoy2 = sdf.format(Date()) //se obtiene el mes actual
+        sdf = SimpleDateFormat("yyyy")
+        val anoHoy2 = sdf.format(Date()) //se obiene el año actual
+
+        val diaHoy = diaHoy2.toInt(); val mesHoy = mesHoy2.toInt(); val anoHoy = anoHoy2.toInt()
+
+        var diaNot = diaHoy - 14; var mesNot = mesHoy; var anoNot = anoHoy
+
+        var dia = 0; var mes = 0; var ano = 0
+        var contador = -1
+
+        var mandarNot = false
+
+        for(i in ultimasFechas){ //recorre las ultimas fechas trabajadas de la meta
+            contador += 1
+            dia = ultimasFechas[contador]!!.split("-").toTypedArray()[0].toInt()
+            mes = ultimasFechas[contador]!!.split("-").toTypedArray()[1].toInt()
+            ano = ultimasFechas[contador]!!.split("-").toTypedArray()[2].toInt()
+
+            if(diaNot <= 0){
+                mesNot = mesHoy- 1
+
+                if(mesNot == 0){
+                    mesNot = 12
+                    anoNot = anoHoy - 1
+                }
+
+                if(mesNot == 1 || mesNot == 3 || mesNot == 5 || mesNot == 7 || mesNot == 8 || mesNot == 10 || mesNot == 12){
+                    diaNot = 31 + diaNot
+                }else{
+                    if(mesNot == 2){
+                        diaNot = 28 + diaNot
+                    }else{
+                        diaNot = 30 + diaNot
+                    }
+                }
+            }
+
+            if(dia == diaNot && mes == mesNot && ano == anoNot){
+                mandarNot = true
+            }
+        }
+
+        if(mandarNot){
+
+        }
     }
 
     private lateinit var drawer: DrawerLayout

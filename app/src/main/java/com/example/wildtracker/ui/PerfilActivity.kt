@@ -782,8 +782,10 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             cadena += " | Fecha de finalización: "
                             cadena += diaF; cadena += "-"; cadena += mesF; cadena += "-"; cadena += anoF
 
-                            if(diaSemHoy == lun || diaSemHoy == mar || diaSemHoy == mier || diaSemHoy == juev || diaSemHoy == vier || diaSemHoy == sab || diaSemHoy == dom){//dia coincide
-                                if(borrarMetas(diaF, mesF, anoF, meta.id)){
+                            //diaSemHoy == lun || diaSemHoy == mar || diaSemHoy == mier || diaSemHoy == juev || diaSemHoy == vier || diaSemHoy == sab || diaSemHoy == dom
+                            //borrarMetas(diaF, mesF, anoF, meta.id)
+                            if(borrarMetas(diaF, mesF, anoF, meta.id)){//dia coincide
+                                if(diaSemHoy == lun || diaSemHoy == mar || diaSemHoy == mier || diaSemHoy == juev || diaSemHoy == vier || diaSemHoy == sab || diaSemHoy == dom){
                                     if(suma){ //si no ha actualizado datos hoy
                                     //poner el dia de la actualizacion con la nueva fecha de seguimiento
                                     actualizarMetas(meta.get("nombre").toString(), (datoDeSuma + meta.get("datoInicial") as Long).toInt(), (meta.get("datoFinal") as Long).toInt(),
@@ -795,6 +797,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                         MainActivity.listaMetas.add(cadena)
                                     }
                                 }
+                                var cadena2 = (meta.get("ultDia") as Long).toString() + "-" + (meta.get("ultMes") as Long).toString() + "-" + (meta.get("ultAno") as Long).toString()
+                                MainActivity.listaMetasAux.add(cadena2)
                             }
                         }
                     }

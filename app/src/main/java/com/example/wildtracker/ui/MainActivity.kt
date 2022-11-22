@@ -59,6 +59,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val listaRanking3 = ArrayList<String>()
         val listaRanking4 = ArrayList<String>()
         var listaRutinasATrabajarAux = ArrayList<String>()
+        var listaMetasAux = ArrayList<String>()
         var validadorListas = true
         //
         var lunes: Double = 0.0; var martes: Double = 0.0; var miercoles: Double = 0.0; var jueves : Double = 0.0
