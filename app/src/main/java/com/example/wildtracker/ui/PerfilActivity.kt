@@ -202,7 +202,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 contadorAux = 0
             }
 
-            if(diaAux < 10){ //se guardan en el arreglo de días los dias pasados y se les da el formato
+            if(diaAux <= 10){ //se guardan en el arreglo de días los dias pasados y se les da el formato
                 dias[i] = "0" + diaAux.toString() + "-" + mesHoy + "-" + anoHoy
             }else {
                 dias[i] = diaAux.toString() + "-" + mesHoy + "-" + anoHoy

@@ -21,6 +21,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import org.achartengine.ChartFactory
+import org.achartengine.GraphicalView
+import org.achartengine.model.XYMultipleSeriesDataset
+import org.achartengine.model.XYSeries
+import org.achartengine.renderer.XYMultipleSeriesRenderer
+import org.achartengine.renderer.XYSeriesRenderer
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 @Suppress("DEPRECATION")
 class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -125,6 +134,12 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                         db.collection("users").get().addOnSuccessListener { result ->
                             for (document in result) {
 
+                                //tomasr sus datos de los 7 dias pasados de la semana
+                                //esto al picarle al nombre del usuario //antes de la alert
+
+                                //mandar esos datos a otra activity (activity_DatosAmigos)
+                                //construir una grafica y ponerle como un titulo con el nombre del usuario
+
                                 perfilGet = document.get("Name").toString()
                                 if(perfilGet==perfil){
                                    //Traerse los datos necesarios
@@ -202,7 +217,8 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             //Al dar click en un elemento de la vista se traere el texto que se clickeo y mandara llamar a AlertaSeguidor para interactuar con ese elemento
             var Perfil:String  =  MainActivity.listaSeguidores[(MainActivity.listaSeguidores!!.size.toInt()- position.toInt())-1]
 
-            AlertaSeguidor(Perfil )
+            AlertaSeguidor(Perfil)
+            CargarDatosGrafica(Perfil)
         }
 
 
@@ -345,7 +361,39 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
     }
 
+    /////////////////////////////////////////////////////////////////////////
+    private var grafica: GraphicalView? = null
+    private var datosGrafica: XYSeries? = null
+    private val informacionGrafica = XYMultipleSeriesDataset()
+    private val renderGrafica = XYMultipleSeriesRenderer()
+    private var seriesRendererGrafica: XYSeriesRenderer? = null
 
+    private fun cargarGrafica() {
+        datosGrafica = XYSeries("Simple Data")
+        informacionGrafica.addSeries(datosGrafica)
+
+        datosGrafica!!.add(0.0, MainActivity.lunes)
+        datosGrafica!!.add(1.0, MainActivity.martes)
+        datosGrafica!!.add(2.0, MainActivity.miercoles)
+        datosGrafica!!.add(3.0, MainActivity.jueves)
+        datosGrafica!!.add(4.0, MainActivity.viernes)
+        datosGrafica!!.add(5.0, MainActivity.sabado)
+        datosGrafica!!.add(6.0, MainActivity.domingo)
+
+        seriesRendererGrafica = XYSeriesRenderer()
+        renderGrafica.addSeriesRenderer(seriesRendererGrafica)
+    }
+    private fun iniciarGrafica() {
+        val layout = findViewById<LinearLayout>(R.id.chart)
+        if (grafica == null) {
+            cargarGrafica()
+            grafica = ChartFactory.getCubeLineChartView(this, informacionGrafica, renderGrafica, 0f)
+            layout.addView(grafica)
+        } else {
+            grafica!!.repaint()
+        }
+    }
+    /////////////////////////////////////////////////////////////////////////
 
     fun alertScrollView(perfil: String) {
         //Estadisticas del usuario seleccionado
@@ -365,7 +413,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         var puntos = " "
         var altura =" "
         var peso = ""
-        var contador =1
+        var contador = 1
         db.collection("users").get().addOnSuccessListener { result ->
             for (document in result) {
                     try {
@@ -407,9 +455,129 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             .setNeutralButton("Ok") {  dialog, id -> dialog.cancel() }.show()
 
 
-
+        Toast.makeText(this, "dia1: "+dia1,Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "dia2: "+dia2,Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "dia3: "+dia3,Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "dia4: "+dia4,Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "dia5: "+dia5,Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "dia6: "+dia6,Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "dia7: "+dia7,Toast.LENGTH_LONG).show()
     }
 
+    var dia1 = 0.0; var dia2 = 0.0; var dia3 = 0.0; var dia4 = 0.0
+    var dia5 = 0.0; var dia6 = 0.0; var dia7 = 0.0
+    var tiempoAux: Int = 0
 
+    private fun CargarDatosGrafica(perfil: String) {
+        dia1 = 0.0; dia2 = 0.0; dia3 = 0.0; dia4 = 0.0; dia5 = 0.0; dia6 = 0.0; dia7 = 0.0
+        var sdf = SimpleDateFormat("dd")
+        var diaHoy = sdf.format(Date()) //se obtiene e dia actual
+        sdf = SimpleDateFormat("MM")
+        var mesHoy = sdf.format(Date()) //se obtiene el mes actual
+        sdf = SimpleDateFormat("yyyy")
+        val anoHoy = sdf.format(Date()) //se obiene el año actual
+
+        val dias: java.util.ArrayList<String> = arrayListOf<String>() //arreglo de string?
+        dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add("") //se llena el arreglo de dias con datos vacios
+
+        var contadorAux = 0 //un contador auxiliar para encontrar los dias pasados
+
+        for (i in 7 downTo 0) { //para obtener los ejercicios de la semana pasada
+            var diaAux = diaHoy.toInt() - contadorAux //variable que va a modificarse segun el día, inicia siendo el dia actual menos 0
+
+            if(diaAux == 0){ //en caso de que llegue a cero el día
+                val mesAux = mesHoy.toInt() //una variable para cambiarle el valor al mes
+
+                if(mesAux == 3){
+                    diaHoy = "28"
+                    diaAux = 28
+                }else{
+                    if(mesAux == 2 || mesAux == 4 || mesAux == 6 || mesAux == 8 || mesAux == 9 || mesAux == 11 || mesAux == 1) {
+                        diaHoy = "31"
+                        diaAux = 31
+                    }else{
+                        diaHoy = "30"
+                        diaAux = 30
+                    }
+                }
+
+                if((mesAux - 1) < 10){//fallo para cambio de año
+                    mesHoy = "0" + (mesHoy.toInt() - 1).toString()
+                }else{
+                    mesHoy = (mesHoy.toInt() - 1).toString()
+                }
+                contadorAux = 0
+            }
+
+            if(diaAux < 10){ //se guardan en el arreglo de días los dias pasados y se les da el formato
+                dias[i] = "0" + diaAux.toString() + "-" + mesHoy + "-" + anoHoy
+            }else {
+                dias[i] = diaAux.toString() + "-" + mesHoy + "-" + anoHoy
+            }
+
+            contadorAux+= 1 //se le agrega al contador un numero más para retorceder más días
+        }
+
+        var perfilGet: String
+        var email = ""
+
+        db.collection("users").get().addOnSuccessListener { result ->
+            for (document in result) {
+                perfilGet = document.get("Name").toString()
+                if(perfilGet == perfil){
+                    email = document.get("email").toString()
+
+                    MainActivity.user?.let { usuario -> //trae los tiempos segun el día
+                        db.collection("users").document(email).collection("tiempos") //abre la base de datos
+                            .get().addOnSuccessListener {
+                                for(tiempos in it) { //por cada dia registrado
+                                    val idFecha = tiempos.get("idFecha") as String //toma la fecha
+
+                                    if(idFecha == dias[1]){ //si la fecha es igual al dia 1 para la grafica
+                                        dia1 = (tiempos.get("minutos") as Long).toDouble() //guardara el tiempo en la variable del dia
+
+                                        tiempoAux = (tiempos.get("horas") as Long).toInt() //de horas a minutos
+                                        dia1 += tiempoAux * 60
+
+                                        tiempoAux = (tiempos.get("segundos") as Long).toInt() //y de segundos a minutos
+                                        dia1 += tiempoAux / 60
+                                    }
+                                    if(idFecha == dias[2]){ //y así con las demas fechas
+                                        dia2 = (tiempos.get("minutos") as Long).toDouble()
+                                        tiempoAux = (tiempos.get("horas") as Long).toInt(); dia2 += tiempoAux * 60
+                                        tiempoAux = (tiempos.get("segundos") as Long).toInt(); dia2 += tiempoAux / 60
+                                    }
+                                    if(idFecha == dias[3]){
+                                        dia3 = (tiempos.get("minutos") as Long).toDouble()
+                                        tiempoAux = (tiempos.get("horas") as Long).toInt(); dia3 += tiempoAux * 60
+                                        tiempoAux = (tiempos.get("segundos") as Long).toInt(); dia3 += tiempoAux / 60
+                                    }
+                                    if(idFecha == dias[4]){
+                                        dia4 = (tiempos.get("minutos") as Long).toDouble()
+                                        tiempoAux = (tiempos.get("horas") as Long).toInt(); dia4 += tiempoAux * 60
+                                        tiempoAux = (tiempos.get("segundos") as Long).toInt(); dia4 += tiempoAux / 60
+                                    }
+                                    if(idFecha == dias[5]){
+                                        dia5 = (tiempos.get("minutos") as Long).toDouble()
+                                        tiempoAux = (tiempos.get("horas") as Long).toInt(); dia5 += tiempoAux * 60
+                                        tiempoAux = (tiempos.get("segundos") as Long).toInt(); dia5 += tiempoAux / 60
+                                    }
+                                    if(idFecha == dias[6]){
+                                        dia6 = (tiempos.get("minutos") as Long).toDouble()
+                                        tiempoAux = (tiempos.get("horas") as Long).toInt(); dia6 += tiempoAux * 60
+                                        tiempoAux = (tiempos.get("segundos") as Long).toInt(); dia6 += tiempoAux / 60
+                                    }
+                                    if(idFecha == dias[7]){
+                                        dia7 = (tiempos.get("minutos") as Long).toDouble()
+                                        tiempoAux = (tiempos.get("horas") as Long).toInt(); dia7 += tiempoAux * 60
+                                        tiempoAux = (tiempos.get("segundos") as Long).toInt(); dia7 += tiempoAux / 60
+                                    }
+                                }
+                            }
+                    }
+                }
+            }
+        }
+    }
 
 }

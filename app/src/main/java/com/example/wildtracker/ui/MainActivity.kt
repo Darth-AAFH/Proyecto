@@ -89,6 +89,71 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    private fun tipoEjercicio(arreglo: Array<String?>): String{ //Funcion que encuentra si sobresale un tipo de ejercicio
+        var tipo: String
+        var piernas = 0; var abdomen = 0; var pecho = 0
+        var espalda = 0; var brazos = 0; var hombros = 0
+        var otro = 0
+
+        for(i in 0 until arreglo.size) { //va a recorrer los ejercicios de la rutina
+            for (j in listaEjercicios) { //para todos los ejercicios
+                val id = j.split(" ").toTypedArray()[0] //toma el id
+                if(arreglo[i] == id){ //si esta el ejercicio en la rutina
+
+                    tipo = j.split(" | ").toTypedArray()[2] // toma el tipo
+
+                    if(tipo == "Piernas") {piernas += 1} //y lo añade a los tipos de ejercicios
+                    if(tipo == "Abdomen") {abdomen += 1}
+                    if(tipo == "Pecho") {pecho += 1}
+                    if(tipo == "Espalda") {espalda += 1}
+                    if(tipo == "Brazos") {brazos += 1}
+                    if(tipo == "Hombros") {hombros += 1}
+                    if(tipo == "Otro") {otro += 1}
+                }
+            }
+        }
+
+        var aux = 0 //variable auxiliar para diferenciar tipos de ejercicios destacados
+
+        if(piernas >= 3){ //necesita que el ejercicio sea minimo 3 veces trabajado
+            aux = (piernas / 2)-1 //se obiene un dato
+            if(abdomen <= aux && pecho <= aux && espalda <= aux && brazos <= aux && hombros <= aux){ //que se compara con los demas tipos de ejercicios para saber si el tipo piernas destaca
+                return "piernas" //si es que destaca lo hara saber
+            }
+        }
+        if(abdomen >= 3){ //lo mismo para los demas tipos de ejercicios
+            aux = (abdomen / 2)-1
+            if(piernas <= aux && pecho <= aux && espalda <= aux && brazos <= aux && hombros <= aux){
+                return "abdomen"
+            }
+        }
+        if(pecho >= 3){
+            aux = (pecho / 2)-1
+            if(abdomen <= aux && piernas <= aux && espalda <= aux && brazos <= aux && hombros <= aux){
+                return "pecho"
+            }
+        }
+        if(espalda >= 3){
+            aux = (espalda / 2)-1
+            if(abdomen <= aux && pecho <= aux && piernas <= aux && brazos <= aux && hombros <= aux){
+                return "espalda"
+            }
+        }
+        if(brazos >= 3){
+            aux = (brazos / 2)-1
+            if(abdomen <= aux && pecho <= aux && espalda <= aux && piernas <= aux && hombros <= aux){
+                return "brazos"
+            }
+        }
+        if(hombros >= 3){
+            aux = (hombros / 2)-1
+            if(abdomen <= aux && pecho <= aux && espalda <= aux && brazos <= aux && piernas <= aux){
+                return "hombros"
+            }
+        }
+        return ""
+    }
+
 private fun myPreferences() {
     val prefs = PreferenceManager.getDefaultSharedPreferences(this)
     val switch = prefs.getBoolean("switch_preference_insignias", true)
@@ -107,6 +172,12 @@ private fun myPreferences() {
             val nombre = j.split(" | ").toTypedArray()[1] //toma el nombre
             val nivelAux = j.split("Nivel:").toTypedArray()[1] //toma el nombre
             val nivel = (nivelAux.split(" ").toTypedArray()[1]).toInt()
+
+            val ejercicios = j.split(" | ").toTypedArray()[3] //toma los ejercicios
+
+            val arreglo: Array<String?>
+            arreglo = ejercicios.split(",").toTypedArray() //toma los ids de los ejercicios
+            val tipoSobresaliente = tipoEjercicio(arreglo) //funcion para ver si sobresale un tipo de ejercicio
 
             var rutina: insignias
             if(InsigniasSwitch){
@@ -151,51 +222,25 @@ private fun myPreferences() {
                     }
                 }
             }
+
+                if (nivel >= 1){
+                    val random = Random().nextInt(2) //numero random para no siempre mostrar las insignias de tipo (50%) //esto se tiene que eliminar despues
+                    if(random == 0){
+                        if(tipoSobresaliente == "piernas"){rutina = insignias(nombre, nivel, R.drawable.insigniapiernas)} //en caso de ser de un tipo lo va a poner
+                        if(tipoSobresaliente == "abdomen"){rutina = insignias(nombre, nivel, R.drawable.insigniaabdomen)}
+                        if(tipoSobresaliente == "pecho"){rutina = insignias(nombre, nivel, R.drawable.insigniapecho)}
+                        if(tipoSobresaliente == "espalda"){rutina = insignias(nombre, nivel, R.drawable.insigniatest)}
+                        if(tipoSobresaliente == "brazos"){rutina = insignias(nombre, nivel, R.drawable.insigniabrazos)}
+                        if(tipoSobresaliente == "hombros"){rutina = insignias(nombre, nivel, R.drawable.insigniatest)}
+                    }
+                }
+
                 val listaRutinasAux3 = listOf(rutina)
                 listaRutinasInsignias += listaRutinasAux3
             }
-            else if(InsigniasSwitch==false){
-                    if(nivel == 100){
-                        rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
-                    }else{
-                        if(nivel > 90){
-                            rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
-                        }else{
-                            if(nivel > 80){
-                                rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
-                            }else{
-                                if(nivel > 70){
-                                    rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
-                                }else{
-                                    if(nivel > 60){
-                                        rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
-                                    }else{
-                                        if(nivel > 50){
-                                            rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
-                                        }else{
-                                            if(nivel > 40){
-                                                rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
-                                            }else{
-                                                if(nivel > 30){
-                                                    rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
-                                                }else{
-                                                    if(nivel > 20){
-                                                        rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
-                                                    }else{
-                                                        if(nivel > 10){
-                                                            rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
-                                                        }else{
-                                                            rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+            else if(!InsigniasSwitch){
+                rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
+
                 val listaRutinasAux3 = listOf(rutina)
                 listaRutinasInsignias += listaRutinasAux3
             }

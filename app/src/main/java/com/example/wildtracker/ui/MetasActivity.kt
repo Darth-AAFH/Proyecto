@@ -34,7 +34,6 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
     var d1: CheckBox ?= null; var d2: CheckBox ?= null; var d3: CheckBox ?= null; var d4: CheckBox ?= null
     var d5: CheckBox ?= null; var d6: CheckBox ?= null; var d7: CheckBox ?= null
     private var buttonGuardar: Button?= null
-    private var buttonTest: Button?= null///////////////////////////////////////////////////////////////
 
     private val db = FirebaseFirestore.getInstance()
 
@@ -58,7 +57,6 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         d5 = findViewById(R.id.check5) as CheckBox; d6 = findViewById(R.id.check6) as CheckBox
         d7 = findViewById(R.id.check7) as CheckBox
         buttonGuardar = findViewById(R.id.buttonGuardarMeta)
-        buttonTest = findViewById(R.id.buttonTest)////////////////////////////////////////////////////
 
         editTextDate.setOnClickListener{ tomarFecha() }
 
@@ -123,11 +121,6 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                     }
                 }
             }
-        }
-
-        buttonTest!!.setOnClickListener{
-            val intent = Intent(this@MetasActivity, SeguimientoActivity::class.java)
-            startActivity(intent)
         }
 
         switchPeso!!.setOnClickListener {

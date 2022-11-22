@@ -514,9 +514,10 @@ class EjecutadorRutina : AppCompatActivity() {
                 if(final == false) {
                     val ejercicio = listado[0]
                     textViewActividadEnFoco!!.setText("" + ejercicio)
+
                     //Funcion para cargar video del siguiente ejercicio aqui
                     cargarVideo(ejercicio)
-                    Toast.makeText(this,ejercicio,Toast.LENGTH_LONG).show()
+
                     listado.removeAt(0) //Remueve el primer ejercicio de la lista
                     val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
                     listViewEjerciciosPorHacer!!.setAdapter(adapter)
