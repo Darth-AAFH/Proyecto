@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.wildtracker.R
 import com.example.wildtracker.musica.Utils
+import kotlinx.android.synthetic.main.settings_activity.*
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -24,6 +25,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var addMusicPathImageButton: ImageButton
     private lateinit var fillPlayListButton: Button
     private lateinit var clearPlayListButton: Button
+    private lateinit var VolverReproductorMusica:Button
     private lateinit var musicPathsParentLinearLayout: LinearLayout
     private lateinit var appVersionNumberTextView: TextView
 
@@ -61,9 +63,7 @@ class SettingsActivity : AppCompatActivity() {
         addMusicPathImageButton = this.findViewById(R.id.add_music_path)
         fillPlayListButton = this.findViewById(R.id.fill_play_list_button)
         clearPlayListButton = this.findViewById(R.id.clear_play_list_button)
-        appVersionNumberTextView = this.findViewById(R.id.app_version_number)
-
-        setVersionNumber()
+        VolverReproductorMusica = this.findViewById(R.id.VolverReproductorMusica)
 
         fillPlayListButton.setOnClickListener {
             sendBroadcastToService(BroadcastMessage.FILL_PLAYLIST)
@@ -84,21 +84,16 @@ class SettingsActivity : AppCompatActivity() {
             DataBase.setMusicPath(this, musicPathEditText.text.toString())
             updateMusicPaths()
         }
+        VolverReproductorMusica.setOnClickListener {
+            onBackPressed()
+        }
 
         musicPathsParentLinearLayout = this.findViewById(R.id.music_paths_parent_linear_layout)
 
         updateMusicPaths()
     }
 
-    private fun setVersionNumber() {
-        try {
-            val pInfo = this.packageManager.getPackageInfo(packageName, 0)
-            val version = "v" + pInfo.versionName
-            appVersionNumberTextView.text = version
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
-        }
-    }
+
 
     private fun updateMusicPaths() {
         musicPathsParentLinearLayout.removeAllViews()

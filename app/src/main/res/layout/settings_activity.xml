@@ -17,11 +17,95 @@
         android:orientation="vertical">
 
         <TextView
+            android:gravity="center"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/play_list"
+            android:text="Agregar música"
             android:textColor="@color/white"
             android:textSize="24sp" />
+
+        <TextView
+            android:layout_marginTop="20dp"
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paso 1: Selecciona la ruta de musica" />
+
+        <ImageButton
+            android:id="@+id/open_file_chooser_internal_storage"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:background="@drawable/baseline_folder_white_48" />
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paso 2: Agrega la ruta que elegiste en el paso anterior" />
+
+        <ImageButton
+            android:id="@+id/add_music_path"
+            android:layout_width="48dp"
+            android:layout_height="47dp"
+            android:background="@drawable/baseline_add_white_48" />
+        <TextView
+            android:id="@+id/textView16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paso 3: Verifica que la ruta sea la correcta " />
+
+
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="48dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal">
+
+
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.52">
+
+                    <EditText
+                        android:id="@+id/music_path_edit_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:hint="@string/music_path"
+                        android:inputType="text"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/color_01"
+                        android:visibility="visible" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="0.16">
+
+                </RelativeLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/music_paths_parent_linear_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
+
+
+
+
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Paso 4: Agrega o limpia los archivos de musica" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -58,83 +142,46 @@
                         android:text="@string/clear_play_list" />
                 </RelativeLayout>
             </LinearLayout>
+
         </RelativeLayout>
 
         <TextView
-            android:layout_width="fill_parent"
+            android:gravity="center"
+            android:layout_marginTop="50dp"
+            android:id="@+id/textView15"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="@string/music_paths"
-            android:textColor="@color/white"
-            android:textSize="24sp" />
+            android:text="Listo!, vuelve para reproducir musica" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="48dp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
             <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
                 android:orientation="horizontal">
 
                 <RelativeLayout
                     android:layout_width="0dp"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="0.16">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5">
 
-                    <ImageButton
-                        android:id="@+id/open_file_chooser_internal_storage"
-                        android:layout_width="wrap_content"
+                    <Button
+                        android:id="@+id/VolverReproductorMusica"
+                        android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:background="@drawable/baseline_folder_white_48" />
+                        android:gravity="center"
+                        android:text="Volver" />
                 </RelativeLayout>
 
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="0.52">
 
-                    <EditText
-                        android:id="@+id/music_path_edit_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:hint="@string/music_path"
-                        android:inputType="text"
-                        android:textColor="@color/white"
-                        android:textColorHint="@color/color_01"
-                        android:visibility="visible" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="fill_parent"
-                    android:layout_weight="0.16">
-
-                    <ImageButton
-                        android:id="@+id/add_music_path"
-                        android:layout_width="wrap_content"
-                        android:layout_height="fill_parent"
-                        android:background="@drawable/baseline_add_white_48" />
-                </RelativeLayout>
             </LinearLayout>
+
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/music_paths_parent_linear_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout>
 
-        <TextView
-            android:id="@+id/app_version_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:layout_marginBottom="25dp"
-            android:text="@string/unknown_version"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
+
     </LinearLayout>
 
     
