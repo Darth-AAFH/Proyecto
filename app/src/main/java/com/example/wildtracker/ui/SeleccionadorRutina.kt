@@ -96,11 +96,12 @@ class SeleccionadorRutina : AppCompatActivity(), NavigationView.OnNavigationItem
             val mesHoy2 = mesHoy.toInt()
             fechaHoy = diaHoy2.toString() + "-" + mesHoy2.toString() + "-" + anoHoy
 
+            var cadena = num.toString() + " | " + nombre + " | Fecha: " + dia.toString() + "-" + mes.toString() + "-" + ano.toString()
             if(fecha == fechaHoy) {
                 MainActivity.listaRutinasATrabajar.clear()
-                var cadena = num.toString() + " | " + nombre + " | Fecha: " + dia.toString() + "-" + mes.toString() + "-" + ano.toString()
                 MainActivity.listaRutinasATrabajar.add(cadena)
             }
+            MainActivity.listaRutinasATrabajarAux.add(cadena)
 
             Toast.makeText(this, "Se añadio correctamente la rutina", Toast.LENGTH_SHORT).show()
 

@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val listaRanking2 = ArrayList<String>()
         val listaRanking3 = ArrayList<String>()
         val listaRanking4 = ArrayList<String>()
+        var listaRutinasATrabajarAux = ArrayList<String>()
         var validadorListas = true
         //
         var lunes: Double = 0.0; var martes: Double = 0.0; var miercoles: Double = 0.0; var jueves : Double = 0.0
@@ -229,9 +230,9 @@ private fun myPreferences() {
                         if(tipoSobresaliente == "piernas"){rutina = insignias(nombre, nivel, R.drawable.insigniapiernas)} //en caso de ser de un tipo lo va a poner
                         if(tipoSobresaliente == "abdomen"){rutina = insignias(nombre, nivel, R.drawable.insigniaabdomen)}
                         if(tipoSobresaliente == "pecho"){rutina = insignias(nombre, nivel, R.drawable.insigniapecho)}
-                        if(tipoSobresaliente == "espalda"){rutina = insignias(nombre, nivel, R.drawable.insigniatest)}
+                        if(tipoSobresaliente == "espalda"){rutina = insignias(nombre, nivel, R.drawable.insigniaespalda)}
                         if(tipoSobresaliente == "brazos"){rutina = insignias(nombre, nivel, R.drawable.insigniabrazos)}
-                        if(tipoSobresaliente == "hombros"){rutina = insignias(nombre, nivel, R.drawable.insigniatest)}
+                        if(tipoSobresaliente == "hombros"){rutina = insignias(nombre, nivel, R.drawable.insigniahombros)}
                     }
                 }
 
@@ -288,7 +289,7 @@ private fun myPreferences() {
         iniciarGrafica()
         CargarListas()
 
-            insigniasRutinas()
+        insigniasRutinas()
 
     }
 

@@ -50,7 +50,7 @@ class VerEjercicios : AppCompatActivity(), OnNavigationItemSelectedListener {
         initNavigationView()
         listViewEjercicios = findViewById(R.id.listViewEjercicios)
 
-        if(!MainActivity.listaRutinas.isEmpty()) {
+        if(!MainActivity.listaRutinas.isEmpty()) { //para tomar los ejercicios que se estan usando
             for (i in 0..MainActivity.listaRutinas.size - 1) {
                 cadena += MainActivity.listaRutinas[i].split(" | ").toTypedArray()[3] //agrega los ejercicios
                 cadena += "," //y una coma

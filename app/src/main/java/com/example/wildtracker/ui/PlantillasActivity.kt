@@ -68,7 +68,26 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 }
             }
         }
+
         CargarListas()
+
+        var cadena = "["
+
+        if(!MainActivity.listaRutinasATrabajarAux.isEmpty()) { //para tomar las rutinas programadas que se estan usando
+            for (i in 0..MainActivity.listaRutinasATrabajarAux.size - 1) {
+                cadena += MainActivity.listaRutinasATrabajarAux[i].split(" | ").toTypedArray()[0] //agrega las rutinas programadas
+                cadena += "," //y una coma
+            }
+
+            var contador = 0
+            for(i in 0 until cadena.length){
+                contador += 1
+            }
+            cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
+        }
+
+        val arreglo: Array<String?>
+        arreglo = cadena.split(",").toTypedArray() //toma los ids de las rutinas
 
         buttonAdd!!.setOnClickListener{
             if(validadorMostar == 0) {
@@ -94,21 +113,33 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         }
 
         listViewRutinas!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-            val num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
+            val num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt() //toma los datos de la rutina
             val nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
             val ejercicios = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[3]
             val nivelAux = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[2]
 
-            val arreglo: Array<String?>
-            arreglo = nivelAux.split(" ").toTypedArray()
-            val nivel = arreglo[1]!!.toInt()
+            var validadorEdicion = true
 
-            val intent = Intent(this@PlantillasActivity, EditorRutinas::class.java)
-            intent.putExtra("Num", num)
-            intent.putExtra("Nombre", nombre)
-            intent.putExtra("Ejercicios", ejercicios)
-            intent.putExtra("Nivel", nivel)
-            startActivity(intent)
+            for(i in arreglo){ //recorre las rutinas programadas
+                if(num.toString() == i){ //si la rutina a  editar esta puesta para ser programada
+                    validadorEdicion = false //no lo podra editar
+                }
+            }
+
+            if(validadorEdicion) {
+                val arreglo: Array<String?>
+                arreglo = nivelAux.split(" ").toTypedArray()
+                val nivel = arreglo[1]!!.toInt()
+
+                val intent = Intent(this@PlantillasActivity, EditorRutinas::class.java)
+                intent.putExtra("Num", num)
+                intent.putExtra("Nombre", nombre)
+                intent.putExtra("Ejercicios", ejercicios)
+                intent.putExtra("Nivel", nivel)
+                startActivity(intent)
+            }else{
+                Toast.makeText(this, "No se puede editar una rutina que está programada", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

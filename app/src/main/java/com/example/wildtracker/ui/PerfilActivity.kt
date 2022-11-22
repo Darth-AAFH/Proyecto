@@ -426,34 +426,40 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                 MainActivity.listaRutinasATrabajar.add(cadena)
                             }
 
-                            borrarRutinasCaducadas((rutina.get("dia") as Long).toInt(), (rutina.get("mes") as Long).toInt(), (rutina.get("ano") as Long).toInt(), diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt(), fecha)
+                            if(borrarRutinasCaducadas((rutina.get("dia") as Long).toInt(), (rutina.get("mes") as Long).toInt(), (rutina.get("ano") as Long).toInt(), diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt(), fecha)){
+                                MainActivity.listaRutinasATrabajarAux.add(cadena)
+                            }
                         }
                     }
             }
         }
     }
-    private fun borrarRutinasCaducadas(dia: Int, mes: Int, ano: Int, diaHoy: Int, mesHoy: Int, anoHoy: Int, fecha: String) {
+    private fun borrarRutinasCaducadas(dia: Int, mes: Int, ano: Int, diaHoy: Int, mesHoy: Int, anoHoy: Int, fecha: String): Boolean {
         if(anoHoy >= ano){
             if(anoHoy > ano){
                 MainActivity.user?.let{ usuario ->
                     db.collection("users").document(usuario).collection("rutinasAtrabajar").document(fecha).delete()
+                    return false
                 }
             }else{
                 if(mesHoy >= mes){
                     if(mesHoy > mes){
                         MainActivity.user?.let{ usuario ->
                             db.collection("users").document(usuario).collection("rutinasAtrabajar").document(fecha).delete()
+                            return false
                         }
                     }else{
                         if(diaHoy > dia){
                             MainActivity.user?.let{ usuario ->
                                 db.collection("users").document(usuario).collection("rutinasAtrabajar").document(fecha).delete()
+                                return false
                             }
                         }
                     }
                 }
             }
         }
+        return true
     }
 
     private fun callSeguimientoActivity() {

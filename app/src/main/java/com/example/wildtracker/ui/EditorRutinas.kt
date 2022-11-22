@@ -211,13 +211,16 @@ class EditorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 )
             }
 
-            val linea: String; val cadenaCambio: String
+            var linea: String; var cadenaCambio: String
             linea = num.toString() + " | " + nombre + " | Nivel: " + nivel.toString() + " | " + ejercicios
             cadenaCambio = Id.toString() + " | " + Nombre + " | Nivel: 0 | " + cadena
 
-            val posicion: Int
+            var posicion: Int
             posicion = MainActivity.listaRutinas.indexOf(linea)
             MainActivity.listaRutinas.set(posicion, cadenaCambio)
+
+            cadenaCambio = Id.toString() + " | " + Nombre + " | Nivel: 0 | "
+            MainActivity.listaRutinasVista.set(posicion, cadenaCambio)
 
             Toast.makeText(this, "Se ha modificado la rutina", Toast.LENGTH_SHORT).show()
             confirmacion = true

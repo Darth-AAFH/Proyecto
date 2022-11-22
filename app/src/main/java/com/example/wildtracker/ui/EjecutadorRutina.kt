@@ -151,6 +151,10 @@ class EjecutadorRutina : AppCompatActivity() {
 
             MainActivity.listaRutinasATrabajar.removeAt(posicion + 1)
 
+            val posicion2: Int
+            posicion2 = MainActivity.listaRutinasATrabajarAux.indexOf(linea)
+            MainActivity.listaRutinasATrabajarAux.removeAt(posicion2 + 1)
+
             MainActivity.user?.let { usuario ->
                 db.collection("users").document(usuario).collection("rutinasAtrabajar")
                     .document(fecha).delete()

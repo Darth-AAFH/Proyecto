@@ -278,7 +278,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             .setTitle("Informacion de personas")
             .setNeutralButton("Ok") {  dialog, id -> dialog.cancel() }.show()
 
-        iniciarGrafica()
+        //iniciarGrafica()
     }
 
     var dia1 = 0.0; var dia2 = 0.0; var dia3 = 0.0; var dia4 = 0.0
