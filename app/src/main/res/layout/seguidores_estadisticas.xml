@@ -5,7 +5,7 @@
 
 
     <LinearLayout
-        android:id="@+id/chart"
+        android:id="@+id/chartSeguidores"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"

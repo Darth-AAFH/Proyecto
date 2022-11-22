@@ -134,12 +134,6 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                         db.collection("users").get().addOnSuccessListener { result ->
                             for (document in result) {
 
-                                //tomasr sus datos de los 7 dias pasados de la semana
-                                //esto al picarle al nombre del usuario //antes de la alert
-
-                                //mandar esos datos a otra activity (activity_DatosAmigos)
-                                //construir una grafica y ponerle como un titulo con el nombre del usuario
-
                                 perfilGet = document.get("Name").toString()
                                 if(perfilGet==perfil){
                                    //Traerse los datos necesarios
@@ -225,176 +219,6 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     }
 
-    private fun initToolbar() {
-        //Inicia el toolbar para el activity Seguidores
-        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
-        toolbar.title = "Siguiendo"
-        setSupportActionBar(toolbar)
-
-        drawer = findViewById(R.id.drawerlayout)!!
-        val toggle = ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.bar_title,
-            R.string.navigation_drawer_close
-        )
-        drawer.addDrawerListener(toggle)
-        toggle.syncState()
-    }
-
-    private fun initNavigationView() {
-
-        val navigationView: NavigationView = findViewById(R.id.nav_view)
-        navigationView.setNavigationItemSelectedListener(this)
-
-        val headerView: View = LayoutInflater.from(this)
-            .inflate(R.layout.nav_header_main, navigationView, false)
-        //Header para datos del usuario
-        navigationView.removeHeaderView(headerView)
-        //para actualizar los datos del header
-        navigationView.addHeaderView(headerView)
-
-        val tvUser: TextView = headerView.findViewById(R.id.tvUser)
-        tvUser.text = MainActivity.user
-
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.nav_perfil -> callPerfilActivity()
-            R.id.nav_inicio -> callInicioActivity()
-            R.id.nav_plantillas -> callPlantillasActivity()
-            R.id.nav_ejercicio -> callEjercicioActivity()
-            R.id.nav_maps -> callMapsActivity()
-            R.id.nav_metas -> callMetasActivity()
-            R.id.nav_chat -> callChatActivity()
-            R.id.logOut -> signOut()
-            R.id.nav_ranking->callRankingActivity()
-            R.id.nav_musica ->callMusica()
-            R.id.nav_amigos ->callAmigosActivity()
-            R.id.Settings->callAjustesActivity()
-            R.id.nav_seguimiento->callSeguimientoActivity()
-        }
-
-        drawer.closeDrawer(GravityCompat.START) // cerrar menu
-
-        return true
-    }
-    private fun callRankingActivity() {
-        val intent = Intent(this, RankingActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun callAjustesActivity() {
-        val intent = Intent(this, SettingsActivity::class.java)
-        startActivity(intent)
-    }
-    private fun callAmigosActivity() {
-        val intent = Intent(this, Activity_Amigos::class.java)
-        startActivity(intent)
-    }
-    private fun callMusica() {
-        val intent = Intent(this, mPlayerActivity::class.java)
-        startActivity(intent)
-    }
-    private fun callPerfilActivity() {
-        val intent = Intent(this, PerfilActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun callInicioActivity() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun callPlantillasActivity() {
-        val intent = Intent(this, PlantillasActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun callEjercicioActivity() {
-        val intent = Intent(this, EjercicioActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun callMapsActivity() {
-        val intent = Intent(this, MapsActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun callSeguimientoActivity() {
-        val intent = Intent(this, SeguimientoActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun callChatActivity() {
-        val intent = Intent(this, ChatActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun callMetasActivity() {
-        val intent = Intent(this, MetasActivity::class.java)
-        startActivity(intent)
-    }
-
-    fun signOut() {
-        //Cierra sesion del usuario actual
-        LoginActivity.useremail = ""
-        FirebaseAuth.getInstance().signOut()
-
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("727481893022-adct709pnvj5tlihh532i6gjgm26thh6.apps.googleusercontent.com")
-            .requestEmail()
-            .build()
-
-        val googleSignInClient = GoogleSignIn.getClient(this, gso)
-        googleSignInClient.signOut()
-        //Cierra sesion y manda devuelta al login
-        deleteAppData() //Elimina los datos de la app
-    }
-    private fun deleteAppData() {
-        try {
-            // clearing app data
-            val packageName = applicationContext.packageName
-            val runtime = Runtime.getRuntime()
-            runtime.exec("pm clear $packageName")
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    /////////////////////////////////////////////////////////////////////////
-    private var grafica: GraphicalView? = null
-    private var datosGrafica: XYSeries? = null
-    private val informacionGrafica = XYMultipleSeriesDataset()
-    private val renderGrafica = XYMultipleSeriesRenderer()
-    private var seriesRendererGrafica: XYSeriesRenderer? = null
-
-    private fun cargarGrafica() {
-        datosGrafica = XYSeries("Simple Data")
-        informacionGrafica.addSeries(datosGrafica)
-
-        datosGrafica!!.add(0.0, MainActivity.lunes)
-        datosGrafica!!.add(1.0, MainActivity.martes)
-        datosGrafica!!.add(2.0, MainActivity.miercoles)
-        datosGrafica!!.add(3.0, MainActivity.jueves)
-        datosGrafica!!.add(4.0, MainActivity.viernes)
-        datosGrafica!!.add(5.0, MainActivity.sabado)
-        datosGrafica!!.add(6.0, MainActivity.domingo)
-
-        seriesRendererGrafica = XYSeriesRenderer()
-        renderGrafica.addSeriesRenderer(seriesRendererGrafica)
-    }
-    private fun iniciarGrafica() {
-        val layout = findViewById<LinearLayout>(R.id.chart)
-        if (grafica == null) {
-            cargarGrafica()
-            grafica = ChartFactory.getCubeLineChartView(this, informacionGrafica, renderGrafica, 0f)
-            layout.addView(grafica)
-        } else {
-            grafica!!.repaint()
-        }
-    }
-    /////////////////////////////////////////////////////////////////////////
-
     fun alertScrollView(perfil: String) {
         //Estadisticas del usuario seleccionado
         val progresDialog = ProgressDialog(this)
@@ -416,52 +240,45 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         var contador = 1
         db.collection("users").get().addOnSuccessListener { result ->
             for (document in result) {
-                    try {
-                        if(perfil==document.get("Name"))
-                            contador++
-                        if(perfil==document.get("Name")&& contador<=2) {
-                            puntos = document.get("puntosTotales").toString()
-                            peso = document.get("peso").toString()
-                            altura = document.get("altura").toString()
-                            // myScrollView.setVisibility(View.GONE);
-                           Thread.sleep(200)
-                            tv.append("Nombre : ${document.get("Name").toString()}\n")
-                            myScrollView.setVisibility(View.VISIBLE);
-                            if(puntos==null||puntos=="null"){
-                                puntos ="NR"
-                            }
-                            if(peso==null||peso=="null"){
-                                peso ="NR"
-                            }
-                            if(altura==null||altura=="null"){
-                                altura ="NR"
-                            }
-                            tv.append("Puntos Totales : $puntos\n")
-                            tv.append("Peso : ${peso}\n")
-                            tv.append("Altura : ${altura}\n")
+                try {
+                    if(perfil==document.get("Name"))
+                        contador++
+                    if(perfil==document.get("Name")&& contador<=2) {
+                        puntos = document.get("puntosTotales").toString()
+                        peso = document.get("peso").toString()
+                        altura = document.get("altura").toString()
+                        // myScrollView.setVisibility(View.GONE);
+                        Thread.sleep(200)
+                        tv.append("Nombre : ${document.get("Name").toString()}\n")
+                        myScrollView.setVisibility(View.VISIBLE);
+                        if(puntos==null||puntos=="null"){
+                            puntos ="NR"
                         }
-
+                        if(peso==null||peso=="null"){
+                            peso ="NR"
+                        }
+                        if(altura==null||altura=="null"){
+                            altura ="NR"
+                        }
+                        tv.append("Puntos Totales : $puntos\n")
+                        tv.append("Peso : ${peso}\n")
+                        tv.append("Altura : ${altura}\n")
                     }
-                    catch (e:Exception){
 
-                    }
                 }
-                if(progresDialog.isShowing) {
-                    progresDialog.dismiss()
+                catch (e:Exception){
+
                 }
             }
+            if(progresDialog.isShowing) {
+                progresDialog.dismiss()
+            }
+        }
         AlertDialog.Builder(this).setView(myScrollView)
             .setTitle("Informacion de personas")
             .setNeutralButton("Ok") {  dialog, id -> dialog.cancel() }.show()
 
-
-        Toast.makeText(this, "dia1: "+dia1,Toast.LENGTH_LONG).show()
-        Toast.makeText(this, "dia2: "+dia2,Toast.LENGTH_LONG).show()
-        Toast.makeText(this, "dia3: "+dia3,Toast.LENGTH_LONG).show()
-        Toast.makeText(this, "dia4: "+dia4,Toast.LENGTH_LONG).show()
-        Toast.makeText(this, "dia5: "+dia5,Toast.LENGTH_LONG).show()
-        Toast.makeText(this, "dia6: "+dia6,Toast.LENGTH_LONG).show()
-        Toast.makeText(this, "dia7: "+dia7,Toast.LENGTH_LONG).show()
+        iniciarGrafica()
     }
 
     var dia1 = 0.0; var dia2 = 0.0; var dia3 = 0.0; var dia4 = 0.0
@@ -580,4 +397,172 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
     }
 
+    /////////////////////////////////////////////////////////////////////////
+    private var grafica: GraphicalView? = null
+    private var datosGrafica: XYSeries? = null
+    private val informacionGrafica = XYMultipleSeriesDataset()
+    private val renderGrafica = XYMultipleSeriesRenderer()
+    private var seriesRendererGrafica: XYSeriesRenderer? = null
+
+    private fun cargarGrafica() {
+        datosGrafica = XYSeries("Simple Data")
+        informacionGrafica.addSeries(datosGrafica)
+
+        datosGrafica!!.add(0.0, dia1)
+        datosGrafica!!.add(1.0, dia2)
+        datosGrafica!!.add(2.0, dia3)
+        datosGrafica!!.add(3.0, dia4)
+        datosGrafica!!.add(4.0, dia5)
+        datosGrafica!!.add(5.0, dia6)
+        datosGrafica!!.add(6.0, dia7)
+
+        seriesRendererGrafica = XYSeriesRenderer()
+        renderGrafica.addSeriesRenderer(seriesRendererGrafica)
+    }
+    private fun iniciarGrafica() {
+        val layout = findViewById<LinearLayout>(R.id.chartSeguidores)
+        if (grafica == null) {
+            cargarGrafica()
+            grafica = ChartFactory.getCubeLineChartView(this, informacionGrafica, renderGrafica, 0f)
+            layout.addView(grafica)
+        } else {
+            grafica!!.repaint()
+        }
+    }
+    /////////////////////////////////////////////////////////////////////////
+
+    private fun initToolbar() {
+        //Inicia el toolbar para el activity Seguidores
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
+        toolbar.title = "Siguiendo"
+        setSupportActionBar(toolbar)
+
+        drawer = findViewById(R.id.drawerlayout)!!
+        val toggle = ActionBarDrawerToggle(
+            this, drawer, toolbar, R.string.bar_title,
+            R.string.navigation_drawer_close
+        )
+        drawer.addDrawerListener(toggle)
+        toggle.syncState()
+    }
+
+    private fun initNavigationView() {
+
+        val navigationView: NavigationView = findViewById(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
+
+        val headerView: View = LayoutInflater.from(this)
+            .inflate(R.layout.nav_header_main, navigationView, false)
+        //Header para datos del usuario
+        navigationView.removeHeaderView(headerView)
+        //para actualizar los datos del header
+        navigationView.addHeaderView(headerView)
+
+        val tvUser: TextView = headerView.findViewById(R.id.tvUser)
+        tvUser.text = MainActivity.user
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_perfil -> callPerfilActivity()
+            R.id.nav_inicio -> callInicioActivity()
+            R.id.nav_plantillas -> callPlantillasActivity()
+            R.id.nav_ejercicio -> callEjercicioActivity()
+            R.id.nav_maps -> callMapsActivity()
+            R.id.nav_metas -> callMetasActivity()
+            R.id.nav_chat -> callChatActivity()
+            R.id.logOut -> signOut()
+            R.id.nav_ranking->callRankingActivity()
+            R.id.nav_musica ->callMusica()
+            R.id.nav_amigos ->callAmigosActivity()
+            R.id.Settings->callAjustesActivity()
+            R.id.nav_seguimiento->callSeguimientoActivity()
+        }
+
+        drawer.closeDrawer(GravityCompat.START) // cerrar menu
+
+        return true
+    }
+    private fun callRankingActivity() {
+        val intent = Intent(this, RankingActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun callAjustesActivity() {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
+    }
+    private fun callAmigosActivity() {
+        val intent = Intent(this, Activity_Amigos::class.java)
+        startActivity(intent)
+    }
+    private fun callMusica() {
+        val intent = Intent(this, mPlayerActivity::class.java)
+        startActivity(intent)
+    }
+    private fun callPerfilActivity() {
+        val intent = Intent(this, PerfilActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun callInicioActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun callPlantillasActivity() {
+        val intent = Intent(this, PlantillasActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun callEjercicioActivity() {
+        val intent = Intent(this, EjercicioActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun callMapsActivity() {
+        val intent = Intent(this, MapsActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun callSeguimientoActivity() {
+        val intent = Intent(this, SeguimientoActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun callChatActivity() {
+        val intent = Intent(this, ChatActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun callMetasActivity() {
+        val intent = Intent(this, MetasActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun signOut() {
+        //Cierra sesion del usuario actual
+        LoginActivity.useremail = ""
+        FirebaseAuth.getInstance().signOut()
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("727481893022-adct709pnvj5tlihh532i6gjgm26thh6.apps.googleusercontent.com")
+            .requestEmail()
+            .build()
+
+        val googleSignInClient = GoogleSignIn.getClient(this, gso)
+        googleSignInClient.signOut()
+        //Cierra sesion y manda devuelta al login
+        deleteAppData() //Elimina los datos de la app
+    }
+    private fun deleteAppData() {
+        try {
+            // clearing app data
+            val packageName = applicationContext.packageName
+            val runtime = Runtime.getRuntime()
+            runtime.exec("pm clear $packageName")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }
