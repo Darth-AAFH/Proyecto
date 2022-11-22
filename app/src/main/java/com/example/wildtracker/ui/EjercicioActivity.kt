@@ -1,8 +1,14 @@
 package com.example.wildtracker.ui
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -105,45 +111,100 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         var mandarNot = false
 
-        for(i in ultimasFechas){ //recorre las ultimas fechas trabajadas de la meta
-            contador += 1
-            dia = ultimasFechas[contador]!!.split("-").toTypedArray()[0].toInt()
-            mes = ultimasFechas[contador]!!.split("-").toTypedArray()[1].toInt()
-            ano = ultimasFechas[contador]!!.split("-").toTypedArray()[2].toInt()
+        if (ultimasFechas[0]!="[") {
 
-            if(diaNot <= 0){
-                mesNot = mesHoy- 1
 
-                if(mesNot == 0){
-                    mesNot = 12
-                    anoNot = anoHoy - 1
-                }
+            for (i in ultimasFechas) { //recorre las ultimas fechas trabajadas de la meta
 
-                if(mesNot == 1 || mesNot == 3 || mesNot == 5 || mesNot == 7 || mesNot == 8 || mesNot == 10 || mesNot == 12){
-                    diaNot = 31 + diaNot
-                }else{
-                    if(mesNot == 2){
-                        diaNot = 28 + diaNot
-                    }else{
-                        diaNot = 30 + diaNot
+                contador += 1
+                dia = ultimasFechas[contador]!!.split("-").toTypedArray()[0].toInt()
+                mes = ultimasFechas[contador]!!.split("-").toTypedArray()[1].toInt()
+                ano = ultimasFechas[contador]!!.split("-").toTypedArray()[2].toInt()
+
+                if (diaNot <= 0) {
+                    mesNot = mesHoy - 1
+
+                    if (mesNot == 0) {
+                        mesNot = 12
+                        anoNot = anoHoy - 1
+                    }
+
+                    if (mesNot == 1 || mesNot == 3 || mesNot == 5 || mesNot == 7 || mesNot == 8 || mesNot == 10 || mesNot == 12) {
+                        diaNot = 31 + diaNot
+                    } else {
+                        if (mesNot == 2) {
+                            diaNot = 28 + diaNot
+                        } else {
+                            diaNot = 30 + diaNot
+                        }
                     }
                 }
-            }
 
-            if(dia == diaNot && mes == mesNot && ano == anoNot){
-                mandarNot = true
+                if (dia == diaNot && mes == mesNot && ano == anoNot) {
+                    mandarNot = true
+                }
             }
         }
-
         if(mandarNot){
-
+            Toast.makeText(this,"MandandoNotif",Toast.LENGTH_SHORT).show()
+            NotificacionRutinaPendiente()
         }
+        Log.d("EstadoMandar",mandarNot.toString())
     }
+    private fun createNotificationChannel()
+    {
+        val name = "Notif Channel"
+        val desc = "A Description of the Channel"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(channelID, name, importance)
+        channel.description = desc
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
+    private fun NotificacionRutinaPendiente() {
+
+        val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
+        val title = "Recordatorio"
+        val message = "Tienes una que no has avanzado en 2 semanas!"
+        intent.putExtra(titleExtra, title)
+        intent.putExtra(messageExtra, message)
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            this@EjercicioActivity,
+            notificationID,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val time =getTime()
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            time,
+            pendingIntent
+        )
+        Log.d("RutinaProgramada", java.lang.String.format(time.toString()))
+
+    }
+
+    private fun getTime(): Long {
+        val calendar = Calendar.getInstance()
+        val minute = calendar.get(Calendar.MINUTE)
+        val hour = calendar.get(Calendar.HOUR)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH)
+        val year =calendar.get(Calendar.YEAR)
+        val year2 = calendar.timeInMillis
+        calendar.set(year, month, day, hour, minute)
+        return calendar.timeInMillis
+    }
+
 
     private lateinit var drawer: DrawerLayout
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        createNotificationChannel()
         setContentView(R.layout.activity_ejercicio)
         initToolbar()
         initNavigationView()
@@ -160,11 +221,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
             nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
             fecha = "0"; tiempo = "0"
-
             textViewRutina!!.setText("Rutina seleccionada: "+nombre)
-
             buttonIniciar!!.setVisibility(View.VISIBLE); buttonIniciar!!.setEnabled(true)
-
             var idRutina: Int
             MainActivity.user?.let { usuario -> //abre la base de datos
                 db.collection("users").document(usuario).collection("rutinas").get().addOnSuccessListener {
@@ -332,7 +390,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            
+
             R.id.nav_musica ->callMusica()
             R.id.nav_amigos ->callAmigosActivity()
             R.id.Settings->callAjustesActivity()
