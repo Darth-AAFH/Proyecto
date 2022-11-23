@@ -105,38 +105,40 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         var mandarNot = false
 
-        for(i in ultimasFechas){ //recorre las ultimas fechas trabajadas de la meta
-            contador += 1
-            dia = ultimasFechas[contador]!!.split("-").toTypedArray()[0].toInt()
-            mes = ultimasFechas[contador]!!.split("-").toTypedArray()[1].toInt()
-            ano = ultimasFechas[contador]!!.split("-").toTypedArray()[2].toInt()
+        if (diaNot <= 0) {
+            mesNot = mesHoy - 1
 
-            if(diaNot <= 0){
-                mesNot = mesHoy- 1
-
-                if(mesNot == 0){
-                    mesNot = 12
-                    anoNot = anoHoy - 1
-                }
-
-                if(mesNot == 1 || mesNot == 3 || mesNot == 5 || mesNot == 7 || mesNot == 8 || mesNot == 10 || mesNot == 12){
-                    diaNot = 31 + diaNot
-                }else{
-                    if(mesNot == 2){
-                        diaNot = 28 + diaNot
-                    }else{
-                        diaNot = 30 + diaNot
-                    }
-                }
+            if (mesNot == 0) {
+                mesNot = 12
+                anoNot = anoHoy - 1
             }
 
-            if(dia == diaNot && mes == mesNot && ano == anoNot){
-                mandarNot = true
+            if (mesNot == 1 || mesNot == 3 || mesNot == 5 || mesNot == 7 || mesNot == 8 || mesNot == 10 || mesNot == 12) {
+                diaNot = 31 + diaNot
+            } else {
+                if (mesNot == 2) {
+                    diaNot = 28 + diaNot
+                } else {
+                    diaNot = 30 + diaNot
+                }
+            }
+        }
+
+        if(ultimasFechas[0] != "[") {
+            for (i in ultimasFechas) { //recorre las ultimas fechas trabajadas de la meta
+                contador += 1
+                dia = ultimasFechas[contador]!!.split("-").toTypedArray()[0].toInt()
+                mes = ultimasFechas[contador]!!.split("-").toTypedArray()[1].toInt()
+                ano = ultimasFechas[contador]!!.split("-").toTypedArray()[2].toInt()
+
+                if (dia <= diaNot && mes == mesNot && ano == anoNot || mes < mesNot && ano == anoNot || ano < anoNot) {
+                    mandarNot = true
+                }
             }
         }
 
         if(mandarNot){
-
+            Toast.makeText(this, "Tienes metas pendientes a caducar", Toast.LENGTH_SHORT).show()
         }
     }
 
