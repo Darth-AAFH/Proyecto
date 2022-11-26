@@ -3,6 +3,7 @@ package com.example.wildtracker.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -10,6 +11,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.view.LayoutInflater
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -25,6 +28,8 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import kotlinx.android.synthetic.main.activity_login.view.*
+import kotlinx.android.synthetic.main.ayuda_layout.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -39,11 +44,12 @@ import kotlin.math.roundToInt
 @Suppress("NAME_SHADOWING")
 class EjecutadorRutina : AppCompatActivity() {
     private lateinit var storage: FirebaseStorage
+    private lateinit var builder: AlertDialog.Builder //Dialogo de alerta para interactuar en el activity
     private lateinit var VideosEjercicios: RecyclerView
     private var youtubeVideos = Vector<youTubeVideos>()
     var textViewActividadEnFoco: TextView?= null; var textViewReloj: TextView?= null
     var buttonParar: Button?= null; var buttonPausar: Button?= null; var buttonSaltar: Button?= null
-    var listViewEjerciciosPorHacer: ListView?= null; var buttonSiguiente: Button?= null
+    var listViewEjerciciosPorHacer: ListView?= null; var buttonSiguiente: Button?= null; var buttonAyuda: Button?=null
     private lateinit var photofile: File
     var listado = ArrayList<String>()
     var datos = ArrayList<String>()
@@ -317,7 +323,7 @@ class EjecutadorRutina : AppCompatActivity() {
         buttonSaltar = findViewById(R.id.buttonSaltar)
         listViewEjerciciosPorHacer = findViewById(R.id.listViewEjerciciosPorHacer)
         buttonSiguiente = findViewById(R.id.buttonSiguiente)
-
+        buttonAyuda = findViewById(R.id.buttonAyuda)
         val sdf = SimpleDateFormat("dd-MM-yyyy")
         val currentDate = sdf.format(Date())
         MainActivity.user?.let { usuario -> //para traer el tiempo del día
@@ -512,6 +518,7 @@ class EjecutadorRutina : AppCompatActivity() {
             }
         }
 
+
         buttonSiguiente!!.setOnClickListener{
             if(firstclick == true && parar == false){
                 puntos += 2
@@ -542,6 +549,44 @@ class EjecutadorRutina : AppCompatActivity() {
                 terminar2 = false
             }
         }
+
+        buttonAyuda!!.setOnClickListener{
+
+            val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val myScrollView: View = inflater.inflate(R.layout.ayuda_layout, null, false)
+
+            // Initializing a blank textview so that we can just append a text later
+
+            val progresDialog = ProgressDialog(this)
+            // Toast.makeText(this, perfil2, Toast.LENGTH_SHORT).show()
+            var perfilGet: String
+            progresDialog.setMessage("Cargando Datos")
+            progresDialog.setCancelable(false)
+            progresDialog.show()
+
+            builder = AlertDialog.Builder(this)
+            builder.setView(R.layout.ayuda_layout)
+            builder.setTitle("Ayuda")
+                .setMessage("Guia de iconos")
+                .setCancelable(true)
+                .setNegativeButton("Ok") { dialogInterface, it -> //dialogInterface.cancel()
+                    dialogInterface.dismiss()
+                }
+                .show()
+//Toast.makeText(this,perfil,Toast.LENGTH_SHORT).show()
+            progresDialog.dismiss()
+
+
+
+
+
+
+
+                        }
+
+
+
+
     }
 
     private fun cargarVideo(ejercicio: String) {
