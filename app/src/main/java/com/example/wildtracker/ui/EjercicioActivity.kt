@@ -1,8 +1,14 @@
 package com.example.wildtracker.ui
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -66,10 +72,14 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if(MainActivity.listaRutinasATrabajar.isEmpty() && MainActivity.listaMetas.isEmpty()){
             textViewRutina3.setVisibility(View.VISIBLE)
         }
+        else{
+            NotificacionRutinaPendiente()
+        }
 
         var cadena = "["
 
         if(!MainActivity.listaMetasAux.isEmpty()) { //para tomar las rutinas programadas que se estan usando
+            NotificacionRutinaPendiente()
             for (i in 0..MainActivity.listaMetasAux.size - 1) {
                 cadena += MainActivity.listaMetasAux[i]//.split("Fecha de finalización: ").toTypedArray()[1] //agrega las rutinas programadas
                 cadena += "," //y una coma
@@ -139,6 +149,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         if(mandarNot){
             Toast.makeText(this, "Tienes metas pendientes a caducar", Toast.LENGTH_SHORT).show()
+            NotificacionNoHasAvanzado()
         }
     }
 
@@ -149,6 +160,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         setContentView(R.layout.activity_ejercicio)
         initToolbar()
         initNavigationView()
+        createNotificationChannel()
 
         listViewRutinas2 = findViewById(R.id.listViewRutinas2)
         listViewRutinas3 = findViewById(R.id.listViewRutinas3)
@@ -292,6 +304,90 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             startActivity(intent)
         }
     }
+
+
+    private fun createNotificationChannel()
+    {
+        val name = "Notif Channel"
+        val desc = "A Description of the Channel"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(channelID, name, importance)
+        channel.description = desc
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
+
+    private fun NotificacionNoHasAvanzado() {
+
+        val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
+        val title = "Recordatorio"
+        val message = "No has progresado en 2 semanas en una rutina °-°"
+        intent.putExtra(titleExtra, title)
+        intent.putExtra(messageExtra, message)
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            this@EjercicioActivity,
+            notificationID,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val time =getTime()
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            time,
+            pendingIntent
+        )
+        Log.d("RutinaProgramada", java.lang.String.format(time.toString()))
+
+    }
+    private fun NotificacionRutinaPendiente() {
+
+        val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
+        val title = "Recordatorio"
+        val message = "Tienes una rutina pendiente por hacer! "
+        intent.putExtra(titleExtra, title)
+        intent.putExtra(messageExtra, message)
+
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            this@EjercicioActivity,
+            notificationID,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val time =getTime()
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            time,
+            pendingIntent
+        )
+        Log.d("RutinaProgramada", java.lang.String.format(time.toString()))
+
+    }
+
+    private fun getTime(): Long {
+        val calendar = Calendar.getInstance()
+        val minute = calendar.get(Calendar.MINUTE)
+        val hour = calendar.get(Calendar.HOUR)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        val month = calendar.get(Calendar.MONTH)
+        val year =calendar.get(Calendar.YEAR)
+        val year2 = calendar.timeInMillis
+        calendar.set(year, month, day, hour, minute)
+        return calendar.timeInMillis
+    }
+
+
+
+
+
+
+
+
 
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)

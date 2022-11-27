@@ -1,0 +1,127 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollMapsPlaceInfo"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:id="@+id/chartAyuda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+       >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="147dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_play">
+
+            </ImageView>
+
+            <TextView
+                android:id="@+id/Pausar_reanudar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pausar/reanudar actividad fisica" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="147dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_stop">
+
+                </ImageView>
+
+                <TextView
+                    android:id="@+id/Detener"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Detener actividad fisica" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="147dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/skip_excercise">
+
+            </ImageView>
+
+            <TextView
+                android:id="@+id/Saltar"
+                android:layout_width="132dp"
+                android:layout_height="wrap_content"
+                android:text="Saltar el ejercio" />
+
+    </LinearLayout>
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="147dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/next_ex">
+
+            </ImageView>
+
+            <TextView
+                android:id="@+id/Siguiente_ejercicio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Siguiente actividad en lista de ejercicios" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="147dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/next_video">
+
+            </ImageView>
+
+            <TextView
+                android:id="@+id/MostrarVideo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mostrar video de ejercicios predeterminados" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>
