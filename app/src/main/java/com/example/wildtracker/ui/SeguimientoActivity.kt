@@ -1,34 +1,67 @@
 package com.example.wildtracker.ui
 
+import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.CalendarView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
 import com.example.wildtracker.musica.mPlayerActivity
+import com.github.sundeepk.compactcalendarview.CompactCalendarView
+import com.github.sundeepk.compactcalendarview.CompactCalendarView.CompactCalendarViewListener
+import com.github.sundeepk.compactcalendarview.domain.Event
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.*
 
-class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CalendarView.OnDateChangeListener{
+class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
     private lateinit var drawer: DrawerLayout
 
-    private lateinit var vistaCalendario: CalendarView
+    var calendario: CompactCalendarView? = null
+    private val dateFormatMonth = SimpleDateFormat("MMMM - yyyy", Locale.getDefault())
 
     private val db = FirebaseFirestore.getInstance()
+
+    fun cargarRutinasProgramadas(){
+        for(i in MainActivity.listaEventos1){ //para agregar las rutinas a trabajar en el calendario
+            var dia = i.split("-").toTypedArray()[0].toLong()
+            var mes = i.split("-").toTypedArray()[1].toLong()
+            var ano = i.split("-").toTypedArray()[2].toLong()
+
+            dia = dia-1L; mes = mes-1L; ano = ano-1970L
+            val tiempoMil = (dia*86400L + mes*2629743L + ano*31556926L)*1000L + 36000000L
+
+            var evento = Event(Color.WHITE  , tiempoMil, "")
+
+            val random = Random().nextInt(10)
+            if(random == 0){evento = Event(Color.BLUE, tiempoMil, "")}
+            if(random == 1){evento = Event(Color.BLACK, tiempoMil, "")}
+            if(random == 2){evento = Event(Color.CYAN, tiempoMil, "")}
+            if(random == 3){evento = Event(Color.DKGRAY, tiempoMil, "")}
+            if(random == 4){evento = Event(Color.GRAY, tiempoMil, "")}
+            if(random == 5){evento = Event(Color.GREEN, tiempoMil, "")}
+            if(random == 6){evento = Event(Color.LTGRAY, tiempoMil, "")}
+            if(random == 7){evento = Event(Color.MAGENTA, tiempoMil, "")}
+            if(random == 8){evento = Event(Color.RED, tiempoMil, "")}
+            if(random == 9){evento = Event(Color.YELLOW, tiempoMil, "")}
+
+            calendario!!.addEvent(evento)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,45 +69,100 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         initToolbar()
         initNavigationView()
 
-        vistaCalendario = findViewById(R.id.vistaCalendario)
+        calendario = findViewById(R.id.calendario2) as CompactCalendarView
+        calendario!!.setUseThreeLetterAbbreviation(true)
 
-        vistaCalendario.setOnDateChangeListener(this)
-    }
+        cargarRutinasProgramadas()
 
-    override fun onSelectedDayChange(p0: CalendarView, p1: Int, p2: Int, p3: Int) {
-        val dia: Int = p3; val mes: Int = p2 + 1; val ano: Int = p1
+        calendario!!.setListener(object : CompactCalendarViewListener {
+            override fun onDayClick(fechaSeleccionada: Date) {
+                val context = applicationContext
 
-        val items = arrayOfNulls<CharSequence>(3)
-        items[0] = "Agregar rutina única"; items[1] = "Borrar eventos"; items[2] = "Cancelar"
+                val dia = (fechaSeleccionada.toString()).split(" ").toTypedArray()[2].toInt()
+                val ano = (fechaSeleccionada.toString()).split(" ").toTypedArray()[5].toInt()
 
-        val alertaTareas = AlertDialog.Builder(this)
-        alertaTareas.setTitle("Seleccionar una tarea")
+                val mesAux = (fechaSeleccionada.toString()).split(" ").toTypedArray()[1]
+                var mes = 0
+                if(mesAux == "Jan"){ mes = 1}; if(mesAux == "Feb"){ mes = 2}; if(mesAux == "Mar"){ mes = 3}
+                if(mesAux == "Apr"){ mes = 4}; if(mesAux == "May"){ mes = 5}; if(mesAux == "Jun"){ mes = 6}
+                if(mesAux == "Jul"){ mes = 7}; if(mesAux == "Aug"){ mes = 8}; if(mesAux == "Sep"){ mes = 9}
+                if(mesAux == "Oct"){ mes = 10}; if(mesAux == "Nov"){ mes = 11}; if(mesAux == "Dec"){ mes = 12}
 
-        alertaTareas.setItems(items, DialogInterface.OnClickListener() { dialogInterface, i ->
-            if(i == 0){ //mandar a lista de rutinas
-                val intent = Intent(this@SeguimientoActivity, SeleccionadorRutina::class.java)
+                crearAlerta(dia, mes, ano)
+            }
+            override fun onMonthScroll(firstDayOfNewMonth: Date) {
 
-                val bundle = Bundle()
-                bundle.putInt("dia", dia); bundle.putInt("mes", mes); bundle.putInt("ano", ano)
-
-                intent.putExtras(bundle)
-                startActivity(intent)
-            }else{
-                if(i == 1){ //elimina la rutina programada de ese dia
-                    var fecha = dia.toString() + "-" + mes.toString() + "-" + ano.toString()
-
-                    MainActivity.user?.let { usuario ->
-                        db.collection("users").document(usuario).collection("rutinasAtrabajar")
-                            .document(fecha).delete()
-                    }
-
-                }else{}
             }
         })
-
-        val mostrarAlerta = alertaTareas.create()
-        mostrarAlerta.show()
     }
+
+    fun crearAlerta(dia: Int, mes: Int, ano: Int){
+        if(diaAnterior(dia, mes, ano)) {
+            Toast.makeText(this, "No puede seleccionar una fecha pasada", Toast.LENGTH_SHORT).show()
+        }else{
+            val items = arrayOfNulls<CharSequence>(3)
+            items[0] = "Agregar rutina única"; items[1] = "Borrar rutina programada"; items[2] = "Cancelar"
+
+            val alertaTareas = AlertDialog.Builder(this)
+            alertaTareas.setTitle("Seleccionar una tarea")
+
+            alertaTareas.setItems(items, DialogInterface.OnClickListener() { dialogInterface, i ->
+                if (i == 0) { //mandar a lista de rutinas
+                    val intent = Intent(this@SeguimientoActivity, SeleccionadorRutina::class.java)
+
+                    val bundle = Bundle()
+                    bundle.putInt("dia", dia); bundle.putInt("mes", mes); bundle.putInt("ano", ano)
+
+                    intent.putExtras(bundle)
+                    startActivity(intent)
+                } else {
+                    if (i == 1) { //elimina la rutina programada de ese dia
+                        var fecha = dia.toString() + "-" + mes.toString() + "-" + ano.toString()
+
+                        MainActivity.user?.let { usuario ->
+                            db.collection("users").document(usuario).collection("rutinasAtrabajar")
+                                .document(fecha).delete()
+                        }
+
+                        val posicion: Int
+                        posicion = MainActivity.listaEventos1.indexOf(fecha) //borra la rutina de las listas en base a la fecha
+                        if(posicion != -1){
+                            MainActivity.listaEventos1.removeAt(posicion)
+                            MainActivity.listaRutinasATrabajarAux.removeAt(posicion)
+                        }
+
+                        for(i in MainActivity.listaRutinasATrabajar){ //busca la rutina si es que esta se hace hoy para quitarla de la otra lista
+                            val fecha2 = i.split("Fecha: ").toTypedArray()[1]
+                            if(fecha2 == fecha){
+                                MainActivity.listaRutinasATrabajar.clear()
+                            }
+                        }
+                    }
+                }
+            })
+
+            val mostrarAlerta = alertaTareas.create()
+            mostrarAlerta.show()
+        }
+    }
+
+    fun diaAnterior(dia: Int, mes: Int, ano: Int): Boolean{
+        var sdf = SimpleDateFormat("dd")
+        val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
+        sdf = SimpleDateFormat("MM")
+        val mesHoy2 = sdf.format(Date()) //se obtiene el mes actual
+        sdf = SimpleDateFormat("yyyy")
+        val anoHoy2 = sdf.format(Date()) //se obiene el año actual
+
+        val diaHoy = diaHoy2.toInt(); val mesHoy = mesHoy2.toInt(); val anoHoy = anoHoy2.toInt() //obtiene la fecha actual en enteros
+
+        if(dia < diaHoy && mes == mesHoy && ano == anoHoy || mes < mesHoy && ano == anoHoy || ano < anoHoy){
+            return true
+        }else{
+            return false
+        }
+    }
+
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         toolbar.title = "Seguimiento"

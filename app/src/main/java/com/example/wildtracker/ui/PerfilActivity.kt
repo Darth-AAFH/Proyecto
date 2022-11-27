@@ -428,6 +428,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                             if(borrarRutinasCaducadas((rutina.get("dia") as Long).toInt(), (rutina.get("mes") as Long).toInt(), (rutina.get("ano") as Long).toInt(), diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt(), fecha)){
                                 MainActivity.listaRutinasATrabajarAux.add(cadena)
+                                MainActivity.listaEventos1.add(fecha)
                             }
                         }
                     }

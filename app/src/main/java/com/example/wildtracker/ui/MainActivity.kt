@@ -74,6 +74,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val listaSeguidores = ArrayList<String>()
         var listaRutinasATrabajar = ArrayList<String>()
         var listaMetas = ArrayList<String>()
+        var listaEventos1 = ArrayList<String>()
     }
 
     private fun CargarListas(){

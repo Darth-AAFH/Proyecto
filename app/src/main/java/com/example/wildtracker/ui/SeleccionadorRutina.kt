@@ -36,6 +36,9 @@ class SeleccionadorRutina : AppCompatActivity(), NavigationView.OnNavigationItem
             MainActivity.listaEjercicios = MainActivity.listaEjercicios1
             MainActivity.listaEjercicios.addAll(MainActivity.listaEjercicios2)
 
+            MainActivity.listaRutinasVista = MainActivity.listaRutinasVista1
+            MainActivity.listaRutinasVista.addAll(MainActivity.listaRutinasVista2)
+
             MainActivity.validadorAcomodo = false
         }
 
@@ -102,6 +105,9 @@ class SeleccionadorRutina : AppCompatActivity(), NavigationView.OnNavigationItem
                 MainActivity.listaRutinasATrabajar.add(cadena)
             }
             MainActivity.listaRutinasATrabajarAux.add(cadena)
+
+            //añadir la rutina a la lista de eventos
+            MainActivity.listaEventos1.add(fecha)
 
             Toast.makeText(this, "Se añadio correctamente la rutina", Toast.LENGTH_SHORT).show()
 

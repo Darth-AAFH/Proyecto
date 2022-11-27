@@ -154,6 +154,7 @@ class EjecutadorRutina : AppCompatActivity() {
             val posicion2: Int
             posicion2 = MainActivity.listaRutinasATrabajarAux.indexOf(linea)
             MainActivity.listaRutinasATrabajarAux.removeAt(posicion2 + 1)
+            MainActivity.listaEventos1.removeAt(posicion2 + 1)
 
             MainActivity.user?.let { usuario ->
                 db.collection("users").document(usuario).collection("rutinasAtrabajar")

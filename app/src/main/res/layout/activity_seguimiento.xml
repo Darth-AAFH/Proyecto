@@ -23,12 +23,22 @@
         android:layout_height="match_parent"
         tools:context=".ui.SeguimientoActivity">
 
-        <CalendarView
-            android:id="@+id/vistaCalendario"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <com.github.sundeepk.compactcalendarview.CompactCalendarView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/calendario2"
+            android:layout_width="fill_parent"
+            android:layout_marginTop="25dp"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:layout_height="250dp"
+            app:compactCalendarTextSize="12sp"
+            app:compactCalendarBackgroundColor="#FFFFFF"
+            app:compactCalendarCurrentDayBackgroundColor="#2b91f7"
+            app:compactCalendarMultiEventIndicatorColor="#2b91f7"
+            />
 
     </RelativeLayout>
+
     <include
         layout="@layout/app_bar_main"
         android:layout_width="match_parent"
