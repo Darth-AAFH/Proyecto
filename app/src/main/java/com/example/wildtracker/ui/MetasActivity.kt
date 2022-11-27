@@ -53,7 +53,7 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         initToolbar()
         initNavigationView()
         createNotificationChannel()
-       // cargarNotificaciones(false)
+
         editTextNombreMeta = findViewById<View>(R.id.editTextNombreMeta) as EditText
         switchPeso = findViewById<View>(R.id.idSwitch1) as Switch
         switchRepeticion = findViewById<View>(R.id.idSwitch2) as Switch
@@ -98,9 +98,9 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                             Toast.makeText(this, "Debe de seleccionar por lo menos un día", Toast.LENGTH_LONG).show()
                         }else{
                             var sdf = SimpleDateFormat("dd")
-                            var diaHoy = sdf.format(Date()) //se obtiene el dia actual
+                            val diaHoy = sdf.format(Date()) //se obtiene el dia actual
                             sdf = SimpleDateFormat("MM")
-                            var mesHoy = sdf.format(Date()) //se obtiene el mes actual
+                            val mesHoy = sdf.format(Date()) //se obtiene el mes actual
                             sdf = SimpleDateFormat("yyyy")
                             val anoHoy = sdf.format(Date()) //se obiene el año actual
 
@@ -228,7 +228,6 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         val diaHoy = diaHoy2.toInt()
         val mesHoy = mesHoy2.toInt()
         val anoHoy = anoHoy2.toInt()
-        val notificar2Semanas = diaSemana(diaHoy+14,mesHoy,anoHoy)
 
         val diaSemHoy = diaSemana(diaHoy, mesHoy, anoHoy) //se obtiene el numero de dia de la semana (lunes = 1, martes = 2, miercoles = 3, etc)
 
@@ -364,6 +363,7 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
+
     private fun NotificacionRutinaPendiente(FechaCadudar: Long) {
 
         val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)

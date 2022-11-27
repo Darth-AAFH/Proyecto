@@ -26,14 +26,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import com.example.wildtracker.musica.mPlayerActivity
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_ejercicio.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -51,6 +44,29 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     var meta = ""
     var tiempo = ""
 
+    private fun CargarUltimasFechasDeMetas(): Array<String?>{
+        var cadena = "["
+
+        if(!MainActivity.listaMetasAux.isEmpty()) { //para tomar las ultimas fechas trabajadas de las metas
+            NotificacionRutinaPendiente()
+            for (i in 0..MainActivity.listaMetasAux.size - 1) {
+                cadena += MainActivity.listaMetasAux[i]// agrega las fechas
+                cadena += "," //y una coma
+            }
+
+            var contador = 0
+            for(i in 0 until cadena.length){
+                contador += 1
+            }
+            cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
+        }
+
+        val arreglo: Array<String?>
+        arreglo = cadena.split(",").toTypedArray() //toma las fechas separadas
+
+        return arreglo
+    }
+
     private fun CargarListas(){
         //ayuda a organizar las listas de rutinas y los ejercicios
         if(MainActivity.validadorAcomodo){ //esto debe ir en plantillas y ejercicios
@@ -62,6 +78,16 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             MainActivity.listaRutinasVista.addAll(MainActivity.listaRutinasVista2)
             MainActivity.validadorAcomodo = false
         }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        var arreglo = CargarUltimasFechasDeMetas()
+        notificacion3semanas(arreglo) //para las notificaciones si una meta no se trabaja hace dos semanas
+
+        arreglo = CargarUltimasFechasDeMetas()
+        notificacion2semanas(arreglo) //para avisarle que rutinas que no ha trabajado en 3 semanas se borraron
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinasVista)
         listViewRutinas2!!.setAdapter(adapter) //La tabla se adapta en la text view
@@ -75,30 +101,9 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         else{
             NotificacionRutinaPendiente()
         }
-
-        var cadena = "["
-
-        if(!MainActivity.listaMetasAux.isEmpty()) { //para tomar las rutinas programadas que se estan usando
-            NotificacionRutinaPendiente()
-            for (i in 0..MainActivity.listaMetasAux.size - 1) {
-                cadena += MainActivity.listaMetasAux[i]//.split("Fecha de finalización: ").toTypedArray()[1] //agrega las rutinas programadas
-                cadena += "," //y una coma
-            }
-
-            var contador = 0
-            for(i in 0 until cadena.length){
-                contador += 1
-            }
-            cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
-        }
-
-        val arreglo: Array<String?>
-        arreglo = cadena.split(",").toTypedArray() //toma los ids de las rutinas
-
-        notificacion(arreglo) //para las notificaciones si una meta no se trabaja hace dos semandas
     }
 
-    fun notificacion(ultimasFechas: Array<String?>) {
+    fun notificacion2semanas(ultimasFechas: Array<String?>) {
         var sdf = SimpleDateFormat("dd")
         val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
         sdf = SimpleDateFormat("MM")
@@ -143,6 +148,12 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
                 if (dia <= diaNot && mes == mesNot && ano == anoNot || mes < mesNot && ano == anoNot || ano < anoNot) {
                     mandarNot = true
+
+                    if(i == MainActivity.listaMetasAux[contador - 1]){ //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
+                        var posicion: Int //para la lista aux (que guarda todas las ultimas fechas trabajadas de las metas)
+                        posicion = MainActivity.listaMetasAux.indexOf(i) //la busca en la lista
+                        MainActivity.listaMetasAux.removeAt(posicion)
+                    }
                 }
             }
         }
@@ -150,6 +161,95 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if(mandarNot){
             Toast.makeText(this, "Tienes metas pendientes a caducar", Toast.LENGTH_SHORT).show()
             NotificacionNoHasAvanzado()
+        }
+    }
+
+    fun notificacion3semanas(ultimasFechas: Array<String?>) {
+        var sdf = SimpleDateFormat("dd")
+        val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
+        sdf = SimpleDateFormat("MM")
+        val mesHoy2 = sdf.format(Date()) //se obtiene el mes actual
+        sdf = SimpleDateFormat("yyyy")
+        val anoHoy2 = sdf.format(Date()) //se obiene el año actual
+
+        val diaHoy = diaHoy2.toInt(); val mesHoy = mesHoy2.toInt(); val anoHoy = anoHoy2.toInt()
+
+        var diaNot = diaHoy - 21; var mesNot = mesHoy; var anoNot = anoHoy
+
+        var dia = 0; var mes = 0; var ano = 0
+        var contador = -1
+
+        var mandarNot = false
+
+        if (diaNot <= 0) {
+            mesNot = mesHoy - 1
+
+            if (mesNot == 0) {
+                mesNot = 12
+                anoNot = anoHoy - 1
+            }
+
+            if (mesNot == 1 || mesNot == 3 || mesNot == 5 || mesNot == 7 || mesNot == 8 || mesNot == 10 || mesNot == 12) {
+                diaNot = 31 + diaNot
+            } else {
+                if (mesNot == 2) {
+                    diaNot = 28 + diaNot
+                } else {
+                    diaNot = 30 + diaNot
+                }
+            }
+        }
+
+        if(ultimasFechas[0] != "[") {
+            for (i in ultimasFechas) { //recorre las ultimas fechas trabajadas de la meta
+                contador += 1
+                dia = ultimasFechas[contador]!!.split("-").toTypedArray()[0].toInt() //el ultimo dia trabajado de todas las metas
+                mes = ultimasFechas[contador]!!.split("-").toTypedArray()[1].toInt()
+                ano = ultimasFechas[contador]!!.split("-").toTypedArray()[2].toInt()
+
+                if (dia <= diaNot && mes == mesNot && ano == anoNot || mes < mesNot && ano == anoNot || ano < anoNot) {
+                    mandarNot = true
+
+                    if(i == MainActivity.listaMetasAux[contador]){ //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
+                        var posicion2: Int //para la lista aux (que guarda todas las ultimas fechas trabajadas de las metas)
+                        posicion2 = MainActivity.listaMetasAux.indexOf(i) //la busca en la lista
+                        MainActivity.listaMetasAux.removeAt(posicion2)
+                    }
+
+                    var cont = -1
+                    for(j in MainActivity.listaMetasAux2){ //para borrar la meta de las listas y de la base de datos
+                        cont += 1
+                        val dia2 = j!!.split("-").toTypedArray()[0].toInt() //el ultimo dia trabajado de las metas que se hace hoy
+                        val mes2 = j!!.split("-").toTypedArray()[1].toInt()
+                        val ano2 = j!!.split("-").toTypedArray()[2].toInt()
+
+                        var cadena = "" //va a tomar el nombre para borra la meta de la base de datos
+                        //var cadena2 = ultimasFechas[contador] //va a tomar la ultima fecha trabajada para borrarla de la lista de metas aux
+
+                        if(dia2 <= diaNot && mes2 == mesNot && ano2 == anoNot || mes2 < mesNot && ano2 == anoNot || ano2 < anoNot){ //borra la meta de las listas
+                            val posicion: Int
+                            posicion = MainActivity.listaMetasAux2.indexOf(j) //la busca en la lista
+                            cadena = MainActivity.listaMetas[cont]
+                            MainActivity.listaMetasAux2.removeAt(posicion) //y la borra
+                            MainActivity.listaMetas.removeAt(posicion)
+                        }
+
+                        if(cadena != "") {
+                            cadena = cadena!!.split(" | ").toTypedArray()[0]
+
+                            //borra la meta de la base de datos
+                            MainActivity.user?.let{ usuario ->
+                                db.collection("users").document(usuario).collection("metas").document(cadena).delete()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if(mandarNot){
+            Toast.makeText(this, "Se ha borrado una meta que no se trabajaba en 3 semanas", Toast.LENGTH_SHORT).show()
+            //Notificacion se ha borrado meta
         }
     }
 
@@ -306,8 +406,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
 
-    private fun createNotificationChannel()
-    {
+    private fun createNotificationChannel() {
         val name = "Notif Channel"
         val desc = "A Description of the Channel"
         val importance = NotificationManager.IMPORTANCE_DEFAULT
@@ -318,7 +417,6 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private fun NotificacionNoHasAvanzado() {
-
         val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
         val title = "Recordatorio"
         val message = "No has progresado en 2 semanas en una rutina °-°"
@@ -343,7 +441,6 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     }
     private fun NotificacionRutinaPendiente() {
-
         val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
         val title = "Recordatorio"
         val message = "Tienes una rutina pendiente por hacer! "
@@ -380,11 +477,6 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         calendar.set(year, month, day, hour, minute)
         return calendar.timeInMillis
     }
-
-
-
-
-
 
 
 

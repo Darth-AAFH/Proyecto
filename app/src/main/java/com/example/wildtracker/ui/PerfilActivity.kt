@@ -794,12 +794,15 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                         (meta.get("ultDia") as Long).toInt(), (meta.get("ultMes") as Long).toInt(), (meta.get("ultAno") as Long).toInt())
                                     }
 
-                                    if((meta.get("ultDia") as Long).toInt() != diaHoy || (meta.get("ultMes") as Long).toInt() != mesHoy || (meta.get("ultAno") as Long).toInt() != anoHoy){
+                                    if((meta.get("ultDia") as Long).toInt() != diaHoy || (meta.get("ultMes") as Long).toInt() != mesHoy || (meta.get("ultAno") as Long).toInt() != anoHoy){ //si la meta no se ha trabajado hoy
                                         MainActivity.listaMetas.add(cadena)
+
+                                        var cadena3 = (meta.get("ultDia") as Long).toString() + "-" + (meta.get("ultMes") as Long).toString() + "-" + (meta.get("ultAno") as Long).toString()
+                                        MainActivity.listaMetasAux2.add(cadena3)
                                     }
                                 }
                                 var cadena2 = (meta.get("ultDia") as Long).toString() + "-" + (meta.get("ultMes") as Long).toString() + "-" + (meta.get("ultAno") as Long).toString()
-                                MainActivity.listaMetasAux.add(cadena2)
+                                MainActivity.listaMetasAux.add(cadena2) //guarda todas las metas no caducadas
                             }
                         }
                     }

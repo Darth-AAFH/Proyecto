@@ -31,7 +31,6 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private lateinit var drawer: DrawerLayout
     private val db = FirebaseFirestore.getInstance()
     private var listViewRanking: ListView?= null
-    private var buttonRecargar: Button ?= null
     private lateinit var builder: AlertDialog.Builder
     private fun CargarRanking () {
 
@@ -166,13 +165,13 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         initToolbar()
         initNavigationView()
 
-        buttonRecargar = findViewById(R.id.buttonRecargar)
         listViewRanking = findViewById(R.id.listViewRanking)
         progresDialog.setMessage("Cargando Datos")
         progresDialog.setCancelable(false)
         progresDialog.show()
         CargarRanking()
 
+        /*
         buttonRecargar!!.setOnClickListener{////////////////////////////////////
             progresDialog.setMessage("Cargando Datos")
             progresDialog.setCancelable(false)
@@ -189,6 +188,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
             }
         }
+         */
 
         if(progresDialog.isShowing){
             Handler(Looper.getMainLooper()).postDelayed(

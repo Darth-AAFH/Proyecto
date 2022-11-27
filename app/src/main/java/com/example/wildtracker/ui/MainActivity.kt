@@ -59,7 +59,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val listaRanking3 = ArrayList<String>()
         val listaRanking4 = ArrayList<String>()
         var listaRutinasATrabajarAux = ArrayList<String>()
-        var listaMetasAux = ArrayList<String>()
+        var listaMetasAux = ArrayList<String>() //guarda las ultimas fechas trabajadas de las metas
+        var listaMetasAux2 = ArrayList<String>() //guarda las metas que se trabajan hoy solo su ulitma fecha trabajada, para poder borarlas en la misma lista
         var validadorListas = true
         //
         var lunes: Double = 0.0; var martes: Double = 0.0; var miercoles: Double = 0.0; var jueves : Double = 0.0
