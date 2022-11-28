@@ -51,6 +51,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
     companion object{
         lateinit var usernameDb : String
+        lateinit var nombreRutinaEliminada :String
+        lateinit var NombreUsuario:String
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -598,7 +600,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             diaF = (meta.get("diaFinal") as Long).toInt()
                             mesF = (meta.get("mesFinal") as Long).toInt()
                             anoF = (meta.get("anoFinal") as Long).toInt()
-
+                            nombreRutinaEliminada = (meta.get("nombre")) as String
                             //primero se obtiene la diferencia de dias entre las dos fechas (diasTotales)
                             if(anoF == anoHoy){ //se comparan los años
                                 if(mesF == mesHoy){ //se comparan los meses
@@ -913,6 +915,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             db.collection("users").document(MainActivity.user!!).get()
                 .addOnSuccessListener {
                 edName.setText (it.get("Name") as String?)
+                    NombreUsuario = ((it.get("Name") as String?).toString())
                 edEmail.setText(it.get("email") as String?)
                 edBirthDay.setText(it.get("birthDay") as String?)
                     AlturaProfileEt.setText(it.get("altura") as String?)

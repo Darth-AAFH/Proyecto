@@ -300,8 +300,8 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         d4!!.setChecked(false); d5!!.setChecked(false); d6!!.setChecked(false)
         d7!!.setChecked(false)
 
-      /*  val intent = Intent(this, EjercicioActivity::class.java)
-        startActivity(intent)*/
+        val intent = Intent(this, EjercicioActivity::class.java)
+        startActivity(intent)
     }
     fun cargarNotificaciones(llamar:Boolean){
         val currentDate = Date()
@@ -368,7 +368,7 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
         val title = "Rutina por caducar!!"
-        val message = "Oye ${MainActivity.user} tienes una rutina que caduda en 2 semanas, hazla ahora!"
+        val message = "Oye ${PerfilActivity.NombreUsuario} tienes una rutina que caduda pronto, hazla ahora!"
         intent.putExtra(titleExtra, title)
         intent.putExtra(messageExtra, message)
 
