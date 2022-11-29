@@ -42,6 +42,7 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
     private lateinit var drawer: DrawerLayout
     private lateinit var photofile: File
     private lateinit var storage: FirebaseStorage
+    private var nombreMeta:String = ""
 
 
     var editTextNombreMeta: EditText ?= null
@@ -140,6 +141,7 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                     }
                 }
             }
+            nombreMeta=nombre
         }
 
         switchPeso!!.setOnClickListener {
@@ -761,7 +763,7 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             //Formato original de la foto
             //  photofile = getPhotoFile("foto_${nombre}_${SimpleDateFormat("yyyMMdd").format(Date())}")
 
-            photofile = getPhotoFile("foto_${"X"}_1-")
+            photofile = getPhotoFile("foto_${nombreMeta}_1-")
 
             val fileProvider = FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile)
 
@@ -811,9 +813,7 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         val userID = FirebaseAuth.getInstance().currentUser!!.email.toString()
         if (takenImage != null) {
-            var pd = ProgressDialog(this)
-            pd.setTitle("Uploading")
-            pd.show()
+
             //Se guarda la rutina en la ruta de cada rutina
 
 // Child references can also take paths
@@ -823,7 +823,7 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             var storageRef = storage.reference
 
             var imagesRef: StorageReference? = storageRef.child("images")
-            var spaceRef = storageRef.child("UsersTakenPictures/$userID/Meta_${"X"}/${photofile.name}")
+            var spaceRef = storageRef.child("UsersTakenPictures/$userID/Meta_${nombreMeta}/${photofile.name}")
             val FotoSeparada = photofile.name.split("-").toTypedArray()
             Toast.makeText(this,"SEPARADA:${FotoSeparada[0]}",Toast.LENGTH_SHORT).show()
             listAllFiles(userID,FotoSeparada[0],takenImage)
@@ -851,15 +851,17 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             //Toast.makeText(this, "Subida", Toast.LENGTH_LONG).show()
         }
 
-        val intent = Intent(this, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
-        startActivity(intent)
+      /*  val intent = Intent(this, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
+        startActivity(intent)*/
     }
     fun listAllFiles(userID: String, name: String, takenImage: Uri) {
         val storage = FirebaseStorage.getInstance()
         // Listamos las fotos en firebase
+        var pd = ProgressDialog(this)
+        pd.setTitle("Uploading")
+        pd.show()
 
-
-        val listRef = storage.reference.child("UsersTakenPictures/$userID/Meta_${"X"}]/")
+        val listRef = storage.reference.child("UsersTakenPictures/$userID/Meta_${nombreMeta}]/")
         listRef.listAll()
             .addOnSuccessListener { listResult ->
                 var Renombrar = false
@@ -879,10 +881,10 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                     // Toast.makeText(this,"Foto item:"+FotoFirebaseSeparada[0],Toast.LENGTH_SHORT).show()
                 }
                 if(Renombrar){
-                    FotoFB = ("foto_${"X"}_2")
+                    FotoFB = ("foto_${nombreMeta}_2")
                     Toast.makeText(this,"Se ha actualizado la foto de registro de actividad",Toast.LENGTH_SHORT).show()
                     var imageRef =
-                        FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Meta_${"X"}/${FotoFB}")
+                        FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Meta_${nombreMeta}/${FotoFB}")
                     imageRef.putFile(takenImage)
                         .addOnSuccessListener { p0 ->
 
@@ -898,15 +900,17 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                     val FotoInicial = FotoListInicial[0]
 
                     var imageRef =
-                        FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Meta_${"X"}/${FotoInicial}")
+                        FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Meta_${nombreMeta}/${FotoInicial}")
                     imageRef.putFile(takenImage)
                         .addOnSuccessListener { p0 ->
 
                             Toast.makeText(applicationContext, "File Uploaded", Toast.LENGTH_SHORT).show()
                             //  Toast.makeText(applicationContext, "${userID}", Toast.LENGTH_LONG).show()
-
+                            pd.dismiss()
                         }
                         .addOnFailureListener { p0 ->
+                        pd.dismiss()
+                            Toast.makeText(applicationContext, "Error al subir", Toast.LENGTH_SHORT).show()
 
                             Toast.makeText(applicationContext, p0.message, Toast.LENGTH_LONG).show()
                         }
@@ -915,6 +919,22 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             .addOnFailureListener {
 
                 Toast.makeText(this,"No se que paso",Toast.LENGTH_SHORT).show()
+                val FotoListInicial = (photofile.name.split("-").toTypedArray())
+                val FotoInicial = FotoListInicial[0]
+
+                var imageRef =
+                    FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Meta_${nombreMeta}/${FotoInicial}")
+                imageRef.putFile(takenImage)
+                    .addOnSuccessListener { p0 ->
+
+                        Toast.makeText(applicationContext, "File Uploaded", Toast.LENGTH_SHORT).show()
+                        //  Toast.makeText(applicationContext, "${userID}", Toast.LENGTH_LONG).show()
+
+                    }
+                    .addOnFailureListener { p0 ->
+
+                        Toast.makeText(applicationContext, p0.message, Toast.LENGTH_LONG).show()
+                    }
             }
 
 

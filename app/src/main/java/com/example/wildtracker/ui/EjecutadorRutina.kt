@@ -55,6 +55,8 @@ class EjecutadorRutina : AppCompatActivity() {
     var datos = ArrayList<String>()
     companion object {
         const val REQUEST_CODE = 42
+        var Ismeta = false
+        var AlertaMostrado = false
 
     }
     lateinit var timer: Timer
@@ -296,10 +298,10 @@ class EjecutadorRutina : AppCompatActivity() {
                 VideosEjercicios.isVisible=false
             }
             else{
-            VideosEjercicios.isVisible=true
-        VideosEjercicios.adapter = videoAdapter
+                VideosEjercicios.isVisible=true
+                VideosEjercicios.adapter = videoAdapter
             }
-            
+
         }
 
 
@@ -582,7 +584,7 @@ class EjecutadorRutina : AppCompatActivity() {
 
 
 
-                        }
+        }
 
 
 
@@ -663,17 +665,17 @@ class EjecutadorRutina : AppCompatActivity() {
                     MainActivity.user?.let { usuario ->
                         db.collection("users").document(usuario).collection("rutinas")
                             .document(num.toString()).set(
-                            hashMapOf( //y se actualiza el ejercicio con un nivel más
-                                "id" to num,
-                                "nombre" to nombre,
-                                "nivel" to nivel + 1,
-                                "ejercicios" to ejercicios,
-                                "xp" to 0,
-                                "horas" to horasR + horas,
-                                "minutos" to minutosR + minutos,
-                                "segundos" to segundosR + segundos
+                                hashMapOf( //y se actualiza el ejercicio con un nivel más
+                                    "id" to num,
+                                    "nombre" to nombre,
+                                    "nivel" to nivel + 1,
+                                    "ejercicios" to ejercicios,
+                                    "xp" to 0,
+                                    "horas" to horasR + horas,
+                                    "minutos" to minutosR + minutos,
+                                    "segundos" to segundosR + segundos
+                                )
                             )
-                        )
                     }
 
                     var linea: String
@@ -753,10 +755,14 @@ class EjecutadorRutina : AppCompatActivity() {
         } else{
             if (completado == true) {
                 Toast.makeText(this, "Felicidades, completó la meta!!", Toast.LENGTH_LONG).show()
-                BorrarMetaDelDia(2)
+                fotoMeta(nombre)
             }
-            terminar()
+
         }
+        if(AlertaMostrado){
+
+        }
+
     }
 
     private fun terminar() {
@@ -787,7 +793,7 @@ class EjecutadorRutina : AppCompatActivity() {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             //Hacer validacion de la toma de foto para analizar si ya existe una foto
 
-          //Formato original de la foto
+            //Formato original de la foto
             //  photofile = getPhotoFile("foto_${nombre}_${SimpleDateFormat("yyyMMdd").format(Date())}")
 
             photofile = getPhotoFile("foto_${nombre}_1-")
@@ -892,8 +898,14 @@ class EjecutadorRutina : AppCompatActivity() {
             var spaceRef = storageRef.child("UsersTakenPictures/$userID/Rutina_$nombre/${photofile.name}")
             val FotoSeparada = photofile.name.split("-").toTypedArray()
             Toast.makeText(this,"SEPARADA:${FotoSeparada[0]}",Toast.LENGTH_SHORT).show()
+            if(Ismeta){
+            listAllFilesMetas(userID,FotoSeparada[0],takenImage)
+            }
+            else{
             listAllFiles(userID,FotoSeparada[0],takenImage)
-
+            }
+            BorrarMetaDelDia(2)
+            terminar()
 
 
             /*var imageRef =
@@ -926,7 +938,6 @@ class EjecutadorRutina : AppCompatActivity() {
         val storage = FirebaseStorage.getInstance()
         // Listamos las fotos en firebase
 
-
         val listRef = storage.reference.child("UsersTakenPictures/$userID/Rutina_$nombre/")
         listRef.listAll()
             .addOnSuccessListener { listResult ->
@@ -936,15 +947,15 @@ class EjecutadorRutina : AppCompatActivity() {
                 for (item in listResult.items) {
                     // All the items under listRef.
                     val FotoFirebaseSeparada= (item.name.split("-").toTypedArray())
-                   //Toast.makeText(this,"SEPARADA:${FotoFirebaseSeparada[0]}",Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this,"SEPARADA:${FotoFirebaseSeparada[0]}",Toast.LENGTH_SHORT).show()
 
                     var FotoFB = FotoFirebaseSeparada[0]
                     if(FotoFB==name){
-                     //   Toast.makeText(this,"YA EXISTE UN ARCHIVO",Toast.LENGTH_SHORT).show()
+                        //   Toast.makeText(this,"YA EXISTE UN ARCHIVO",Toast.LENGTH_SHORT).show()
                         Renombrar=true
                     }
 
-                   // Toast.makeText(this,"Foto item:"+FotoFirebaseSeparada[0],Toast.LENGTH_SHORT).show()
+                    // Toast.makeText(this,"Foto item:"+FotoFirebaseSeparada[0],Toast.LENGTH_SHORT).show()
                 }
                 if(Renombrar){
                     FotoFB = ("foto_${nombre}_2")
@@ -953,7 +964,6 @@ class EjecutadorRutina : AppCompatActivity() {
                         FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Rutina_$nombre/${FotoFB}")
                     imageRef.putFile(takenImage)
                         .addOnSuccessListener { p0 ->
-
 
                         }
                         .addOnFailureListener { p0 ->
@@ -988,6 +998,114 @@ class EjecutadorRutina : AppCompatActivity() {
 
     }
 
+    private fun fotoMeta(nombreMeta: String) {
+        val alertaFoto = AlertDialog.Builder(this) //Alerta para la foto
+
+        alertaFoto.setTitle("Registro de entrenamiento") //Se ponen los textos para preguntar si quiere un ejercicio extra
+        alertaFoto.setMessage("¿Deseas tomarte una foto como registro de ejercicio para la meta ${nombreMeta}?")
+        //nombre como ruta para la rutina en firebase
+        alertaFoto.setPositiveButton("Si"){dialogInterface, i ->
+            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            //Hacer validacion de la toma de foto para analizar si ya existe una foto
+            //Formato original de la foto
+            //  photofile = getPhotoFile("foto_${nombre}_${SimpleDateFormat("yyyMMdd").format(Date())}")
+
+            photofile = getPhotoFile("foto_${nombreMeta}_1-")
+            Ismeta = true
+            val fileProvider = FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile)
+
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
+            if (takePictureIntent.resolveActivity(this.packageManager) != null) {
+                startActivityForResult(takePictureIntent, REQUEST_CODE)
+                AlertaMostrado =true
+            } else {
+                Toast.makeText(this, "Unable to open camera", Toast.LENGTH_SHORT).show()
+            }
+
+            // mandarPuntos(puntos, horas, minutos, segundos)
+        }
+        alertaFoto.setNegativeButton("No"){dialogInterface, i ->
+            dialogInterface.cancel()
+            AlertaMostrado =true
+            // mandarPuntos(puntos, horas, minutos, segundos)
+            val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
+            startActivity(intent)
+
+        }
+
+        alertaFoto.show()
+
+
+    }
+
+
+
+
+
+    fun listAllFilesMetas(userID: String, name: String, takenImage: Uri) {
+        val storage = FirebaseStorage.getInstance()
+        // Listamos las fotos en firebase
+
+
+        val listRef = storage.reference.child("UsersTakenPictures/$userID/Meta_$nombre/")
+        listRef.listAll()
+            .addOnSuccessListener { listResult ->
+                var Renombrar = false
+                var FotoFB =""
+                for (item in listResult.items) {
+                    // All the items under listRef.
+                    val FotoFirebaseSeparada= (item.name.split("-").toTypedArray())
+                    //Toast.makeText(this,"SEPARADA:${FotoFirebaseSeparada[0]}",Toast.LENGTH_SHORT).show()
+
+                    var FotoFB = FotoFirebaseSeparada[0]
+                    if(FotoFB==name){
+                        //   Toast.makeText(this,"YA EXISTE UN ARCHIVO",Toast.LENGTH_SHORT).show()
+                        Renombrar=true
+                    }
+
+                    // Toast.makeText(this,"Foto item:"+FotoFirebaseSeparada[0],Toast.LENGTH_SHORT).show()
+                }
+                if(Renombrar){
+                    FotoFB = ("foto_${nombre}_2")
+                    Toast.makeText(this,"Se ha actualizado la foto de registro de actividad",Toast.LENGTH_SHORT).show()
+                    var imageRef =
+                        FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Meta_$nombre/${FotoFB}")
+                    imageRef.putFile(takenImage)
+                        .addOnSuccessListener { p0 ->
+
+
+                        }
+                        .addOnFailureListener { p0 ->
+                        }
+                        .addOnProgressListener { p0 ->
+                        }
+                }
+                else{
+                    val FotoListInicial = (photofile.name.split("-").toTypedArray())
+                    val FotoInicial = FotoListInicial[0]
+
+                    var imageRef =
+                        FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Meta_$nombre/${FotoInicial}")
+                    imageRef.putFile(takenImage)
+                        .addOnSuccessListener { p0 ->
+
+                            Toast.makeText(applicationContext, "File Uploaded", Toast.LENGTH_SHORT).show()
+                            //  Toast.makeText(applicationContext, "${userID}", Toast.LENGTH_LONG).show()
+
+                        }
+                        .addOnFailureListener { p0 ->
+
+                            Toast.makeText(applicationContext, p0.message, Toast.LENGTH_LONG).show()
+                        }
+                }
+            }
+            .addOnFailureListener {
+
+                Toast.makeText(this,"No se que paso",Toast.LENGTH_SHORT).show()
+            }
+
+
+    }
 
 
 
