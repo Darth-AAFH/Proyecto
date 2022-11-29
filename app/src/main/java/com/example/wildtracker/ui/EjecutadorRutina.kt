@@ -1026,7 +1026,8 @@ class EjecutadorRutina : AppCompatActivity() {
         }
         alertaFoto.setNegativeButton("No"){dialogInterface, i ->
             dialogInterface.cancel()
-            AlertaMostrado =true
+            BorrarMetaDelDia(2)
+            terminar()
             // mandarPuntos(puntos, horas, minutos, segundos)
             val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
             startActivity(intent)
