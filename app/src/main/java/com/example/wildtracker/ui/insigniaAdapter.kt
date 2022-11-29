@@ -23,7 +23,7 @@ class insigniaAdapter(private val mContext: Context, private val listaRutinas: L
 
         layout.textViewNombre.text = rutina.nombre
         layout.textViewNivel.text = "Nivel: " + rutina.nivel.toString()
-        layout.imageViewInsignia.setImageResource(rutina.imagen)
+        layout.imageViewDibujo.setImageResource(rutina.imagen)
         var num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
         var nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
 

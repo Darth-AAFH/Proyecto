@@ -26,7 +26,7 @@
         tools:context=".MainActivity">
 
         <TextView
-            android:id="@+id/textViewL"
+            android:id="@+id/textViewDia1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
@@ -37,30 +37,30 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewM"
+            android:id="@+id/textViewDia2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="280dp"
             android:layout_marginEnd="10dp"
             android:text="M"
             android:textColor="#FFFFFF"
-            app:layout_constraintEnd_toStartOf="@+id/textViewJ"
+            app:layout_constraintEnd_toStartOf="@+id/textViewDia4"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewMi"
+            android:id="@+id/textViewDia3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="280dp"
             android:text="M"
             android:textColor="#FFFFFF"
-            app:layout_constraintEnd_toStartOf="@+id/textViewJ"
-            app:layout_constraintStart_toEndOf="@+id/textViewM"
+            app:layout_constraintEnd_toStartOf="@+id/textViewDia4"
+            app:layout_constraintStart_toEndOf="@+id/textViewDia2"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewJ"
+            android:id="@+id/textViewDia4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="280dp"
@@ -71,18 +71,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewV"
+            android:id="@+id/textViewDia5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="280dp"
             android:text="V"
             android:textColor="#FFFFFF"
-            app:layout_constraintEnd_toStartOf="@+id/textViewS"
-            app:layout_constraintStart_toEndOf="@+id/textViewJ"
+            app:layout_constraintEnd_toStartOf="@+id/textViewDia6"
+            app:layout_constraintStart_toEndOf="@+id/textViewDia4"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewS"
+            android:id="@+id/textViewDia6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="280dp"
@@ -90,11 +90,11 @@
             android:text="S"
             android:textColor="#FFFFFF"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/textViewJ"
+            app:layout_constraintStart_toEndOf="@+id/textViewDia4"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textViewD"
+            android:id="@+id/textViewDia7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="280dp"
@@ -112,6 +112,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewAyudaMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No hay rutinas creadas"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/listViewInsignias" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

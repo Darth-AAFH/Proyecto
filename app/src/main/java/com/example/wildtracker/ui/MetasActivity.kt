@@ -217,6 +217,17 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         Toast.makeText(this, "Se ha guardado la meta", Toast.LENGTH_LONG).show()
 
+        //tomar la fecha de inicio, la de final
+        //val diaSemHoy = diaSemana(diaHoy, mesHoy, anoHoy)
+        //diaHoy, mesHoy, anoHoy //inicio
+        //dia, mes, ano //dias de fecha de finalización
+        //D1, D2, D3, D4, D5, D6, D7 //si son true son los dias de la semana que se trabajan
+        // MainActivity.listaEventos2
+
+        //obtener diferencia de dias,
+
+        guardarMetaCalendario(diaHoy, mesHoy, anoHoy, dia, mes, ano, D1, D2, D3, D4, D5, D6, D7)
+
         //guarda la meta en la lista (si es que se tiene que trabajar hoy)
         var sdf = SimpleDateFormat("dd")
         val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
@@ -280,10 +291,6 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             cadena += " | Fecha de finalización: "
             cadena += dia; cadena += "-"; cadena += mes; cadena += "-"; cadena += ano
 
-
-
-
-
             MainActivity.listaMetas.add(cadena)
         }
 
@@ -303,6 +310,182 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
       /*  val intent = Intent(this, EjercicioActivity::class.java)
         startActivity(intent)*/
     }
+
+    fun guardarMetaCalendario(diaHoyAux: Int, mesHoyAux: Int, anoHoyAux: Int, dia: Int, mes: Int, ano: Int, D1: Boolean, D2: Boolean, D3: Boolean, D4: Boolean, D5: Boolean, D6: Boolean, D7: Boolean){
+        var diasTotales: Int //primero se obtienen los dias totales
+        var cadena = "["
+
+        if(ano == anoHoyAux){ //se comparan los años
+            if(mes == mesHoyAux){ //se comparan los meses
+                diasTotales = dia - diaHoyAux //y si son los mismos solo se obtiene la diferencia entre los días
+            }else{ //si no, se le suman los días del mes inicial
+                if(mesHoyAux == 1 || mesHoyAux == 3 || mesHoyAux == 5 || mesHoyAux == 7 || mesHoyAux == 8 || mesHoyAux == 10 || mesHoyAux == 12){
+                    diasTotales = 31 - diaHoyAux
+                }else{
+                    if(mesHoyAux == 2){
+                        diasTotales = 28 - diaHoyAux
+                    }else{
+                        diasTotales = 30 - diaHoyAux
+                    }
+                }
+
+                var i = mes - 1
+                while (mesHoyAux != i) { //se le suman los días de los meses intermedios
+                    diasTotales += if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
+                        31
+                    } else {
+                        if (i == 2) {
+                            28
+                        } else {
+                            30
+                        }
+                    }
+                    i--
+                }
+
+                diasTotales += dia //y se le suman los días del mes final
+            }
+        }else{ //para años diferentes
+            diasTotales = (ano - anoHoyAux)*365 //se obtienen los años en días
+
+            if(mes == mesHoyAux){ //si el mes es igual se resta o suma la diferencia de dias
+                if(dia > diaHoyAux){
+                    diasTotales += (dia - diaHoyAux)
+                } else{
+                    diasTotales -= (diaHoyAux - dia)
+                }
+
+            }else{
+                if(mes > mesHoyAux){ //si el mes es mayor
+
+                    //se le suman los dias del mes inicial
+                    if(mesHoyAux == 1 || mesHoyAux == 3 || mesHoyAux == 5 || mesHoyAux == 7 || mesHoyAux == 8 || mesHoyAux == 10 || mesHoyAux == 12){
+                        diasTotales = diasTotales + 31 - diaHoyAux
+                    }else{
+                        if(mesHoyAux == 2){
+                            diasTotales = diasTotales + 28 - diaHoyAux
+                        }else{
+                            diasTotales = diasTotales + 30 - diaHoyAux
+                        }
+                    }
+
+                    var i = mes - 1
+                    while (mesHoyAux != i) { //se le suman los días de los meses intermedios
+                        diasTotales += if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
+                            31
+                        } else {
+                            if (i == 2) {
+                                28
+                            } else {
+                                30
+                            }
+                        }
+                        i--
+                    }
+
+                    diasTotales += dia //y se le suman los días del mes final
+
+                } else{ //y si el mes es menor
+                    //se le restan los dias del mes inicial
+                    diasTotales -= diaHoyAux
+
+                    var i = mesHoyAux - 1
+                    while (mes != i) { //se le restan los días de los meses intermedios
+                        diasTotales -= if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
+                            31
+                        } else {
+                            if (i == 2) {
+                                28
+                            } else {
+                                30
+                            }
+                        }
+                        i--
+                    }
+
+                    //y se le restan los días del mes final
+                    if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12){
+                        diasTotales = diasTotales - 31 + dia
+                    }else{
+                        if(mes == 2){
+                            diasTotales = diasTotales - 28 + dia
+                        }else{
+                            diasTotales = diasTotales - 30 + dia
+                        }
+                    }
+                }
+            }
+        }
+
+        //se obtiene que dia de la semana es hoy para iniciar a traer las fechas
+        var diaSem = diaSemana(diaHoyAux, mesHoyAux, anoHoyAux)
+        var diaHoy = diaHoyAux; var mesHoy = mesHoyAux; var anoHoy = anoHoyAux
+
+        for(i in diasTotales downTo 0){
+            if(diaSem == 8){ //avanza los dias de la semana y reinicia si pasa el domingo
+                diaSem = 1
+            }
+
+            //avanza los dias, meses y años
+            if(mesHoy == 2){
+                if(diaHoy > 28){
+                    mesHoy += 1
+                    diaHoy = 1
+                }
+            }else{
+                if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
+                    if(diaHoy > 31){
+                        mesHoy += 1
+                        diaHoy = 1
+                    }
+                }else{
+                    if(diaHoy > 30) {
+                        mesHoy += 1
+                        diaHoy = 1
+                    }
+                }
+            }
+            if(mesHoy > 12){
+                anoHoy += 1
+                mesHoy = 1
+            }
+
+            //coloca las fechas a trabajar en la lista de eventos segun corresponda
+            if(diaSem == 1 && D1 == true){
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            }
+            if(diaSem == 2 && D2 == true){
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            }
+            if(diaSem == 3 && D3 == true){
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            }
+            if(diaSem == 4 && D4 == true){
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            }
+            if(diaSem == 5 && D5 == true){
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            }
+            if(diaSem == 6 && D6 == true){
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            }
+            if(diaSem == 7 && D7 == true){
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            }
+
+            diaSem += 1
+            diaHoy += 1
+        }
+
+        var contador = 0
+        for(i in 0 until cadena.length){
+            contador += 1
+        }
+        cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
+
+        MainActivity.listaEventos2.add(cadena)
+    }
+
     fun cargarNotificaciones(llamar:Boolean){
         val currentDate = Date()
         // convert date to calendar
@@ -328,7 +511,7 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         Log.d("FechaActual,",format(currentDate.toString()))
 
     }
-    private fun diaSemana(dia: Int, mes: Int, ano: Int): Int {  ///// revisar esto
+    private fun diaSemana(dia: Int, mes: Int, ano: Int): Int {
         val c = Calendar.getInstance()
         c.set(ano, mes, dia)
         val diaSem =  c.get(Calendar.DAY_OF_WEEK)

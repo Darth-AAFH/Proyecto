@@ -21,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_ver_ejercicios.*
 
 class VerEjercicios : AppCompatActivity(), OnNavigationItemSelectedListener {
 
@@ -41,6 +42,11 @@ class VerEjercicios : AppCompatActivity(), OnNavigationItemSelectedListener {
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listaEjercicios)
         listViewEjercicios!!.setAdapter(adapter) //La tabla se adapta en la text view
+
+
+        if(MainActivity.listaEjercicios.size <= 15){
+            textViewAyudaVerEj.setVisibility(View.VISIBLE)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

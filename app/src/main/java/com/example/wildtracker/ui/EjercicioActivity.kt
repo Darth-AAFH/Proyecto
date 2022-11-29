@@ -96,10 +96,14 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         listViewRutinas3!!.setAdapter(adapter2) //La tabla se adapta en la text view
 
         if(MainActivity.listaRutinasATrabajar.isEmpty() && MainActivity.listaMetas.isEmpty()){
-            textViewRutina3.setVisibility(View.VISIBLE)
+            textViewAyudaEj2.setVisibility(View.VISIBLE)
         }
         else{
             NotificacionRutinaPendiente()
+        }
+
+        if(MainActivity.listaRutinas.isEmpty()){
+            textViewAyudaEj1.setVisibility(View.VISIBLE)
         }
     }
 
@@ -404,7 +408,6 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             startActivity(intent)
         }
     }
-
 
     private fun createNotificationChannel() {
         val name = "Notif Channel"

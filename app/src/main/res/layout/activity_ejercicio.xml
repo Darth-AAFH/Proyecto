@@ -67,7 +67,7 @@
             app:layout_constraintTop_toBottomOf="@+id/listViewRutinas2" />
 
         <TextView
-            android:id="@+id/textViewRutina3"
+            android:id="@+id/textViewAyudaEj2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="36dp"
@@ -77,6 +77,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/listViewRutinas2" />
+
+        <TextView
+            android:id="@+id/textViewAyudaEj1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="75dp"
+            android:text="No hay rutinas creadas (ir a plantillas)"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

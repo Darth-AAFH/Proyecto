@@ -15,6 +15,25 @@
         android:layout_height="match_parent"
         tools:context=".ui.SeguimientoActivity">
 
+        <ListView
+            android:id="@+id/listViewMetas"
+            android:layout_width="350dp"
+            android:layout_height="230dp"
+            android:layout_marginBottom="42dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewAyudaSeg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No hay metas creadas"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/listViewMetas" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <RelativeLayout

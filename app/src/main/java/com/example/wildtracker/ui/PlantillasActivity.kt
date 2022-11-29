@@ -19,6 +19,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import com.example.wildtracker.musica.mPlayerActivity
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_plantillas.*
 
 class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -46,6 +47,10 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinas)
         listViewRutinas!!.setAdapter(adapter) //La tabla se adapta en la text view
+
+        if(MainActivity.listaRutinas.isEmpty()){
+            textViewAyudaPlan.setVisibility(View.VISIBLE)
+        }
     }
 
     private lateinit var drawer: DrawerLayout

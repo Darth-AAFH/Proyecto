@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -25,11 +26,15 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_plantillas.*
+import kotlinx.android.synthetic.main.activity_seguimiento.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
     private lateinit var drawer: DrawerLayout
+
+    var listViewMetas: ListView?= null
 
     var calendario: CompactCalendarView? = null
     private val dateFormatMonth = SimpleDateFormat("MMMM - yyyy", Locale.getDefault())
@@ -63,16 +68,199 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }
     }
 
+    fun cargarMetas(){
+        for(i in MainActivity.listaEventos2){ //para cada meta
+            val arreglo: Array<String?>
+            arreglo = i.split(",").toTypedArray() //toma todas las fechas en que se va a realizar la meta
+
+            val random = Random().nextInt(10) //numero random para poner los colores
+
+            for(j in arreglo){ //para cada fecha
+                var dia = j!!.split("-").toTypedArray()[0].toInt() //se toma el dia
+                var mes = j!!.split("-").toTypedArray()[1].toInt()
+                var ano = j!!.split("-").toTypedArray()[2].toInt()
+
+                //////////////////////////////////////////////////////////////
+
+                var tiempoMil = System.currentTimeMillis()
+                tiempoMil += diferenciaDeDias(dia, mes, ano) * 86400000L
+
+                //////////////////////////////////////////////////////////////
+
+                var evento = Event(Color.WHITE  , tiempoMil, "") //lo pasa a un evento
+
+                if(random == 0){evento = Event(Color.BLUE, tiempoMil, "")}
+                if(random == 1){evento = Event(Color.BLACK, tiempoMil, "")}
+                if(random == 2){evento = Event(Color.CYAN, tiempoMil, "")}
+                if(random == 3){evento = Event(Color.DKGRAY, tiempoMil, "")}
+                if(random == 4){evento = Event(Color.GRAY, tiempoMil, "")}
+                if(random == 5){evento = Event(Color.GREEN, tiempoMil, "")}
+                if(random == 6){evento = Event(Color.LTGRAY, tiempoMil, "")}
+                if(random == 7){evento = Event(Color.MAGENTA, tiempoMil, "")}
+                if(random == 8){evento = Event(Color.RED, tiempoMil, "")}
+                if(random == 9){evento = Event(Color.YELLOW, tiempoMil, "")}
+
+                calendario!!.addEvent(evento) //y lo añade al calendario
+            }
+        }
+    }
+
+    fun diferenciaDeDias(dia: Int, mes: Int, ano: Int): Long{
+        var sdf = SimpleDateFormat("dd")
+        val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
+        sdf = SimpleDateFormat("MM")
+        val mesHoy2 = sdf.format(Date()) //se obtiene el mes actual
+        sdf = SimpleDateFormat("yyyy")
+        val anoHoy2 = sdf.format(Date()) //se obiene el año actual
+        val diaHoy = diaHoy2.toInt(); val mesHoy = mesHoy2.toInt(); val anoHoy = anoHoy2.toInt()
+
+        var diasTotales: Int
+
+        if(ano == anoHoy){ //se comparan los años
+            if(mes == mesHoy){ //se comparan los meses
+                diasTotales = dia - diaHoy //y si son los mismos solo se obtiene la diferencia entre los días
+            }else{ //si no, se le suman los días del mes inicial
+                if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
+                    diasTotales = 31 - diaHoy
+                }else{
+                    if(mesHoy == 2){
+                        diasTotales = 28 - diaHoy
+                    }else{
+                        diasTotales = 30 - diaHoy
+                    }
+                }
+
+                var i = mes - 1
+                while (mesHoy != i) { //se le suman los días de los meses intermedios
+                    diasTotales += if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
+                        31
+                    } else {
+                        if (i == 2) {
+                            28
+                        } else {
+                            30
+                        }
+                    }
+                    i--
+                }
+
+                diasTotales += dia //y se le suman los días del mes final
+            }
+        }else{ //para años diferentes
+            diasTotales = (ano - anoHoy)*365 //se obtienen los años en días
+
+            if(mes == mesHoy){ //si el mes es igual se resta o suma la diferencia de dias
+                if(dia > diaHoy){
+                    diasTotales += (dia - diaHoy)
+                } else{
+                    diasTotales -= (diaHoy - dia)
+                }
+
+            }else{
+                if(mes > mesHoy){ //si el mes es mayor
+
+                    //se le suman los dias del mes inicial
+                    if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
+                        diasTotales = diasTotales + 31 - diaHoy
+                    }else{
+                        if(mesHoy == 2){
+                            diasTotales = diasTotales + 28 - diaHoy
+                        }else{
+                            diasTotales = diasTotales + 30 - diaHoy
+                        }
+                    }
+
+                    var i = mes - 1
+                    while (mesHoy != i) { //se le suman los días de los meses intermedios
+                        diasTotales += if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
+                            31
+                        } else {
+                            if (i == 2) {
+                                28
+                            } else {
+                                30
+                            }
+                        }
+                        i--
+                    }
+
+                    diasTotales += dia //y se le suman los días del mes final
+
+                } else{ //y si el mes es menor
+                    //se le restan los dias del mes inicial
+                    diasTotales -= diaHoy
+
+                    var i = mesHoy - 1
+                    while (mes != i) { //se le restan los días de los meses intermedios
+                        diasTotales -= if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
+                            31
+                        } else {
+                            if (i == 2) {
+                                28
+                            } else {
+                                30
+                            }
+                        }
+                        i--
+                    }
+
+                    //y se le restan los días del mes final
+                    if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12){
+                        diasTotales = diasTotales - 31 + dia
+                    }else{
+                        if(mes == 2){
+                            diasTotales = diasTotales - 28 + dia
+                        }else{
+                            diasTotales = diasTotales - 30 + dia
+                        }
+                    }
+                }
+            }
+        }
+
+        return diasTotales.toLong()
+    }
+
+    fun cargarListaMetas(){
+        var listaMetasVista = listOf<metas>()
+
+        for(i in MainActivity.listaAllMetas){
+            val nombre = i.split(" | ").toTypedArray()[0] //toma el nombre
+            val meta = i.split(" | ").toTypedArray()[2] //toma la meta
+
+            var descripcion = i.split(" | ").toTypedArray()[1]
+            descripcion += ", hasta el "
+            descripcion += i.split("Fecha de finalización: ").toTypedArray()[1]
+
+            var acomodo: metas
+            acomodo = metas(nombre, meta, descripcion, R.drawable.excersice_icon)
+
+            val listaMetasVistaAux = listOf(acomodo)
+            listaMetasVista += listaMetasVistaAux
+        }
+
+        val adapter = metasAdapter(this, listaMetasVista)
+        listViewMetas!!.adapter = adapter
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_seguimiento)
         initToolbar()
         initNavigationView()
 
+        listViewMetas = findViewById(R.id.listViewMetas)
+        if(MainActivity.listaMetas.isEmpty()){
+            textViewAyudaSeg.setVisibility(View.VISIBLE)
+        }
+
+        cargarListaMetas()
+
         calendario = findViewById(R.id.calendario2) as CompactCalendarView
         calendario!!.setUseThreeLetterAbbreviation(true)
 
-        cargarRutinasProgramadas()
+        cargarRutinasProgramadas() //en calendario
+        cargarMetas() //en calendario
 
         calendario!!.setListener(object : CompactCalendarViewListener {
             override fun onDayClick(fechaSeleccionada: Date) {
@@ -91,7 +279,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 crearAlerta(dia, mes, ano)
             }
             override fun onMonthScroll(firstDayOfNewMonth: Date) {
-
+                
             }
         })
     }

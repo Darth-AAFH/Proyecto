@@ -15,11 +15,11 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity.Companion.useremail
 import com.example.wildtracker.R
 import com.example.wildtracker.musica.mPlayerActivity
-import com.example.wildtracker.ui.MainActivity.Companion.InsigniasSwitch
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_plantillas.*
 import org.achartengine.ChartFactory
 import org.achartengine.GraphicalView
 import org.achartengine.model.XYMultipleSeriesDataset
@@ -34,6 +34,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var drawer: DrawerLayout
 
     var listViewInsignias: ListView?= null
+
+    var textViewDia1: TextView?= null; var textViewDia2: TextView?= null; var textViewDia3: TextView?= null
+    var textViewDia4: TextView?= null; var textViewDia5: TextView?= null; var textViewDia6: TextView?= null
+    var textViewDia7: TextView?= null
 
     private var grafica: GraphicalView? = null
     private var datosGrafica: XYSeries? = null
@@ -59,12 +63,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val listaRanking3 = ArrayList<String>()
         val listaRanking4 = ArrayList<String>()
         var listaRutinasATrabajarAux = ArrayList<String>()
-        var listaMetasAux = ArrayList<String>() //guarda las ultimas fechas trabajadas de las metas
-        var listaMetasAux2 = ArrayList<String>() //guarda las metas que se trabajan hoy solo su ulitma fecha trabajada, para poder borarlas en la misma lista
+        var listaMetasAux = ArrayList<String>() //guarda las ultimas fechas trabajadas de todas las metas (para las notificaciones)
+        var listaMetasAux2 = ArrayList<String>() //guarda las metas que se trabajan hoy (solo su ulitma fecha trabajada), para poder borrarlas en la lista de metas
+        var listaAllMetas = ArrayList<String>() //guarda todas las metas creadas
         var validadorListas = true
         //
-        var lunes: Double = 0.0; var martes: Double = 0.0; var miercoles: Double = 0.0; var jueves : Double = 0.0
-        var viernes: Double = 0.0; var sabado: Double = 0.0; var domingo: Double = 0.0
+        var dia1: Double = 0.0; var dia2: Double = 0.0; var dia3: Double = 0.0; var dia4 : Double = 0.0
+        var dia5: Double = 0.0; var dia6: Double = 0.0; var dia7: Double = 0.0
+        var diaSemanaHoy: Int = 0
         //
 
         var listaRutinas = ArrayList<String>()
@@ -75,7 +81,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val listaSeguidores = ArrayList<String>()
         var listaRutinasATrabajar = ArrayList<String>()
         var listaMetas = ArrayList<String>()
-        var listaEventos1 = ArrayList<String>()
+        var listaEventos1 = ArrayList<String>() //para las rutinas programadas
+        var listaEventos2 = ArrayList<String>() //para las metas
     }
 
     private fun CargarListas(){
@@ -90,6 +97,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             listaRutinasVista.addAll(listaRutinasVista2)
 
             validadorAcomodo = false
+        }
+
+        if(listaRutinas.isEmpty()){
+            textViewAyudaPlan.setVisibility(View.VISIBLE)
         }
     }
 
@@ -259,13 +270,13 @@ private fun myPreferences() {
         datosGrafica = XYSeries("Simple Data")
         informacionGrafica.addSeries(datosGrafica)
 
-        datosGrafica!!.add(0.0, lunes)
-        datosGrafica!!.add(1.0, martes)
-        datosGrafica!!.add(2.0, miercoles)
-        datosGrafica!!.add(3.0, jueves)
-        datosGrafica!!.add(4.0, viernes)
-        datosGrafica!!.add(5.0, sabado)
-        datosGrafica!!.add(6.0, domingo)
+        datosGrafica!!.add(0.0, dia1)
+        datosGrafica!!.add(1.0, dia2)
+        datosGrafica!!.add(2.0, dia3)
+        datosGrafica!!.add(3.0, dia4)
+        datosGrafica!!.add(4.0, dia5)
+        datosGrafica!!.add(5.0, dia6)
+        datosGrafica!!.add(6.0, dia7)
 
         seriesRendererGrafica = XYSeriesRenderer()
         renderGrafica.addSeriesRenderer(seriesRendererGrafica)
@@ -288,12 +299,47 @@ private fun myPreferences() {
         initNavigationView()
         myPreferences()
         listViewInsignias = findViewById(R.id.listViewInsignias)
+        textViewDia1 = findViewById(R.id.textViewDia1)
+        textViewDia2 = findViewById(R.id.textViewDia2)
+        textViewDia3 = findViewById(R.id.textViewDia3)
+        textViewDia4 = findViewById(R.id.textViewDia4)
+        textViewDia5 = findViewById(R.id.textViewDia5)
+        textViewDia6 = findViewById(R.id.textViewDia6)
+        textViewDia7 = findViewById(R.id.textViewDia7)
 
         iniciarGrafica()
         CargarListas()
 
         insigniasRutinas()
 
+        if(diaSemanaHoy == 7){
+            textViewDia1!!.setText("L"); textViewDia2!!.setText("M"); textViewDia3!!.setText("M"); textViewDia4!!.setText("J")
+            textViewDia5!!.setText("V"); textViewDia6!!.setText("S"); textViewDia7!!.setText("D")
+        }
+        if(diaSemanaHoy == 6){
+            textViewDia2!!.setText("L"); textViewDia3!!.setText("M"); textViewDia4!!.setText("M"); textViewDia5!!.setText("J")
+            textViewDia6!!.setText("V"); textViewDia7!!.setText("S"); textViewDia1!!.setText("D")
+        }
+        if(diaSemanaHoy == 5){
+            textViewDia3!!.setText("L"); textViewDia4!!.setText("M"); textViewDia5!!.setText("M"); textViewDia6!!.setText("J")
+            textViewDia7!!.setText("V"); textViewDia1!!.setText("S"); textViewDia2!!.setText("D")
+        }
+        if(diaSemanaHoy == 4){
+            textViewDia4!!.setText("L"); textViewDia5!!.setText("M"); textViewDia6!!.setText("M"); textViewDia7!!.setText("J")
+            textViewDia1!!.setText("V"); textViewDia2!!.setText("S"); textViewDia3!!.setText("D")
+        }
+        if(diaSemanaHoy == 3){
+            textViewDia5!!.setText("L"); textViewDia6!!.setText("M"); textViewDia7!!.setText("M"); textViewDia1!!.setText("J")
+            textViewDia2!!.setText("V"); textViewDia3!!.setText("S"); textViewDia4!!.setText("D")
+        }
+        if(diaSemanaHoy == 2){
+            textViewDia6!!.setText("L"); textViewDia7!!.setText("M"); textViewDia1!!.setText("M"); textViewDia2!!.setText("J")
+            textViewDia3!!.setText("V"); textViewDia4!!.setText("S"); textViewDia5!!.setText("D")
+        }
+        if(diaSemanaHoy == 1){
+            textViewDia7!!.setText("L"); textViewDia1!!.setText("M"); textViewDia2!!.setText("M"); textViewDia3!!.setText("J")
+            textViewDia4!!.setText("V"); textViewDia5!!.setText("S"); textViewDia6!!.setText("D")
+        }
     }
 
     private fun initToolbar() {
