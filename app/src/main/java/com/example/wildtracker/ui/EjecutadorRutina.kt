@@ -54,7 +54,7 @@ class EjecutadorRutina : AppCompatActivity() {
     var listado = ArrayList<String>()
     var datos = ArrayList<String>()
     companion object {
-        private const val REQUEST_CODE = 42
+        const val REQUEST_CODE = 42
 
     }
     lateinit var timer: Timer

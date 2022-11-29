@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,6 +25,9 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.graphics.red
 import com.example.wildtracker.musica.mPlayerActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_ejercicio.*
@@ -39,6 +43,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private val db = FirebaseFirestore.getInstance()
     var num = 0; var nombre  = ""; var xp: Int? = null
+    var nombreRutina =""
     var fecha = ""
     var dia = 0; var mes = 0; var ano = 0
     var meta = ""
@@ -48,7 +53,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         var cadena = "["
 
         if(!MainActivity.listaMetasAux.isEmpty()) { //para tomar las ultimas fechas trabajadas de las metas
-            NotificacionRutinaPendiente()
+           // NotificacionRutinaPendiente()
             for (i in 0..MainActivity.listaMetasAux.size - 1) {
                 cadena += MainActivity.listaMetasAux[i]// agrega las fechas
                 cadena += "," //y una coma
@@ -99,7 +104,9 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             textViewAyudaEj2.setVisibility(View.VISIBLE)
         }
         else{
-            NotificacionRutinaPendiente()
+            //
+           // NotificacionRutinaPendiente()
+            NotificacionRutinaPen()
         }
 
         if(MainActivity.listaRutinas.isEmpty()){
@@ -107,7 +114,45 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
+    private fun NotificacionRutinaPen() {
+        val intent = Intent(this, EjercicioActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        var builder = NotificationCompat.Builder(this, "Chanel1")
+            .setSmallIcon(R.drawable.icon2)
+            .setContentTitle("Recordatorio")
+            .setContentText("Tienes una rutina pendiente por hacer!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(2, builder.build())
+        }
+
+    }
+    private fun createNotificationChannel2() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = ("Chanel1")
+            val descriptionText = "description"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("Chanel1", name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+
     fun notificacion2semanas(ultimasFechas: Array<String?>) {
+
+
         var sdf = SimpleDateFormat("dd")
         val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
         sdf = SimpleDateFormat("MM")
@@ -153,7 +198,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 if (dia <= diaNot && mes == mesNot && ano == anoNot || mes < mesNot && ano == anoNot || ano < anoNot) {
                     mandarNot = true
 
-                    if(i == MainActivity.listaMetasAux[contador - 1]){ //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
+                    if(i == MainActivity.listaMetasAux[contador ]){ //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
                         var posicion: Int //para la lista aux (que guarda todas las ultimas fechas trabajadas de las metas)
                         posicion = MainActivity.listaMetasAux.indexOf(i) //la busca en la lista
                         MainActivity.listaMetasAux.removeAt(posicion)
@@ -164,8 +209,10 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         if(mandarNot){
             Toast.makeText(this, "Tienes metas pendientes a caducar", Toast.LENGTH_SHORT).show()
+            //NotificacionNoHasAvanzado2Semanas()
             NotificacionNoHasAvanzado()
         }
+
     }
 
     fun notificacion3semanas(ultimasFechas: Array<String?>) {
@@ -226,6 +273,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                         val dia2 = j!!.split("-").toTypedArray()[0].toInt() //el ultimo dia trabajado de las metas que se hace hoy
                         val mes2 = j!!.split("-").toTypedArray()[1].toInt()
                         val ano2 = j!!.split("-").toTypedArray()[2].toInt()
+                         nombreRutina = PerfilActivity.nombreRutinaEliminada
 
                         var cadena = "" //va a tomar el nombre para borra la meta de la base de datos
                         //var cadena2 = ultimasFechas[contador] //va a tomar la ultima fecha trabajada para borrarla de la lista de metas aux
@@ -254,6 +302,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if(mandarNot){
             Toast.makeText(this, "Se ha borrado una meta que no se trabajaba en 3 semanas", Toast.LENGTH_SHORT).show()
             //Notificacion se ha borrado meta
+            //NotificacionRutinaBorrada()
+            NotificacionRutinaEliminada(nombreRutina)
         }
     }
 
@@ -265,7 +315,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         initToolbar()
         initNavigationView()
         createNotificationChannel()
-
+        createNotificationChannel2()
         listViewRutinas2 = findViewById(R.id.listViewRutinas2)
         listViewRutinas3 = findViewById(R.id.listViewRutinas3)
         textViewRutina = findViewById(R.id.textViewRutina)
@@ -416,8 +466,55 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val channel = NotificationChannel(channelID, name, importance)
         channel.description = desc
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+       // notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
         notificationManager.createNotificationChannel(channel)
     }
+private fun NotificacionNoHasAvanzado2Semanas(){
+
+    val intent = Intent(this, EjercicioActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    }
+    val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+    var builder = NotificationCompat.Builder(this, "Chanel1")
+        .setSmallIcon(R.drawable.icon2)
+        .setContentTitle("Recordatorio")
+        .setContentText("No has progresado en 2 semanas en una rutina °-°!")
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        .setContentIntent(pendingIntent)
+        .setAutoCancel(true)
+    with(NotificationManagerCompat.from(this)) {
+        // notificationId is a unique int for each notification that you must define
+        notify(3, builder.build())
+    }
+
+
+}
+
+
+    private fun NotificacionRutinaEliminada(toString: String) {
+
+        val intent = Intent(this, EjercicioActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        var builder = NotificationCompat.Builder(this, "Chanel1")
+            .setSmallIcon(R.drawable.icon2)
+            .setContentTitle("Oye ${PerfilActivity.NombreUsuario}!")
+            .setContentText("Se ha eliminado la rutina $toString ")
+            .setColor(titleColor.red)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(1, builder.build())
+        }
+
+
+    }
+
+
 
     private fun NotificacionNoHasAvanzado() {
         val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
@@ -428,7 +525,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         val pendingIntent = PendingIntent.getBroadcast(
             this@EjercicioActivity,
-            notificationID,
+            3,
             intent,
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
@@ -447,6 +544,31 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
         val title = "Recordatorio"
         val message = "Tienes una rutina pendiente por hacer! "
+        intent.putExtra(titleExtra, title)
+        intent.putExtra(messageExtra, message)
+
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            this@EjercicioActivity,
+            2,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val time =getTime()
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            time,
+            pendingIntent
+        )
+        Log.d("RutinaProgramada", java.lang.String.format(time.toString()))
+
+    }
+    private fun NotificacionRutinaBorrada() {
+        val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
+        val title = "Rutina Borrada"
+        val message = "A falta de seguimiento de ejercicio hemos eliminado una rutina "
         intent.putExtra(titleExtra, title)
         intent.putExtra(messageExtra, message)
 
