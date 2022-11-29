@@ -270,18 +270,19 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             if(D6){cadena += "sab "}
             if(D7){cadena += "dom "}
             cadena += "| " //se le agraga texto de formato
+            var cadena2 = cadena
             //se le agrega las repeticiones, peso o tiempo a trabajar
             if(Peso){ //con un texto que diferencie peso, repeticiones o tiempo
-                cadena += "Levantar: "
-                cadena += DatoInicial //se le agrega las repeticiones, peso o tiempo a trabajar
-                cadena += "kg"
+                cadena += "Levantar: "; cadena2 += "Levantar: ";
+                cadena += DatoInicial; cadena2 += DatoFinal; //se le agrega las repeticiones, peso o tiempo a trabajar
+                cadena += "kg"; cadena2 += "kg"
             }
             if(Repeticion){ //con un texto que diferencie peso, repeticiones o tiempo
-                cadena += "Repeticiones: "
-                cadena += DatoInicial //se le agrega las repeticiones, peso o tiempo a trabajar
+                cadena += "Repeticiones: "; cadena2 += "Repeticiones: "
+                cadena += DatoInicial; cadena += DatoFinal //se le agrega las repeticiones, peso o tiempo a trabajar
             }
             if(Tiempo){ //con un texto que diferencie peso, repeticiones o tiempo
-                cadena += "Completar: "
+                cadena += "Completar: "; cadena2 += "Completar: "
 
                 var minutos = DatoInicial
                 var horas = 0
@@ -297,16 +298,32 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 }
                 cadena += minutos //se le agregan los minutos
                 cadena += "min"
+
+                var minutos2 = DatoFinal
+                var horas2 = 0
+
+                while(minutos2 >= 60){ //se obtienen las horas
+                    minutos2 -= 60
+                    horas2 += 1
+                }
+
+                if(horas2 != 0){
+                    cadena2 += horas2 //se le agrega el tiempo con horas
+                    cadena2 += "hr "
+                }
+                cadena2 += minutos2 //se le agregan los minutos
+                cadena2 += "min"
             }
             //se le agrega la fecha de finalizacion
-            cadena += " | Fecha de finalización: "
+            cadena += " | Fecha de finalización: "; cadena2 += " | Fecha de finalización: "
             cadena += dia; cadena += "-"; cadena += mes; cadena += "-"; cadena += ano
+            cadena2 += dia; cadena2 += "-"; cadena2 += mes; cadena2 += "-"; cadena2 += ano
 
             MainActivity.listaMetas.add(cadena)
 
+            MainActivity.listaAllMetas.add(cadena2)
 
             //Tomarse foto de inicio de la meta
-
         }
 
         cargarNotificaciones(true)

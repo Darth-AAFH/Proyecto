@@ -740,6 +740,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                 suma = false //para no actualizar los datos
                             }
 
+                            var cadena3 = cadena
+
                             //se le agrega las repeticiones, peso o tiempo a trabajar
                             if(meta.get("peso") as Boolean){ //con un texto que diferencie
                                 cadena += "Levantar: "
@@ -799,14 +801,49 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                     if((meta.get("ultDia") as Long).toInt() != diaHoy || (meta.get("ultMes") as Long).toInt() != mesHoy || (meta.get("ultAno") as Long).toInt() != anoHoy){ //si la meta no se ha trabajado hoy
                                         MainActivity.listaMetas.add(cadena)
 
-                                        var cadena3 = (meta.get("ultDia") as Long).toString() + "-" + (meta.get("ultMes") as Long).toString() + "-" + (meta.get("ultAno") as Long).toString()
-                                        MainActivity.listaMetasAux2.add(cadena3)
+                                        var cadena4 = (meta.get("ultDia") as Long).toString() + "-" + (meta.get("ultMes") as Long).toString() + "-" + (meta.get("ultAno") as Long).toString()
+                                        MainActivity.listaMetasAux2.add(cadena4)
                                     }
                                 }
                                 var cadena2 = (meta.get("ultDia") as Long).toString() + "-" + (meta.get("ultMes") as Long).toString() + "-" + (meta.get("ultAno") as Long).toString()
                                 MainActivity.listaMetasAux.add(cadena2) //guarda todas las metas no caducadas (su ultimo dia trabajado)
                                 cargarFechasDeMetas(diaHoy, mesHoy, anoHoy, diaF, mesF, anoF, lun == 1, mar == 2, mier == 3, juev == 4, vier == 5, sab == 6, dom == 7)//carga todas las fechas en que se trabaja una meta
-                                MainActivity.listaAllMetas.add(cadena)
+
+                                //se le agrega las repeticiones, peso o tiempo final
+                                if(meta.get("peso") as Boolean){ //con un texto que diferencie
+                                    cadena3 += "Levantar: "
+                                    cadena3 += (meta.get("datoFinal") as Long).toString()
+                                    cadena3 += "kg"
+                                }
+                                if(meta.get("repeticion") as Boolean){ //con un texto que diferencie
+                                    cadena3 += "Repeticiones: "
+                                    cadena3 += (meta.get("datoFinal") as Long).toString()
+                                }
+                                if(meta.get("tiempo") as Boolean){ //con un texto que diferencie
+                                    cadena3 += "Completar: "
+
+                                    var minutos = 0
+                                    var horas = 0
+
+                                    minutos = (meta.get("datoFinal") as Long).toInt()
+
+                                    while(minutos >= 60){ //se obtienen las horas
+                                        minutos -= 60
+                                        horas += 1
+                                    }
+
+                                    if(horas != 0){
+                                        cadena3 += horas //se le agrega el tiempo con horas
+                                        cadena3 += "hr "
+                                    }
+                                    cadena3 += minutos //se le agregan los minutos
+                                    cadena3 += "min"
+                                }
+                                //se le agrega la fecha de finalizacion
+                                cadena3 += " | Fecha de finalización: "
+                                cadena3 += diaF; cadena3 += "-"; cadena3 += mesF; cadena3 += "-"; cadena3 += anoF
+
+                                MainActivity.listaAllMetas.add(cadena3)
                             }
                         }
                     }

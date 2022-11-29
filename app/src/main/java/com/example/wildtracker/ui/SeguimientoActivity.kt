@@ -250,7 +250,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         initNavigationView()
 
         listViewMetas = findViewById(R.id.listViewMetas)
-        if(MainActivity.listaMetas.isEmpty()){
+        if(MainActivity.listaAllMetas.isEmpty()){
             textViewAyudaSeg.setVisibility(View.VISIBLE)
         }
 

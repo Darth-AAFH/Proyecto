@@ -132,6 +132,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
 
     }
+
     private fun createNotificationChannel2() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -149,10 +150,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
-
     fun notificacion2semanas(ultimasFechas: Array<String?>) {
-
-
         var sdf = SimpleDateFormat("dd")
         val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
         sdf = SimpleDateFormat("MM")
@@ -198,10 +196,18 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 if (dia <= diaNot && mes == mesNot && ano == anoNot || mes < mesNot && ano == anoNot || ano < anoNot) {
                     mandarNot = true
 
-                    if(i == MainActivity.listaMetasAux[contador ]){ //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
-                        var posicion: Int //para la lista aux (que guarda todas las ultimas fechas trabajadas de las metas)
-                        posicion = MainActivity.listaMetasAux.indexOf(i) //la busca en la lista
-                        MainActivity.listaMetasAux.removeAt(posicion)
+                    if(MainActivity.listaMetasAux.size > 1) {
+                        if (i == MainActivity.listaMetasAux[contador - 1]) { //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
+                            var posicion: Int //para la lista aux (que guarda todas las ultimas fechas trabajadas de las metas)
+                            posicion = MainActivity.listaMetasAux.indexOf(i) //la busca en la lista
+                            MainActivity.listaMetasAux.removeAt(posicion)
+                        }
+                    }else{
+                        if (i == MainActivity.listaMetasAux[0]) { //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
+                            var posicion: Int //para la lista aux (que guarda todas las ultimas fechas trabajadas de las metas)
+                            posicion = MainActivity.listaMetasAux.indexOf(i) //la busca en la lista
+                            MainActivity.listaMetasAux.removeAt(posicion)
+                        }
                     }
                 }
             }
@@ -261,11 +267,24 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 if (dia <= diaNot && mes == mesNot && ano == anoNot || mes < mesNot && ano == anoNot || ano < anoNot) {
                     mandarNot = true
 
-                    if(i == MainActivity.listaMetasAux[contador]){ //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
-                        var posicion2: Int //para la lista aux (que guarda todas las ultimas fechas trabajadas de las metas)
-                        posicion2 = MainActivity.listaMetasAux.indexOf(i) //la busca en la lista
-                        MainActivity.listaMetasAux.removeAt(posicion2)
+                    if(MainActivity.listaMetasAux.size > 1) {
+                        if (i == MainActivity.listaMetasAux[contador - 1]) { //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
+                            var posicion2: Int //para la lista aux (que guarda todas las ultimas fechas trabajadas de las metas)
+                            posicion2 = MainActivity.listaMetasAux.indexOf(i) //la busca en la lista
+                            MainActivity.listaMetasAux.removeAt(posicion2)
+                            MainActivity.listaAllMetas.removeAt(posicion2)
+                            MainActivity.listaEventos2.removeAt(posicion2)
+                        }
+                    }else{
+                        if (i == MainActivity.listaMetasAux[0]) { //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
+                            var posicion2: Int //para la lista aux (que guarda todas las ultimas fechas trabajadas de las metas)
+                            posicion2 = MainActivity.listaMetasAux.indexOf(i) //la busca en la lista
+                            MainActivity.listaMetasAux.removeAt(posicion2)
+                            MainActivity.listaAllMetas.removeAt(posicion2)
+                            MainActivity.listaEventos2.removeAt(posicion2)
+                        }
                     }
+
 
                     var cont = -1
                     for(j in MainActivity.listaMetasAux2){ //para borrar la meta de las listas y de la base de datos
@@ -276,7 +295,6 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                          nombreRutina = PerfilActivity.nombreRutinaEliminada
 
                         var cadena = "" //va a tomar el nombre para borra la meta de la base de datos
-                        //var cadena2 = ultimasFechas[contador] //va a tomar la ultima fecha trabajada para borrarla de la lista de metas aux
 
                         if(dia2 <= diaNot && mes2 == mesNot && ano2 == anoNot || mes2 < mesNot && ano2 == anoNot || ano2 < anoNot){ //borra la meta de las listas
                             val posicion: Int
@@ -470,26 +488,25 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         notificationManager.createNotificationChannel(channel)
     }
-private fun NotificacionNoHasAvanzado2Semanas(){
 
-    val intent = Intent(this, EjercicioActivity::class.java).apply {
-        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+    private fun NotificacionNoHasAvanzado2Semanas(){
+
+        val intent = Intent(this, EjercicioActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        var builder = NotificationCompat.Builder(this, "Chanel1")
+            .setSmallIcon(R.drawable.icon2)
+            .setContentTitle("Recordatorio")
+            .setContentText("No has progresado en 2 semanas en una rutina °-°!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(3, builder.build())
+        }
     }
-    val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-    var builder = NotificationCompat.Builder(this, "Chanel1")
-        .setSmallIcon(R.drawable.icon2)
-        .setContentTitle("Recordatorio")
-        .setContentText("No has progresado en 2 semanas en una rutina °-°!")
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-        .setContentIntent(pendingIntent)
-        .setAutoCancel(true)
-    with(NotificationManagerCompat.from(this)) {
-        // notificationId is a unique int for each notification that you must define
-        notify(3, builder.build())
-    }
-
-
-}
 
 
     private fun NotificacionRutinaEliminada(toString: String) {
