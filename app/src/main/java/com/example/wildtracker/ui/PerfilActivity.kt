@@ -161,7 +161,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         startActivity(intent)
     }
 
-    var tiempoAux: Int = 0
+    var tiempoAux: Double = 0.0
     @SuppressLint("SimpleDateFormat")
     private fun CargarTiempos() {
         var sdf = SimpleDateFormat("dd")
@@ -223,41 +223,41 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                         if(idFecha == dias[1]){ //si la fecha es igual al dia lunes guardado
                             MainActivity.dia1 = (tiempos.get("minutos") as Long).toDouble() //guardara el tiempo en la variable del dia
 
-                            tiempoAux = (tiempos.get("horas") as Long).toInt() //de horas a minutos
+                            tiempoAux = (tiempos.get("horas") as Long).toDouble() //de horas a minutos
                             MainActivity.dia1 += tiempoAux * 60
 
-                            tiempoAux = (tiempos.get("segundos") as Long).toInt() //y de segundos a minutos
+                            tiempoAux = (tiempos.get("segundos") as Long).toDouble() //y de segundos a minutos
                             MainActivity.dia1 += tiempoAux / 60
                         }
                         if(idFecha == dias[2]){ //y así con las demas fechas
                             MainActivity.dia2 = (tiempos.get("minutos") as Long).toDouble()
-                            tiempoAux = (tiempos.get("horas") as Long).toInt(); MainActivity.dia2 += tiempoAux * 60
-                            tiempoAux = (tiempos.get("segundos") as Long).toInt(); MainActivity.dia2 += tiempoAux / 60
+                            tiempoAux = (tiempos.get("horas") as Long).toDouble(); MainActivity.dia2 += tiempoAux * 60
+                            tiempoAux = (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia2 += tiempoAux / 60
                         }
                         if(idFecha == dias[3]){
                             MainActivity.dia3 = (tiempos.get("minutos") as Long).toDouble()
-                            tiempoAux = (tiempos.get("horas") as Long).toInt(); MainActivity.dia3 += tiempoAux * 60
-                            tiempoAux = (tiempos.get("segundos") as Long).toInt(); MainActivity.dia3 += tiempoAux / 60
+                            tiempoAux = (tiempos.get("horas") as Long).toDouble(); MainActivity.dia3 += tiempoAux * 60
+                            tiempoAux = (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia3 += tiempoAux / 60
                         }
                         if(idFecha == dias[4]){
                             MainActivity.dia4 = (tiempos.get("minutos") as Long).toDouble()
-                            tiempoAux = (tiempos.get("horas") as Long).toInt(); MainActivity.dia4 += tiempoAux * 60
-                            tiempoAux = (tiempos.get("segundos") as Long).toInt(); MainActivity.dia4 += tiempoAux / 60
+                            tiempoAux = (tiempos.get("horas") as Long).toDouble(); MainActivity.dia4 += tiempoAux * 60
+                            tiempoAux = (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia4 += tiempoAux / 60
                         }
                         if(idFecha == dias[5]){
                             MainActivity.dia5 = (tiempos.get("minutos") as Long).toDouble()
-                            tiempoAux = (tiempos.get("horas") as Long).toInt(); MainActivity.dia5 += tiempoAux * 60
-                            tiempoAux = (tiempos.get("segundos") as Long).toInt(); MainActivity.dia5 += tiempoAux / 60
+                            tiempoAux = (tiempos.get("horas") as Long).toDouble(); MainActivity.dia5 += tiempoAux * 60
+                            tiempoAux = (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia5 += tiempoAux / 60
                         }
                         if(idFecha == dias[6]){
                             MainActivity.dia6 = (tiempos.get("minutos") as Long).toDouble()
-                            tiempoAux = (tiempos.get("horas") as Long).toInt(); MainActivity.dia6 += tiempoAux * 60
-                            tiempoAux = (tiempos.get("segundos") as Long).toInt(); MainActivity.dia6 += tiempoAux / 60
+                            tiempoAux = (tiempos.get("horas") as Long).toDouble(); MainActivity.dia6 += tiempoAux * 60
+                            tiempoAux = (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia6 += tiempoAux / 60
                         }
                         if(idFecha == dias[7]){
                             MainActivity.dia7 = (tiempos.get("minutos") as Long).toDouble()
-                            tiempoAux = (tiempos.get("horas") as Long).toInt(); MainActivity.dia7 += tiempoAux * 60
-                            tiempoAux = (tiempos.get("segundos") as Long).toInt(); MainActivity.dia7 += tiempoAux / 60
+                            tiempoAux = (tiempos.get("horas") as Long).toDouble(); MainActivity.dia7 += tiempoAux * 60
+                            tiempoAux = (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia7 += tiempoAux / 60
                         }
                     }
                 }

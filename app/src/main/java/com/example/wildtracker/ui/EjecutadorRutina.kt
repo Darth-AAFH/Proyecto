@@ -901,7 +901,9 @@ class EjecutadorRutina : AppCompatActivity() {
             else{
             listAllFiles(userID,FotoSeparada[0],takenImage)
             }
-            BorrarMetaDelDia(2)
+            if(num == -1) {
+                BorrarMetaDelDia(2)
+            }
             terminar()
 
 
