@@ -289,7 +289,12 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
                 Log.d(TAG, "Month was scrolled to: " + firstDayOfNewMonth);
                 val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
-                toolbar.title = mes[1].toString()
+                if(mes[1] == "Jan") toolbar.title = "Enero"; if(mes[1] == "Feb") toolbar.title = "Febrero"
+                if(mes[1] == "Mar") toolbar.title = "Marzo"; if(mes[1] == "Apr") toolbar.title = "Abril"
+                if(mes[1] == "May") toolbar.title = "Mayo"; if(mes[1] == "Jun") toolbar.title = "Junio"
+                if(mes[1] == "Jul") toolbar.title = "Julio"; if(mes[1] == "Aug") toolbar.title = "Agosto"
+                if(mes[1] == "Sep") toolbar.title = "Septiembre"; if(mes[1] == "Oct") toolbar.title = "Octubre"
+                if(mes[1] == "Nov") toolbar.title = "Noviembre"; if(mes[1] == "Dec") toolbar.title = "Diciembre"
                 setSupportActionBar(toolbar)
 
                 com.example.wildtracker.ui.drawer = findViewById(R.id.drawerlayout)!!
