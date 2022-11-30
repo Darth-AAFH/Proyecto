@@ -1,10 +1,12 @@
 package com.example.wildtracker.ui
 
 import android.app.AlertDialog
+import android.content.ContentValues.TAG
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -29,6 +31,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_plantillas.*
 import kotlinx.android.synthetic.main.activity_seguimiento.*
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
@@ -279,7 +283,23 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 crearAlerta(dia, mes, ano)
             }
             override fun onMonthScroll(firstDayOfNewMonth: Date) {
-                
+                val formatter:String = firstDayOfNewMonth.toString()
+                var mes = formatter.split(" ")
+
+
+                Log.d(TAG, "Month was scrolled to: " + firstDayOfNewMonth);
+                val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
+                toolbar.title = mes[1].toString()
+                setSupportActionBar(toolbar)
+
+                com.example.wildtracker.ui.drawer = findViewById(R.id.drawerlayout)!!
+                val toggle = ActionBarDrawerToggle(
+                    this@SeguimientoActivity, com.example.wildtracker.ui.drawer, toolbar, R.string.bar_title,
+                    R.string.navigation_drawer_close
+                )
+                com.example.wildtracker.ui.drawer.addDrawerListener(toggle)
+                toggle.syncState()
+
             }
         })
     }
@@ -352,7 +372,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     private fun initToolbar() {
-        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
+       /* val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         toolbar.title = "Seguimiento"
         setSupportActionBar(toolbar)
 
@@ -362,7 +382,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             R.string.navigation_drawer_close
         )
         com.example.wildtracker.ui.drawer.addDrawerListener(toggle)
-        toggle.syncState()
+        toggle.syncState()*/
     }
     private fun initNavigationView() {
 
