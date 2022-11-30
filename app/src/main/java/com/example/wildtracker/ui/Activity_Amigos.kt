@@ -90,6 +90,64 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     }
 
+    private fun CargarSeguidoresSiguiendome () {
+        //Funcion que se trae los datos de la lista de personas a las que el usuario esta siguiendo
+        val values = ArrayList<String>() //Values es la lista de seguidores a que será llenada con datos de firebase
+        values.clear() // Limpiamos la vista cada que se presione el boton para evitar escribir mas de alguna vez el dato
+        var mListView = findViewById<ListView>(R.id.userlistSiguiendome) //Seteamos la lista de usuarios en una variable para poder manipularla
+        mListView.emptyView //Vaciamos la lista
+        mListView.adapter = ArrayAdapter(this,
+            android.R.layout.simple_list_item_1, values) //Seteamos los valores de la lista a que se adapten con los valores que se cargue de la lista de usuarios
+        //Accesar a la coleccion de amigos del usuario
+        var listaSeguidores = ArrayList<String>()
+        var perfilGet ="" //Variable para el nombre de usuario
+        val progresDialog = ProgressDialog(this)
+        progresDialog.setMessage("Cargando Datos")
+        progresDialog.setCancelable(false)
+        progresDialog.show()
+        MainActivity.ListaSiguiendome.clear() //Cada que se traiga los datos de firebase actualizara la lista de seguidores global
+        //Sentencia para consultar los datos de firebase en la ruta de usuarios, el usuario actual loggeado y en sus seguidores
+        db.collection("users").document(MainActivity.user!!).collection("Siguiendo").get().addOnSuccessListener { result ->
+            for (document in result) {
+                perfilGet = document.get("Nombre").toString()
+                if(progresDialog.isShowing) {
+                    //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
+                    //Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
+                    Thread.sleep(1_00)  // wait for 1 second
+                    MainActivity.ListaSiguiendome.add(perfilGet)//Añade a la lista de seguidores los nombres encontrados en firebase
+                }
+
+            }
+            Thread.sleep(1_00)  // wait for 1 second
+            MainActivity.ListaSiguiendome.sort() // Acomoda la lista de seguidores numericamente 0,1,2....
+            val array = ArrayList<String>()
+            var i = MainActivity.ListaSiguiendome.size - 1
+            while (i != -1) {
+                //Acomoda el arreglo para mostrar en orden a los seguidores
+                array.add(MainActivity.ListaSiguiendome[i])
+                i--
+            }
+
+            progresDialog.dismiss()
+            val arrayAdapter: ArrayAdapter<*>
+            // val users = MainActivity.listaSeguidores
+
+            // access the listView from xml file
+
+            arrayAdapter = ArrayAdapter(this,
+                android.R.layout.simple_list_item_1, array)
+            //Pinta la lista de seguidores en orden
+            mListView.adapter = arrayAdapter
+
+        }
+
+
+
+
+
+
+
+    }
 
     private fun AlertaSeguidor(perfil: String) {
         //Alert dialog para interactuar sobre un usuario ya elegido
@@ -185,13 +243,24 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         initToolbar()
         initNavigationView()
         val arrayAdapter: ArrayAdapter<*>
+        val arrayAdapterSiguiendome: ArrayAdapter<*>
         val users = MainActivity.listaSeguidores
+        val siguiendome = MainActivity.ListaSiguiendome
         //Seteamos la mListView como la lista de seguidores
         var mListView = findViewById<ListView>(R.id.userlist)
         arrayAdapter = ArrayAdapter(this,
             android.R.layout.simple_list_item_1, users)
         mListView.adapter = arrayAdapter
         CargarSeguidores() //Cargamos a los seguidores
+
+
+        var mListViewSiguiendome = findViewById<ListView>(R.id.userlistSiguiendome)
+        arrayAdapterSiguiendome = ArrayAdapter(this,
+            android.R.layout.simple_list_item_1, siguiendome)
+        mListViewSiguiendome.adapter = arrayAdapterSiguiendome
+        CargarSeguidoresSiguiendome() //Cargamos a los seguidores
+
+
         buttonRecargar = findViewById(R.id.buttonRecargar) //Boton para recargar la lista
         // listViewRanking = findViewById(R.id.listViewRanking)
 
@@ -203,12 +272,99 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         mListView!!.setOnItemClickListener  { parent, view, position, id ->
             //Al dar click en un elemento de la vista se traere el texto que se clickeo y mandara llamar a AlertaSeguidor para interactuar con ese elemento
             var Perfil:String  =  MainActivity.listaSeguidores[(MainActivity.listaSeguidores!!.size.toInt()- position.toInt())-1]
-
             AlertaSeguidor(Perfil )
+        }
+        mListViewSiguiendome!!.setOnItemClickListener { parent, view, position, id ->
+
+            var Perfil:String  =  MainActivity.ListaSiguiendome[(MainActivity.ListaSiguiendome!!.size.toInt()- position.toInt())-1]
+            AlertaSiguiendome(Perfil )
         }
 
 
 
+    }
+
+    private fun AlertaSiguiendome(perfil: String) {
+        //Alert dialog para interactuar sobre un usuario ya elegido
+        var perfil2 = perfil.substringAfter(" ")
+        val progresDialog = ProgressDialog(this)
+        // Toast.makeText(this, perfil2, Toast.LENGTH_SHORT).show()
+        var perfilGet: String
+        progresDialog.setMessage("Cargando Datos")
+        progresDialog.setCancelable(false)
+        progresDialog.show()
+
+        builder = AlertDialog.Builder(this)
+        builder.setTitle("Siguiendo a ${perfil}")
+            .setMessage("Que deseas hacer con este usuario")
+            .setCancelable(true)
+            .setPositiveButton("Eliminar") { dialogInterface, it ->
+                //Funcion para eliminar al usuario de mis amigos
+                db.collection("users").document(MainActivity.user!!).collection("Siguiendome").get().addOnSuccessListener { result ->
+                    //Consulta en la base de datos los usuarios que coicidan con el nombre de usuario a dejar de seguir, cuando lo encuentra lo elimina
+                    for (document in result) {
+                        perfilGet = document.get("Nombre").toString()
+                        if(perfilGet==perfil){
+                            document.reference.delete()
+                        }
+                    }
+
+                }
+            }
+            .setNeutralButton("Ver estadisticas") { dialogInterface, it ->
+                //Buscar al usuario y traerse sus estadisticas
+                db.collection("users").get().addOnSuccessListener { result ->
+                    for (document in result) {
+
+                        perfilGet = document.get("Name").toString()
+                        if(perfilGet==perfil){
+                            //Traerse los datos necesarios
+                            /*   builderStadistics = AlertDialog.Builder(this)
+                               builderStadistics.setTitle("Estadisticas de $perfil")
+                                   .setCancelable(true)
+                                   .setNeutralButton("OK"){
+                                       dialogInterface,it->*/
+                            alertScrollView(perfil) //Muestra las estadisticas del usuario seleccionado
+
+                        }
+                        /* else{
+                             builder = AlertDialog.Builder(this)
+                             builder.setTitle("Alerta")
+                                 .setMessage("No se encontro el usuario es posible que haya cambiado de nombre")
+                                 .setCancelable(true)
+                                 .setPositiveButton("Dejar de seguir") { dialogInterface, it ->
+                                     //Funcion para eliminar al usuario de mis amigos
+                                     db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
+                                         for (document in result) {
+
+                                             perfilGet = document.get("Nombre").toString()
+
+                                             if(perfilGet==perfil){
+                                                 document.reference.delete()
+                                             }
+                                         }
+
+                                     }
+                                     dialogInterface.dismiss()
+                                 }
+                                 .setNegativeButton("Cancelar") { dialogInterface, it -> //dialogInterface.cancel()
+                                     dialogInterface.dismiss()
+                                 }
+                                 .show()
+                         } */
+
+                    }
+                }
+
+            }
+            .setNegativeButton("Ver más") { dialogInterface, it -> //dialogInterface.cancel()
+                val intent = Intent(this, RankingActivity::class.java)
+                startActivity(intent)
+            }
+
+            .show()
+//Toast.makeText(this,perfil,Toast.LENGTH_SHORT).show()
+        progresDialog.dismiss()
     }
 
     private fun initToolbar() {
