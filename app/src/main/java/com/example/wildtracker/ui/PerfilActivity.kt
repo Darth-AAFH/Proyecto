@@ -601,7 +601,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             diaF = (meta.get("diaFinal") as Long).toInt()
                             mesF = (meta.get("mesFinal") as Long).toInt()
                             anoF = (meta.get("anoFinal") as Long).toInt()
-                            nombreRutinaEliminada = (meta.get("nombre")) as String
+
                             //primero se obtiene la diferencia de dias entre las dos fechas (diasTotales)
                             if(anoF == anoHoy){ //se comparan los años
                                 if(mesF == mesHoy){ //se comparan los meses
@@ -802,11 +802,13 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                         MainActivity.listaMetas.add(cadena)
 
                                         var cadena4 = (meta.get("ultDia") as Long).toString() + "-" + (meta.get("ultMes") as Long).toString() + "-" + (meta.get("ultAno") as Long).toString()
-                                        MainActivity.listaMetasAux2.add(cadena4)
+                                        MainActivity.listaMetasDates.add(cadena4)
                                     }
                                 }
                                 var cadena2 = (meta.get("ultDia") as Long).toString() + "-" + (meta.get("ultMes") as Long).toString() + "-" + (meta.get("ultAno") as Long).toString()
-                                MainActivity.listaMetasAux.add(cadena2) //guarda todas las metas no caducadas (su ultimo dia trabajado)
+                                MainActivity.listaMetasAllDates.add(cadena2) //guarda todas las metas no caducadas (su ultimo dia trabajado)
+                                MainActivity.listaMetasVistaDates.add(cadena2)
+
                                 cargarFechasDeMetas(diaHoy, mesHoy, anoHoy, diaF, mesF, anoF, lun == 1, mar == 2, mier == 3, juev == 4, vier == 5, sab == 6, dom == 7)//carga todas las fechas en que se trabaja una meta
 
                                 //se le agrega las repeticiones, peso o tiempo final
@@ -844,6 +846,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                 cadena3 += diaF; cadena3 += "-"; cadena3 += mesF; cadena3 += "-"; cadena3 += anoF
 
                                 MainActivity.listaAllMetas.add(cadena3)
+                                MainActivity.listaMetasVista.add(cadena3)
                             }
                         }
                     }

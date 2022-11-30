@@ -49,21 +49,35 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     var meta = ""
     var tiempo = ""
 
-    private fun CargarUltimasFechasDeMetas(): Array<String?>{
+    private fun CargarUltimasFechasDeMetas(opcion: Int): Array<String?>{
         var cadena = "["
 
-        if(!MainActivity.listaMetasAux.isEmpty()) { //para tomar las ultimas fechas trabajadas de las metas
-           // NotificacionRutinaPendiente()
-            for (i in 0..MainActivity.listaMetasAux.size - 1) {
-                cadena += MainActivity.listaMetasAux[i]// agrega las fechas
-                cadena += "," //y una coma
-            }
+        if(opcion == 1) {
+            if (!MainActivity.listaMetasAllDates.isEmpty()) { //para tomar las ultimas fechas trabajadas de las metas
+                for (i in 0..MainActivity.listaMetasAllDates.size - 1) {
+                    cadena += MainActivity.listaMetasAllDates[i]// agrega las fechas
+                    cadena += "," //y una coma
+                }
 
-            var contador = 0
-            for(i in 0 until cadena.length){
-                contador += 1
+                var contador = 0
+                for (i in 0 until cadena.length) {
+                    contador += 1
+                }
+                cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
             }
-            cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
+        }else{
+            if (!MainActivity.listaMetasDates.isEmpty()) { //para tomar las ultimas fechas trabajadas de las metas
+                for (i in 0..MainActivity.listaMetasDates.size - 1) {
+                    cadena += MainActivity.listaMetasDates[i]// agrega las fechas
+                    cadena += "," //y una coma
+                }
+
+                var contador = 0
+                for (i in 0 until cadena.length) {
+                    contador += 1
+                }
+                cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
+            }
         }
 
         val arreglo: Array<String?>
@@ -86,10 +100,10 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        var arreglo = CargarUltimasFechasDeMetas()
+        var arreglo = CargarUltimasFechasDeMetas(1)
         notificacion3semanas(arreglo) //para las notificaciones si una meta no se trabaja hace dos semanas
 
-        arreglo = CargarUltimasFechasDeMetas()
+        arreglo = CargarUltimasFechasDeMetas(1)
         notificacion2semanas(arreglo) //para avisarle que rutinas que no ha trabajado en 3 semanas se borraron
 
         ////////////////////////////////////////////////////////////////////////////////////////////
@@ -196,19 +210,11 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 if (dia <= diaNot && mes == mesNot && ano == anoNot || mes < mesNot && ano == anoNot || ano < anoNot) {
                     mandarNot = true
 
-                    if(MainActivity.listaMetasAux.size > 1) {
-                        if (i == MainActivity.listaMetasAux[contador - 1]) { //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
-                            var posicion: Int //para la lista aux (que guarda todas las ultimas fechas trabajadas de las metas)
-                            posicion = MainActivity.listaMetasAux.indexOf(i) //la busca en la lista
-                            MainActivity.listaMetasAux.removeAt(posicion)
-                        }
-                    }else{
-                        if (i == MainActivity.listaMetasAux[0]) { //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
-                            var posicion: Int //para la lista aux (que guarda todas las ultimas fechas trabajadas de las metas)
-                            posicion = MainActivity.listaMetasAux.indexOf(i) //la busca en la lista
-                            MainActivity.listaMetasAux.removeAt(posicion)
-                        }
-                    }
+                    //borrar meta de listas: all dates, all metas
+                    var posicion: Int
+                    posicion = MainActivity.listaMetasAllDates.indexOf(dia.toString()+"-"+mes.toString()+"-"+ano.toString())
+                    MainActivity.listaMetasAllDates.removeAt(posicion)
+                    MainActivity.listaAllMetas.removeAt(posicion)
                 }
             }
         }
@@ -234,7 +240,6 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         var diaNot = diaHoy - 21; var mesNot = mesHoy; var anoNot = anoHoy
 
         var dia = 0; var mes = 0; var ano = 0
-        var contador = -1
 
         var mandarNot = false
 
@@ -259,60 +264,56 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         if(ultimasFechas[0] != "[") {
             for (i in ultimasFechas) { //recorre las ultimas fechas trabajadas de la meta
-                contador += 1
-                dia = ultimasFechas[contador]!!.split("-").toTypedArray()[0].toInt() //el ultimo dia trabajado de todas las metas
-                mes = ultimasFechas[contador]!!.split("-").toTypedArray()[1].toInt()
-                ano = ultimasFechas[contador]!!.split("-").toTypedArray()[2].toInt()
+                dia = i!!.split("-").toTypedArray()[0].toInt() //el ultimo dia trabajado de todas las metas
+                mes = i!!.split("-").toTypedArray()[1].toInt()
+                ano = i!!.split("-").toTypedArray()[2].toInt()
 
-                if (dia <= diaNot && mes == mesNot && ano == anoNot || mes < mesNot && ano == anoNot || ano < anoNot) {
+                if (dia < diaNot && mes == mesNot && ano == anoNot || mes < mesNot && ano == anoNot || ano < anoNot) {
                     mandarNot = true
 
-                    if(MainActivity.listaMetasAux.size > 1) {
-                        if (i == MainActivity.listaMetasAux[contador - 1]) { //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
-                            var posicion2: Int //para la lista aux (que guarda todas las ultimas fechas trabajadas de las metas)
-                            posicion2 = MainActivity.listaMetasAux.indexOf(i) //la busca en la lista
-                            MainActivity.listaMetasAux.removeAt(posicion2)
-                            MainActivity.listaAllMetas.removeAt(posicion2)
-                            MainActivity.listaEventos2.removeAt(posicion2)
-                        }
-                    }else{
-                        if (i == MainActivity.listaMetasAux[0]) { //borra la fecha de listaMetasAux para que no se repita la notificacion varias veces
-                            var posicion2: Int //para la lista aux (que guarda todas las ultimas fechas trabajadas de las metas)
-                            posicion2 = MainActivity.listaMetasAux.indexOf(i) //la busca en la lista
-                            MainActivity.listaMetasAux.removeAt(posicion2)
-                            MainActivity.listaAllMetas.removeAt(posicion2)
-                            MainActivity.listaEventos2.removeAt(posicion2)
-                        }
-                    }
+                    //borrar meta de listas: all dates, eventos2, all metas,
+                    var cadena = ""
 
+                    var posicion: Int
+                    posicion = MainActivity.listaMetasAllDates.indexOf(dia.toString()+"-"+mes.toString()+"-"+ano.toString())
+                    MainActivity.listaMetasAllDates.removeAt(posicion)
+                    cadena = MainActivity.listaAllMetas[posicion] //toma la meta que se va a borrar
+                    MainActivity.listaAllMetas.removeAt(posicion)
+                    MainActivity.listaEventos2.removeAt(posicion)
 
-                    var cont = -1
-                    for(j in MainActivity.listaMetasAux2){ //para borrar la meta de las listas y de la base de datos
-                        cont += 1
-                        val dia2 = j!!.split("-").toTypedArray()[0].toInt() //el ultimo dia trabajado de las metas que se hace hoy
-                        val mes2 = j!!.split("-").toTypedArray()[1].toInt()
-                        val ano2 = j!!.split("-").toTypedArray()[2].toInt()
-                         nombreRutina = PerfilActivity.nombreRutinaEliminada
+                    //borrar lista metas, metas dates, y de la base de datos
+                    var arreglo = CargarUltimasFechasDeMetas(2)
+                    if(arreglo[0] != "[") {
+                        for (j in arreglo) { //para borrar la meta de las listas y de la base de datos
+                            val dia2 = j!!.split("-")
+                                .toTypedArray()[0].toInt() //el ultimo dia trabajado de las metas que se hace hoy
+                            val mes2 = j!!.split("-").toTypedArray()[1].toInt()
+                            val ano2 = j!!.split("-").toTypedArray()[2].toInt()
 
-                        var cadena = "" //va a tomar el nombre para borra la meta de la base de datos
-
-                        if(dia2 <= diaNot && mes2 == mesNot && ano2 == anoNot || mes2 < mesNot && ano2 == anoNot || ano2 < anoNot){ //borra la meta de las listas
-                            val posicion: Int
-                            posicion = MainActivity.listaMetasAux2.indexOf(j) //la busca en la lista
-                            cadena = MainActivity.listaMetas[cont]
-                            MainActivity.listaMetasAux2.removeAt(posicion) //y la borra
-                            MainActivity.listaMetas.removeAt(posicion)
-                        }
-
-                        if(cadena != "") {
-                            cadena = cadena!!.split(" | ").toTypedArray()[0]
-
-                            //borra la meta de la base de datos
-                            MainActivity.user?.let{ usuario ->
-                                db.collection("users").document(usuario).collection("metas").document(cadena).delete()
+                            if (dia == dia2 && mes == mes2 && ano == ano2) {
+                                posicion =
+                                    MainActivity.listaMetasDates.indexOf(dia.toString() + "-" + mes.toString() + "-" + ano.toString())
+                                MainActivity.listaMetasDates.removeAt(posicion)
+                                MainActivity.listaMetas.removeAt(posicion)
                             }
                         }
                     }
+
+                    //borra la meta de la base de datos
+                    if(cadena != "") {
+                        cadena = cadena!!.split(" | ").toTypedArray()[0]
+
+                        MainActivity.user?.let{ usuario ->
+                            db.collection("users").document(usuario).collection("metas").document(cadena).delete()
+                        }
+                    }
+
+                    //borra meta de la lista de vista (las que se muestran en seguimiento) y lista metas vista fechas
+                    posicion = MainActivity.listaMetasVistaDates.indexOf(dia.toString()+"-"+mes.toString()+"-"+ano.toString())
+                    MainActivity.listaMetasVistaDates.removeAt(posicion)
+                    MainActivity.listaMetasVista.removeAt(posicion)
+
+                    nombreRutina = cadena
                 }
             }
         }

@@ -224,7 +224,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     fun cargarListaMetas(){
         var listaMetasVista = listOf<metas>()
 
-        for(i in MainActivity.listaAllMetas){
+        for(i in MainActivity.listaMetasVista){
             val nombre = i.split(" | ").toTypedArray()[0] //toma el nombre
             val meta = i.split(" | ").toTypedArray()[2] //toma la meta
 
@@ -250,7 +250,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         initNavigationView()
 
         listViewMetas = findViewById(R.id.listViewMetas)
-        if(MainActivity.listaAllMetas.isEmpty()){
+        if(MainActivity.listaMetasVista.isEmpty()){
             textViewAyudaSeg.setVisibility(View.VISIBLE)
         }
 

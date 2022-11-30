@@ -230,15 +230,6 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         Toast.makeText(this, "Se ha guardado la meta", Toast.LENGTH_LONG).show()
 
-        //tomar la fecha de inicio, la de final
-        //val diaSemHoy = diaSemana(diaHoy, mesHoy, anoHoy)
-        //diaHoy, mesHoy, anoHoy //inicio
-        //dia, mes, ano //dias de fecha de finalización
-        //D1, D2, D3, D4, D5, D6, D7 //si son true son los dias de la semana que se trabajan
-        // MainActivity.listaEventos2
-
-        //obtener diferencia de dias,
-
         guardarMetaCalendario(diaHoy, mesHoy, anoHoy, dia, mes, ano, D1, D2, D3, D4, D5, D6, D7)
 
         //guarda la meta en la lista (si es que se tiene que trabajar hoy)
@@ -272,19 +263,19 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             if(D6){cadena += "sab "}
             if(D7){cadena += "dom "}
             cadena += "| " //se le agraga texto de formato
-            var cadena2 = cadena
+
             //se le agrega las repeticiones, peso o tiempo a trabajar
             if(Peso){ //con un texto que diferencie peso, repeticiones o tiempo
-                cadena += "Levantar: "; cadena2 += "Levantar: ";
-                cadena += DatoInicial; cadena2 += DatoFinal; //se le agrega las repeticiones, peso o tiempo a trabajar
-                cadena += "kg"; cadena2 += "kg"
+                cadena += "Levantar: "
+                cadena += DatoInicial //se le agrega las repeticiones, peso o tiempo a trabajar
+                cadena += "kg"
             }
             if(Repeticion){ //con un texto que diferencie peso, repeticiones o tiempo
-                cadena += "Repeticiones: "; cadena2 += "Repeticiones: "
-                cadena += DatoInicial; cadena += DatoFinal //se le agrega las repeticiones, peso o tiempo a trabajar
+                cadena += "Repeticiones: "
+                cadena += DatoInicial //se le agrega las repeticiones, peso o tiempo a trabajar
             }
             if(Tiempo){ //con un texto que diferencie peso, repeticiones o tiempo
-                cadena += "Completar: "; cadena2 += "Completar: "
+                cadena += "Completar: "
 
                 var minutos = DatoInicial
                 var horas = 0
@@ -300,33 +291,61 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 }
                 cadena += minutos //se le agregan los minutos
                 cadena += "min"
-
-                var minutos2 = DatoFinal
-                var horas2 = 0
-
-                while(minutos2 >= 60){ //se obtienen las horas
-                    minutos2 -= 60
-                    horas2 += 1
-                }
-
-                if(horas2 != 0){
-                    cadena2 += horas2 //se le agrega el tiempo con horas
-                    cadena2 += "hr "
-                }
-                cadena2 += minutos2 //se le agregan los minutos
-                cadena2 += "min"
             }
             //se le agrega la fecha de finalizacion
-            cadena += " | Fecha de finalización: "; cadena2 += " | Fecha de finalización: "
+            cadena += " | Fecha de finalización: "
             cadena += dia; cadena += "-"; cadena += mes; cadena += "-"; cadena += ano
-            cadena2 += dia; cadena2 += "-"; cadena2 += mes; cadena2 += "-"; cadena2 += ano
 
             MainActivity.listaMetas.add(cadena)
-
-            MainActivity.listaAllMetas.add(cadena2)
-
+            MainActivity.listaMetasDates.add((diaHoy - 1).toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString())
             //Tomarse foto de inicio de la meta
         }
+
+        var cadena = Nombre //toma el nombre de la meta
+        cadena += " | " //se le agraga texto de formato
+        if(D1){cadena += "lun "} //se le agregan los dias a trabajar
+        if(D2){cadena += "mar "}
+        if(D3){cadena += "mier "}
+        if(D4){cadena += "juev "}
+        if(D5){cadena += "vier "}
+        if(D6){cadena += "sab "}
+        if(D7){cadena += "dom "}
+        cadena += "| " //se le agraga texto de formato
+
+        //se le agrega las repeticiones, peso o tiempo a trabajar
+        if(Peso){ //con un texto que diferencie peso, repeticiones o tiempo
+            cadena += "Levantar: ";
+            cadena += DatoFinal; //se le agrega las repeticiones, peso o tiempo a trabajar
+            cadena += "kg"
+        }
+        if(Repeticion){ //con un texto que diferencie peso, repeticiones o tiempo
+            cadena += "Repeticiones: "
+            cadena += DatoFinal //se le agrega las repeticiones, peso o tiempo a trabajar
+        }
+        if(Tiempo){ //con un texto que diferencie peso, repeticiones o tiempo
+            cadena += "Completar: "
+
+            var minutos2 = DatoFinal
+            var horas2 = 0
+
+            while(minutos2 >= 60){ //se obtienen las horas
+                minutos2 -= 60
+                horas2 += 1
+            }
+
+            if(horas2 != 0){
+                cadena += horas2 //se le agrega el tiempo con horas
+                cadena += "hr "
+            }
+            cadena += minutos2 //se le agregan los minutos
+            cadena += "min"
+        }
+        //se le agrega la fecha de finalizacion
+        cadena += " | Fecha de finalización: "
+        cadena += dia; cadena += "-"; cadena += mes; cadena += "-"; cadena += ano
+
+        MainActivity.listaAllMetas.add(cadena)
+        MainActivity.listaMetasAllDates.add((diaHoy - 1).toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString())
 
         cargarNotificaciones(true)
         //para poner en blanco las cajas de datos

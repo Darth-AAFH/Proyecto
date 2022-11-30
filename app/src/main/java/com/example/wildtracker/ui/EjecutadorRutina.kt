@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -28,8 +27,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
-import kotlinx.android.synthetic.main.activity_login.view.*
-import kotlinx.android.synthetic.main.ayuda_layout.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -276,7 +273,7 @@ class EjecutadorRutina : AppCompatActivity() {
             val posicion: Int
             posicion = MainActivity.listaMetas.indexOf(linea) //la busca en la lista
             MainActivity.listaMetas.removeAt(posicion) //y la borra
-            MainActivity.listaMetasAux2.removeAt(posicion)
+            MainActivity.listaMetasDates.removeAt(posicion)
         }
     }
 
