@@ -511,29 +511,38 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             var latitudActual = latLng.latitude ;  var longitudActual = latLng.longitude
             var latitud =""; var longitud=""
             var EstaCerca = false
+            var Valido = false
             for (document in result) {
                 var tipo = document.get("tipo").toString()
                 var descripcion = document.get("descripcion").toString()
                 latitud = document.get("latitud").toString();  latitud.toDouble()
                 longitud = document.get("longitud").toString();longitud.toDouble()
 
+
                 //Obtener ubicaciones
                 val miPosicion = LatLng1(latitudActual, longitudActual)
                 var posicionCercana = LatLng1(  latitud.toDouble(),longitud.toDouble())
+                if(descripcion.uppercase()==edDescripction.uppercase()){
 
+                    Valido=false
+                }
+                else{ Valido=true   }
                 //Operacion para determinar la distancia entre 2 puntos
                 distance = SphericalUtil.computeDistanceBetween(miPosicion,posicionCercana)
                 if(distance<101&&tipo.equals(selectedPlace)){
                     EstaCerca=true
-
                 }
 
             }
-            if(!EstaCerca)
+            if(!EstaCerca &&!Valido)
                 addMarker(latLng, edDescripction, selectedPlace)
-           else{
+           else if(EstaCerca){
                 Toast.makeText(this,"No puedes añadir un marcador aqui, ya hay otro en 100m o menos",Toast.LENGTH_SHORT).show()
            }
+            else{
+                Toast.makeText(this,"Ya existe un marcador con ese nombre",Toast.LENGTH_LONG).show()
+            }
+
 
 
 
