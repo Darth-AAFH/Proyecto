@@ -31,6 +31,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private lateinit var drawer: DrawerLayout
     private val db = FirebaseFirestore.getInstance()
     private var listViewRanking: ListView?= null
+    private var buttonRecargar: Button ?= null
     private lateinit var builder: AlertDialog.Builder
     private fun CargarRanking () {
 
@@ -153,6 +154,21 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 }
             }
 
+            db.collection("users").get().addOnSuccessListener { result ->
+
+                for (document in result) {
+                    var documentRef = document.id
+                    NombreValidador = document.get("Name").toString()
+                    if(usuario==NombreValidador){
+                        db.collection("users").document(documentRef).collection("Siguiendo").document().set(
+                            hashMapOf(
+                                "Nombre" to PerfilActivity.NombreUsuario
+                            )
+                        )
+                    }
+                    }
+            }
+
         }
         return (Siguiendo)
     }
@@ -165,13 +181,13 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         initToolbar()
         initNavigationView()
 
+        buttonRecargar = findViewById(R.id.buttonRecargar)
         listViewRanking = findViewById(R.id.listViewRanking)
         progresDialog.setMessage("Cargando Datos")
         progresDialog.setCancelable(false)
         progresDialog.show()
         CargarRanking()
 
-        /*
         buttonRecargar!!.setOnClickListener{////////////////////////////////////
             progresDialog.setMessage("Cargando Datos")
             progresDialog.setCancelable(false)
@@ -188,7 +204,6 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
             }
         }
-         */
 
         if(progresDialog.isShowing){
             Handler(Looper.getMainLooper()).postDelayed(
@@ -248,7 +263,6 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             R.id.nav_musica ->callMusica()
             R.id.nav_amigos ->callAmigosActivity()
             R.id.Settings->callAjustesActivity()
-            R.id.nav_seguimiento->callSeguimientoActivity()
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
