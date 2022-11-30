@@ -33,10 +33,9 @@ class FotosActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         setContentView(R.layout.activity_fotos)
         initToolbar()
         initNavigationView()
-        val progresDialog = ProgressDialog(this)
-        progresDialog.setMessage("Cargando Imagen")
-        progresDialog.setCancelable(false)
-        progresDialog.show()
+        var pd = ProgressDialog(this)
+        pd.setTitle("Cargando fotos")
+        pd.show()
         val intento = intent
         val db = FirebaseFirestore.getInstance()
 
@@ -48,8 +47,10 @@ class FotosActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         val FotoFinal =  FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Rutina_${insigniaAdapter.nombreCajaFotos}/foto_${insigniaAdapter.nombreCajaFotos}_2")
         val FotoMetaInicial = FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Meta_${metasAdapter.nombreCajaFotos}/foto_${metasAdapter.nombreCajaFotos}_1")
         val FotoMetaFinal = FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Meta_${metasAdapter.nombreCajaFotos}/foto_${metasAdapter.nombreCajaFotos}_2")
-        val localfileInicial =  File.createTempFile("tempImage", "jpg")
-        val localfileFinal = File.createTempFile("tempImage", "jpg")
+        val localfileInicialFotoInicial =  File.createTempFile("tempImage", "jpg")
+        val localfileFinalFotoFinal = File.createTempFile("tempImage", "jpg")
+        val localfileInicialFotoInicialMeta =  File.createTempFile("tempImage", "jpg")
+        val localfileFinalFotoFinalMeta = File.createTempFile("tempImage", "jpg")
 
         /* storageRef.getFile(localfile).addOnSuccessListener {
              val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
@@ -65,11 +66,9 @@ class FotosActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                  ).show()
              }
  */
-        FotoInicial.getFile(localfileInicial).addOnSuccessListener {
-            if (progresDialog.isShowing) {
-                progresDialog.dismiss()
+        FotoInicial.getFile(localfileInicialFotoInicial).addOnSuccessListener {
+            if (pd.isShowing) {
                 try {
-                    progresDialog.show()
                     MainActivity.user?.let { it1 ->
                         db.collection("users").document(MainActivity.user!!).get()
                             .addOnSuccessListener {
@@ -88,90 +87,21 @@ class FotosActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                     }
                 }
             }
-            val bitmapInicial = BitmapFactory.decodeFile(localfileInicial.absolutePath)
+
+            var bitmapInicial = BitmapFactory.decodeFile(localfileInicialFotoInicial.absolutePath)
             fotoinicio.setImageBitmap(bitmapInicial)
-            Toast.makeText(this, "${intento.getStringExtra("Rutina")}", Toast.LENGTH_LONG).show() // Muestra el nombre de la rutina cachado en insignia adapter
-        }.addOnFailureListener {
-            Toast.makeText(
-                this,
-                "Recuperación de imagen fallida, sube otra foto",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
-        FotoFinal.getFile(localfileFinal).addOnSuccessListener {
-            if (progresDialog.isShowing) {
-                progresDialog.dismiss()
-                try {
-
-
-                    MainActivity.user?.let { it1 ->
-                        db.collection("users").document(MainActivity.user!!).get()
-                            .addOnSuccessListener {
-                                PerfilActivity.usernameDb = ((it.get("Name") as String?).toString())
-                            }
-                    }
-
-                    // usernameDb = edName.text.toString()
-
-                } catch (e: Exception) {
-                    MainActivity.user?.let { it1 ->
-                        db.collection("users").document(MainActivity.user!!).get()
-                            .addOnSuccessListener {
-                                PerfilActivity.usernameDb = ((it.get("Name") as String?).toString())
-                            }
-                    }
-                }
-            }
-            val bitmapFinal = BitmapFactory.decodeFile(localfileFinal.absolutePath)
-            ultimafoto.setImageBitmap(bitmapFinal)
-            Toast.makeText(this, "${intento.getStringExtra("Rutina")}", Toast.LENGTH_LONG).show() // Muestra el nombre de la rutina cachado en insignia adapter
-        }.addOnFailureListener {
-            Toast.makeText(
-                this,
-                "Recuperación de imagen fallida, sube otra foto",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
-        FotoMetaInicial.getFile(localfileInicial).addOnSuccessListener {
-            if (progresDialog.isShowing) {
-                progresDialog.dismiss()
-                try {
-                    progresDialog.show()
-                    MainActivity.user?.let { it1 ->
-                        db.collection("users").document(MainActivity.user!!).get()
-                            .addOnSuccessListener {
-                                PerfilActivity.usernameDb = ((it.get("Name") as String?).toString())
-                            }
-                    }
-
-                    // usernameDb = edName.text.toString()
-
-                } catch (e: Exception) {
-                    MainActivity.user?.let { it1 ->
-                        db.collection("users").document(MainActivity.user!!).get()
-                            .addOnSuccessListener {
-                                PerfilActivity.usernameDb = ((it.get("Name") as String?).toString())
-                            }
-                    }
-                }
-            }
-            val bitmapInicial = BitmapFactory.decodeFile(localfileInicial.absolutePath)
+            bitmapInicial.recycle()
+            bitmapInicial = BitmapFactory.decodeFile(localfileInicialFotoInicial.absolutePath)
             fotoinicio.setImageBitmap(bitmapInicial)
-            Toast.makeText(this, "${intento.getStringExtra("Meta")}", Toast.LENGTH_LONG).show() // Muestra el nombre de la rutina cachado en insignia adapter
+            pd.dismiss()
+           // Toast.makeText(this, "${intento.getStringExtra("Rutina")}", Toast.LENGTH_LONG).show() // Muestra el nombre de la rutina cachado en insignia adapter
         }.addOnFailureListener {
-            Toast.makeText(
-                this,
-                "Recuperación de imagen fallida, sube otra foto",
-                Toast.LENGTH_SHORT
-            ).show()
-
 
         }
-        FotoMetaFinal.getFile(localfileFinal).addOnSuccessListener {
-            if (progresDialog.isShowing) {
-                progresDialog.dismiss()
+
+        FotoFinal.getFile(localfileFinalFotoFinal).addOnSuccessListener {
+            if (pd.isShowing) {
+
                 try {
 
 
@@ -193,20 +123,94 @@ class FotosActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                     }
                 }
             }
-            val bitmapFinal = BitmapFactory.decodeFile(localfileFinal.absolutePath)
+            var bitmapFinal = BitmapFactory.decodeFile(localfileFinalFotoFinal.absolutePath)
+            bitmapFinal.recycle()
             ultimafoto.setImageBitmap(bitmapFinal)
-            Toast.makeText(this, "${intento.getStringExtra("Meta")}", Toast.LENGTH_LONG).show() // Muestra el nombre de la rutina cachado en insignia adapter
+            bitmapFinal = BitmapFactory.decodeFile(localfileFinalFotoFinal.absolutePath)
+            ultimafoto.setImageBitmap(bitmapFinal)
+            pd.dismiss()
+           // Toast.makeText(this, "${intento.getStringExtra("Rutina")}", Toast.LENGTH_LONG).show() // Muestra el nombre de la rutina cachado en insignia adapter
+        }.addOnFailureListener {
+
+            //pd.dismiss()
+        }
+
+        FotoMetaInicial.getFile(localfileInicialFotoInicialMeta).addOnSuccessListener {
+            if (pd.isShowing) {
+                try {
+                    pd.show()
+                    MainActivity.user?.let { it1 ->
+                        db.collection("users").document(MainActivity.user!!).get()
+                            .addOnSuccessListener {
+                                PerfilActivity.usernameDb = ((it.get("Name") as String?).toString())
+                            }
+                    }
+
+                    // usernameDb = edName.text.toString()
+
+                } catch (e: Exception) {
+                    MainActivity.user?.let { it1 ->
+                        db.collection("users").document(MainActivity.user!!).get()
+                            .addOnSuccessListener {
+                                PerfilActivity.usernameDb = ((it.get("Name") as String?).toString())
+                            }
+                    }
+                }
+            }
+            var bitmapInicial = BitmapFactory.decodeFile(localfileInicialFotoInicialMeta.absolutePath)
+            bitmapInicial.recycle()
+            fotoinicio.setImageBitmap(bitmapInicial)
+            bitmapInicial = BitmapFactory.decodeFile(localfileInicialFotoInicialMeta.absolutePath)
+            fotoinicio.setImageBitmap(bitmapInicial)
+            pd.dismiss()
+         //   Toast.makeText(this, "${intento.getStringExtra("Meta")}", Toast.LENGTH_LONG).show() // Muestra el nombre de la rutina cachado en insignia adapter
+        }.addOnFailureListener {
+
+           // pd.dismiss()
+
+        }
+        FotoMetaFinal.getFile(localfileFinalFotoFinalMeta).addOnSuccessListener {
+            if (pd.isShowing) {
+                try {
+
+
+                    MainActivity.user?.let { it1 ->
+                        db.collection("users").document(MainActivity.user!!).get()
+                            .addOnSuccessListener {
+                                PerfilActivity.usernameDb = ((it.get("Name") as String?).toString())
+                            }
+                    }
+                    // usernameDb = edName.text.toString()
+
+                } catch (e: Exception) {
+                    MainActivity.user?.let { it1 ->
+                        db.collection("users").document(MainActivity.user!!).get()
+                            .addOnSuccessListener {
+                                PerfilActivity.usernameDb = ((it.get("Name") as String?).toString())
+                            }
+                    }
+                }
+            }
+            var bitmapFinal = BitmapFactory.decodeFile(localfileFinalFotoFinalMeta.absolutePath)
+            bitmapFinal.recycle()
+            ultimafoto.setImageBitmap(bitmapFinal)
+            bitmapFinal = BitmapFactory.decodeFile(localfileFinalFotoFinalMeta.absolutePath)
+            ultimafoto.setImageBitmap(bitmapFinal)
+            pd.dismiss()
+            //.makeText(this, "${intento.getStringExtra("Meta")}", Toast.LENGTH_LONG).show() // Muestra el nombre de la rutina cachado en insignia adapter
         }.addOnFailureListener {
             Toast.makeText(
                 this,
                 "Recuperación de imagen fallida, sube otra foto",
                 Toast.LENGTH_SHORT
             ).show()
+            Thread.sleep(1000)
+            pd.dismiss()
         }
 
 
 
-        progresDialog.dismiss()
+
 
     }
     private fun initToolbar() {

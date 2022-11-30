@@ -894,7 +894,7 @@ class EjecutadorRutina : AppCompatActivity() {
             var imagesRef: StorageReference? = storageRef.child("images")
             var spaceRef = storageRef.child("UsersTakenPictures/$userID/Rutina_$nombre/${photofile.name}")
             val FotoSeparada = photofile.name.split("-").toTypedArray()
-            Toast.makeText(this,"SEPARADA:${FotoSeparada[0]}",Toast.LENGTH_SHORT).show()
+           // Toast.makeText(this,"SEPARADA:${FotoSeparada[0]}",Toast.LENGTH_SHORT).show()
             if(Ismeta){
             listAllFilesMetas(userID,FotoSeparada[0],takenImage)
             }
@@ -1025,7 +1025,8 @@ class EjecutadorRutina : AppCompatActivity() {
         }
         alertaFoto.setNegativeButton("No"){dialogInterface, i ->
             dialogInterface.cancel()
-            BorrarMetaDelDia(2)
+            if(num ==-1){            BorrarMetaDelDia(2)
+            }
             terminar()
             // mandarPuntos(puntos, horas, minutos, segundos)
             val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
