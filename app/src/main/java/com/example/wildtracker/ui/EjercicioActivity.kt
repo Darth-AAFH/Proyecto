@@ -32,6 +32,8 @@ import com.example.wildtracker.musica.mPlayerActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_ejercicio.*
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -146,6 +148,25 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
 
     }
+    private fun NotificacionSinEjercicio3Dias() {
+        val intent = Intent(this, EjercicioActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        var builder = NotificationCompat.Builder(this, "Chanel1")
+            .setSmallIcon(R.drawable.icon2)
+            .setContentTitle("Recordatorio")
+            .setContentText("Tienes una rutina pendiente por hacer!")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(2, builder.build())
+        }
+
+    }
+
 
     private fun createNotificationChannel2() {
         // Create the NotificationChannel, but only on API 26+ because
@@ -335,12 +356,14 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         initNavigationView()
         createNotificationChannel()
         createNotificationChannel2()
+
         listViewRutinas2 = findViewById(R.id.listViewRutinas2)
         listViewRutinas3 = findViewById(R.id.listViewRutinas3)
         textViewRutina = findViewById(R.id.textViewRutina)
         buttonIniciar = findViewById(R.id.buttonIniciar); buttonIniciar!!.setVisibility(View.INVISIBLE); buttonIniciar!!.setEnabled(false)
 
         Toast.makeText(this, "Seleccione la rutina", Toast.LENGTH_SHORT).show()
+        validarUltimoDía()
         CargarListas()
 
         listViewRutinas2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
@@ -477,6 +500,31 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             startActivity(intent)
         }
     }
+
+    private fun validarUltimoDía() {
+
+        db.collection("users").document(MainActivity.user!!).collection("UltimaFechaTrabajada").get().addOnSuccessListener { result ->
+            var UltimaFechaTrabajada =" "
+            for (document in result) {
+                UltimaFechaTrabajada = document.get("UltimaFechaTrabajada").toString()
+                Toast.makeText(this,"UltimaFecha=$UltimaFechaTrabajada",Toast.LENGTH_LONG).show()
+            }
+           // var StringToDate= LocalDate.parse(UltimaFechaTrabajada, DateTimeFormatter.ISO_DATE)
+            val sdf = SimpleDateFormat("dd-M-yyyy")
+            val currentDate = sdf.format(Date())
+
+            if(currentDate == UltimaFechaTrabajada){
+                Toast.makeText(this,"MismaFecha",Toast.LENGTH_SHORT).show()
+            }
+            else{
+                Toast.makeText(this,"No es la misma fecha",Toast.LENGTH_SHORT).show()
+
+            }
+
+
+        }
+    }
+
 
     private fun createNotificationChannel() {
         val name = "Notif Channel"

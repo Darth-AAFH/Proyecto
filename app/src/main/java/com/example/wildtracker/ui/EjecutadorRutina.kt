@@ -544,10 +544,12 @@ class EjecutadorRutina : AppCompatActivity() {
                 }
             }
             if(terminar2){
+                //Añadir a firebase el dato del ultimo día trabajado de ejercicio
                 terminar()
                 terminar2 = false
             }
         }
+
 
         buttonAyuda!!.setOnClickListener{
 
@@ -586,6 +588,14 @@ class EjecutadorRutina : AppCompatActivity() {
 
 
 
+    }
+    fun Date.toString(format: String, locale: Locale = Locale.getDefault()): String {
+        val formatter = SimpleDateFormat(format, locale)
+        return formatter.format(this)
+    }
+
+    fun getCurrentDateTime(): Date {
+        return Calendar.getInstance().time
     }
 
     private fun cargarVideo(ejercicio: String) {
@@ -770,6 +780,16 @@ class EjecutadorRutina : AppCompatActivity() {
         val horas = redondeo % 86400 / 3600
         val minutos = redondeo % 86400 % 3600 / 60
         val segundos = redondeo % 86400 % 3600 % 60
+        val date = getCurrentDateTime()
+        val dateInString = date.toString("yyyy/MM/dd")
+        MainActivity.user?.let{ usuario ->
+            db.collection("users").document(MainActivity.user!!).collection("tiempos2")
+                .document("currentDate").set(
+                    hashMapOf(
+                        "Fecha" to date
+                    )
+                )
+        }
 
         if(num != -1) {
             foto(puntos, horas, minutos, segundos)
@@ -848,6 +868,14 @@ class EjecutadorRutina : AppCompatActivity() {
                         "horas" to horasE,
                         "minutos" to minutosE,
                         "segundos" to segundosE
+                    )
+                )
+        }
+        MainActivity.user?.let{ usuario ->
+            db.collection("users").document(usuario).collection("UltimaFechaTrabajada")
+                .document("UltimaFechaTrabajada").set(
+                    hashMapOf(
+                        "UltimaFechaTrabajada" to currentDate,
                     )
                 )
         }
