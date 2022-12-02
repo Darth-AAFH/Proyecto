@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.wildtracker.R
+import com.example.wildtracker.ui.EjecutadorRutina.Companion.Ismeta
 import kotlinx.android.synthetic.main.metasdiseno.view.*
 
 class metasAdapter(private val mContext: Context, private val listaMetas: List<metas>) : ArrayAdapter<metas>(mContext, 0, listaMetas) {
@@ -29,7 +30,8 @@ class metasAdapter(private val mContext: Context, private val listaMetas: List<m
         layout.setOnClickListener {
             sequenceOf(Toast.makeText(mContext, "Meta: ${meta.nombre}", Toast.LENGTH_LONG).show())
             nombreCajaFotos = meta.nombre
-            Utils.startActivity(mContext,FotosActivity::class.java, meta.nombre)
+            Ismeta =true
+            Utils.startActivity(mContext,FotosActivity::class.java, meta.nombre, Ismeta)
         }
 
         return layout
@@ -37,11 +39,11 @@ class metasAdapter(private val mContext: Context, private val listaMetas: List<m
     class Utils {
 
         companion object {
-            fun startActivity(context: Context, clazz: Class<*>, nombre: String) {
+            fun startActivity(context: Context, clazz: Class<*>, nombre: String, Ismeta: Boolean) {
 
                 val intent = Intent(context, clazz)
                 intent.putExtra("Meta",nombre) //Manda el nombre de la rutina mediante el intent, se cacha en el activirty fotos
-
+                intent.putExtra("Ismeta", Ismeta)
                 context.startActivity(intent)
 
             }

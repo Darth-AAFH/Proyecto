@@ -66,6 +66,10 @@ class FotosActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                  ).show()
              }
  */
+
+        if(!intento.getBooleanExtra("Ismeta",false)){
+
+           // Toast.makeText(this,"No es meta",Toast.LENGTH_LONG).show()
         FotoInicial.getFile(localfileInicialFotoInicial).addOnSuccessListener {
             if (pd.isShowing) {
                 try {
@@ -135,6 +139,9 @@ class FotosActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             //pd.dismiss()
         }
 
+        }
+        else{
+          //  Toast.makeText(this,"Es meta",Toast.LENGTH_LONG).show()
         FotoMetaInicial.getFile(localfileInicialFotoInicialMeta).addOnSuccessListener {
             if (pd.isShowing) {
                 try {
@@ -207,7 +214,7 @@ class FotosActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             Thread.sleep(1000)
             pd.dismiss()
         }
-
+        }
 
 
 
