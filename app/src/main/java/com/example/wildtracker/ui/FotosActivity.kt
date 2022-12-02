@@ -206,12 +206,6 @@ class FotosActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             pd.dismiss()
             //.makeText(this, "${intento.getStringExtra("Meta")}", Toast.LENGTH_LONG).show() // Muestra el nombre de la rutina cachado en insignia adapter
         }.addOnFailureListener {
-            Toast.makeText(
-                this,
-                "Recuperación de imagen fallida, sube otra foto",
-                Toast.LENGTH_SHORT
-            ).show()
-            Thread.sleep(1000)
             pd.dismiss()
         }
         }
