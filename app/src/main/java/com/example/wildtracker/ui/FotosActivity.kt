@@ -216,9 +216,6 @@ class FotosActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         }
         }
 
-
-
-
     }
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
