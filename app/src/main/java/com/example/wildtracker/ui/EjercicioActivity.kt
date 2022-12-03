@@ -516,8 +516,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             val format = DateTimeFormatter.ofPattern("dd-M-yyyy")
             var date: LocalDate = getDateFromString(string, format)
 
-            var dias3futuro: LocalDate= date.plusDays(3) //Fecha en localdate
-            Log.d("Futuro", dias3futuro.toString())
+            var dias3futuro: LocalDate= date.plusDays(3) //Fecha en localdate autosetear alarma con 3 dias ?
+            /*Log.d("Futuro", dias3futuro.toString())
 
             val formatters = DateTimeFormatter.ofPattern("dd-M-yyyy")
             val FechaFutura = dias3futuro.format(formatters) //Fecha en formato dd-m-yyyy
@@ -533,9 +533,46 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 Toast.makeText(this,"No es la misma fecha",Toast.LENGTH_SHORT).show()
 
             }
+            //Setear alarma en 3 dia*/
+            Notificacion3Dias(dias3futuro)
 
 
         }
+    }
+
+    private fun Notificacion3Dias(dias3futuro: LocalDate) {
+        val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
+        val title = "Recordatorio"
+        val message = "No ha realizado ejercicio en 3 días"
+        intent.putExtra(titleExtra, title)
+        intent.putExtra(messageExtra, message)
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            this@EjercicioActivity,
+            3,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val time =getAlarma3Dias(dias3futuro)
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            time,
+            pendingIntent
+        )
+        Log.d("RutinaProgramada", java.lang.String.format(time.toString()))
+
+    }
+
+    private fun getAlarma3Dias(dias3futuro: LocalDate): Long {
+        val calendar = Calendar.getInstance()
+        val day = (dias3futuro.dayOfMonth)
+        val month = (dias3futuro.monthValue-1)
+        val year =(dias3futuro.year)
+        calendar.set(year, month, day)
+        Log.d("AlarmaSet", calendar.timeInMillis.toString())
+        return calendar.timeInMillis
     }
 
     fun getDateFromString(
