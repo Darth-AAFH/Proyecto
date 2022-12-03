@@ -189,10 +189,69 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         MainActivity.listaRutinas.add(rutina)
 
         Toast.makeText(this, "Se ha guardado la rutina", Toast.LENGTH_SHORT).show()
+
+        recomendarRutinas()
     }
 
+    fun recomendarRutinas(){ //Funcion que encuentra si un tipo de ejercicio se hace menos que los demas
+        var piernas = 0; var abdomen = 0; var pecho = 0
+        var espalda = 0; var brazos = 0; var hombros = 0
 
+        for (i in MainActivity.listaRutinas) { //para todas las rutinas
+            val ejercicios = i.split(" | ").toTypedArray()[3] //toma los ejercicios
+            val arreglo = ejercicios.split(",").toTypedArray() //toma los ids de los ejercicios
 
+            for(j in arreglo){ //va a recorrer todos los ejercicios
+
+                for (k in MainActivity.listaEjercicios) { //para todos los ejercicios
+                    val id = k.split(" ").toTypedArray()[0] //toma el id
+                    if(j == id){ //si esta el ejercicio en la rutina
+
+                        var tipo = k.split(" | ").toTypedArray()[2] // toma el tipo
+
+                        if(tipo == "Piernas") {piernas += 1} //y lo añade a los tipos de ejercicios
+                        if(tipo == "Abdomen") {abdomen += 1}
+                        if(tipo == "Pecho") {pecho += 1}
+                        if(tipo == "Espalda") {espalda += 1}
+                        if(tipo == "Brazos") {brazos += 1}
+                        if(tipo == "Hombros") {hombros += 1}
+                    }
+                }
+            }
+        }
+
+        var max = piernas //variable que guardara que tipo de ejercicio se hace mas que los demas
+        if(abdomen > max){max = abdomen}
+        if(pecho > max){max = pecho}
+        if(espalda > max){max = espalda}
+        if(brazos > max){max = brazos}
+        if(hombros > max){max = hombros}
+
+        if(piernas <= (max * .25)){
+            Toast.makeText(this, "Deberias trabajar mas piernas", Toast.LENGTH_SHORT).show()
+            //Notificacion piernas
+        }
+        if(abdomen <= (max * .25)){
+            Toast.makeText(this, "Deberias trabajar mas abdomen", Toast.LENGTH_SHORT).show()
+            //Notificacion abdomen
+        }
+        if(pecho <= (max * .25)){
+            Toast.makeText(this, "Deberias trabajar mas pecho", Toast.LENGTH_SHORT).show()
+            //Notificacion pecho
+        }
+        if(espalda <= (max * .25)){
+            Toast.makeText(this, "Deberias trabajar mas espalda", Toast.LENGTH_SHORT).show()
+            //Notificacion espalda
+        }
+        if(brazos <= (max * .25)){
+            Toast.makeText(this, "Deberias trabajar mas brazos", Toast.LENGTH_SHORT).show()
+            //Notificacion brazos
+        }
+        if(hombros <= (max * .25)){
+            Toast.makeText(this, "Deberias trabajar mas hombros", Toast.LENGTH_SHORT).show()
+            //Notificacion hombros
+        }
+    }
 
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)

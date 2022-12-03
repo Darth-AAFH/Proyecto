@@ -281,11 +281,16 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 if(mesAux == "Oct"){ mes = 10}; if(mesAux == "Nov"){ mes = 11}; if(mesAux == "Dec"){ mes = 12}
 
                 crearAlerta(dia, mes, ano)
+
+                //ir a fucion que envie a otra activity que muestre las metas programdas para ese dia, dia-mes-ano, tmb las rutinas
+                //recorrer las listas de eventos, y de ahi comparar con la fecha de hoy
+                //primero la de ruitinas programadas (facil?)
+                //y luego para las de metas va a tomar la posicion de la q encuentre en eventos
+                //para poner la de all metas
             }
             override fun onMonthScroll(firstDayOfNewMonth: Date) {
                 val formatter:String = firstDayOfNewMonth.toString()
                 var mes = formatter.split(" ")
-
 
                 Log.d(TAG, "Month was scrolled to: " + firstDayOfNewMonth)
                 val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)

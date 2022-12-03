@@ -103,8 +103,8 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 if(nombre == ""){
                     Toast.makeText(this, "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
                 }else{
-                    if(datoFinal == 0){
-                        Toast.makeText(this, "El dato final no puede ser igual a 0", Toast.LENGTH_SHORT).show()
+                    if(datoFinal == 0 || datoInicial == 0){
+                        Toast.makeText(this, "El dato no puede ser igual a 0", Toast.LENGTH_SHORT).show()
                     }else{
                         if(D1 == false && D2 == false && D3 == false && D4 == false && D5 == false && D6 == false && D7 == false){
                             Toast.makeText(this, "Debe de seleccionar por lo menos un día", Toast.LENGTH_LONG).show()
@@ -346,6 +346,9 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         MainActivity.listaAllMetas.add(cadena)
         MainActivity.listaMetasAllDates.add((diaHoy - 1).toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString())
+
+        MainActivity.listaMetasVista.add(cadena)
+        MainActivity.listaMetasVistaDates.add((diaHoy - 1).toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString())
 
         cargarNotificaciones(true)
         //para poner en blanco las cajas de datos

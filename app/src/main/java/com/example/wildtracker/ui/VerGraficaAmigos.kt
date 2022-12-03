@@ -17,7 +17,22 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.*
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewDia1
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewDia2
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewDia3
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewDia4
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewDia5
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewDia6
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewDia7
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewTiempo1
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewTiempo2
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewTiempo3
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewTiempo4
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewTiempo5
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewTiempo6
+import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewTiempo7
 import org.achartengine.ChartFactory
 import org.achartengine.GraphicalView
 import org.achartengine.model.XYMultipleSeriesDataset
@@ -56,7 +71,24 @@ class VerGraficaAmigos : AppCompatActivity(), NavigationView.OnNavigationItemSel
         }
 
         iniciarGrafica()
+        acomodarTextoGrafica()
 
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
+        toolbar.title = "Grafica Semanal de $nombre"
+        setSupportActionBar(toolbar)
+
+        com.example.wildtracker.ui.drawer = findViewById(R.id.drawerlayout)!!
+        val toggle = ActionBarDrawerToggle(
+            this, drawer, toolbar, R.string.bar_title,
+            R.string.navigation_drawer_close
+        )
+        com.example.wildtracker.ui.drawer.addDrawerListener(toggle)
+        toggle.syncState()
+
+
+    }
+
+    fun acomodarTextoGrafica(){
         if(MainActivity.diaSemanaHoy == 7){
             textViewDia1!!.text = "L"; textViewDia2!!.text = "M"; textViewDia3!!.text = "M"; textViewDia4!!.text =
                 "J"
@@ -93,19 +125,92 @@ class VerGraficaAmigos : AppCompatActivity(), NavigationView.OnNavigationItemSel
             textViewDia4!!.text = "V"; textViewDia5!!.text = "S"; textViewDia6!!.text = "D"
         }
 
-        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
-        toolbar.title = "Grafica Semanal de $nombre"
-        setSupportActionBar(toolbar)
+        var aux: Int
+        var horas = 0
 
-        com.example.wildtracker.ui.drawer = findViewById(R.id.drawerlayout)!!
-        val toggle = ActionBarDrawerToggle(
-            this, drawer, toolbar, R.string.bar_title,
-            R.string.navigation_drawer_close
-        )
-        com.example.wildtracker.ui.drawer.addDrawerListener(toggle)
-        toggle.syncState()
+        aux = dia1.toInt()
+        if(dia1 >= 60){
+            while(aux >= 60){ //se obtienen las horas
+                aux -= 60
+                horas += 1
+            }
+            this.textViewTiempo1!!.text = horas.toString() + "hr" + aux.toString()
+            horas = 0
+        }else{
+            textViewTiempo1!!.text = (dia1.toInt()).toString()
+        }
 
+        aux = dia2.toInt()
+        if(dia2 >= 60){
+            while(aux >= 60){ //se obtienen las horas
+                aux -= 60
+                horas += 1
+            }
+            textViewTiempo2!!.text = horas.toString() + "hr" + aux.toString()
+            horas = 0
+        }else{
+            textViewTiempo2!!.text = (dia2.toInt()).toString()
+        }
 
+        aux = dia3.toInt()
+        if(dia3 >= 60){
+            while(aux >= 60){ //se obtienen las horas
+                aux -= 60
+                horas += 1
+            }
+            textViewTiempo3!!.text = horas.toString() + "hr" + aux.toString()
+            horas = 0
+        }else{
+            textViewTiempo3!!.text = (dia3.toInt()).toString()
+        }
+
+        aux = dia4.toInt()
+        if(dia4 >= 60){
+            while(aux >= 60){ //se obtienen las horas
+                aux -= 60
+                horas += 1
+            }
+            textViewTiempo4!!.text = horas.toString() + "hr" + aux.toString()
+            horas = 0
+        }else{
+            textViewTiempo4!!.text = (dia4.toInt()).toString()
+        }
+
+        aux = dia5.toInt()
+        if(dia5 >= 60){
+            while(aux >= 60){ //se obtienen las horas
+                aux -= 60
+                horas += 1
+            }
+            textViewTiempo5!!.text = horas.toString() + "hr" + aux.toString()
+            horas = 0
+        }else{
+            textViewTiempo5!!.text = (dia5.toInt()).toString()
+        }
+
+        aux = dia6.toInt()
+        if(dia6 >= 60){
+            while(aux >= 60){ //se obtienen las horas
+                aux -= 60
+                horas += 1
+            }
+            textViewTiempo6!!.text = horas.toString() + "hr" + aux.toString()
+            horas = 0
+        }else{
+            textViewTiempo6!!.text = (dia6.toInt()).toString()
+        }
+
+        aux = dia7.toInt()
+        if(dia7 >= 60){
+            while(aux >= 60){ //se obtienen las horas
+                aux -= 60
+                horas += 1
+            }
+            textViewTiempo7!!.text = horas.toString() + "hr" + aux.toString()
+            horas = 0
+        }else{
+            textViewTiempo7!!.text = (dia7.toInt()).toString()
+        }
     }
 
     private fun iniciarGrafica() {

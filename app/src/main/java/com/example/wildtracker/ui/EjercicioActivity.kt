@@ -168,7 +168,6 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     }
 
-
     private fun createNotificationChannel2() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -365,7 +364,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             false
 
         Toast.makeText(this, "Seleccione la rutina", Toast.LENGTH_SHORT).show()
-        validarUltimoDía()
+        //validarUltimoDía()
         CargarListas()
 
         listViewRutinas2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
