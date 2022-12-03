@@ -14,11 +14,11 @@ class ChatMessage(toString: String, displayName: String?) {
     }
     @SuppressLint("NotConstructor")
     fun ChatMessage(messageText: String, messageUser:String) {
-        this.messageText = messageText;
-        this.messageUser = messageUser;
+        this.messageText = messageText
+        this.messageUser = messageUser
 
         // Initialize to current time
-        messageTime =  Date().getTime();
+        messageTime =  Date().time
     }
     @JvmName("getMessageText1")
     fun getMessageText(): String? {

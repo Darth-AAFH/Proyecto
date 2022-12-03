@@ -495,29 +495,29 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                             if((user1!!.puntosTotales)!!.toInt() < 10){
                                 if(MainActivity.user == userEmail){ //si es el usuario en uso
-                                    MainActivity.listaRanking1.add((user1!!.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
+                                    MainActivity.listaRanking1.add((user1.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
                                 }else{
-                                    MainActivity.listaRanking1.add((user1!!.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
+                                    MainActivity.listaRanking1.add((user1.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
                                 }
                             }else{
-                                if((user1!!.puntosTotales)!!.toInt() < 100){
+                                if((user1.puntosTotales)!!.toInt() < 100){
                                     if(MainActivity.user == userEmail){ //si es el usuario en uso
-                                        MainActivity.listaRanking2.add((user1!!.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
+                                        MainActivity.listaRanking2.add((user1.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
                                     }else{
-                                        MainActivity.listaRanking2.add((user1!!.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
+                                        MainActivity.listaRanking2.add((user1.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
                                     }
                                 }else{
-                                    if((user1!!.puntosTotales)!!.toInt() < 1000){
+                                    if((user1.puntosTotales)!!.toInt() < 1000){
                                         if(MainActivity.user == userEmail){ //si es el usuario en uso
-                                            MainActivity.listaRanking3.add((user1!!.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
+                                            MainActivity.listaRanking3.add((user1.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
                                         }else{
-                                            MainActivity.listaRanking3.add((user1!!.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
+                                            MainActivity.listaRanking3.add((user1.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
                                         }
                                     }else{
                                         if(MainActivity.user == userEmail){ //si es el usuario en uso
-                                            MainActivity.listaRanking4.add((user1!!.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
+                                            MainActivity.listaRanking4.add((user1.puntosTotales).toString() + " .- " + user1.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
                                         }else{
-                                            MainActivity.listaRanking4.add((user1!!.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
+                                            MainActivity.listaRanking4.add((user1.puntosTotales).toString() + " .- " + user1.Name) //y si no los va a agregar pero sin la estrellita
                                         }
                                     }
                                 }

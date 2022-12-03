@@ -243,7 +243,7 @@ class LoginActivity : AppCompatActivity() {
                 else {
                     if (lyTerms.visibility == View.INVISIBLE) {
                         lyTerms.visibility = View.VISIBLE
-                        tvLogin.setText("Registrar ")
+                        tvLogin.text = "Registrar "
                     } else {
                         val cbAcept = findViewById<CheckBox>(R.id.cbAcept)
                         if (cbAcept.isChecked) register()

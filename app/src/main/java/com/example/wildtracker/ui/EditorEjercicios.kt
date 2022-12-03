@@ -67,8 +67,8 @@ class EditorEjercicios : AppCompatActivity(), NavigationView.OnNavigationItemSel
         if(tipo == "Brazos") spinnerTipos2.setSelection(4)
         if(tipo == "Hombros") spinnerTipos2.setSelection(5)
         if(tipo == "Otro") spinnerTipos2.setSelection(6)
-        if(peso == "Con peso") switchPeso2!!.setChecked(true)
-        if(peso == "Sin peso") switchPeso2!!.setChecked(false)
+        if(peso == "Con peso") switchPeso2!!.isChecked = true
+        if(peso == "Sin peso") switchPeso2!!.isChecked = false
 
         buttonGuardar!!.setOnClickListener{
             //Validacion para guardar el cambio en el ejercicio
@@ -78,7 +78,7 @@ class EditorEjercicios : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 .setCancelable(true)
                 .setPositiveButton("Si") { dialogInterface, it ->
                     //Editar
-                    val cambioNombre = editTextNombre2!!.text.toString(); val cambioTipo = spinnerTipos2.selectedItem.toString(); val cambioPeso = switchPeso2!!.isChecked()
+                    val cambioNombre = editTextNombre2!!.text.toString(); val cambioTipo = spinnerTipos2.selectedItem.toString(); val cambioPeso = switchPeso2!!.isChecked
                     if(guardar(num, cambioNombre, cambioTipo, cambioPeso)){
                         val intent = Intent(this@EditorEjercicios, PlantillasActivity::class.java)
                         startActivity(intent)

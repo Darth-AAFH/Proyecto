@@ -72,19 +72,19 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         switchTiempo = findViewById<View>(R.id.idSwitch3) as Switch
         editTextInicio = findViewById<View>(R.id.editTextInicio) as EditText
         editTextFinal = findViewById<View>(R.id.editTextFinal) as EditText
-        d1 = findViewById<CheckBox>(R.id.check1); d2 = findViewById(R.id.check2) as CheckBox
-        d3 = findViewById(R.id.check3) as CheckBox; d4 = findViewById(R.id.check4) as CheckBox
-        d5 = findViewById(R.id.check5) as CheckBox; d6 = findViewById(R.id.check6) as CheckBox
-        d7 = findViewById(R.id.check7) as CheckBox
+        d1 = findViewById<CheckBox>(R.id.check1); d2 = findViewById<CheckBox>(R.id.check2)
+        d3 = findViewById<CheckBox>(R.id.check3); d4 = findViewById<CheckBox>(R.id.check4)
+        d5 = findViewById<CheckBox>(R.id.check5); d6 = findViewById<CheckBox>(R.id.check6)
+        d7 = findViewById<CheckBox>(R.id.check7)
         buttonGuardar = findViewById(R.id.buttonGuardarMeta)
 
         editTextDate.setOnClickListener{ tomarFecha() }
 
-        switchPeso!!.setChecked(true)
+        switchPeso!!.isChecked = true
 
         buttonGuardar!!.setOnClickListener{
-            val nombre = editTextNombreMeta!!.text.toString(); val peso = switchPeso!!.isChecked()
-            val repeticion = switchRepeticion!!.isChecked(); val tiempo = switchTiempo!!.isChecked()
+            val nombre = editTextNombreMeta!!.text.toString(); val peso = switchPeso!!.isChecked
+            val repeticion = switchRepeticion!!.isChecked; val tiempo = switchTiempo!!.isChecked
 
             var datoInicial = 0; var datoFinal = 0
 
@@ -95,7 +95,7 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 datoFinal = (editTextFinal!!.text.toString()).toInt()
             }
 
-            D1 = d1!!.isChecked(); D2 = d2!!.isChecked(); D3 = d3!!.isChecked(); D4 = d4!!.isChecked(); D5 = d5!!.isChecked(); D6 = d6!!.isChecked(); D7 = d7!!.isChecked()
+            D1 = d1!!.isChecked; D2 = d2!!.isChecked; D3 = d3!!.isChecked; D4 = d4!!.isChecked; D5 = d5!!.isChecked; D6 = d6!!.isChecked; D7 = d7!!.isChecked
 
             if(datoFinal <= datoInicial) {
                 Toast.makeText(this, "El dato final debe ser mayor al inicial", Toast.LENGTH_SHORT).show()
@@ -145,41 +145,41 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         }
 
         switchPeso!!.setOnClickListener {
-            switchRepeticion!!.setChecked(true)
-            editTextInicio!!.setHint("Cantidad de repeticiones iniciales")
-            editTextFinal!!.setHint("Cantidad de repeticiones finales")
+            switchRepeticion!!.isChecked = true
+            editTextInicio!!.hint = "Cantidad de repeticiones iniciales"
+            editTextFinal!!.hint = "Cantidad de repeticiones finales"
 
-            if(switchPeso!!.isChecked()){ //si se activa va a poner los otros dos switches en falso
-                switchRepeticion!!.setChecked(false)
-                switchTiempo!!.setChecked(false)
-                editTextInicio!!.setHint("Peso inicial (kg)")
-                editTextFinal!!.setHint("Peso inicial (kg)")
+            if(switchPeso!!.isChecked){ //si se activa va a poner los otros dos switches en falso
+                switchRepeticion!!.isChecked = false
+                switchTiempo!!.isChecked = false
+                editTextInicio!!.hint = "Peso inicial (kg)"
+                editTextFinal!!.hint = "Peso inicial (kg)"
             }
         }
 
         switchRepeticion!!.setOnClickListener {
-            switchTiempo!!.setChecked(true)
-            editTextInicio!!.setHint("Tiempo inicial (min)")
-            editTextFinal!!.setHint("Tiempo final (min)")
+            switchTiempo!!.isChecked = true
+            editTextInicio!!.hint = "Tiempo inicial (min)"
+            editTextFinal!!.hint = "Tiempo final (min)"
 
-            if(switchRepeticion!!.isChecked()){
-                switchPeso!!.setChecked(false)
-                switchTiempo!!.setChecked(false)
-                editTextInicio!!.setHint("Cantidad de repeticiones iniciales")
-                editTextFinal!!.setHint("Cantidad de repeticiones finales")
+            if(switchRepeticion!!.isChecked){
+                switchPeso!!.isChecked = false
+                switchTiempo!!.isChecked = false
+                editTextInicio!!.hint = "Cantidad de repeticiones iniciales"
+                editTextFinal!!.hint = "Cantidad de repeticiones finales"
             }
         }
 
         switchTiempo!!.setOnClickListener {
-            switchPeso!!.setChecked(true)
-            editTextInicio!!.setHint("Peso inicial (kg)")
-            editTextFinal!!.setHint("Peso inicial (kg)")
+            switchPeso!!.isChecked = true
+            editTextInicio!!.hint = "Peso inicial (kg)"
+            editTextFinal!!.hint = "Peso inicial (kg)"
 
-            if(switchTiempo!!.isChecked()){
-                switchPeso!!.setChecked(false)
-                switchRepeticion!!.setChecked(false)
-                editTextInicio!!.setHint("Tiempo inicial (min)")
-                editTextFinal!!.setHint("Tiempo final (min)")
+            if(switchTiempo!!.isChecked){
+                switchPeso!!.isChecked = false
+                switchRepeticion!!.isChecked = false
+                editTextInicio!!.hint = "Tiempo inicial (min)"
+                editTextFinal!!.hint = "Tiempo final (min)"
             }
         }
     }
@@ -314,8 +314,8 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         //se le agrega las repeticiones, peso o tiempo a trabajar
         if(Peso){ //con un texto que diferencie peso, repeticiones o tiempo
-            cadena += "Levantar: ";
-            cadena += DatoFinal; //se le agrega las repeticiones, peso o tiempo a trabajar
+            cadena += "Levantar: "
+            cadena += DatoFinal //se le agrega las repeticiones, peso o tiempo a trabajar
             cadena += "kg"
         }
         if(Repeticion){ //con un texto que diferencie peso, repeticiones o tiempo
@@ -351,14 +351,14 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
         //para poner en blanco las cajas de datos
         editTextNombreMeta!!.setText("")
         editTextDate!!.setText("")
-        switchPeso!!.setChecked(true)
-        switchRepeticion!!.setChecked(false)
-        switchTiempo!!.setChecked(false)
+        switchPeso!!.isChecked = true
+        switchRepeticion!!.isChecked = false
+        switchTiempo!!.isChecked = false
         editTextInicio!!.setText("")
         editTextFinal!!.setText("")
-        d1!!.setChecked(false); d2!!.setChecked(false); d3!!.setChecked(false)
-        d4!!.setChecked(false); d5!!.setChecked(false); d6!!.setChecked(false)
-        d7!!.setChecked(false)
+        d1!!.isChecked = false; d2!!.isChecked = false; d3!!.isChecked = false
+        d4!!.isChecked = false; d5!!.isChecked = false; d6!!.isChecked = false
+        d7!!.isChecked = false
         foto()
        /* val intent = Intent(this, EjercicioActivity::class.java)
         startActivity(intent)*/

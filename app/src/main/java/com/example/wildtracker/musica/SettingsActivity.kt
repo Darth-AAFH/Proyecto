@@ -98,7 +98,7 @@ class SettingsActivity : AppCompatActivity() {
     private fun updateMusicPaths() {
         musicPathsParentLinearLayout.removeAllViews()
         var musicPaths = DataBase.getMusicPaths()
-        for (i in 0 until musicPaths?.size!! step 1) {
+        for (i in 0 until musicPaths.size step 1) {
             musicPathsParentLinearLayout.addView(createPathLinearLayout(musicPaths[i]))
         }
     }

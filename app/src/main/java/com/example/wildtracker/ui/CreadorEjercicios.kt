@@ -62,7 +62,7 @@ class CreadorEjercicios : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
 
         buttonCrear!!.setOnClickListener{
-            val nombre = editTextNombre!!.text.toString(); val tipo = spinnerTipos.selectedItem.toString(); val peso = switchPeso!!.isChecked()
+            val nombre = editTextNombre!!.text.toString(); val tipo = spinnerTipos.selectedItem.toString(); val peso = switchPeso!!.isChecked
             if(crear(nombre, tipo, peso)){
                 if(validadorNombre) {
                     finish()

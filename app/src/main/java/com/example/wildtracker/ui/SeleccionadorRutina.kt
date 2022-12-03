@@ -43,7 +43,7 @@ class SeleccionadorRutina : AppCompatActivity(), NavigationView.OnNavigationItem
         }
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinas)
-        listViewRutinas2!!.setAdapter(adapter) //La tabla se adapta en la text view
+        listViewRutinas2!!.adapter = adapter //La tabla se adapta en la text view
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

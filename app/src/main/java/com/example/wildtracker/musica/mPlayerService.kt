@@ -386,7 +386,7 @@ class mPlayerService : Service() {
                 }
             }, Visualizer.getMaxCaptureRate(), false, true)
 
-            visualizer.enabled = true;
+            visualizer.enabled = true
         }
     }
 
@@ -419,7 +419,7 @@ class mPlayerService : Service() {
 
     private fun fillDataBase(rootPaths: ArrayList<String>) {
         Log.l("Filling database with songs. rootPaths size: ${rootPaths.size}")
-        for (i in 0 until rootPaths?.size!! step 1) {
+        for (i in 0 until rootPaths.size step 1) {
             fillDataBase(rootPaths[i])
         }
     }

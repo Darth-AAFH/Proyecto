@@ -13,28 +13,29 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.*
+import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.graphics.red
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
+import com.example.wildtracker.musica.mPlayerActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import android.widget.*
-import android.widget.AdapterView.OnItemClickListener
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.graphics.red
-import com.example.wildtracker.musica.mPlayerActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_ejercicio.*
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
+
 
 class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -111,13 +112,13 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinasVista)
-        listViewRutinas2!!.setAdapter(adapter) //La tabla se adapta en la text view
+        listViewRutinas2!!.adapter = adapter //La tabla se adapta en la text view
 
         val adapter2: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinasATrabajar + MainActivity.listaMetas)
-        listViewRutinas3!!.setAdapter(adapter2) //La tabla se adapta en la text view
+        listViewRutinas3!!.adapter = adapter2 //La tabla se adapta en la text view
 
         if(MainActivity.listaRutinasATrabajar.isEmpty() && MainActivity.listaMetas.isEmpty()){
-            textViewAyudaEj2.setVisibility(View.VISIBLE)
+            textViewAyudaEj2.visibility = View.VISIBLE
         }
         else{
             //
@@ -126,7 +127,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
 
         if(MainActivity.listaRutinas.isEmpty()){
-            textViewAyudaEj1.setVisibility(View.VISIBLE)
+            textViewAyudaEj1.visibility = View.VISIBLE
         }
     }
 
@@ -286,8 +287,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if(ultimasFechas[0] != "[") {
             for (i in ultimasFechas) { //recorre las ultimas fechas trabajadas de la meta
                 dia = i!!.split("-").toTypedArray()[0].toInt() //el ultimo dia trabajado de todas las metas
-                mes = i!!.split("-").toTypedArray()[1].toInt()
-                ano = i!!.split("-").toTypedArray()[2].toInt()
+                mes = i.split("-").toTypedArray()[1].toInt()
+                ano = i.split("-").toTypedArray()[2].toInt()
 
                 if (dia < diaNot && mes == mesNot && ano == anoNot || mes < mesNot && ano == anoNot || ano < anoNot) {
                     mandarNot = true
@@ -308,8 +309,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                         for (j in arreglo) { //para borrar la meta de las listas y de la base de datos
                             val dia2 = j!!.split("-")
                                 .toTypedArray()[0].toInt() //el ultimo dia trabajado de las metas que se hace hoy
-                            val mes2 = j!!.split("-").toTypedArray()[1].toInt()
-                            val ano2 = j!!.split("-").toTypedArray()[2].toInt()
+                            val mes2 = j.split("-").toTypedArray()[1].toInt()
+                            val ano2 = j.split("-").toTypedArray()[2].toInt()
 
                             if (dia == dia2 && mes == mes2 && ano == ano2) {
                                 posicion =
@@ -322,7 +323,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
                     //borra la meta de la base de datos
                     if(cadena != "") {
-                        cadena = cadena!!.split(" | ").toTypedArray()[0]
+                        cadena = cadena.split(" | ").toTypedArray()[0]
 
                         MainActivity.user?.let{ usuario ->
                             db.collection("users").document(usuario).collection("metas").document(cadena).delete()
@@ -360,7 +361,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         listViewRutinas2 = findViewById(R.id.listViewRutinas2)
         listViewRutinas3 = findViewById(R.id.listViewRutinas3)
         textViewRutina = findViewById(R.id.textViewRutina)
-        buttonIniciar = findViewById(R.id.buttonIniciar); buttonIniciar!!.setVisibility(View.INVISIBLE); buttonIniciar!!.setEnabled(false)
+        buttonIniciar = findViewById(R.id.buttonIniciar); buttonIniciar!!.visibility = View.INVISIBLE; buttonIniciar!!.isEnabled =
+            false
 
         Toast.makeText(this, "Seleccione la rutina", Toast.LENGTH_SHORT).show()
         validarUltimoDía()
@@ -371,9 +373,9 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
             fecha = "0"; tiempo = "0"
 
-            textViewRutina!!.setText("Rutina seleccionada: "+nombre)
+            textViewRutina!!.text = "Rutina seleccionada: "+nombre
 
-            buttonIniciar!!.setVisibility(View.VISIBLE); buttonIniciar!!.setEnabled(true)
+            buttonIniciar!!.visibility = View.VISIBLE; buttonIniciar!!.isEnabled = true
 
             var idRutina: Int
             MainActivity.user?.let { usuario -> //abre la base de datos
@@ -411,9 +413,9 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 fecha = MainActivity.listaRutinasATrabajar[position].split("Fecha: ").toTypedArray()[1]
                 tiempo = "0"
 
-                textViewRutina!!.setText("Rutina seleccionada: "+nombre)
+                textViewRutina!!.text = "Rutina seleccionada: "+nombre
 
-                buttonIniciar!!.setVisibility(View.VISIBLE); buttonIniciar!!.setEnabled(true)
+                buttonIniciar!!.visibility = View.VISIBLE; buttonIniciar!!.isEnabled = true
 
                 var idRutina: Int
                 MainActivity.user?.let { usuario -> //abre la base de datos
@@ -480,9 +482,9 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 mes = mesHoy.toInt()
                 ano = anoHoy.toInt()
 
-                textViewRutina!!.setText("Meta seleccionada: "+nombre)
+                textViewRutina!!.text = "Meta seleccionada: "+nombre
 
-                buttonIniciar!!.setVisibility(View.VISIBLE); buttonIniciar!!.setEnabled(true)
+                buttonIniciar!!.visibility = View.VISIBLE; buttonIniciar!!.isEnabled = true
             }
         }
 
@@ -510,9 +512,20 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 Toast.makeText(this,"UltimaFecha=$UltimaFechaTrabajada",Toast.LENGTH_LONG).show()
             }
            // var StringToDate= LocalDate.parse(UltimaFechaTrabajada, DateTimeFormatter.ISO_DATE)
+            var string = UltimaFechaTrabajada
+            val format = DateTimeFormatter.ofPattern("dd-M-yyyy")
+            var date: LocalDate = getDateFromString(string, format)
+
+            var dias3futuro: LocalDate= date.plusDays(3) //Fecha en localdate
+            Log.d("Futuro", dias3futuro.toString())
+
+            val formatters = DateTimeFormatter.ofPattern("dd-M-yyyy")
+            val FechaFutura = dias3futuro.format(formatters) //Fecha en formato dd-m-yyyy
+
             val sdf = SimpleDateFormat("dd-M-yyyy")
             val currentDate = sdf.format(Date())
 
+            Log.d("Futuro2",FechaFutura.toString())
             if(currentDate == UltimaFechaTrabajada){
                 Toast.makeText(this,"MismaFecha",Toast.LENGTH_SHORT).show()
             }
@@ -525,6 +538,16 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
     }
 
+    fun getDateFromString(
+        string: String?,
+        format: DateTimeFormatter?
+    ): LocalDate {
+        // Converting the string to date
+        // in the specified format
+
+        // Returning the converted date
+        return LocalDate.parse(string, format)
+    }
 
     private fun createNotificationChannel() {
         val name = "Notif Channel"

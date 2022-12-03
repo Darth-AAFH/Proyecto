@@ -282,13 +282,13 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
         mListView!!.setOnItemClickListener  { parent, view, position, id ->
             //Al dar click en un elemento de la vista se traere el texto que se clickeo y mandara llamar a AlertaSeguidor para interactuar con ese elemento
-            var Perfil:String  =  MainActivity.listaSeguidores[(MainActivity.listaSeguidores!!.size.toInt()- position.toInt())-1]
+            var Perfil:String  =  MainActivity.listaSeguidores[(MainActivity.listaSeguidores.size.toInt()- position.toInt())-1]
             CargarDatosGrafica(Perfil)
             AlertaSeguidor(Perfil )
         }
         mListViewSiguiendome!!.setOnItemClickListener { parent, view, position, id ->
 
-            var Perfil:String  =  MainActivity.ListaSiguiendome[(MainActivity.ListaSiguiendome!!.size.toInt()- position.toInt())-1]
+            var Perfil:String  =  MainActivity.ListaSiguiendome[(MainActivity.ListaSiguiendome.size.toInt()- position.toInt())-1]
             AlertaSiguiendome(Perfil )
         }
 
@@ -634,7 +634,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                         // myScrollView.setVisibility(View.GONE);
                         Thread.sleep(200)
                         tv.append("Nombre : ${document.get("Name").toString()}\n")
-                        myScrollView.setVisibility(View.VISIBLE);
+                        myScrollView.visibility = View.VISIBLE
                         if(puntos==null||puntos=="null"){
                             puntos ="NR"
                         }

@@ -41,7 +41,7 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
     private fun CargarTabla() { //Funcion que trae la tabla
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaEjercicios)
-        listViewEjerciciosHechos!!.setAdapter(adapter) //La tabla se adapta en la text view
+        listViewEjerciciosHechos!!.adapter = adapter //La tabla se adapta en la text view
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -94,7 +94,7 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
             listado2.removeAt(posicion) //Remueve el ejercicio del array list
             val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
-            listViewEjerciciosRutina!!.setAdapter(adapter)
+            listViewEjerciciosRutina!!.adapter = adapter
 
             contadorMaxEjer -= 1
         }
@@ -112,7 +112,7 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 datos.add(linea) //y lo va a añadir a
                 listado2 = datos //el listado de los ejercicios de rutina
                 val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
-                listViewEjerciciosRutina!!.setAdapter(adapter) //después lo va a poner en la listView
+                listViewEjerciciosRutina!!.adapter = adapter //después lo va a poner en la listView
 
                 contadorMaxEjer += 1
             }

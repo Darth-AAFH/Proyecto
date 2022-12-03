@@ -94,7 +94,7 @@ class EjecutadorRutina : AppCompatActivity() {
         datos.add(" ")
         listado = datos
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
-        listViewEjerciciosPorHacer!!.setAdapter(adapter) //La rutina se adapta en la text view
+        listViewEjerciciosPorHacer!!.adapter = adapter //La rutina se adapta en la text view
     }
 
     var Name = ""; var birthDay = ""; var email = ""; var peso = ""
@@ -121,9 +121,9 @@ class EjecutadorRutina : AppCompatActivity() {
                         withContext(Dispatchers.Main) {
                             Name = puntosTaux.Name!!
                             birthDay = puntosTaux.birthDay!!
-                            email = puntosTaux.email!!
+                            email = puntosTaux.email
                             puntosTotales = puntosTaux.puntosTotales!! //se guarda en la variable global
-                            peso = puntosTaux.peso!!
+                            peso = puntosTaux.peso
                             if (puntosTotales == null) { //en caso de que sea null se guarda como 0
                                 puntosTotales = 0
                             }
@@ -168,7 +168,7 @@ class EjecutadorRutina : AppCompatActivity() {
     }
 
     var Peso = false; var Repeticion = false; var Tiempo = false
-    var D1 = false ; var D2 = false; var D3 = false; var D4 = false;
+    var D1 = false ; var D2 = false; var D3 = false; var D4 = false
     var D5 = false; var D6 = false; var D7 = false
     var diaF = 0; var mesF = 0; var anoF = 0
     var DatoInicial = 0; var DatoFinal = 0
@@ -385,7 +385,7 @@ class EjecutadorRutina : AppCompatActivity() {
             BorrarRutinaDelDia(fecha)
         }else{
             BorrarMetaDelDia(1)
-            textViewActividadEnFoco!!.setText(nombre + ", " +meta)
+            textViewActividadEnFoco!!.text = nombre + ", " +meta
             listado.add(" ")
         }
 
@@ -420,15 +420,15 @@ class EjecutadorRutina : AppCompatActivity() {
             if(firstclick == false){
                 if(num != -1) {
                     val ejercicio1 = listado[0]
-                    textViewActividadEnFoco!!.setText("" + ejercicio1)
+                    textViewActividadEnFoco!!.text = "" + ejercicio1
                     listado.removeAt(0) //Remueve el primer ejercicio de la lista
                     val adapter: ArrayAdapter<String> =
                         ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
-                    listViewEjerciciosPorHacer!!.setAdapter(adapter)
+                    listViewEjerciciosPorHacer!!.adapter = adapter
                 }
 
                 if (listado[0] == " ") {
-                    buttonSiguiente!!.setText("Terminar")
+                    buttonSiguiente!!.text = "Terminar"
                     final = true
                 }
 
@@ -466,13 +466,13 @@ class EjecutadorRutina : AppCompatActivity() {
                         puntos += 1
                         if(final != true) {
                             val ejercicio = listado[0]
-                            textViewActividadEnFoco!!.setText("" + ejercicio)
+                            textViewActividadEnFoco!!.text = "" + ejercicio
                             listado.removeAt(0) //Remueve el primer ejercicio de la lista
                             val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
-                            listViewEjerciciosPorHacer!!.setAdapter(adapter)
+                            listViewEjerciciosPorHacer!!.adapter = adapter
 
                             if (listado[0] == " ") {
-                                buttonSiguiente!!.setText("Terminar")
+                                buttonSiguiente!!.text = "Terminar"
                                 final = true
                             }
 
@@ -488,13 +488,13 @@ class EjecutadorRutina : AppCompatActivity() {
                     alertaIncompleto.setNegativeButton("No") { dialogInterface, i ->
                         if(final != true) {
                             val ejercicio = listado[0]
-                            textViewActividadEnFoco!!.setText("" + ejercicio)
+                            textViewActividadEnFoco!!.text = "" + ejercicio
                             listado.removeAt(0) //Remueve el primer ejercicio de la lista
                             val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
-                            listViewEjerciciosPorHacer!!.setAdapter(adapter)
+                            listViewEjerciciosPorHacer!!.adapter = adapter
 
                             if (listado[0] == " ") {
-                                buttonSiguiente!!.setText("Terminar")
+                                buttonSiguiente!!.text = "Terminar"
                                 final = true
                             }
 
@@ -524,17 +524,17 @@ class EjecutadorRutina : AppCompatActivity() {
 
                 if(final == false) {
                     val ejercicio = listado[0]
-                    textViewActividadEnFoco!!.setText("" + ejercicio)
+                    textViewActividadEnFoco!!.text = "" + ejercicio
 
                     //Funcion para cargar video del siguiente ejercicio aqui
                     cargarVideo(ejercicio)
 
                     listado.removeAt(0) //Remueve el primer ejercicio de la lista
                     val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
-                    listViewEjerciciosPorHacer!!.setAdapter(adapter)
+                    listViewEjerciciosPorHacer!!.adapter = adapter
 
                     if (listado[0] == " ") {
-                        buttonSiguiente!!.setText("Terminar")
+                        buttonSiguiente!!.text = "Terminar"
                         final = true
                     }
                 }else{
@@ -625,7 +625,7 @@ class EjecutadorRutina : AppCompatActivity() {
             override fun run() {
                 runOnUiThread {
                     tiempo++
-                    textViewReloj!!.setText(tiempoATexto())
+                    textViewReloj!!.text = tiempoATexto()
 
                     //para las metas con tiempo
                     if(duracion != "0") {
@@ -744,7 +744,7 @@ class EjecutadorRutina : AppCompatActivity() {
                         val id = j.split(" ").toTypedArray()[0] //toma el id
                         if (idRandom == id.toInt()) { //si esta el ejercicio en la rutina
                             val nombre = j.split(" | ").toTypedArray()[1] //va a tomar el nombre
-                            textViewActividadEnFoco!!.setText("" + nombre) //y lo va a poner en la actividad en foco
+                            textViewActividadEnFoco!!.text = "" + nombre //y lo va a poner en la actividad en foco
                         }
                     }
 

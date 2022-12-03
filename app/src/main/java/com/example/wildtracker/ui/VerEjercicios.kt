@@ -41,11 +41,11 @@ class VerEjercicios : AppCompatActivity(), OnNavigationItemSelectedListener {
         }
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listaEjercicios)
-        listViewEjercicios!!.setAdapter(adapter) //La tabla se adapta en la text view
+        listViewEjercicios!!.adapter = adapter //La tabla se adapta en la text view
 
 
         if(MainActivity.listaEjercicios.size <= 15){
-            textViewAyudaVerEj.setVisibility(View.VISIBLE)
+            textViewAyudaVerEj.visibility = View.VISIBLE
         }
     }
 

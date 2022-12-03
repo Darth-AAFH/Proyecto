@@ -81,8 +81,8 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
             for(j in arreglo){ //para cada fecha
                 var dia = j!!.split("-").toTypedArray()[0].toInt() //se toma el dia
-                var mes = j!!.split("-").toTypedArray()[1].toInt()
-                var ano = j!!.split("-").toTypedArray()[2].toInt()
+                var mes = j.split("-").toTypedArray()[1].toInt()
+                var ano = j.split("-").toTypedArray()[2].toInt()
 
                 //////////////////////////////////////////////////////////////
 
@@ -255,12 +255,12 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         listViewMetas = findViewById(R.id.listViewMetas)
         if(MainActivity.listaMetasVista.isEmpty()){
-            textViewAyudaSeg.setVisibility(View.VISIBLE)
+            textViewAyudaSeg.visibility = View.VISIBLE
         }
 
         cargarListaMetas()
 
-        calendario = findViewById(R.id.calendario2) as CompactCalendarView
+        calendario = findViewById<CompactCalendarView>(R.id.calendario2)
         calendario!!.setUseThreeLetterAbbreviation(true)
 
         cargarRutinasProgramadas() //en calendario
@@ -287,7 +287,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 var mes = formatter.split(" ")
 
 
-                Log.d(TAG, "Month was scrolled to: " + firstDayOfNewMonth);
+                Log.d(TAG, "Month was scrolled to: " + firstDayOfNewMonth)
                 val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
                 if(mes[1] == "Jan") toolbar.title = "Enero"; if(mes[1] == "Feb") toolbar.title = "Febrero"
                 if(mes[1] == "Mar") toolbar.title = "Marzo"; if(mes[1] == "Apr") toolbar.title = "Abril"
@@ -319,7 +319,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             val alertaTareas = AlertDialog.Builder(this)
             alertaTareas.setTitle("Seleccionar una tarea")
 
-            alertaTareas.setItems(items, DialogInterface.OnClickListener() { dialogInterface, i ->
+            alertaTareas.setItems(items, DialogInterface.OnClickListener { dialogInterface, i ->
                 if (i == 0) { //mandar a lista de rutinas
                     val intent = Intent(this@SeguimientoActivity, SeleccionadorRutina::class.java)
 
@@ -369,11 +369,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         val diaHoy = diaHoy2.toInt(); val mesHoy = mesHoy2.toInt(); val anoHoy = anoHoy2.toInt() //obtiene la fecha actual en enteros
 
-        if(dia < diaHoy && mes == mesHoy && ano == anoHoy || mes < mesHoy && ano == anoHoy || ano < anoHoy){
-            return true
-        }else{
-            return false
-        }
+        return dia < diaHoy && mes == mesHoy && ano == anoHoy || mes < mesHoy && ano == anoHoy || ano < anoHoy
     }
 
     private fun initToolbar() {

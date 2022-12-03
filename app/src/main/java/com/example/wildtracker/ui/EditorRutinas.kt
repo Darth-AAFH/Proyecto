@@ -40,7 +40,7 @@ class EditorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
     private fun CargarEjercicios() { //Funcion que trae los ejercicios
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaEjercicios)
-        listViewEjerciciosHechos2!!.setAdapter(adapter) //La tabla se adapta en la text view
+        listViewEjerciciosHechos2!!.adapter = adapter //La tabla se adapta en la text view
     }
 
     private fun CargarEjerciciosDeRutina(arreglo: Array<String?>) { //Funcion que trae la tabla
@@ -59,7 +59,7 @@ class EditorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         listado2 = datos
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
-        listViewEjerciciosRutina2!!.setAdapter(adapter) //La rutina se adapta en la text view
+        listViewEjerciciosRutina2!!.adapter = adapter //La rutina se adapta en la text view
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -144,7 +144,7 @@ class EditorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
             listado2.removeAt(posicion) //Remueve el ejercicio del array list
             val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
-            listViewEjerciciosRutina2!!.setAdapter(adapter)
+            listViewEjerciciosRutina2!!.adapter = adapter
 
             contadorMax -= 1
         }
@@ -162,7 +162,7 @@ class EditorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                 datos.add(linea) //y lo va a añadir a
                 listado2 = datos //el listado de los ejercicios de rutina
                 val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
-                listViewEjerciciosRutina2!!.setAdapter(adapter) //después lo va a poner en la listView
+                listViewEjerciciosRutina2!!.adapter = adapter //después lo va a poner en la listView
 
                 contadorMax += 1
             }

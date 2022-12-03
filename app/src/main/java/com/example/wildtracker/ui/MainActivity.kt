@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         if(listaRutinas.isEmpty()){
-            textViewAyudaPlan.setVisibility(View.VISIBLE)
+            textViewAyudaPlan.visibility = View.VISIBLE
         }
     }
 
@@ -316,32 +316,39 @@ private fun myPreferences() {
         insigniasRutinas()
 
         if(diaSemanaHoy == 7){
-            textViewDia1!!.setText("L"); textViewDia2!!.setText("M"); textViewDia3!!.setText("M"); textViewDia4!!.setText("J")
-            textViewDia5!!.setText("V"); textViewDia6!!.setText("S"); textViewDia7!!.setText("D")
+            textViewDia1!!.text = "L"; textViewDia2!!.text = "M"; textViewDia3!!.text = "M"; textViewDia4!!.text =
+                "J"
+            textViewDia5!!.text = "V"; textViewDia6!!.text = "S"; textViewDia7!!.text = "D"
         }
         if(diaSemanaHoy == 6){
-            textViewDia2!!.setText("L"); textViewDia3!!.setText("M"); textViewDia4!!.setText("M"); textViewDia5!!.setText("J")
-            textViewDia6!!.setText("V"); textViewDia7!!.setText("S"); textViewDia1!!.setText("D")
+            textViewDia2!!.text = "L"; textViewDia3!!.text = "M"; textViewDia4!!.text = "M"; textViewDia5!!.text =
+                "J"
+            textViewDia6!!.text = "V"; textViewDia7!!.text = "S"; textViewDia1!!.text = "D"
         }
         if(diaSemanaHoy == 5){
-            textViewDia3!!.setText("L"); textViewDia4!!.setText("M"); textViewDia5!!.setText("M"); textViewDia6!!.setText("J")
-            textViewDia7!!.setText("V"); textViewDia1!!.setText("S"); textViewDia2!!.setText("D")
+            textViewDia3!!.text = "L"; textViewDia4!!.text = "M"; textViewDia5!!.text = "M"; textViewDia6!!.text =
+                "J"
+            textViewDia7!!.text = "V"; textViewDia1!!.text = "S"; textViewDia2!!.text = "D"
         }
         if(diaSemanaHoy == 4){
-            textViewDia4!!.setText("L"); textViewDia5!!.setText("M"); textViewDia6!!.setText("M"); textViewDia7!!.setText("J")
-            textViewDia1!!.setText("V"); textViewDia2!!.setText("S"); textViewDia3!!.setText("D")
+            textViewDia4!!.text = "L"; textViewDia5!!.text = "M"; textViewDia6!!.text = "M"; textViewDia7!!.text =
+                "J"
+            textViewDia1!!.text = "V"; textViewDia2!!.text = "S"; textViewDia3!!.text = "D"
         }
         if(diaSemanaHoy == 3){
-            textViewDia5!!.setText("L"); textViewDia6!!.setText("M"); textViewDia7!!.setText("M"); textViewDia1!!.setText("J")
-            textViewDia2!!.setText("V"); textViewDia3!!.setText("S"); textViewDia4!!.setText("D")
+            textViewDia5!!.text = "L"; textViewDia6!!.text = "M"; textViewDia7!!.text = "M"; textViewDia1!!.text =
+                "J"
+            textViewDia2!!.text = "V"; textViewDia3!!.text = "S"; textViewDia4!!.text = "D"
         }
         if(diaSemanaHoy == 2){
-            textViewDia6!!.setText("L"); textViewDia7!!.setText("M"); textViewDia1!!.setText("M"); textViewDia2!!.setText("J")
-            textViewDia3!!.setText("V"); textViewDia4!!.setText("S"); textViewDia5!!.setText("D")
+            textViewDia6!!.text = "L"; textViewDia7!!.text = "M"; textViewDia1!!.text = "M"; textViewDia2!!.text =
+                "J"
+            textViewDia3!!.text = "V"; textViewDia4!!.text = "S"; textViewDia5!!.text = "D"
         }
         if(diaSemanaHoy == 1){
-            textViewDia7!!.setText("L"); textViewDia1!!.setText("M"); textViewDia2!!.setText("M"); textViewDia3!!.setText("J")
-            textViewDia4!!.setText("V"); textViewDia5!!.setText("S"); textViewDia6!!.setText("D")
+            textViewDia7!!.text = "L"; textViewDia1!!.text = "M"; textViewDia2!!.text = "M"; textViewDia3!!.text =
+                "J"
+            textViewDia4!!.text = "V"; textViewDia5!!.text = "S"; textViewDia6!!.text = "D"
         }
     }
 

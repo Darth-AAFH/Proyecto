@@ -50,10 +50,10 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array)
-        listViewRanking!!.setAdapter(adapter) //La lista se adapta en la text view
+        listViewRanking!!.adapter = adapter //La lista se adapta en la text view
         // listaRanking.sort()
         listViewRanking!!.setOnItemClickListener  { parent, view, position, id ->
-            var Perfil:String  =  listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]
+            var Perfil:String  =  listaRanking[(listaRanking.size.toInt()- position.toInt())-1]
             Perfil = Perfil.substringAfter("-")
             //  Toast.makeText(this,MainActivity.listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]+"$Perfil",Toast.LENGTH_SHORT).show()
             AlertaSeguir(Perfil )
@@ -116,8 +116,8 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     // Toast.makeText(this,"No se encontro... "+ perfilGet.length,Toast.LENGTH_LONG).show()
                     //  Toast.makeText(this,"Buscaba..."+ perfil2.length,Toast.LENGTH_LONG).show()
                 }
-                Log.d("myTag", "Encontre:$perfilGet");
-                Log.d("myTag", "Buscaba:$perfil2");
+                Log.d("myTag", "Encontre:$perfilGet")
+                Log.d("myTag", "Buscaba:$perfil2")
 
                 if(progresDialog.isShowing) {
                     //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()

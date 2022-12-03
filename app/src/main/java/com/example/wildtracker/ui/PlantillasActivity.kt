@@ -46,10 +46,10 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         }
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinas)
-        listViewRutinas!!.setAdapter(adapter) //La tabla se adapta en la text view
+        listViewRutinas!!.adapter = adapter //La tabla se adapta en la text view
 
         if(MainActivity.listaRutinas.isEmpty()){
-            textViewAyudaPlan.setVisibility(View.VISIBLE)
+            textViewAyudaPlan.visibility = View.VISIBLE
         }
     }
 
@@ -61,8 +61,10 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         initNavigationView()
 
         buttonAdd = findViewById(R.id.buttonAdd)
-        buttonRutina = findViewById(R.id.buttonRutina); buttonRutina!!.setVisibility(View.INVISIBLE); buttonRutina!!.setEnabled(false)
-        buttonEjercicio = findViewById(R.id.buttonEjercicio); buttonEjercicio!!.setVisibility(View.INVISIBLE); buttonEjercicio!!.setEnabled(false)
+        buttonRutina = findViewById(R.id.buttonRutina); buttonRutina!!.visibility = View.INVISIBLE; buttonRutina!!.isEnabled =
+            false
+        buttonEjercicio = findViewById(R.id.buttonEjercicio); buttonEjercicio!!.visibility = View.INVISIBLE; buttonEjercicio!!.isEnabled =
+            false
         listViewRutinas = findViewById(R.id.listViewRutinas)
 
         MainActivity.user?.let { usuario -> //para cargar los ejercicios por defecto
@@ -96,12 +98,12 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         buttonAdd!!.setOnClickListener{
             if(validadorMostar == 0) {
-                buttonRutina!!.setVisibility(View.VISIBLE); buttonRutina!!.setEnabled(true)
-                buttonEjercicio!!.setVisibility(View.VISIBLE); buttonEjercicio!!.setEnabled(true)
+                buttonRutina!!.visibility = View.VISIBLE; buttonRutina!!.isEnabled = true
+                buttonEjercicio!!.visibility = View.VISIBLE; buttonEjercicio!!.isEnabled = true
                 validadorMostar = 1
             }else{
-                buttonRutina!!.setVisibility(View.INVISIBLE); buttonRutina!!.setEnabled(false)
-                buttonEjercicio!!.setVisibility(View.INVISIBLE); buttonEjercicio!!.setEnabled(false)
+                buttonRutina!!.visibility = View.INVISIBLE; buttonRutina!!.isEnabled = false
+                buttonEjercicio!!.visibility = View.INVISIBLE; buttonEjercicio!!.isEnabled = false
                 validadorMostar = 0
             }
             validadorPredeterDB()

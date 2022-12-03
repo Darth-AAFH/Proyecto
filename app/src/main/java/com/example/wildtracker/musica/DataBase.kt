@@ -65,12 +65,12 @@ class DataBase {
             val dataBase = dataBaseHelper.readableDatabase
             val cursor = dataBase.rawQuery("SELECT * FROM $SONG_LIST_TABLE_NAME ORDER BY $COLUMN_SONG COLLATE NOCASE ASC", null)
             if (cursor.moveToFirst()) {
-                var i = 0;
+                var i = 0
                 while (!cursor.isAfterLast) {
                     val songName = cursor.getString(cursor.getColumnIndex("song"))
                     arrayListOfSongs[i] = songName
                     cursor.moveToNext()
-                    i++;
+                    i++
                 }
             }
             cursor.close()
@@ -236,9 +236,9 @@ class DataBase {
                     }
 
                     if (isLastSongPlayedTableEmpty()) {
-                        dataBase?.insert(LAST_SONG_PLAYED_TABLE_NAME, null, values)
+                        dataBase.insert(LAST_SONG_PLAYED_TABLE_NAME, null, values)
                     } else {
-                        dataBase?.update(LAST_SONG_PLAYED_TABLE_NAME, values,  "$COLUMN_LAST_SONG_NAME IS NOT NULL", null)
+                        dataBase.update(LAST_SONG_PLAYED_TABLE_NAME, values,  "$COLUMN_LAST_SONG_NAME IS NOT NULL", null)
                     }
                     Log.l("DataBaseLog: Last song played '$lastSongPlayed' inserted into the database.")
                 }
