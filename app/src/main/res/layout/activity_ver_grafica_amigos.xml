@@ -201,6 +201,25 @@
             app:layout_constraintStart_toEndOf="@id/textViewTiempo7"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ListView
+            android:id="@+id/listViewRutinasAmigo"
+            android:layout_width="350dp"
+            android:layout_height="230dp"
+            android:layout_marginBottom="35dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/textViewAyudaVerGrafica"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="El usuario no tiene rutinas"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/listViewRutinasAmigo" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include

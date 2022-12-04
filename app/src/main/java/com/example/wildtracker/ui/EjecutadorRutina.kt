@@ -667,6 +667,11 @@ class EjecutadorRutina : AppCompatActivity() {
                 Toast.makeText(this, "Felicidades, completó la rutina!!", Toast.LENGTH_LONG).show() //se mandara mensaje de felicidades
 
                 xp += 1 //se le suma uno de experiencia
+
+                if(nivel == 3 && xp == 6){
+                    Toast.makeText(this, "Realizó la rutina 15 veces, le recomendamos trabajar otros ejercicios", Toast.LENGTH_LONG).show() //se mandara mensaje de felicidades
+                }
+
                 if ((2 * nivel) + 1 == xp && nivel != 100) { //si la xp llega iguala a lo que pide el nivel
                     xp = 0 //se reinicia la xp
                     MainActivity.user?.let { usuario ->

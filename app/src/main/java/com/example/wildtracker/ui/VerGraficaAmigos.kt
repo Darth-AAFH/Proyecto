@@ -17,7 +17,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.*
 import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewDia1
 import kotlinx.android.synthetic.main.activity_ver_grafica_amigos.textViewDia2
@@ -39,6 +38,8 @@ import org.achartengine.model.XYMultipleSeriesDataset
 import org.achartengine.model.XYSeries
 import org.achartengine.renderer.XYMultipleSeriesRenderer
 import org.achartengine.renderer.XYSeriesRenderer
+import java.util.*
+import kotlin.collections.ArrayList
 
 class VerGraficaAmigos : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -52,6 +53,10 @@ class VerGraficaAmigos : AppCompatActivity(), NavigationView.OnNavigationItemSel
     var dia5: Double = 0.0; var dia6: Double = 0.0; var dia7: Double = 0.0
 
     var nombre = ""
+
+    companion object{
+        var listaRutinasAmigo = ArrayList<String>()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,9 +77,10 @@ class VerGraficaAmigos : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
         iniciarGrafica()
         acomodarTextoGrafica()
+        cargarRutinas()
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
-        toolbar.title = "Grafica Semanal de $nombre"
+        toolbar.title = "Estadisticas de $nombre"
         setSupportActionBar(toolbar)
 
         com.example.wildtracker.ui.drawer = findViewById(R.id.drawerlayout)!!
@@ -239,6 +245,82 @@ class VerGraficaAmigos : AppCompatActivity(), NavigationView.OnNavigationItemSel
         seriesRendererGrafica = XYSeriesRenderer()
         renderGrafica.addSeriesRenderer(seriesRendererGrafica)
     }
+
+    private fun cargarRutinas(){
+        if(listaRutinasAmigo.isEmpty()){
+            textViewAyudaVerGrafica.visibility = View.VISIBLE
+        }else{
+            for(i in listaRutinasAmigo){
+                val nombre = i.split(" | ").toTypedArray()[0] //toma el nombre
+                val ejercicios = i.split(" | ").toTypedArray()[2] //toma los ejercicios
+                val nivel = i.split(" | ").toTypedArray()[1].toInt() //toma el nivel
+
+                ponerInsignia(nombre, nivel, ejercicios)
+            }
+
+            val adapter = amigosAdapter(this, listaRutinasVista)
+            listViewRutinasAmigo!!.adapter = adapter
+        }
+    }
+
+    var listaRutinasVista = listOf<amigos>()
+    private fun ponerInsignia(nombre: String, nivel: Int, ejercicios: String){
+        var vista: amigos
+
+        if(MainActivity.InsigniasSwitch){
+            if(nivel == 100){
+                vista = amigos(nombre, ejercicios, nivel, R.drawable.insignia11)
+            }else{
+                if(nivel > 90){
+                    vista = amigos(nombre, ejercicios, nivel, R.drawable.insignia10)
+                }else{
+                    if(nivel > 80){
+                        vista = amigos(nombre, ejercicios, nivel, R.drawable.insignia9)
+                    }else{
+                        if(nivel > 70){
+                            vista = amigos(nombre, ejercicios, nivel, R.drawable.insignia8)
+                        }else{
+                            if(nivel > 60){
+                                vista = amigos(nombre, ejercicios, nivel, R.drawable.insignia7)
+                            }else{
+                                if(nivel > 50){
+                                    vista = amigos(nombre, ejercicios, nivel, R.drawable.insignia6)
+                                }else{
+                                    if(nivel > 40){
+                                        vista = amigos(nombre, ejercicios, nivel, R.drawable.insignia5)
+                                    }else{
+                                        if(nivel > 30){
+                                            vista = amigos(nombre, ejercicios, nivel, R.drawable.insignia4)
+                                        }else{
+                                            if(nivel > 20){
+                                                vista = amigos(nombre, ejercicios, nivel, R.drawable.insignia3)
+                                            }else{
+                                                if(nivel > 10){
+                                                    vista = amigos(nombre, ejercicios, nivel, R.drawable.insignia2)
+                                                }else{
+                                                    vista = amigos(nombre, ejercicios, nivel, R.drawable.insignia1)
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            val listaRutinasAmigoAux = listOf(vista)
+            listaRutinasVista += listaRutinasAmigoAux
+        }
+        else if(!MainActivity.InsigniasSwitch){
+            vista = amigos(nombre, ejercicios, nivel, R.drawable.excersice_icon)
+
+            val listaRutinasAmigoAux2 = listOf(vista)
+            listaRutinasVista += listaRutinasAmigoAux2
+        }
+    }
+
     private fun initNavigationView() {
 
         val navigationView: NavigationView = findViewById(R.id.nav_view)

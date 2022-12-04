@@ -183,7 +183,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
                 }
             }
-            .setNeutralButton("Ver estadisticas") { dialogInterface, it ->
+            .setNeutralButton("Ver información") { dialogInterface, it ->
                 //Buscar al usuario y traerse sus estadisticas
                 db.collection("users").get().addOnSuccessListener { result ->
                     for (document in result) {
@@ -229,7 +229,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 }
 
             }
-            .setNegativeButton("Ver grafica semanal") { dialogInterface, it -> //dialogInterface.cancel()
+            .setNegativeButton("Ver estadisticas") { dialogInterface, it -> //dialogInterface.cancel()
                 val intent = Intent(this, VerGraficaAmigos::class.java)
                 intent.putExtra("Nombre", perfil)
                 intent.putExtra("Dia1", dia1)
@@ -284,6 +284,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             //Al dar click en un elemento de la vista se traere el texto que se clickeo y mandara llamar a AlertaSeguidor para interactuar con ese elemento
             var Perfil:String  =  MainActivity.listaSeguidores[(MainActivity.listaSeguidores.size.toInt()- position.toInt())-1]
             CargarDatosGrafica(Perfil)
+            CargarRutinasAmigo(Perfil)
             AlertaSeguidor(Perfil )
         }
         mListViewSiguiendome!!.setOnItemClickListener { parent, view, position, id ->
@@ -323,7 +324,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
                 }
             }
-            .setNeutralButton("Ver estadisticas") { dialogInterface, it ->
+            .setNeutralButton("Ver información") { dialogInterface, it ->
                 //Buscar al usuario y traerse sus estadisticas
                 db.collection("users").get().addOnSuccessListener { result ->
                     for (document in result) {
@@ -464,6 +465,52 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
     }
 
+    private fun CargarRutinasAmigo(perfil: String){
+        VerGraficaAmigos.listaRutinasAmigo.clear()
+        var perfilGet: String
+        var email = ""
+
+        db.collection("users").get().addOnSuccessListener { result ->
+            for (document in result) {
+                perfilGet = document.get("Name").toString()
+                if(perfilGet == perfil){
+                    email = document.get("email").toString()
+
+                    MainActivity.user?.let { usuario -> //abre la base de datos buscando al usuario amigo
+                        db.collection("users").document(email).collection("rutinas")
+                            .get().addOnSuccessListener {
+                                for(rutina in it) { //por cada dia rutina del usuario
+                                    var cadena = rutina.get("nombre") as String + " | " //cadena que toma la rutina con los ejercicios
+                                    cadena += (rutina.get("nivel") as Long).toString() + " | "//y el nivel
+
+                                    var ejercicios = rutina.get("ejercicios") as String //toma los ejercicios pero unidos
+
+                                    val arreglo: Array<String?>
+                                    arreglo = ejercicios.split(",").toTypedArray() //toma los ejercicios separados
+
+                                    MainActivity.user?.let { usuario -> //abre la base de datos buscando al usuario amigo
+                                        db.collection("users").document(email).collection("ejercicios")
+                                            .get().addOnSuccessListener {
+                                                for(i in arreglo){ //para los ejercicios de la rutina
+                                                    for(ejercicio in it){ //lo va a comparar con todos los ejercicios del usuario
+                                                        val id = (ejercicio.get("id") as Long).toString() //toma el id
+
+                                                        if(i == id){ //y si el ejercicio esta en la rutina
+                                                            cadena += ejercicio.get("nombre") as String + " "
+                                                        }
+                                                    }
+                                                    //VerGraficaAmigos.listaRutinasAmigo.add(cadena)
+                                                }
+                                                VerGraficaAmigos.listaRutinasAmigo.add(cadena)
+                                            }
+                                    }
+                                }
+                            }
+                    }
+                }
+            }
+        }
+    }
 
     private fun initToolbar() {
         //Inicia el toolbar para el activity Seguidores
@@ -635,13 +682,13 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                         Thread.sleep(200)
                         tv.append("Nombre : ${document.get("Name").toString()}\n")
                         myScrollView.visibility = View.VISIBLE
-                        if(puntos==null||puntos=="null"){
+                        if(puntos==""){
                             puntos ="NR"
                         }
-                        if(peso==null||peso=="null"){
+                        if(peso==""){
                             peso ="NR"
                         }
-                        if(altura==null||altura=="null"){
+                        if(altura==""){
                             altura ="NR"
                         }
                         tv.append("Puntos Totales : $puntos\n")
