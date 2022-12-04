@@ -266,6 +266,9 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         cargarRutinasProgramadas() //en calendario
         cargarMetas() //en calendario
 
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
+        toolbar.title = "Seguimiento"
+
         calendario!!.setListener(object : CompactCalendarViewListener {
             override fun onDayClick(fechaSeleccionada: Date) {
                 val context = applicationContext
@@ -281,12 +284,6 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 if(mesAux == "Oct"){ mes = 10}; if(mesAux == "Nov"){ mes = 11}; if(mesAux == "Dec"){ mes = 12}
 
                 crearAlerta(dia, mes, ano)
-
-                //ir a fucion que envie a otra activity que muestre las metas programdas para ese dia, dia-mes-ano, tmb las rutinas
-                //recorrer las listas de eventos, y de ahi comparar con la fecha de hoy
-                //primero la de ruitinas programadas (facil?)
-                //y luego para las de metas va a tomar la posicion de la q encuentre en eventos
-                //para poner la de all metas
             }
             override fun onMonthScroll(firstDayOfNewMonth: Date) {
                 val formatter:String = firstDayOfNewMonth.toString()
@@ -318,8 +315,9 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         if(diaAnterior(dia, mes, ano)) {
             Toast.makeText(this, "No puede seleccionar una fecha pasada", Toast.LENGTH_SHORT).show()
         }else{
-            val items = arrayOfNulls<CharSequence>(3)
-            items[0] = "Agregar rutina única"; items[1] = "Borrar rutina programada"; items[2] = "Cancelar"
+            val items = arrayOfNulls<CharSequence>(4)
+            items[0] = "Agregar rutina única"; items[1] = "Borrar rutina programada"
+            items[2] = "Ver eventos"; items[3] = "Cancelar"
 
             val alertaTareas = AlertDialog.Builder(this)
             alertaTareas.setTitle("Seleccionar una tarea")
@@ -354,6 +352,14 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                             if(fecha2 == fecha){
                                 MainActivity.listaRutinasATrabajar.clear()
                             }
+                        }
+                    }else{
+                        if(i == 2){
+                            val intent = Intent(this@SeguimientoActivity, VerEventos::class.java)
+                            intent.putExtra("Dia", dia)
+                            intent.putExtra("Mes", mes)
+                            intent.putExtra("Ano", ano)
+                            startActivity(intent)
                         }
                     }
                 }

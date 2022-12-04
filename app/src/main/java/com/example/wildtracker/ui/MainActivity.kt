@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val listaRanking2 = ArrayList<String>()
         val listaRanking3 = ArrayList<String>()
         val listaRanking4 = ArrayList<String>()
-        var listaRutinasATrabajarAux = ArrayList<String>()
+        var listaRutinasATrabajarAux = ArrayList<String>() //todas las rutinas a trabajar, para ?
         var listaMetasAllDates = ArrayList<String>() //guarda las ultimas fechas trabajadas de todas las metas (para las notificaciones)
         var listaMetasDates = ArrayList<String>() //guarda las metas que se trabajan hoy (solo su ulitma fecha trabajada), para poder borrarlas en la lista de metas
         var listaAllMetas = ArrayList<String>() //guarda todas las metas creadas
