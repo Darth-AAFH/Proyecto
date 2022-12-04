@@ -1,6 +1,11 @@
 package com.example.wildtracker.ui
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -9,6 +14,8 @@ import android.widget.*
 import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.text.isDigitsOnly
 import androidx.core.view.GravityCompat
 import com.example.wildtracker.LoginActivity
@@ -49,6 +56,7 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         setContentView(R.layout.activity_creador_rutinas)
         initToolbar()
         initNavigationView()
+        createNotificationChannel2()
 
         editTextNombre3 = findViewById<View>(R.id.editTextNombre3) as EditText
         buttonCrear2 = findViewById(R.id.buttonCrear2)
@@ -116,6 +124,23 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                 contadorMaxEjer += 1
             }
+        }
+    }
+
+    private fun createNotificationChannel2() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = ("Chanel1")
+            val descriptionText = "description"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("Chanel1", name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
     }
 
@@ -230,26 +255,140 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         if(piernas <= (max * .25)){
             Toast.makeText(this, "Deberias trabajar mas piernas", Toast.LENGTH_SHORT).show()
             //Notificacion piernas
-        }
+            notificacionTrabajarPierna()
+        }else
         if(abdomen <= (max * .25)){
             Toast.makeText(this, "Deberias trabajar mas abdomen", Toast.LENGTH_SHORT).show()
             //Notificacion abdomen
-        }
+            notificacionTrabajarAbdomen()
+        }else
         if(pecho <= (max * .25)){
             Toast.makeText(this, "Deberias trabajar mas pecho", Toast.LENGTH_SHORT).show()
             //Notificacion pecho
-        }
+            notificacionTrabajarPecho()
+        }else
         if(espalda <= (max * .25)){
             Toast.makeText(this, "Deberias trabajar mas espalda", Toast.LENGTH_SHORT).show()
             //Notificacion espalda
-        }
+            notificacionTrabajarEspalda()
+        }else
         if(brazos <= (max * .25)){
             Toast.makeText(this, "Deberias trabajar mas brazos", Toast.LENGTH_SHORT).show()
             //Notificacion brazos
-        }
+            notificacionTrabajarBrazos()
+        }else
         if(hombros <= (max * .25)){
             Toast.makeText(this, "Deberias trabajar mas hombros", Toast.LENGTH_SHORT).show()
             //Notificacion hombros
+            notificacionTrabajarHombros()
+        }
+    }
+
+    private fun notificacionTrabajarAbdomen() {
+        val intent = Intent(this, CreadorRutinas::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        var builder = NotificationCompat.Builder(this, "Chanel1")
+            .setSmallIcon(R.drawable.icon2)
+            .setContentTitle("Sugerencia de rutina")
+            .setContentText("Deberías trabajar más ejercicios de Abdomen")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(1, builder.build())
+        }
+    }
+
+    private fun notificacionTrabajarPecho() {
+        val intent = Intent(this, CreadorRutinas::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        var builder = NotificationCompat.Builder(this, "Chanel1")
+            .setSmallIcon(R.drawable.icon2)
+            .setContentTitle("Sugerencia de rutina")
+            .setContentText("Deberías trabajar más ejercicios de Pecho")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(2, builder.build())
+        }
+    }
+
+    private fun notificacionTrabajarEspalda() {
+        val intent = Intent(this, CreadorRutinas::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        var builder = NotificationCompat.Builder(this, "Chanel1")
+            .setSmallIcon(R.drawable.icon2)
+            .setContentTitle("Sugerencia de rutina")
+            .setContentText("Deberías trabajar más ejercicios de Espalda")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(3, builder.build())
+        }
+    }
+
+    private fun notificacionTrabajarBrazos() {
+        val intent = Intent(this, CreadorRutinas::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        var builder = NotificationCompat.Builder(this, "Chanel1")
+            .setSmallIcon(R.drawable.icon2)
+            .setContentTitle("Sugerencia de rutina")
+            .setContentText("Deberías trabajar más ejercicios de Brazos")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(4, builder.build())
+        }
+    }
+
+    private fun notificacionTrabajarHombros() {
+        val intent = Intent(this, CreadorRutinas::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        var builder = NotificationCompat.Builder(this, "Chanel1")
+            .setSmallIcon(R.drawable.icon2)
+            .setContentTitle("Sugerencia de rutina")
+            .setContentText("Deberías trabajar más ejercicios de Hombro")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(5, builder.build())
+        }
+    }
+
+    private fun notificacionTrabajarPierna() {
+        val intent = Intent(this, CreadorRutinas::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        var builder = NotificationCompat.Builder(this, "Chanel1")
+            .setSmallIcon(R.drawable.icon2)
+            .setContentTitle("Sugerencia de rutina")
+            .setContentText("Deberías trabajar más ejercicios de Pierna")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(6, builder.build())
         }
     }
 

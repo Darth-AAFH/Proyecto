@@ -101,6 +101,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             MainActivity.validadorAcomodo = false
         }
 
+
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         var arreglo = CargarUltimasFechasDeMetas(1)
@@ -364,7 +365,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             false
 
         Toast.makeText(this, "Seleccione la rutina", Toast.LENGTH_SHORT).show()
-        //validarUltimoDía()
+        validarUltimoDía()
         CargarListas()
 
         listViewRutinas2!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->

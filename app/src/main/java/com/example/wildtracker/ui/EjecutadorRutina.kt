@@ -1,12 +1,12 @@
 package com.example.wildtracker.ui
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.ProgressDialog
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -15,6 +15,8 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -281,7 +283,7 @@ class EjecutadorRutina : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ejecutador_rutina)
-
+        createNotificationChannel2()
         VideosEjercicios = findViewById(R.id.VideosEjercicios)
         VideosEjercicios.layoutManager = LinearLayoutManager(this)
         val BotonMostrar: Button = (findViewById(R.id.buttonMostrarVideo))
@@ -589,6 +591,42 @@ class EjecutadorRutina : AppCompatActivity() {
 
 
     }
+
+    private fun createNotificationChannel2() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = ("Chanel1")
+            val descriptionText = "description"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("Chanel1", name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+    private fun notificacionTrabajarOtrosEjercicios() {
+        val intent = Intent(this, CreadorRutinas::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        var builder = NotificationCompat.Builder(this, "Chanel1")
+            .setSmallIcon(R.drawable.icon2)
+            .setContentTitle("Sugerencia de rutina")
+            .setContentText("Realizó la rutina 15 veces, le recomendamos trabajar otros ejercicios")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(6, builder.build())
+        }
+    }
+
+
     fun Date.toString(format: String, locale: Locale = Locale.getDefault()): String {
         val formatter = SimpleDateFormat(format, locale)
         return formatter.format(this)
@@ -670,6 +708,7 @@ class EjecutadorRutina : AppCompatActivity() {
 
                 if(nivel == 3 && xp == 6){
                     Toast.makeText(this, "Realizó la rutina 15 veces, le recomendamos trabajar otros ejercicios", Toast.LENGTH_LONG).show() //se mandara mensaje de felicidades
+                    notificacionTrabajarOtrosEjercicios()
                 }
 
                 if ((2 * nivel) + 1 == xp && nivel != 100) { //si la xp llega iguala a lo que pide el nivel

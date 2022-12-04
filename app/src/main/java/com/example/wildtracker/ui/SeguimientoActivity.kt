@@ -267,7 +267,14 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         cargarMetas() //en calendario
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
-        toolbar.title = "Seguimiento"
+      //  toolbar.title = "Seguimiento"
+
+
+        var monthname= android.text.format.DateFormat.format("MMMM",  Date())
+        var mesActual:String = monthname.toString()
+        var mesActualCapital = mesActual.capitalize()
+        toolbar.title = mesActualCapital
+
 
         calendario!!.setListener(object : CompactCalendarViewListener {
             override fun onDayClick(fechaSeleccionada: Date) {

@@ -929,6 +929,9 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                             Toast.makeText(applicationContext, "File Uploaded", Toast.LENGTH_SHORT).show()
                             //  Toast.makeText(applicationContext, "${userID}", Toast.LENGTH_LONG).show()
                             pd.dismiss()
+                            val intent = Intent(this, EjercicioActivity::class.java)
+                            startActivity(intent)
+
                         }
                         .addOnFailureListener { p0 ->
                         pd.dismiss()
@@ -958,7 +961,6 @@ class MetasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                         Toast.makeText(applicationContext, p0.message, Toast.LENGTH_LONG).show()
                     }
             }
-
 
     }
 
