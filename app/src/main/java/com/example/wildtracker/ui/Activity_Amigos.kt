@@ -290,6 +290,8 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         mListViewSiguiendome!!.setOnItemClickListener { parent, view, position, id ->
 
             var Perfil:String  =  MainActivity.ListaSiguiendome[(MainActivity.ListaSiguiendome.size.toInt()- position.toInt())-1]
+            CargarDatosGrafica(Perfil)
+            CargarRutinasAmigo(Perfil)
             AlertaSiguiendome(Perfil )
         }
 
@@ -341,7 +343,15 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
             }
             .setNegativeButton("Ver más") { dialogInterface, it -> //dialogInterface.cancel()
-                val intent = Intent(this, RankingActivity::class.java)
+                val intent = Intent(this, VerGraficaAmigos::class.java)
+                intent.putExtra("Nombre", perfil)
+                intent.putExtra("Dia1", dia1)
+                intent.putExtra("Dia2", dia2)
+                intent.putExtra("Dia3", dia3)
+                intent.putExtra("Dia4", dia4)
+                intent.putExtra("Dia5", dia5)
+                intent.putExtra("Dia6", dia6)
+                intent.putExtra("Dia7", dia7)
                 startActivity(intent)
             }
 
@@ -353,6 +363,9 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
     var dia1: Double = 0.0; var dia2: Double = 0.0; var dia3: Double = 0.0; var dia4: Double = 0.0
     var dia5: Double = 0.0; var dia6: Double = 0.0; var dia7: Double = 0.0
     var tiempoAux: Double = 0.0
+
+
+
     private fun CargarDatosGrafica(perfil: String) {
         dia1 = 0.0; dia2 = 0.0; dia3 = 0.0; dia4 = 0.0; dia5 = 0.0; dia6 = 0.0; dia7 = 0.0
         var sdf = SimpleDateFormat("dd")

@@ -113,13 +113,13 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         ////////////////////////////////////////////////////////////////////////////////////////////
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinasVista)
-        listViewRutinas2!!.adapter = adapter //La tabla se adapta en la text view
+        listViewRutinas2!!.setAdapter(adapter) //La tabla se adapta en la text view
 
         val adapter2: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinasATrabajar + MainActivity.listaMetas)
         listViewRutinas3!!.adapter = adapter2 //La tabla se adapta en la text view
 
         if(MainActivity.listaRutinasATrabajar.isEmpty() && MainActivity.listaMetas.isEmpty()){
-            textViewAyudaEj2.visibility = View.VISIBLE
+            textViewAyudaEj2.setVisibility(View.VISIBLE)
         }
         else{
             //
@@ -128,7 +128,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
 
         if(MainActivity.listaRutinas.isEmpty()){
-            textViewAyudaEj1.visibility = View.VISIBLE
+            textViewAyudaEj1.setVisibility(View.VISIBLE)
         }
     }
 
@@ -287,8 +287,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if(ultimasFechas[0] != "[") {
             for (i in ultimasFechas) { //recorre las ultimas fechas trabajadas de la meta
                 dia = i!!.split("-").toTypedArray()[0].toInt() //el ultimo dia trabajado de todas las metas
-                mes = i.split("-").toTypedArray()[1].toInt()
-                ano = i.split("-").toTypedArray()[2].toInt()
+                mes = i!!.split("-").toTypedArray()[1].toInt()
+                ano = i!!.split("-").toTypedArray()[2].toInt()
 
                 if (dia < diaNot && mes == mesNot && ano == anoNot || mes < mesNot && ano == anoNot || ano < anoNot) {
                     mandarNot = true
@@ -309,8 +309,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                         for (j in arreglo) { //para borrar la meta de las listas y de la base de datos
                             val dia2 = j!!.split("-")
                                 .toTypedArray()[0].toInt() //el ultimo dia trabajado de las metas que se hace hoy
-                            val mes2 = j.split("-").toTypedArray()[1].toInt()
-                            val ano2 = j.split("-").toTypedArray()[2].toInt()
+                            val mes2 = j!!.split("-").toTypedArray()[1].toInt()
+                            val ano2 = j!!.split("-").toTypedArray()[2].toInt()
 
                             if (dia == dia2 && mes == mes2 && ano == ano2) {
                                 posicion =
@@ -323,7 +323,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
                     //borra la meta de la base de datos
                     if(cadena != "") {
-                        cadena = cadena.split(" | ").toTypedArray()[0]
+                        cadena = cadena!!.split(" | ").toTypedArray()[0]
 
                         MainActivity.user?.let{ usuario ->
                             db.collection("users").document(usuario).collection("metas").document(cadena).delete()
@@ -373,7 +373,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
             fecha = "0"; tiempo = "0"
 
-            textViewRutina!!.text = "Rutina seleccionada: "+nombre
+            textViewRutina!!.setText("Rutina seleccionada: "+nombre)
 
             buttonIniciar!!.visibility = View.VISIBLE; buttonIniciar!!.isEnabled = true
 
@@ -506,7 +506,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun validarUltimoDía() {
 
         db.collection("users").document(MainActivity.user!!).collection("UltimaFechaTrabajada").get().addOnSuccessListener { result ->
-            var UltimaFechaTrabajada =" "
+            var UltimaFechaTrabajada ="09-05-2002"
             for (document in result) {
                 UltimaFechaTrabajada = document.get("UltimaFechaTrabajada").toString()
                 Toast.makeText(this,"UltimaFecha=$UltimaFechaTrabajada",Toast.LENGTH_LONG).show()
@@ -534,7 +534,10 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
             }
             //Setear alarma en 3 dia*/
+            Log.d("UltimoDia",dias3futuro.toString())
+            if(dias3futuro.toString()!="2002-05-12"){
             Notificacion3Dias(dias3futuro)
+            }
 
 
         }

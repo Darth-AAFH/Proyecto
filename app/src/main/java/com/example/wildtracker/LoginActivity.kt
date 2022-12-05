@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.properties.Delegates
 import kotlin.random.Random
@@ -51,6 +52,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var lyTerms: LinearLayout
 
     private lateinit var mAuth: FirebaseAuth
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -99,6 +101,7 @@ class LoginActivity : AppCompatActivity() {
                 val account = accountTask.getResult(ApiException::class.java)
                 val dateRegister = SimpleDateFormat("dd/MM/yyyy").format(Date())
                 val dbRegister = FirebaseFirestore.getInstance()
+                val UltimaFechaTrabajada = LocalDateTime.now()
 
                 if (account != null) {
                     email = account.email.toString()
@@ -107,17 +110,22 @@ class LoginActivity : AppCompatActivity() {
                     mAuth.signInWithCredential(credential).addOnCompleteListener {
                         if (it.isSuccessful) {
 
-                                dbRegister.collection("users").document(email).set(
+                            dbRegister.collection("users").document(email).set(
+                                hashMapOf(
+                                    "Name" to "U" + (System.nanoTime()),
+                                    "email" to email,
+                                    "dateRegister" to dateRegister
+                                )
+                            )
+                            db.collection("users").document(email).collection("UltimaFechaTrabajada")
+                                .document("UltimaFechaTrabajada").set(
                                     hashMapOf(
-
-                                        "Name" to "U" + (System.nanoTime()),
-                                        "email" to email,
-                                        "dateRegister" to dateRegister
+                                        "UltimaFechaTrabajada" to dateRegister,
                                     )
                                 )
 
-                                goHome(email, "email")
-                                goHome(email, "Google")
+                            goHome(email, "email")
+                            goHome(email, "Google")
 
                         }
                         else Toast.makeText(
@@ -243,7 +251,7 @@ class LoginActivity : AppCompatActivity() {
                 else {
                     if (lyTerms.visibility == View.INVISIBLE) {
                         lyTerms.visibility = View.VISIBLE
-                        tvLogin.text = "Registrar "
+                        tvLogin.setText("Registrar ")
                     } else {
                         val cbAcept = findViewById<CheckBox>(R.id.cbAcept)
                         if (cbAcept.isChecked) register()
@@ -266,28 +274,28 @@ class LoginActivity : AppCompatActivity() {
     @SuppressLint("SimpleDateFormat")
     private fun register() {
 
-            var random = Random.nextInt(1000, 99999)
-            email = etEmail.text.toString()
-            password = etPassword.text.toString()
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
+        var random = Random.nextInt(1000, 99999)
+        email = etEmail.text.toString()
+        password = etPassword.text.toString()
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
 
-                        val dateRegister = SimpleDateFormat("dd/MM/yyyy").format(Date())
-                        val dbRegister = FirebaseFirestore.getInstance()
+                    val dateRegister = SimpleDateFormat("dd/MM/yyyy").format(Date())
+                    val dbRegister = FirebaseFirestore.getInstance()
 
-                        dbRegister.collection("users").document(email).set(
-                            hashMapOf(
+                    dbRegister.collection("users").document(email).set(
+                        hashMapOf(
 
-                                "Name" to "U" + (System.nanoTime()),
-                                "email" to email,
-                                "dateRegister" to dateRegister
-                            )
+                            "Name" to "U" + (System.nanoTime()),
+                            "email" to email,
+                            "dateRegister" to dateRegister
                         )
-                        goHome(email, "email")
-                    } else Toast.makeText(this, "Error, algo ha ido mal :(", Toast.LENGTH_SHORT)
-                        .show()
-                }
+                    )
+                    goHome(email, "email")
+                } else Toast.makeText(this, "Error, algo ha ido mal :(", Toast.LENGTH_SHORT)
+                    .show()
+            }
 
     }
 
