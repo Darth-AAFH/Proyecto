@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         if(listaRutinas.isEmpty()){
-            textViewAyudaPlan.setVisibility(View.VISIBLE)
+            textViewAyudaMain.setVisibility(View.VISIBLE)
         }
     }
 

@@ -140,7 +140,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         var builder = NotificationCompat.Builder(this, "Chanel1")
             .setSmallIcon(R.drawable.icon2)
             .setContentTitle("Recordatorio")
-            .setContentText("Tienes una rutina pendiente por hacer!")
+            .setContentText("Tienes pendientes programados hoy, revisa que son!")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
