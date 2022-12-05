@@ -342,7 +342,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 }
 
             }
-            .setNegativeButton("Ver más") { dialogInterface, it -> //dialogInterface.cancel()
+            .setNegativeButton("Ver estadisticas") { dialogInterface, it -> //dialogInterface.cancel()
                 val intent = Intent(this, VerGraficaAmigos::class.java)
                 intent.putExtra("Nombre", perfil)
                 intent.putExtra("Dia1", dia1)
