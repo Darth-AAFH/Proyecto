@@ -132,9 +132,9 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     private fun validarSeguimiento(usuario: String): Boolean {
         var Siguiendo = false
+
         var NombreValidador =" "
         db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
-            //Consulta en la base de datos los usuarios que coicidan con el nombre de usuario a dejar de seguir, cuando lo encuentra lo elimina
             for (document in result) {
                 NombreValidador = document.get("Nombre").toString()
                 if(NombreValidador==usuario){
@@ -143,34 +143,161 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 }
             }
             if(!Siguiendo){
-                Toast.makeText(this,"Comenzaste a seguir a $usuario",Toast.LENGTH_SHORT).show()
-                MainActivity.user?.let {
-                    db.collection("users").document(it).collection("Seguidores").document().set(
-                        hashMapOf(
-                            "Nombre" to usuario
-                        )
+                //Hacer validacion de solicitud de amistad
+               // validarSolicitudAmistad(usuario)
+                //Meterme al usuario y setear una nueva solicitud de amistad
 
-                    )
+                db.collection("users").get().addOnSuccessListener { result ->
+                    for (document in result) {
+                        var documentRef = document.id
+                        NombreValidador = document.get("Name").toString()
+                        if(usuario==NombreValidador){
+                            db.collection("users").document(documentRef).collection("SolicitudesAmistad").get().addOnSuccessListener {
+                                for (document in it){
+                                    var ParaQuien = document.get("Paraquien") as String?
+                                    var Nombre = document.get("Nombre") as String?
+                                    var Aceptada = document.get("SolicitudAceptada") as Boolean
+                                    Toast.makeText(this,"Nombre $Nombre + Aceptada: $Aceptada", Toast.LENGTH_SHORT).show()
+
+                                    if(Aceptada ==true&& ParaQuien==usuario){
+                                        Toast.makeText(this,"Comenzaste a seguir a $usuario",Toast.LENGTH_SHORT).show()
+                                        MainActivity.user?.let {
+                                            db.collection("users").document(it).collection("Seguidores").document().set(   //Añade a mi lista de quien sigo el nuevo usuario
+                                                hashMapOf(
+                                                    "Nombre" to usuario
+                                                )
+
+                                            )
+                                        }
+                                        var SolicitudEliminar = document.id
+                                       db.collection("users").document(documentRef).collection("SolicitudesAmistad").document( SolicitudEliminar).delete()
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
+                db.collection("users").get().addOnSuccessListener { result ->
+                   // var SolicitudAceptada:Boolean = false
+                    for (document in result) {
+                        var ExisteSol:Boolean? = false
+                        var ExisteSol2 = ExisteSol.toString()
+
+                        var documentRef = document.id
+                        db.collection("users").document(documentRef).collection("SolicitudesAmistad").document("Solicitud de ${PerfilActivity.NombreUsuario}").get().addOnSuccessListener { hay->
+                         ExisteSol =   hay.get("ExisteSolicitud") as Boolean?
+                            Toast.makeText(this,"Soli: ${ExisteSol.toString()}",Toast.LENGTH_LONG).show()
+                            var NombreValidador = document.get("Name").toString()
+                            if(usuario==NombreValidador && ExisteSol==false || ExisteSol==null || ExisteSol2=="null"){
+                                db.collection("users").document(documentRef).collection("SolicitudesAmistad").document("Solicitud de ${PerfilActivity.NombreUsuario}").set(
+                                    hashMapOf(
+                                        "Nombre" to PerfilActivity.NombreUsuario, // Añade al usuario que comence a seguir mi id para que le aparezca que yo lo sigo
+                                        "Paraquien" to usuario,
+                                        "SolicitudAceptada" to false,
+                                        "ExisteSolicitud" to true
+                                    )
+                                )
+                            }
+                        }
+
+                    }
+                }
+
+                Toast.makeText(this,"Solicitud de amistad mandada a $usuario",Toast.LENGTH_SHORT).show()
+
+
+
+
+
+
+
+                //Este queda despues de que el usuario acepta mi solicitud de amistad
+                //If(SolicitudAceptada)
+                //else
+
             }
 
-            db.collection("users").get().addOnSuccessListener { result ->
 
+
+            //Añade al usuario que comence a seguir en su lista de siguiendome el nombre del usuario que lo comenzó a seguir
+            //If solicitud aprobada{}
+            /*
+            db.collection("users").get().addOnSuccessListener { result ->
                 for (document in result) {
                     var documentRef = document.id
                     NombreValidador = document.get("Name").toString()
                     if(usuario==NombreValidador){
                         db.collection("users").document(documentRef).collection("Siguiendo").document().set(
                             hashMapOf(
-                                "Nombre" to PerfilActivity.NombreUsuario
+                                "Nombre" to PerfilActivity.NombreUsuario // Añade al usuario que comence a seguir mi id para que le aparezca que yo lo sigo
                             )
                         )
                     }
                     }
+            }*/
+        }
+
+
+
+        return (Siguiendo)
+    }
+
+    private fun validarSolicitudAmistad(usuario: String) {
+
+        db.collection("users").get().addOnSuccessListener { result ->
+            for (document in result) {
+                var documentRef = document.id
+                var NombreValidador = document.get("Name").toString()
+                if(usuario==NombreValidador){
+                    db.collection("users").document(documentRef).collection("SolicitudesAmistad").get().addOnSuccessListener {
+                        for (document in it){
+                            var ParaQuien = document.get("Paraquien") as String?
+                            var Nombre = document.get("Nombre") as String?
+                            var Aceptada = document.get("SolicitudAceptada") as Boolean
+                            Toast.makeText(this,"Nombre $Nombre + Aceptada: $Aceptada", Toast.LENGTH_SHORT).show()
+
+                            if(Aceptada ==true && ParaQuien==usuario){
+                                Toast.makeText(this,"Comenzaste a seguir a $usuario",Toast.LENGTH_SHORT).show()
+                                MainActivity.user?.let {
+                                    db.collection("users").document(it).collection("Seguidores").document().set(   //Añade a mi lista de quien sigo el nuevo usuario
+                                        hashMapOf(
+                                            "Nombre" to usuario
+                                        )
+
+                                    )
+                                }
+                                var SolicitudEliminar = document.id
+                                db.collection("users").document(documentRef).collection("SolicitudesAmistad").document( SolicitudEliminar).delete()
+                            }
+                        }
+                    }
+                }
             }
 
         }
-        return (Siguiendo)
+
+
+
+
+
+        db.collection("users").get().addOnSuccessListener { result ->
+            var SolicitudAceptada:Boolean = false
+            for (document in result) {
+                var documentRef = document.id
+                var NombreValidador = document.get("Name").toString()
+                if(usuario==NombreValidador){
+                    db.collection("users").document(documentRef).collection("SolicitudesAmistad").document().set(
+                        hashMapOf(
+                            "Nombre" to PerfilActivity.NombreUsuario, // Añade al usuario que comence a seguir mi id para que le aparezca que yo lo sigo
+                            "Paraquien" to usuario,
+                            "SolicitudAceptada" to SolicitudAceptada
+                        )
+                    )
+                }
+            }
+        }
+
+        Toast.makeText(this,"Solicitud de amistad mandada a $usuario",Toast.LENGTH_SHORT).show()
     }
 
 
