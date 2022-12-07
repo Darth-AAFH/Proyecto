@@ -211,7 +211,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                         var documentRef = document.id
                         db.collection("users").document(documentRef).collection("SolicitudesAmistad").document("Solicitud de ${PerfilActivity.NombreUsuario}").get().addOnSuccessListener { hay->
                          ExisteSol =   hay.get("ExisteSolicitud") as Boolean?
-                            Toast.makeText(this,"Soli: ${ExisteSol.toString()}",Toast.LENGTH_LONG).show()
+                           // Toast.makeText(this,"Soli: ${ExisteSol.toString()}",Toast.LENGTH_LONG).show()
                             var NombreValidador = document.get("Name").toString()
                             val rnds = (0..1000000).random()
                             if(usuario==NombreValidador && ExisteSol==false || ExisteSol==null || ExisteSol2=="null"){
@@ -270,7 +270,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                             var ParaQuien = document.get("Paraquien") as String?
                             var Nombre = document.get("Nombre") as String?
                             var Aceptada = document.get("SolicitudAceptada") as Boolean
-                            Toast.makeText(this,"Nombre $Nombre + Aceptada: $Aceptada", Toast.LENGTH_SHORT).show()
+                           // Toast.makeText(this,"Nombre $Nombre + Aceptada: $Aceptada", Toast.LENGTH_SHORT).show()
 
                             if(Aceptada ==true && ParaQuien==usuario){
                                 Toast.makeText(this,"Comenzaste a seguir a $usuario",Toast.LENGTH_SHORT).show()
