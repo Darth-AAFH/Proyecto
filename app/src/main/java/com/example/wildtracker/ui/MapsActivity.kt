@@ -788,6 +788,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
             R.id.nav_amigos -> callAmigosActivity()
             R.id.Settings -> callAjustesActivity()
             R.id.nav_seguimiento -> callSeguimientoActivity()
+            R.id.nav_solicitudes-> callSolicitudesActivity()
+
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
@@ -798,6 +800,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,
     /**
      * Llamada de actividades
      */
+
+    private fun callSolicitudesActivity() {
+        val intent = Intent(this, SolicitudesActivity::class.java)
+        startActivity(intent)    }
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)

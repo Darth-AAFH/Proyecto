@@ -140,6 +140,8 @@ class VerEventos : AppCompatActivity(),OnNavigationItemSelectedListener {
             R.id.nav_amigos ->callAmigosActivity()
             R.id.Settings->callAjustesActivity()
             R.id.nav_seguimiento->callSeguimientoActivity()
+            R.id.nav_solicitudes-> callSolicitudesActivity()
+
 
         }
 
@@ -147,6 +149,10 @@ class VerEventos : AppCompatActivity(),OnNavigationItemSelectedListener {
 
         return true
     }
+
+    private fun callSolicitudesActivity() {
+        val intent = Intent(this, SolicitudesActivity::class.java)
+        startActivity(intent)    }
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)

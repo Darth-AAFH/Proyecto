@@ -62,7 +62,7 @@ class SolicitudesActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
                     //Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
                     Thread.sleep(1_00)  // wait for 1 second
-                    if(PerfilActivity.NombreUsuario!=origen){
+                    if(PerfilActivity.NombreUsuario!=origen&&PerfilActivity.NombreUsuario==perfilGet){
                     MainActivity.listaSolicitudesEnviadas.add(origen)//Añade a la lista de seguidores los nombres encontrados en firebase
                     }
                 }
@@ -198,10 +198,9 @@ class SolicitudesActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 db.collection("users").document(MainActivity.user!!).collection("SolicitudesAmistad").get().addOnSuccessListener { result ->
                     //Consulta en la base de datos los usuarios que coicidan con el nombre de usuario a dejar de seguir, cuando lo encuentra lo elimina
                     for (document in result) {
-                        perfilGet = document.get("Nombre").toString()
+                        perfilGet = document.get("Paraquien").toString()
                         if(perfilGet==perfil){
                             var documentRef = document.reference
-
                             db.collection("users").document(MainActivity.user!!).collection("SolicitudesAmistad").document(
                                 document.id
                             ).delete()

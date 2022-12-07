@@ -82,7 +82,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 var correo = document.get("email").toString()
 
                 if (perfil2 == perfilGet) {
-                    val usuario =perfilGet
+                    val usuario = perfilGet
                     // validarSeguimiento(usuario)
                     //  Toast.makeText(this,"Encontrado! "+document.get("Name").toString(),Toast.LENGTH_LONG).show()
                     //Si encuentro que coincide en firebase lo añado a amigos para desde ahi cargar sus datos de actividad fisica.
@@ -157,15 +157,21 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     for (document in result) {
                         var documentRef = document.id
                         NombreValidador = document.get("Name").toString()
+                       // Toast.makeText(this,"Buscaba: {$usuario} Encontre: $NombreValidador",Toast.LENGTH_SHORT).show()
+                        //Toast.makeText(this,"Buscaba: $usuario",Toast.LENGTH_SHORT).show()
+
                         if(usuario==NombreValidador){
                             db.collection("users").document(documentRef).collection("SolicitudesAmistad").get().addOnSuccessListener {
+                                var continuar =true
                                 for (document in it){
+
                                     var ParaQuien = document.get("Paraquien") as String?
                                     var Nombre = document.get("Nombre") as String?
                                     var Aceptada = document.get("SolicitudAceptada") as Boolean
-                                    Toast.makeText(this,"Nombre $Nombre + Aceptada: $Aceptada", Toast.LENGTH_SHORT).show()
+                                  //  Toast.makeText(this,"Nombre $Nombre + Aceptada: $Aceptada", Toast.LENGTH_SHORT).show()
 
                                     if(Aceptada ==true&& ParaQuien==usuario){
+
                                         Toast.makeText(this,"Comenzaste a seguir a $usuario",Toast.LENGTH_SHORT).show()
                                         MainActivity.user?.let {
                                             db.collection("users").document(it).collection("Seguidores").document().set(   //Añade a mi lista de quien sigo el nuevo usuario
@@ -174,11 +180,24 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                                                 )
 
                                             )
+                                            db.collection("users").document(documentRef).collection("Siguiendo").document().set(
+                                                hashMapOf(
+                                                    "Nombre" to PerfilActivity.NombreUsuario // Añade al usuario que comence a seguir mi id para que le aparezca que yo lo sigo
+                                                )
+                                            )
                                         }
                                         var SolicitudEliminar = document.id
-                                       db.collection("users").document(documentRef).collection("SolicitudesAmistad").document( SolicitudEliminar).delete()
+                                       db.collection("users").document(documentRef).collection("SolicitudesAmistad").document(SolicitudEliminar).delete()
+                                                var documentRef = document.id
+                                                NombreValidador = document.get("Name").toString()
+                                                if(usuario==NombreValidador ){
+
+
+
+                                        }
                                     }
                                 }
+
                             }
                         }
                     }
@@ -230,20 +249,8 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
             //Añade al usuario que comence a seguir en su lista de siguiendome el nombre del usuario que lo comenzó a seguir
             //If solicitud aprobada{}
-            /*
-            db.collection("users").get().addOnSuccessListener { result ->
-                for (document in result) {
-                    var documentRef = document.id
-                    NombreValidador = document.get("Name").toString()
-                    if(usuario==NombreValidador){
-                        db.collection("users").document(documentRef).collection("Siguiendo").document().set(
-                            hashMapOf(
-                                "Nombre" to PerfilActivity.NombreUsuario // Añade al usuario que comence a seguir mi id para que le aparezca que yo lo sigo
-                            )
-                        )
-                    }
-                    }
-            }*/
+
+
         }
 
 

@@ -363,12 +363,18 @@ class VerGraficaAmigos : AppCompatActivity(), NavigationView.OnNavigationItemSel
             R.id.nav_amigos ->callAmigosActivity()
             R.id.Settings->callAjustesActivity()
             R.id.nav_seguimiento->callSeguimientoActivity()
+            R.id.nav_solicitudes-> callSolicitudesActivity()
+
         }
 
         com.example.wildtracker.ui.drawer.closeDrawer(GravityCompat.START) // cerrar menu
 
         return true
     }
+
+    private fun callSolicitudesActivity() {
+        val intent = Intent(this, SolicitudesActivity::class.java)
+        startActivity(intent)    }
     private fun callRankingActivity() {
         val intent = Intent(this, RankingActivity::class.java)
         startActivity(intent)

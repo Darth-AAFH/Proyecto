@@ -74,6 +74,7 @@ class RecordActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             R.id.nav_musica ->callMusica()
            R.id.nav_amigos->callAmigosActivity()
             R.id.nav_seguimiento->callSeguimientoActivity()
+            R.id.nav_solicitudes-> callSolicitudesActivity()
 
         }
 
@@ -81,6 +82,11 @@ class RecordActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         return true
     }
+
+
+    private fun callSolicitudesActivity() {
+        val intent = Intent(this, SolicitudesActivity::class.java)
+        startActivity(intent)    }
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
