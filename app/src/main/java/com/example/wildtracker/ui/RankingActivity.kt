@@ -1,5 +1,6 @@
 package com.example.wildtracker.ui
 
+import android.annotation.SuppressLint
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
@@ -24,6 +25,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import java.lang.Math.random
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.random.Random.Default.nextInt
 
 @Suppress("DEPRECATION")
 class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -130,6 +135,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun validarSeguimiento(usuario: String): Boolean {
         var Siguiendo = false
 
@@ -188,8 +194,11 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                          ExisteSol =   hay.get("ExisteSolicitud") as Boolean?
                             Toast.makeText(this,"Soli: ${ExisteSol.toString()}",Toast.LENGTH_LONG).show()
                             var NombreValidador = document.get("Name").toString()
+                            val rnds = (0..1000000).random()
                             if(usuario==NombreValidador && ExisteSol==false || ExisteSol==null || ExisteSol2=="null"){
-                                db.collection("users").document(documentRef).collection("SolicitudesAmistad").document("Solicitud de ${PerfilActivity.NombreUsuario}").set(
+                                db.collection("users").document(documentRef).collection("SolicitudesAmistad").document(
+                                    (MainActivity.listaSolicitudesEnviadas.size+ rnds).toString()
+                                ).set(
                                     hashMapOf(
                                         "Nombre" to PerfilActivity.NombreUsuario, // Añade al usuario que comence a seguir mi id para que le aparezca que yo lo sigo
                                         "Paraquien" to usuario,
@@ -391,12 +400,18 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             R.id.nav_amigos ->callAmigosActivity()
             R.id.Settings->callAjustesActivity()
             R.id.nav_seguimiento->callSeguimientoActivity()
+            R.id.nav_solicitudes-> callSolicitudesActivity()
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
 
         return true
     }
+
+    private fun callSolicitudesActivity() {
+        val intent = Intent(this, SolicitudesActivity::class.java)
+        startActivity(intent)    }
+
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
