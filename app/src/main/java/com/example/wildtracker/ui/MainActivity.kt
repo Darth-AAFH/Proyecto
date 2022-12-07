@@ -86,6 +86,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var validadorAcomodo = true
         var listaRanking = ArrayList<String>()
         val listaSeguidores = ArrayList<String>()
+        val listaSolicitudesEnviadas = ArrayList<String>()
+        val listaSolicitudesRecibidas = ArrayList<String>()
         val ListaSiguiendome = ArrayList<String>()
         var listaRutinasATrabajar = ArrayList<String>()
         var listaMetas = ArrayList<String>()
