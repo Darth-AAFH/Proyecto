@@ -9,8 +9,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.example.wildtracker.R
 import kotlinx.android.synthetic.main.insigniasdiseno.view.*
+import kotlinx.android.synthetic.main.insigniasdiseno.view.imageViewDibujo1
+import kotlinx.android.synthetic.main.insigniasdiseno.view.imageViewDibujo2
+import kotlinx.android.synthetic.main.insigniasdiseno.view.imageViewDibujo3
 
-class insigniaAdapter(private val mContext: Context, private val listaRutinas: List<insignias>) : ArrayAdapter<insignias>(mContext, 0, listaRutinas) {
+class insigniaAdapter(private val mContext: Context, private val listaInsignias: List<insignias>) : ArrayAdapter<insignias>(mContext, 0, listaInsignias) {
     companion object {
         private const val REQUEST_CODE = 42
       var nombreCajaFotos =""
@@ -18,21 +21,37 @@ class insigniaAdapter(private val mContext: Context, private val listaRutinas: L
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val layout = LayoutInflater.from(mContext).inflate(R.layout.insigniasdiseno, parent, false)
         val intent = Intent(mContext, FotosActivity::class.java)
-        val rutina = listaRutinas[position]
+        val insignia = listaInsignias[position]
 
+        if(insignia.rutina) {
+            layout.textViewNombre.text = insignia.nombre
+            layout.textViewNivel.text = "Nivel: " + insignia.nivel.toString()
+            layout.imageViewDibujo.setImageResource(insignia.imagen1)
+            //var num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
+            //var nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
 
-        layout.textViewNombre.text = rutina.nombre
-        layout.textViewNivel.text = "Nivel: " + rutina.nivel.toString()
-        layout.imageViewDibujo.setImageResource(rutina.imagen)
-        var num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt()
-        var nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
+            layout.setOnClickListener {
+                sequenceOf(
+                    Toast.makeText(mContext, "Rutina: ${insignia.nombre}", Toast.LENGTH_LONG).show()
+                )
+                nombreCajaFotos = insignia.nombre
+                Utils.startActivity(mContext, FotosActivity::class.java, insignia.nombre)
+            }
+        }else{
+            layout.textViewNombre.setVisibility(View.INVISIBLE)
+            layout.textViewNivel.setVisibility(View.INVISIBLE)
+            layout.imageViewDibujo.setVisibility(View.INVISIBLE)
 
-        layout.setOnClickListener {
-            sequenceOf(Toast.makeText(mContext, "Rutina: ${rutina.nombre}", Toast.LENGTH_LONG).show())
-            nombreCajaFotos = rutina.nombre
-            Utils.startActivity(mContext,FotosActivity::class.java,rutina.nombre)
+            if(insignia.imagen2 == 0){
+                layout.imageViewDibujo1.setImageResource(insignia.imagen1)
+                layout.imageViewDibujo1.setVisibility(View.VISIBLE)
+            }else{
+                layout.imageViewDibujo2.setImageResource(insignia.imagen1)
+                layout.imageViewDibujo3.setImageResource(insignia.imagen2)
+                layout.imageViewDibujo2.setVisibility(View.VISIBLE)
+                layout.imageViewDibujo3.setVisibility(View.VISIBLE)
+            }
         }
-
 
         return layout
     }

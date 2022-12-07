@@ -48,7 +48,7 @@
                     android:id="@+id/Detener"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Detener actividad fisica" />
+                    android:text="Detener actividad fisica (para detener por completo la rutina)" />
 
             </LinearLayout>
         </LinearLayout>
@@ -73,7 +73,7 @@
                 android:id="@+id/Saltar"
                 android:layout_width="132dp"
                 android:layout_height="wrap_content"
-                android:text="Saltar el ejercio" />
+                android:text="Saltar el ejercio (para cuando no haya iniciado o terminado un ejercicio)" />
 
     </LinearLayout>
         </LinearLayout>
@@ -96,7 +96,7 @@
                 android:id="@+id/Siguiente_ejercicio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Siguiente actividad en lista de ejercicios" />
+                android:text="Siguiente actividad en lista de ejercicios (para cuando haya completado un ejercicio correctamente o con repeticiones extras)" />
 
         </LinearLayout>
 

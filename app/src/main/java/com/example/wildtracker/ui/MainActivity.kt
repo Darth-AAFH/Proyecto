@@ -20,7 +20,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_plantillas.*
 import org.achartengine.ChartFactory
 import org.achartengine.GraphicalView
 import org.achartengine.model.XYMultipleSeriesDataset
@@ -69,11 +68,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var listaAllMetas = ArrayList<String>() //guarda todas las metas creadas
         var listaMetasVista = ArrayList<String>() //para las metas que se muestran en seguimiento
         var listaMetasVistaDates = ArrayList<String>() //para las metas que se muestran en seguimiento (solo fechas), para poder borrarlas
-        var validadorListas = true
+        var validadorListas = true //para no volver a traerese datos de la base de datos repetidos
         //
         var dia1: Double = 0.0; var dia2: Double = 0.0; var dia3: Double = 0.0; var dia4 : Double = 0.0
         var dia5: Double = 0.0; var dia6: Double = 0.0; var dia7: Double = 0.0
         var diaSemanaHoy: Int = 0
+        //
+        var tiemposMes1 = 0 //para los tiempos de los dos meses anteriores
+        var tiemposMes2 = 0
+        var puntosMes1 = 0 //para los puntos de los dos meses anteriores
+        var puntosMes2 = 0
         //
 
         var listaRutinas = ArrayList<String>()
@@ -87,6 +91,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         var listaMetas = ArrayList<String>()
         var listaEventos1 = ArrayList<String>() //para las rutinas programadas
         var listaEventos2 = ArrayList<String>() //para las metas
+
     }
 
     private fun CargarListas(){
@@ -184,8 +189,8 @@ private fun myPreferences() {
     }
 }
 
+    var listaInsignias = listOf<insignias>()
     private fun insigniasRutinas() {
-        var listaRutinasInsignias = listOf<insignias>()
 
         for (j in listaRutinas) { //para todas las rutinas
             val nombre = j.split(" | ").toTypedArray()[1] //toma el nombre
@@ -201,36 +206,36 @@ private fun myPreferences() {
             var rutina: insignias
             if(InsigniasSwitch){
             if(nivel == 100){
-                rutina = insignias(nombre, nivel, R.drawable.insignia11)
+                rutina = insignias(nombre, nivel, true, R.drawable.insignia11, 0)
             }else{
                 if(nivel > 90){
-                    rutina = insignias(nombre, nivel, R.drawable.insignia10)
+                    rutina = insignias(nombre, nivel, true, R.drawable.insignia10, 0)
                 }else{
                     if(nivel > 80){
-                        rutina = insignias(nombre, nivel, R.drawable.insignia9)
+                        rutina = insignias(nombre, nivel, true, R.drawable.insignia9, 0)
                     }else{
                         if(nivel > 70){
-                            rutina = insignias(nombre, nivel, R.drawable.insignia8)
+                            rutina = insignias(nombre, nivel, true, R.drawable.insignia8, 0)
                         }else{
                             if(nivel > 60){
-                                rutina = insignias(nombre, nivel, R.drawable.insignia7)
+                                rutina = insignias(nombre, nivel, true, R.drawable.insignia7, 0)
                             }else{
                                 if(nivel > 50){
-                                    rutina = insignias(nombre, nivel, R.drawable.insignia6)
+                                    rutina = insignias(nombre, nivel, true, R.drawable.insignia6, 0)
                                 }else{
                                     if(nivel > 40){
-                                        rutina = insignias(nombre, nivel, R.drawable.insignia5)
+                                        rutina = insignias(nombre, nivel, true, R.drawable.insignia5, 0)
                                     }else{
                                         if(nivel > 30){
-                                            rutina = insignias(nombre, nivel, R.drawable.insignia4)
+                                            rutina = insignias(nombre, nivel, true, R.drawable.insignia4, 0)
                                         }else{
                                             if(nivel > 20){
-                                                rutina = insignias(nombre, nivel, R.drawable.insignia3)
+                                                rutina = insignias(nombre, nivel, true, R.drawable.insignia3, 0)
                                             }else{
                                                 if(nivel > 10){
-                                                    rutina = insignias(nombre, nivel, R.drawable.insignia2)
+                                                    rutina = insignias(nombre, nivel, true, R.drawable.insignia2, 0)
                                                 }else{
-                                                    rutina = insignias(nombre, nivel, R.drawable.insignia1)
+                                                    rutina = insignias(nombre, nivel, true, R.drawable.insignia1, 0)
                                                 }
                                             }
                                         }
@@ -245,29 +250,70 @@ private fun myPreferences() {
                 if (nivel >= 1){
                     val random = Random().nextInt(2) //numero random para no siempre mostrar las insignias de tipo (50%) //esto se tiene que eliminar despues
                     if(random == 0){
-                        if(tipoSobresaliente == "piernas"){rutina = insignias(nombre, nivel, R.drawable.insigniapiernas)} //en caso de ser de un tipo lo va a poner
-                        if(tipoSobresaliente == "abdomen"){rutina = insignias(nombre, nivel, R.drawable.insigniaabdomen)}
-                        if(tipoSobresaliente == "pecho"){rutina = insignias(nombre, nivel, R.drawable.insigniapecho)}
-                        if(tipoSobresaliente == "espalda"){rutina = insignias(nombre, nivel, R.drawable.insigniaespalda)}
-                        if(tipoSobresaliente == "brazos"){rutina = insignias(nombre, nivel, R.drawable.insigniabrazos)}
-                        if(tipoSobresaliente == "hombros"){rutina = insignias(nombre, nivel, R.drawable.insigniahombros)}
+                        if(tipoSobresaliente == "piernas"){rutina = insignias(nombre, nivel, true, R.drawable.insigniapiernas, 0)} //en caso de ser de un tipo lo va a poner
+                        if(tipoSobresaliente == "abdomen"){rutina = insignias(nombre, nivel, true, R.drawable.insigniaabdomen, 0)}
+                        if(tipoSobresaliente == "pecho"){rutina = insignias(nombre, nivel, true, R.drawable.insigniapecho, 0)}
+                        if(tipoSobresaliente == "espalda"){rutina = insignias(nombre, nivel, true, R.drawable.insigniaespalda, 0)}
+                        if(tipoSobresaliente == "brazos"){rutina = insignias(nombre, nivel, true, R.drawable.insigniabrazos, 0)}
+                        if(tipoSobresaliente == "hombros"){rutina = insignias(nombre, nivel, true, R.drawable.insigniahombros, 0)}
                     }
                 }
 
-                val listaRutinasAux3 = listOf(rutina)
-                listaRutinasInsignias += listaRutinasAux3
+                val listaRutinasAux = listOf(rutina)
+                listaInsignias += listaRutinasAux
             }
             else if(!InsigniasSwitch){
-                rutina = insignias(nombre, nivel, R.drawable.excersice_icon)
+                rutina = insignias(nombre, nivel, true, R.drawable.excersice_icon, 0)
 
-                val listaRutinasAux3 = listOf(rutina)
-                listaRutinasInsignias += listaRutinasAux3
+                val listaRutinasAux = listOf(rutina)
+                listaInsignias += listaRutinasAux
             }
         }
+    }
 
-        val adapter = insigniaAdapter(this, listaRutinasInsignias)
-        listViewInsignias!!.adapter = adapter
+    private fun insigniasTiempos(){
+        //Excelencia: Se entrega cuando el usuario hizo todos los ejercicios planteados en la semana
+        //para las rutinasATrabajar, no sé como hacerla :(
 
+        //verifica si se activan las insignias
+        var constancia = false
+        var superacion = false
+
+        if(tiemposMes2 >= (tiemposMes1 * 0.6)){
+            constancia = true
+        }
+
+        if(puntosMes2 >= (puntosMes1 * 1.4)){
+            superacion = true
+        }
+
+        if(tiemposMes2 == 0)
+            constancia = false
+
+        if(puntosMes2 == 0)
+            superacion = false
+
+        //las agrega a la lista
+        var insignia: insignias
+        if(constancia && superacion){
+            insignia = insignias("", 0, false, R.drawable.insigniaconstancia, R.drawable.insigniasuperacion)
+            val listaRutinasAux = listOf(insignia)
+            listaInsignias += listaRutinasAux
+
+        }else{
+            if(constancia){
+                insignia = insignias("", 0, false, R.drawable.insigniaconstancia, 0)
+                val listaRutinasAux = listOf(insignia)
+                listaInsignias += listaRutinasAux
+
+            }
+            if(superacion){
+                insignia = insignias("", 0, false, R.drawable.insigniasuperacion, 0)
+                val listaRutinasAux = listOf(insignia)
+                listaInsignias += listaRutinasAux
+
+            }
+        }
     }
 
     private fun cargarGrafica() {
@@ -314,7 +360,13 @@ private fun myPreferences() {
         iniciarGrafica()
         CargarListas()
 
+        insigniasTiempos()
         insigniasRutinas()
+
+        var adapter = insigniaAdapter(this, listaInsignias)
+        listViewInsignias!!.adapter = adapter
+
+
         acomodarTextoGrafica()
     }
 

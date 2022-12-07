@@ -342,7 +342,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 }
 
             }
-            .setNegativeButton("Ver más") { dialogInterface, it -> //dialogInterface.cancel()
+            .setNegativeButton("Ver estadisticas") { dialogInterface, it -> //dialogInterface.cancel()
                 val intent = Intent(this, VerGraficaAmigos::class.java)
                 intent.putExtra("Nombre", perfil)
                 intent.putExtra("Dia1", dia1)
@@ -432,43 +432,57 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                                     val idFecha = tiempos.get("idFecha") as String //toma la fecha
 
                                     if(idFecha == dias[1]){ //si la fecha es igual al dia 1 para la grafica
-                                        dia1 = (tiempos.get("minutos") as Long).toDouble() //guardara el tiempo en la variable del dia
+                                        dia1 = (tiempos.get("puntos") as Long).toDouble() //guardara el tiempo en la variable del dia
 
+                                        /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble() //de horas a minutos
                                         dia1 += tiempoAux * 60
 
                                         tiempoAux = (tiempos.get("segundos") as Long).toDouble() //y de segundos a minutos
                                         dia1 += tiempoAux / 60
+                                         */
                                     }
                                     if(idFecha == dias[2]){ //y así con las demas fechas
-                                        dia2 = (tiempos.get("minutos") as Long).toDouble()
+                                        dia2 = (tiempos.get("puntos") as Long).toDouble()
+                                        /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble(); dia2 += tiempoAux * 60
                                         tiempoAux = (tiempos.get("segundos") as Long).toDouble(); dia2 += tiempoAux / 60
+                                         */
                                     }
                                     if(idFecha == dias[3]){
-                                        dia3 = (tiempos.get("minutos") as Long).toDouble()
+                                        dia3 = (tiempos.get("puntos") as Long).toDouble()
+                                        /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble(); dia3 += tiempoAux * 60
                                         tiempoAux = (tiempos.get("segundos") as Long).toDouble(); dia3 += tiempoAux / 60
+                                         */
                                     }
                                     if(idFecha == dias[4]){
-                                        dia4 = (tiempos.get("minutos") as Long).toDouble()
+                                        dia4 = (tiempos.get("puntos") as Long).toDouble()
+                                        /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble(); dia4 += tiempoAux * 60
                                         tiempoAux = (tiempos.get("segundos") as Long).toDouble(); dia4 += tiempoAux / 60
+                                         */
                                     }
                                     if(idFecha == dias[5]){
-                                        dia5 = (tiempos.get("minutos") as Long).toDouble()
+                                        dia5 = (tiempos.get("puntos") as Long).toDouble()
+                                        /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble(); dia5 += tiempoAux * 60
                                         tiempoAux = (tiempos.get("segundos") as Long).toDouble(); dia5 += tiempoAux / 60
+                                         */
                                     }
                                     if(idFecha == dias[6]){
-                                        dia6 = (tiempos.get("minutos") as Long).toDouble()
+                                        dia6 = (tiempos.get("puntos") as Long).toDouble()
+                                        /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble(); dia6 += tiempoAux * 60
                                         tiempoAux = (tiempos.get("segundos") as Long).toDouble(); dia6 += tiempoAux / 60
+                                         */
                                     }
                                     if(idFecha == dias[7]){
-                                        dia7 = (tiempos.get("minutos") as Long).toDouble()
+                                        dia7 = (tiempos.get("puntos") as Long).toDouble()
+                                        /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble(); dia7 += tiempoAux * 60
                                         tiempoAux = (tiempos.get("segundos") as Long).toDouble(); dia7 += tiempoAux / 60
+                                         */
                                     }
                                 }
                             }

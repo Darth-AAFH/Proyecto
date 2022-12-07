@@ -69,8 +69,11 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         CargarEjercicios()
         CargarRutinas()
+
         CargarRutinasATrabajar()
         CargarMetas()
+
+        CargarInsignias() //para las insignias de constancia, superación y excelencia
 
         CargarSeguidores()
     }
@@ -285,6 +288,84 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             }
         }
         return 0
+    }
+
+    private fun CargarInsignias(){
+
+        if(MainActivity.validadorListas) {
+
+            //se trae el tiempo hecho hace dos meses
+            var sdf = SimpleDateFormat("dd")
+            sdf = SimpleDateFormat("MM")
+            var mesHoy2 = sdf.format(Date()) //se obtiene el mes actual
+            sdf = SimpleDateFormat("yyyy")
+            val anoHoy2 = sdf.format(Date()) //se obiene el año actual
+
+            val mesHoy = mesHoy2.toInt();
+            val anoHoy = anoHoy2.toInt() //obtiene la fecha de hoy
+
+            //se obtienen las fechas de los dos meses pasados
+            var mes1 = mesHoy - 2
+            var mes2 = mesHoy - 1
+            var ano1 = anoHoy
+            var ano2 = anoHoy
+
+            if (mesHoy == 2) {
+                mes1 = 12
+                ano1 -= 1
+            }
+            if (mesHoy == 1) {
+                mes1 = 11
+                mes2 = 12
+                ano1 -= 1
+                ano2 -= 1
+            }
+
+            //se obtienen los tiempos de esos meses
+            MainActivity.user?.let { usuario -> //abre la base de datos
+                db.collection("users").document(usuario)
+                    .collection("tiempos")
+                    .get().addOnSuccessListener {
+                        for (tiempo in it) {
+                            val fecha =
+                                tiempo.get("idFecha") as String //se trae la fecha de los tiempos
+
+                            val mes = fecha.split("-").toTypedArray()[1].toInt() //toma el mes y año de cada fecha
+                            val ano = fecha.split("-").toTypedArray()[2].toInt()
+
+                            var tiempoAux = 0
+
+                            if (mes == mes1 && ano == ano1) { //si coincide con dos meses anteriores
+                                MainActivity.tiemposMes1 += (tiempo.get("minutos") as Long).toInt() //se trae el tiempo
+
+                                tiempoAux =
+                                    (tiempo.get("horas") as Long).toInt() //de horas a minutos
+                                MainActivity.tiemposMes1 += tiempoAux * 60
+
+                                tiempoAux =
+                                    (tiempo.get("segundos") as Long).toInt() //y de segundos a minutos
+                                MainActivity.tiemposMes1 += tiempoAux / 60
+
+                                MainActivity.puntosMes1 += (tiempo.get("puntos") as Long).toInt()
+                            }
+
+                            if (mes == mes2 && ano == ano2) { //si coincide con el mes anterior
+                                MainActivity.tiemposMes2 += (tiempo.get("minutos") as Long).toInt() //se trae el tiempo
+
+                                tiempoAux =
+                                    (tiempo.get("horas") as Long).toInt() //de horas a minutos
+                                MainActivity.tiemposMes2 += tiempoAux * 60
+
+                                tiempoAux = (tiempo.get("segundos") as Long).toInt() //y de segundos a minutos
+                                MainActivity.tiemposMes2 += tiempoAux / 60
+
+                                MainActivity.puntosMes2 += (tiempo.get("puntos") as Long).toInt()
+                            }
+                        }
+                    }
+            }
+            MainActivity.validadorListas = false //cambia el validador para que esto no se vuelva a hacer
+        }
     }
 
     private fun callInicioActivity() {
@@ -582,7 +663,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val diaSemHoy = diaSemana(diaHoy, mesHoy, anoHoy) //se obtiene el numero de dia de la semana (lunes = 1, martes = 2, miercoles = 3, etc)
 
         var diaF: Int; var mesF: Int; var anoF: Int
-        var diasTotales: Int; var diasxSemana = 0; var diasATrabajar: Int
+        var diasTotales = 0; var diasxSemana = 0; var diasATrabajar: Int
 
         var datoDeSuma = 0
 
@@ -715,7 +796,6 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             if(meta.get("domingo") as Boolean){diasxSemana += 1; dom = 7}
 
                             //los dias a trabajar
-                            //diasATrabajar = diasTotales/diasxSemana
                             diasATrabajar = (diasTotales/7)*diasxSemana
 
                             //el dato para sumar al dato inicial
@@ -851,7 +931,6 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                         }
                     }
             }
-            MainActivity.validadorListas = false //cambia el validador para que esto no se vuelva a hacer
         }
     }
     private fun borrarMetas(dia: Int, mes: Int, ano: Int, id: String): Boolean { //se encarga de borrar metas ya caducadas

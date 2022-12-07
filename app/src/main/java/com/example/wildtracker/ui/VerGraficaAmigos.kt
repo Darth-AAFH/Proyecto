@@ -131,6 +131,15 @@ class VerGraficaAmigos : AppCompatActivity(), NavigationView.OnNavigationItemSel
             textViewDia4!!.text = "V"; textViewDia5!!.text = "S"; textViewDia6!!.text = "D"
         }
 
+
+        textViewTiempo1!!.text = (dia1.toInt()).toString()
+        textViewTiempo2!!.text = (dia2.toInt()).toString()
+        textViewTiempo3!!.text = (dia3.toInt()).toString()
+        textViewTiempo4!!.text = (dia4.toInt()).toString()
+        textViewTiempo5!!.text = (dia5.toInt()).toString()
+        textViewTiempo6!!.text = (dia6.toInt()).toString()
+        textViewTiempo7!!.text = (dia7.toInt()).toString()
+        /*
         var aux: Int
         var horas = 0
 
@@ -217,6 +226,7 @@ class VerGraficaAmigos : AppCompatActivity(), NavigationView.OnNavigationItemSel
         }else{
             textViewTiempo7!!.text = (dia7.toInt()).toString()
         }
+        */
     }
 
     private fun iniciarGrafica() {
