@@ -9,7 +9,8 @@ import com.example.wildtracker.R
 import kotlinx.android.synthetic.main.amigosdiseno.view.*
 import kotlinx.android.synthetic.main.metasdiseno.view.textViewNombre
 
-class amigosAdapter (private val mContext: Context, private val listaAmigos: List<amigos>) : ArrayAdapter<amigos>(mContext, 0, listaAmigos) {
+class amigosAdapter(private val mContext: Context, private val listaAmigos: List<amigos>) :
+    ArrayAdapter<amigos>(mContext, 0, listaAmigos) {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val layout = LayoutInflater.from(mContext).inflate(R.layout.amigosdiseno, parent, false)
         val amigo = listaAmigos[position]

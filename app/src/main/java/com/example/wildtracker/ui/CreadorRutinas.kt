@@ -19,7 +19,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.text.isDigitsOnly
 import androidx.core.view.GravityCompat
 import com.example.wildtracker.LoginActivity
-import java.util.*
 import com.example.wildtracker.R
 import com.example.wildtracker.musica.mPlayerActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -30,24 +29,30 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    var editTextNombre3: EditText ?= null
-    private var buttonCrear2: Button?= null
-    var listViewEjerciciosHechos: ListView?= null
-    var listViewEjerciciosRutina: ListView?= null
+    var editTextNombre3: EditText? = null
+    private var buttonCrear2: Button? = null
+    var listViewEjerciciosHechos: ListView? = null
+    var listViewEjerciciosRutina: ListView? = null
 
     var listado2 = ArrayList<String>()
     var datos = ArrayList<String>()
     var contadorMaxEjer = 0
 
-    var arregloRutinas = Array<rutina?>(51){null}
+    var arregloRutinas = Array<rutina?>(51) { null }
     var validadorVacia = true
 
-    var contadorMaxRut = 0; var idFinalRut = 0;  var idAux = 0
+    var contadorMaxRut = 0;
+    var idFinalRut = 0;
+    var idAux = 0
 
     private val db = FirebaseFirestore.getInstance()
 
     private fun CargarTabla() { //Funcion que trae la tabla
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaEjercicios)
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_list_item_1,
+            MainActivity.listaEjercicios
+        )
         listViewEjerciciosHechos!!.adapter = adapter //La tabla se adapta en la text view
     }
 
@@ -69,62 +74,81 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         MainActivity.user?.let { usuario -> //para guardar el id final de las rutinas
             db.collection("users").document(usuario).collection("rutinas") //abre la base de datos
                 .get().addOnSuccessListener {
-                    for(rutina in it){ //para cada rutina
+                    for (rutina in it) { //para cada rutina
                         contadorMaxRut += 1 //cuenta cuantas rutinas hay
                         idAux = (rutina.get("id") as Long).toInt() //toma el id
-                        if(idFinalRut < idAux){ //si es un id mayor
-                            idFinalRut = (rutina.get("id") as Long).toInt() //lo va a guardar como el id final
+                        if (idFinalRut < idAux) { //si es un id mayor
+                            idFinalRut =
+                                (rutina.get("id") as Long).toInt() //lo va a guardar como el id final
                         }
                     }
                 }
         }
 
-        buttonCrear2!!.setOnClickListener{
+        buttonCrear2!!.setOnClickListener {
             val nombre = editTextNombre3!!.text.toString()
-            if(crear(nombre)){
-                if(validadorVacia == true) {
+            if (crear(nombre)) {
+                if (validadorVacia == true) {
                     val intent = Intent(this@CreadorRutinas, PlantillasActivity::class.java)
                     startActivity(intent)
                 }
-            }else {
-                Toast.makeText(this, "Se ha alcanzado el numero maximo de rutinas", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Se ha alcanzado el numero maximo de rutinas",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
-        listViewEjerciciosRutina!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-            var linea: String
-            linea = this.listado2[position].split(" ").toTypedArray()[0]; linea += " | "
-            linea += this.listado2[position].split(" | ").toTypedArray()[1]; linea += " | "
-            linea += this.listado2[position].split(" | ").toTypedArray()[2]; linea += " | "
-            linea += this.listado2[position].split(" | ").toTypedArray()[3]
-
-            val posicion = listado2.indexOf(linea) //Toma la posición del ejercicio en el array list
-
-            listado2.removeAt(posicion) //Remueve el ejercicio del array list
-            val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
-            listViewEjerciciosRutina!!.adapter = adapter
-
-            contadorMaxEjer -= 1
-        }
-
-        listViewEjerciciosHechos!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-            if(contadorMaxEjer >= 10){ //un validador para que solo hayan max 10 ejercicios
-                Toast.makeText(this, "Solo se pueden agregar 10 ejercicios a la rutina", Toast.LENGTH_SHORT).show()
-            }else {
+        listViewEjerciciosRutina!!.onItemClickListener =
+            OnItemClickListener { parent, view, position, id ->
                 var linea: String
-                linea = MainActivity.listaEjercicios[position].split(" ").toTypedArray()[0]; linea += " | " //va a tomar el indice
-                linea += MainActivity.listaEjercicios[position].split(" | ").toTypedArray()[1]; linea += " | " //nombre
-                linea += MainActivity.listaEjercicios[position].split(" | ").toTypedArray()[2]; linea += " | " //tipo
-                linea += MainActivity.listaEjercicios[position].split(" | ").toTypedArray()[3] //y peso del ejercicio seleccionado
+                linea = this.listado2[position].split(" ").toTypedArray()[0]; linea += " | "
+                linea += this.listado2[position].split(" | ").toTypedArray()[1]; linea += " | "
+                linea += this.listado2[position].split(" | ").toTypedArray()[2]; linea += " | "
+                linea += this.listado2[position].split(" | ").toTypedArray()[3]
 
-                datos.add(linea) //y lo va a añadir a
-                listado2 = datos //el listado de los ejercicios de rutina
-                val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
-                listViewEjerciciosRutina!!.adapter = adapter //después lo va a poner en la listView
+                val posicion =
+                    listado2.indexOf(linea) //Toma la posición del ejercicio en el array list
 
-                contadorMaxEjer += 1
+                listado2.removeAt(posicion) //Remueve el ejercicio del array list
+                val adapter: ArrayAdapter<String> =
+                    ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
+                listViewEjerciciosRutina!!.adapter = adapter
+
+                contadorMaxEjer -= 1
             }
-        }
+
+        listViewEjerciciosHechos!!.onItemClickListener =
+            OnItemClickListener { parent, view, position, id ->
+                if (contadorMaxEjer >= 10) { //un validador para que solo hayan max 10 ejercicios
+                    Toast.makeText(
+                        this,
+                        "Solo se pueden agregar 10 ejercicios a la rutina",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    var linea: String
+                    linea = MainActivity.listaEjercicios[position].split(" ")
+                        .toTypedArray()[0]; linea += " | " //va a tomar el indice
+                    linea += MainActivity.listaEjercicios[position].split(" | ")
+                        .toTypedArray()[1]; linea += " | " //nombre
+                    linea += MainActivity.listaEjercicios[position].split(" | ")
+                        .toTypedArray()[2]; linea += " | " //tipo
+                    linea += MainActivity.listaEjercicios[position].split(" | ")
+                        .toTypedArray()[3] //y peso del ejercicio seleccionado
+
+                    datos.add(linea) //y lo va a añadir a
+                    listado2 = datos //el listado de los ejercicios de rutina
+                    val adapter: ArrayAdapter<String> =
+                        ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado2)
+                    listViewEjerciciosRutina!!.adapter =
+                        adapter //después lo va a poner en la listView
+
+                    contadorMaxEjer += 1
+                }
+            }
     }
 
     private fun createNotificationChannel2() {
@@ -144,42 +168,47 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         }
     }
 
-    private fun crear(Nombre: String): Boolean{
+    private fun crear(Nombre: String): Boolean {
         var confirmacion = false
-        if(contadorMaxRut <= 50){
+        if (contadorMaxRut <= 50) {
             var nombre = Nombre
 
-            if(nombre == "")
+            if (nombre == "")
                 nombre = "Rutina " + (idFinalRut + 1)
 
             var cadena: String //Variables para tomar los datos
             val arreglo: Array<String?>
 
             cadena = listado2.toString() //Toma la lista de los ejercicios
-            arreglo = cadena.split(" ").toTypedArray() //arreglo tiene toda la lista separada por espacios
+            arreglo =
+                cadena.split(" ").toTypedArray() //arreglo tiene toda la lista separada por espacios
 
             cadena = arreglo[0].toString() //guarda el primer indice de los ejercicios
             cadena += ","
             var contador = 0
             for (i in 0 until arreglo.size) {//recorre todo el arreglo
                 contador += 1
-                if(arreglo[i]!!.isDigitsOnly()){ //si uno de los datos es numero
+                if (arreglo[i]!!.isDigitsOnly()) { //si uno de los datos es numero
                     cadena += arreglo[i] //lo añade a la cadena
                     cadena += ","
                 }
             }
 
             contador = 0
-            for(i in 0 until cadena.length){
+            for (i in 0 until cadena.length) {
                 contador += 1
             }
             cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
 
             validadorVacia = true
-            if(cadena == "]"){
-                Toast.makeText(this, "No se puede crear una rutina sin ejercicios", Toast.LENGTH_SHORT).show()
+            if (cadena == "]") {
+                Toast.makeText(
+                    this,
+                    "No se puede crear una rutina sin ejercicios",
+                    Toast.LENGTH_SHORT
+                ).show()
                 validadorVacia = false
-            }else {
+            } else {
                 arregloRutinas[contadorMaxRut] = rutina(idFinalRut + 1, nombre, cadena)
                 guardarBD(arregloRutinas[contadorMaxRut]!!)
             }
@@ -194,7 +223,7 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         rutina2 = (Rutina.id).toString() + " | " + Rutina.nombre + " | Nivel: 0"
         MainActivity.listaRutinasVista.add(rutina2)
 
-        MainActivity.user?.let{ usuario ->
+        MainActivity.user?.let { usuario ->
             db.collection("users").document(usuario).collection("rutinas")
                 .document(Rutina.id.toString()).set(
                     hashMapOf(
@@ -210,7 +239,8 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 )
         }
         val rutina: String
-        rutina = (Rutina.id).toString() + " | " + Rutina.nombre + " | Nivel: 0 | " + Rutina.ejercicios
+        rutina =
+            (Rutina.id).toString() + " | " + Rutina.nombre + " | Nivel: 0 | " + Rutina.ejercicios
         MainActivity.listaRutinas.add(rutina)
 
         Toast.makeText(this, "Se ha guardado la rutina", Toast.LENGTH_SHORT).show()
@@ -218,77 +248,110 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         recomendarRutinas()
     }
 
-    fun recomendarRutinas(){ //Funcion que encuentra si un tipo de ejercicio se hace menos que los demas
-        var piernas = 0; var abdomen = 0; var pecho = 0
-        var espalda = 0; var brazos = 0; var hombros = 0
+    fun recomendarRutinas() { //Funcion que encuentra si un tipo de ejercicio se hace menos que los demas
+        var piernas = 0;
+        var abdomen = 0;
+        var pecho = 0
+        var espalda = 0;
+        var brazos = 0;
+        var hombros = 0
 
         for (i in MainActivity.listaRutinas) { //para todas las rutinas
             val ejercicios = i.split(" | ").toTypedArray()[3] //toma los ejercicios
             val arreglo = ejercicios.split(",").toTypedArray() //toma los ids de los ejercicios
 
-            for(j in arreglo){ //va a recorrer todos los ejercicios
+            for (j in arreglo) { //va a recorrer todos los ejercicios
 
                 for (k in MainActivity.listaEjercicios) { //para todos los ejercicios
                     val id = k.split(" ").toTypedArray()[0] //toma el id
-                    if(j == id){ //si esta el ejercicio en la rutina
+                    if (j == id) { //si esta el ejercicio en la rutina
 
                         var tipo = k.split(" | ").toTypedArray()[2] // toma el tipo
 
-                        if(tipo == "Piernas") {piernas += 1} //y lo añade a los tipos de ejercicios
-                        if(tipo == "Abdomen") {abdomen += 1}
-                        if(tipo == "Pecho") {pecho += 1}
-                        if(tipo == "Espalda") {espalda += 1}
-                        if(tipo == "Brazos") {brazos += 1}
-                        if(tipo == "Hombros") {hombros += 1}
+                        if (tipo == "Piernas") {
+                            piernas += 1
+                        } //y lo añade a los tipos de ejercicios
+                        if (tipo == "Abdomen") {
+                            abdomen += 1
+                        }
+                        if (tipo == "Pecho") {
+                            pecho += 1
+                        }
+                        if (tipo == "Espalda") {
+                            espalda += 1
+                        }
+                        if (tipo == "Brazos") {
+                            brazos += 1
+                        }
+                        if (tipo == "Hombros") {
+                            hombros += 1
+                        }
                     }
                 }
             }
         }
 
         var max = piernas //variable que guardara que tipo de ejercicio se hace mas que los demas
-        if(abdomen > max){max = abdomen}
-        if(pecho > max){max = pecho}
-        if(espalda > max){max = espalda}
-        if(brazos > max){max = brazos}
-        if(hombros > max){max = hombros}
+        if (abdomen > max) {
+            max = abdomen
+        }
+        if (pecho > max) {
+            max = pecho
+        }
+        if (espalda > max) {
+            max = espalda
+        }
+        if (brazos > max) {
+            max = brazos
+        }
+        if (hombros > max) {
+            max = hombros
+        }
 
-        if(piernas <= (max * .25)){
+        if (piernas <= (max * .25)) {
             Toast.makeText(this, "Deberias trabajar mas piernas", Toast.LENGTH_SHORT).show()
             //Notificacion piernas
             notificacionTrabajarPierna()
-        }else
-        if(abdomen <= (max * .25)){
-            Toast.makeText(this, "Deberias trabajar mas abdomen", Toast.LENGTH_SHORT).show()
-            //Notificacion abdomen
-            notificacionTrabajarAbdomen()
-        }else
-        if(pecho <= (max * .25)){
-            Toast.makeText(this, "Deberias trabajar mas pecho", Toast.LENGTH_SHORT).show()
-            //Notificacion pecho
-            notificacionTrabajarPecho()
-        }else
-        if(espalda <= (max * .25)){
-            Toast.makeText(this, "Deberias trabajar mas espalda", Toast.LENGTH_SHORT).show()
-            //Notificacion espalda
-            notificacionTrabajarEspalda()
-        }else
-        if(brazos <= (max * .25)){
-            Toast.makeText(this, "Deberias trabajar mas brazos", Toast.LENGTH_SHORT).show()
-            //Notificacion brazos
-            notificacionTrabajarBrazos()
-        }else
-        if(hombros <= (max * .25)){
-            Toast.makeText(this, "Deberias trabajar mas hombros", Toast.LENGTH_SHORT).show()
-            //Notificacion hombros
-            notificacionTrabajarHombros()
-        }
+        } else
+            if (abdomen <= (max * .25)) {
+                Toast.makeText(this, "Deberias trabajar mas abdomen", Toast.LENGTH_SHORT).show()
+                //Notificacion abdomen
+                notificacionTrabajarAbdomen()
+            } else
+                if (pecho <= (max * .25)) {
+                    Toast.makeText(this, "Deberias trabajar mas pecho", Toast.LENGTH_SHORT).show()
+                    //Notificacion pecho
+                    notificacionTrabajarPecho()
+                } else
+                    if (espalda <= (max * .25)) {
+                        Toast.makeText(this, "Deberias trabajar mas espalda", Toast.LENGTH_SHORT)
+                            .show()
+                        //Notificacion espalda
+                        notificacionTrabajarEspalda()
+                    } else
+                        if (brazos <= (max * .25)) {
+                            Toast.makeText(this, "Deberias trabajar mas brazos", Toast.LENGTH_SHORT)
+                                .show()
+                            //Notificacion brazos
+                            notificacionTrabajarBrazos()
+                        } else
+                            if (hombros <= (max * .25)) {
+                                Toast.makeText(
+                                    this,
+                                    "Deberias trabajar mas hombros",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                //Notificacion hombros
+                                notificacionTrabajarHombros()
+                            }
     }
 
     private fun notificacionTrabajarAbdomen() {
         val intent = Intent(this, CreadorRutinas::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         var builder = NotificationCompat.Builder(this, "Chanel1")
             .setSmallIcon(R.drawable.icon2)
             .setContentTitle("Sugerencia de rutina")
@@ -306,7 +369,8 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val intent = Intent(this, CreadorRutinas::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         var builder = NotificationCompat.Builder(this, "Chanel1")
             .setSmallIcon(R.drawable.icon2)
             .setContentTitle("Sugerencia de rutina")
@@ -324,7 +388,8 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val intent = Intent(this, CreadorRutinas::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         var builder = NotificationCompat.Builder(this, "Chanel1")
             .setSmallIcon(R.drawable.icon2)
             .setContentTitle("Sugerencia de rutina")
@@ -342,7 +407,8 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val intent = Intent(this, CreadorRutinas::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         var builder = NotificationCompat.Builder(this, "Chanel1")
             .setSmallIcon(R.drawable.icon2)
             .setContentTitle("Sugerencia de rutina")
@@ -360,7 +426,8 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val intent = Intent(this, CreadorRutinas::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         var builder = NotificationCompat.Builder(this, "Chanel1")
             .setSmallIcon(R.drawable.icon2)
             .setContentTitle("Sugerencia de rutina")
@@ -378,7 +445,8 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val intent = Intent(this, CreadorRutinas::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         var builder = NotificationCompat.Builder(this, "Chanel1")
             .setSmallIcon(R.drawable.icon2)
             .setContentTitle("Sugerencia de rutina")
@@ -434,11 +502,11 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            R.id.nav_musica ->callMusica()
-            R.id.nav_amigos ->callAmigosActivity()
-            R.id.Settings->callAjustesActivity()
-            R.id.nav_seguimiento->callSeguimientoActivity()
-            R.id.nav_solicitudes-> callSolicitudesActivity()
+            R.id.nav_musica -> callMusica()
+            R.id.nav_amigos -> callAmigosActivity()
+            R.id.Settings -> callAjustesActivity()
+            R.id.nav_seguimiento -> callSeguimientoActivity()
+            R.id.nav_solicitudes -> callSolicitudesActivity()
 
         }
 
@@ -446,25 +514,32 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         return true
     }
+
     private fun callSolicitudesActivity() {
         val intent = Intent(this, SolicitudesActivity::class.java)
-        startActivity(intent)    }
+        startActivity(intent)
+    }
+
     private fun callRankingActivity() {
         val intent = Intent(this, RankingActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
     }
+
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
     }
+
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
@@ -521,6 +596,7 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         //Cierra sesion y manda devuelta al login
         deleteAppData()
     }
+
     private fun deleteAppData() {
         try {
             // clearing app data
@@ -531,16 +607,6 @@ class CreadorRutinas : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             e.printStackTrace()
         }
     }
-
-
-
-
-
-
-
-
-
-
 
 
 }

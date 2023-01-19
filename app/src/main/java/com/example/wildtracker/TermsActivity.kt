@@ -1,7 +1,7 @@
 package com.example.wildtracker
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 
 class TermsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

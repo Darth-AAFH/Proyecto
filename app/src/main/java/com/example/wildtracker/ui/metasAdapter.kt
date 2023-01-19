@@ -11,11 +11,13 @@ import com.example.wildtracker.R
 import com.example.wildtracker.ui.EjecutadorRutina.Companion.Ismeta
 import kotlinx.android.synthetic.main.metasdiseno.view.*
 
-class metasAdapter(private val mContext: Context, private val listaMetas: List<metas>) : ArrayAdapter<metas>(mContext, 0, listaMetas) {
+class metasAdapter(private val mContext: Context, private val listaMetas: List<metas>) :
+    ArrayAdapter<metas>(mContext, 0, listaMetas) {
     companion object {
         private const val REQUEST_CODE = 42
-        var nombreCajaFotos =""
+        var nombreCajaFotos = ""
     }
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val layout = LayoutInflater.from(mContext).inflate(R.layout.metasdiseno, parent, false)
         val intent = Intent(mContext, FotosActivity::class.java)
@@ -30,19 +32,23 @@ class metasAdapter(private val mContext: Context, private val listaMetas: List<m
         layout.setOnClickListener {
             sequenceOf(Toast.makeText(mContext, "Meta: ${meta.nombre}", Toast.LENGTH_LONG).show())
             nombreCajaFotos = meta.nombre
-            Ismeta =true
-            Utils.startActivity(mContext,FotosActivity::class.java, meta.nombre, Ismeta)
+            Ismeta = true
+            Utils.startActivity(mContext, FotosActivity::class.java, meta.nombre, Ismeta)
         }
 
         return layout
     }
+
     class Utils {
 
         companion object {
             fun startActivity(context: Context, clazz: Class<*>, nombre: String, Ismeta: Boolean) {
 
                 val intent = Intent(context, clazz)
-                intent.putExtra("Meta",nombre) //Manda el nombre de la rutina mediante el intent, se cacha en el activirty fotos
+                intent.putExtra(
+                    "Meta",
+                    nombre
+                ) //Manda el nombre de la rutina mediante el intent, se cacha en el activirty fotos
                 intent.putExtra("Ismeta", Ismeta)
                 context.startActivity(intent)
 

@@ -22,7 +22,6 @@ import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
 import com.example.wildtracker.musica.mPlayerActivity
-import com.example.wildtracker.ui.MainActivity.Companion.listaSeguidores
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
@@ -43,16 +42,16 @@ import java.util.*
 class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var filepath:Uri
+    private lateinit var filepath: Uri
     /*var Perfil_birthday = findViewById<EditText>(R.id.Perfil_birthday)
     var Perfil_mail = findViewById<EditText>(R.id.Perfil_mail)
     var Perfil_name = findViewById<EditText>(R.id.Perfil_name)
 */
 
-    companion object{
-        lateinit var usernameDb : String
-        lateinit var nombreRutinaEliminada :String
-        lateinit var NombreUsuario:String
+    companion object {
+        lateinit var usernameDb: String
+        lateinit var nombreRutinaEliminada: String
+        lateinit var NombreUsuario: String
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,7 +79,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
     val listaNombres = ArrayList<String>()
 
-    private fun ValidadorNombres(){
+    private fun ValidadorNombres() {
         var cadena: String
         MainActivity.user?.let { usuario -> //para cargar el ranking
             db.collection("users").get().addOnSuccessListener {
@@ -134,11 +133,11 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            R.id.nav_musica ->callMusica()
-            R.id.nav_amigos ->callAmigosActivity()
-            R.id.Settings->callAjustesActivity()
-            R.id.nav_seguimiento->callSeguimientoActivity()
-            R.id.nav_solicitudes-> callSolicitudesActivity()
+            R.id.nav_musica -> callMusica()
+            R.id.nav_amigos -> callAmigosActivity()
+            R.id.Settings -> callAjustesActivity()
+            R.id.nav_seguimiento -> callSeguimientoActivity()
+            R.id.nav_solicitudes -> callSolicitudesActivity()
 
         }
 
@@ -146,9 +145,12 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         return true
     }
+
     private fun callSolicitudesActivity() {
         val intent = Intent(this, SolicitudesActivity::class.java)
-        startActivity(intent)    }
+        startActivity(intent)
+    }
+
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
@@ -158,6 +160,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
     }
+
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
@@ -169,6 +172,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     }
 
     var tiempoAux: Double = 0.0
+
     @SuppressLint("SimpleDateFormat")
     private fun CargarTiempos() {
         var sdf = SimpleDateFormat("dd")
@@ -178,93 +182,115 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         sdf = SimpleDateFormat("yyyy")
         val anoHoy = sdf.format(Date()) //se obiene el año actual
 
-        MainActivity.diaSemanaHoy = diaSemana(diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt()) //se obtiene el numero de dia de la semana (lunes = 1, martes = 2, miercoles = 3, etc)
+        MainActivity.diaSemanaHoy = diaSemana(
+            diaHoy.toInt(),
+            mesHoy.toInt(),
+            anoHoy.toInt()
+        ) //se obtiene el numero de dia de la semana (lunes = 1, martes = 2, miercoles = 3, etc)
 
         val dias: ArrayList<String> = arrayListOf<String>() //arreglo de string?
-        dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add("") //se llena el arreglo de dias con datos vacios
+        dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(
+            ""
+        ); dias.add("") //se llena el arreglo de dias con datos vacios
 
         var contadorAux = 0 //un contador auxiliar para encontrar los demas días
 
         for (i in 7 downTo 0) { //para el numero de dia de la semana para toda la semana pasada
-            var diaAux = diaHoy.toInt() - contadorAux //variable que va a modificarse segun el día, inicia siendo el dia actual menos 0
+            var diaAux =
+                diaHoy.toInt() - contadorAux //variable que va a modificarse segun el día, inicia siendo el dia actual menos 0
 
-            if(diaAux == 0){ //en caso de que llegue a cero el día
+            if (diaAux == 0) { //en caso de que llegue a cero el día
                 val mesAux = mesHoy.toInt() //una variable para cambiarle el valor al mes
 
-                if(mesAux == 3){
+                if (mesAux == 3) {
                     diaHoy = "28"
                     diaAux = 28
-                }else{
-                    if(mesAux == 2 || mesAux == 4 || mesAux == 6 || mesAux == 8 || mesAux == 9 || mesAux == 11 || mesAux == 1) {
+                } else {
+                    if (mesAux == 2 || mesAux == 4 || mesAux == 6 || mesAux == 8 || mesAux == 9 || mesAux == 11 || mesAux == 1) {
                         diaHoy = "31"
                         diaAux = 31
-                    }else{
+                    } else {
                         diaHoy = "30"
                         diaAux = 30
                     }
                 }
 
-                if((mesAux - 1) < 10){//fallo para cambio de año
+                if ((mesAux - 1) < 10) {//fallo para cambio de año
                     mesHoy = "0" + (mesHoy.toInt() - 1).toString()
-                }else{
+                } else {
                     mesHoy = (mesHoy.toInt() - 1).toString()
                 }
                 contadorAux = 0
             }
 
-            if(diaAux <= 10){ //se guardan en el arreglo de días los dias pasados y se les da el formato
+            if (diaAux <= 10) { //se guardan en el arreglo de días los dias pasados y se les da el formato
                 dias[i] = "0" + diaAux.toString() + "-" + mesHoy + "-" + anoHoy
-            }else {
+            } else {
                 dias[i] = diaAux.toString() + "-" + mesHoy + "-" + anoHoy
             }
 
-            contadorAux+= 1 //se le agrega al contador un numero más para retorceder más días
+            contadorAux += 1 //se le agrega al contador un numero más para retorceder más días
         }
 
         MainActivity.user?.let { usuario -> //trae los tiempos segun el día
             db.collection("users").document(usuario).collection("tiempos") //abre la base de datos
                 .get().addOnSuccessListener {
-                    for(tiempos in it) { //por cada dia registrado
+                    for (tiempos in it) { //por cada dia registrado
                         val idFecha = tiempos.get("idFecha") as String //toma la fecha
 
-                        if(idFecha == dias[1]){ //si la fecha es igual al dia lunes guardado
-                            MainActivity.dia1 = (tiempos.get("minutos") as Long).toDouble() //guardara el tiempo en la variable del dia
+                        if (idFecha == dias[1]) { //si la fecha es igual al dia lunes guardado
+                            MainActivity.dia1 =
+                                (tiempos.get("minutos") as Long).toDouble() //guardara el tiempo en la variable del dia
 
-                            tiempoAux = (tiempos.get("horas") as Long).toDouble() //de horas a minutos
+                            tiempoAux =
+                                (tiempos.get("horas") as Long).toDouble() //de horas a minutos
                             MainActivity.dia1 += tiempoAux * 60
 
-                            tiempoAux = (tiempos.get("segundos") as Long).toDouble() //y de segundos a minutos
+                            tiempoAux =
+                                (tiempos.get("segundos") as Long).toDouble() //y de segundos a minutos
                             MainActivity.dia1 += tiempoAux / 60
                         }
-                        if(idFecha == dias[2]){ //y así con las demas fechas
+                        if (idFecha == dias[2]) { //y así con las demas fechas
                             MainActivity.dia2 = (tiempos.get("minutos") as Long).toDouble()
-                            tiempoAux = (tiempos.get("horas") as Long).toDouble(); MainActivity.dia2 += tiempoAux * 60
-                            tiempoAux = (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia2 += tiempoAux / 60
+                            tiempoAux =
+                                (tiempos.get("horas") as Long).toDouble(); MainActivity.dia2 += tiempoAux * 60
+                            tiempoAux =
+                                (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia2 += tiempoAux / 60
                         }
-                        if(idFecha == dias[3]){
+                        if (idFecha == dias[3]) {
                             MainActivity.dia3 = (tiempos.get("minutos") as Long).toDouble()
-                            tiempoAux = (tiempos.get("horas") as Long).toDouble(); MainActivity.dia3 += tiempoAux * 60
-                            tiempoAux = (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia3 += tiempoAux / 60
+                            tiempoAux =
+                                (tiempos.get("horas") as Long).toDouble(); MainActivity.dia3 += tiempoAux * 60
+                            tiempoAux =
+                                (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia3 += tiempoAux / 60
                         }
-                        if(idFecha == dias[4]){
+                        if (idFecha == dias[4]) {
                             MainActivity.dia4 = (tiempos.get("minutos") as Long).toDouble()
-                            tiempoAux = (tiempos.get("horas") as Long).toDouble(); MainActivity.dia4 += tiempoAux * 60
-                            tiempoAux = (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia4 += tiempoAux / 60
+                            tiempoAux =
+                                (tiempos.get("horas") as Long).toDouble(); MainActivity.dia4 += tiempoAux * 60
+                            tiempoAux =
+                                (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia4 += tiempoAux / 60
                         }
-                        if(idFecha == dias[5]){
+                        if (idFecha == dias[5]) {
                             MainActivity.dia5 = (tiempos.get("minutos") as Long).toDouble()
-                            tiempoAux = (tiempos.get("horas") as Long).toDouble(); MainActivity.dia5 += tiempoAux * 60
-                            tiempoAux = (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia5 += tiempoAux / 60
+                            tiempoAux =
+                                (tiempos.get("horas") as Long).toDouble(); MainActivity.dia5 += tiempoAux * 60
+                            tiempoAux =
+                                (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia5 += tiempoAux / 60
                         }
-                        if(idFecha == dias[6]){
+                        if (idFecha == dias[6]) {
                             MainActivity.dia6 = (tiempos.get("minutos") as Long).toDouble()
-                            tiempoAux = (tiempos.get("horas") as Long).toDouble(); MainActivity.dia6 += tiempoAux * 60
-                            tiempoAux = (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia6 += tiempoAux / 60
+                            tiempoAux =
+                                (tiempos.get("horas") as Long).toDouble(); MainActivity.dia6 += tiempoAux * 60
+                            tiempoAux =
+                                (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia6 += tiempoAux / 60
                         }
-                        if(idFecha == dias[7]){
+                        if (idFecha == dias[7]) {
                             MainActivity.dia7 = (tiempos.get("minutos") as Long).toDouble()
-                            tiempoAux = (tiempos.get("horas") as Long).toDouble(); MainActivity.dia7 += tiempoAux * 60
-                            tiempoAux = (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia7 += tiempoAux / 60
+                            tiempoAux =
+                                (tiempos.get("horas") as Long).toDouble(); MainActivity.dia7 += tiempoAux * 60
+                            tiempoAux =
+                                (tiempos.get("segundos") as Long).toDouble(); MainActivity.dia7 += tiempoAux / 60
                         }
                     }
                 }
@@ -274,29 +300,29 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private fun diaSemana(dia: Int, mes: Int, ano: Int): Int {
         val c = Calendar.getInstance()
         c.set(ano, mes, dia)
-        val diaSem =  c.get(Calendar.DAY_OF_WEEK)
+        val diaSem = c.get(Calendar.DAY_OF_WEEK)
 
-        if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12){
-            if(diaSem == 5) return 1; if(diaSem == 6) return 2; if(diaSem == 7) return 3
-            if(diaSem == 1) return 4; if(diaSem == 2) return 5; if(diaSem == 3) return 6
-            if(diaSem == 4) return 7
-        }else{
-            if(mes == 2){
-                if(diaSem == 2) return 1; if(diaSem == 3) return 2; if(diaSem == 4) return 3
-                if(diaSem == 5) return 4; if(diaSem == 6) return 5; if(diaSem == 7) return 6
-                if(diaSem == 1) return 7
-            }else{
-                if(diaSem == 4) return 1; if(diaSem == 5) return 2; if(diaSem == 6) return 3
-                if(diaSem == 7) return 4; if(diaSem == 1) return 5; if(diaSem == 2) return 6
-                if(diaSem == 3) return 7
+        if (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) {
+            if (diaSem == 5) return 1; if (diaSem == 6) return 2; if (diaSem == 7) return 3
+            if (diaSem == 1) return 4; if (diaSem == 2) return 5; if (diaSem == 3) return 6
+            if (diaSem == 4) return 7
+        } else {
+            if (mes == 2) {
+                if (diaSem == 2) return 1; if (diaSem == 3) return 2; if (diaSem == 4) return 3
+                if (diaSem == 5) return 4; if (diaSem == 6) return 5; if (diaSem == 7) return 6
+                if (diaSem == 1) return 7
+            } else {
+                if (diaSem == 4) return 1; if (diaSem == 5) return 2; if (diaSem == 6) return 3
+                if (diaSem == 7) return 4; if (diaSem == 1) return 5; if (diaSem == 2) return 6
+                if (diaSem == 3) return 7
             }
         }
         return 0
     }
 
-    private fun CargarInsignias(){
+    private fun CargarInsignias() {
 
-        if(MainActivity.validadorListas) {
+        if (MainActivity.validadorListas) {
 
             //se trae el tiempo hecho hace dos meses
             var sdf = SimpleDateFormat("dd")
@@ -334,7 +360,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             val fecha =
                                 tiempo.get("idFecha") as String //se trae la fecha de los tiempos
 
-                            val mes = fecha.split("-").toTypedArray()[1].toInt() //toma el mes y año de cada fecha
+                            val mes = fecha.split("-")
+                                .toTypedArray()[1].toInt() //toma el mes y año de cada fecha
                             val ano = fecha.split("-").toTypedArray()[2].toInt()
 
                             var tiempoAux = 0
@@ -360,7 +387,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                     (tiempo.get("horas") as Long).toInt() //de horas a minutos
                                 MainActivity.tiemposMes2 += tiempoAux * 60
 
-                                tiempoAux = (tiempo.get("segundos") as Long).toInt() //y de segundos a minutos
+                                tiempoAux =
+                                    (tiempo.get("segundos") as Long).toInt() //y de segundos a minutos
                                 MainActivity.tiemposMes2 += tiempoAux / 60
 
                                 MainActivity.puntosMes2 += (tiempo.get("puntos") as Long).toInt()
@@ -368,7 +396,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                         }
                     }
             }
-            MainActivity.validadorListas = false //cambia el validador para que esto no se vuelva a hacer
+            MainActivity.validadorListas =
+                false //cambia el validador para que esto no se vuelva a hacer
         }
     }
 
@@ -377,19 +406,21 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         startActivity(intent)
     }
 
-    private fun CargarEjercicios(){
-        var cadena: String; var id: Int
-        if(MainActivity.validadorListas) {
+    private fun CargarEjercicios() {
+        var cadena: String;
+        var id: Int
+        if (MainActivity.validadorListas) {
             MainActivity.user?.let { usuario -> //para cargar las rutinas
                 db.collection("users").document(usuario)
                     .collection("ejercicios") //abre la base de datos
                     .get().addOnSuccessListener {
                         for (ejercicio in it) { //para cada ejercicio
                             id = (ejercicio.get("id") as Long).toInt()
-                            if(id < 10) {
+                            if (id < 10) {
                                 cadena = id.toString() //toma el id del ejercicio
                                 cadena += " | " //le pone un texto para darle orden
-                                cadena += ejercicio.get("nombre").toString() //toma el nombre del ejercicio
+                                cadena += ejercicio.get("nombre")
+                                    .toString() //toma el nombre del ejercicio
                                 cadena += " | " //le pone un texto para darle orden
                                 cadena += ejercicio.get("tipo").toString() //toma el tipo
                                 cadena += " | " //le pone un texto para darle orden
@@ -400,10 +431,11 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                     cadena += "Sin peso"
                                 }
                                 MainActivity.listaEjercicios1.add(cadena)//y lo guarda en la primer lista
-                            }else{
+                            } else {
                                 cadena = id.toString() //toma el id del ejercicio
                                 cadena += " | " //le pone un texto para darle orden
-                                cadena += ejercicio.get("nombre").toString() //toma el nombre del ejercicio
+                                cadena += ejercicio.get("nombre")
+                                    .toString() //toma el nombre del ejercicio
                                 cadena += " | " //le pone un texto para darle orden
                                 cadena += ejercicio.get("tipo").toString() //toma el tipo
                                 cadena += " | " //le pone un texto para darle orden
@@ -421,29 +453,35 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             MainActivity.listaEjercicios1.sort(); MainActivity.listaEjercicios2.sort()// acomoda las listas
         }
     }
-    private fun CargarRutinas(){
-        var cadena: String; var id: Int
-        if(MainActivity.validadorListas) {
+
+    private fun CargarRutinas() {
+        var cadena: String;
+        var id: Int
+        if (MainActivity.validadorListas) {
             MainActivity.user?.let { usuario -> //para cargar las rutinas
                 db.collection("users").document(usuario)
                     .collection("rutinas") //abre la base de datos
                     .get().addOnSuccessListener {
                         for (rutina in it) { //para cada rutina
                             id = (rutina.get("id") as Long).toInt()
-                            if(id < 10) {
-                                cadena = (rutina.get("id") as Long).toString() //toma el id de la rutina
+                            if (id < 10) {
+                                cadena =
+                                    (rutina.get("id") as Long).toString() //toma el id de la rutina
                                 cadena += " | " //le pone un texto para darle orden
-                                cadena += rutina.get("nombre").toString() //toma el nombre de la rutina
+                                cadena += rutina.get("nombre")
+                                    .toString() //toma el nombre de la rutina
                                 cadena += " | Nivel: " //le pone un texto para darle orden
                                 cadena += (rutina.get("nivel") as Long).toString() //toma el nivel de la rutina
                                 MainActivity.listaRutinasVista1.add(cadena)
                                 cadena += " | " //le pone un texto para darle orden
                                 cadena += rutina.get("ejercicios").toString() //toma los ejercicios
                                 MainActivity.listaRutinas1.add(cadena)
-                            }else{
-                                cadena = (rutina.get("id") as Long).toString() //toma el id de la rutina
+                            } else {
+                                cadena =
+                                    (rutina.get("id") as Long).toString() //toma el id de la rutina
                                 cadena += " | " //le pone un texto para darle orden
-                                cadena += rutina.get("nombre").toString() //toma el nombre de la rutina
+                                cadena += rutina.get("nombre")
+                                    .toString() //toma el nombre de la rutina
                                 cadena += " | Nivel: " //le pone un texto para darle orden
                                 cadena += (rutina.get("nivel") as Long).toString() //toma el nivel de la rutina
                                 MainActivity.listaRutinasVista2.add(cadena)
@@ -474,7 +512,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         startActivity(intent)
     }
 
-    private fun CargarRutinasATrabajar(){
+    private fun CargarRutinasATrabajar() {
         var sdf = SimpleDateFormat("dd")
         val diaHoy = sdf.format(Date()) //se obtiene el dia actual
         sdf = SimpleDateFormat("MM")
@@ -486,15 +524,17 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val mesHoy2 = mesHoy.toInt()
         fechaHoy = diaHoy2.toString() + "-" + mesHoy2.toString() + "-" + anoHoy
 
-        var cadena: String; var fecha: String
+        var cadena: String;
+        var fecha: String
 
-        if(MainActivity.validadorListas) {
+        if (MainActivity.validadorListas) {
             MainActivity.user?.let { usuario -> //para cargar las rutinas
                 db.collection("users").document(usuario)
                     .collection("rutinasAtrabajar") //abre la base de datos
                     .get().addOnSuccessListener {
                         for (rutina in it) { //para cada rutina
-                            cadena = (rutina.get("idRutina") as Long).toString() //toma el id de la rutina
+                            cadena =
+                                (rutina.get("idRutina") as Long).toString() //toma el id de la rutina
                             cadena += " | " //le pone un texto para darle orden
                             cadena += rutina.get("nombre").toString() //toma el nombre de la rutina
                             cadena += " | Fecha: " //le pone un texto para darle orden
@@ -510,11 +550,20 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             fecha += "-" //le pone un texto para darle orden
                             fecha += rutina.get("ano").toString()
 
-                            if(fecha == fechaHoy) {
+                            if (fecha == fechaHoy) {
                                 MainActivity.listaRutinasATrabajar.add(cadena)
                             }
 
-                            if(borrarRutinasCaducadas((rutina.get("dia") as Long).toInt(), (rutina.get("mes") as Long).toInt(), (rutina.get("ano") as Long).toInt(), diaHoy.toInt(), mesHoy.toInt(), anoHoy.toInt(), fecha)){
+                            if (borrarRutinasCaducadas(
+                                    (rutina.get("dia") as Long).toInt(),
+                                    (rutina.get("mes") as Long).toInt(),
+                                    (rutina.get("ano") as Long).toInt(),
+                                    diaHoy.toInt(),
+                                    mesHoy.toInt(),
+                                    anoHoy.toInt(),
+                                    fecha
+                                )
+                            ) {
                                 MainActivity.listaRutinasATrabajarAux.add(cadena)
                                 MainActivity.listaEventos1.add(fecha)
                             }
@@ -523,24 +572,36 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             }
         }
     }
-    private fun borrarRutinasCaducadas(dia: Int, mes: Int, ano: Int, diaHoy: Int, mesHoy: Int, anoHoy: Int, fecha: String): Boolean {
-        if(anoHoy >= ano){
-            if(anoHoy > ano){
-                MainActivity.user?.let{ usuario ->
-                    db.collection("users").document(usuario).collection("rutinasAtrabajar").document(fecha).delete()
+
+    private fun borrarRutinasCaducadas(
+        dia: Int,
+        mes: Int,
+        ano: Int,
+        diaHoy: Int,
+        mesHoy: Int,
+        anoHoy: Int,
+        fecha: String
+    ): Boolean {
+        if (anoHoy >= ano) {
+            if (anoHoy > ano) {
+                MainActivity.user?.let { usuario ->
+                    db.collection("users").document(usuario).collection("rutinasAtrabajar")
+                        .document(fecha).delete()
                     return false
                 }
-            }else{
-                if(mesHoy >= mes){
-                    if(mesHoy > mes){
-                        MainActivity.user?.let{ usuario ->
-                            db.collection("users").document(usuario).collection("rutinasAtrabajar").document(fecha).delete()
+            } else {
+                if (mesHoy >= mes) {
+                    if (mesHoy > mes) {
+                        MainActivity.user?.let { usuario ->
+                            db.collection("users").document(usuario).collection("rutinasAtrabajar")
+                                .document(fecha).delete()
                             return false
                         }
-                    }else{
-                        if(diaHoy > dia){
-                            MainActivity.user?.let{ usuario ->
-                                db.collection("users").document(usuario).collection("rutinasAtrabajar").document(fecha).delete()
+                    } else {
+                        if (diaHoy > dia) {
+                            MainActivity.user?.let { usuario ->
+                                db.collection("users").document(usuario)
+                                    .collection("rutinasAtrabajar").document(fecha).delete()
                                 return false
                             }
                         }
@@ -556,12 +617,12 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         startActivity(intent)
     }
 
-    data class userData (
+    data class userData(
         val Name: String? = "",
         var puntosTotales: Int? = 0
     )
 
-    private fun CargarRanking () {
+    private fun CargarRanking() {
         MainActivity.listaRanking.clear() //limpia las listas del ranking para poder recargarlas
         MainActivity.listaRanking1.clear(); MainActivity.listaRanking2.clear()
         MainActivity.listaRanking3.clear(); MainActivity.listaRanking4.clear()
@@ -573,35 +634,37 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                     for (userIt in it) { //para cada usuario
                         val userEmail = userIt.get("email") as String? //va a tomar el correo
-                        val nameDocument = Firebase.firestore.collection("users").document(userEmail.toString()) //la ruta en la base de datos
-                        val user1 = nameDocument.get().await().toObject(userData::class.java) //y se va a traer los datos
+                        val nameDocument = Firebase.firestore.collection("users")
+                            .document(userEmail.toString()) //la ruta en la base de datos
+                        val user1 = nameDocument.get().await()
+                            .toObject(userData::class.java) //y se va a traer los datos
 
-                        withContext(Dispatchers.Main){
+                        withContext(Dispatchers.Main) {
 
-                            if((user1!!.puntosTotales)!!.toInt() < 10){
-                                if(MainActivity.user == userEmail){ //si es el usuario en uso
+                            if ((user1!!.puntosTotales)!!.toInt() < 10) {
+                                if (MainActivity.user == userEmail) { //si es el usuario en uso
                                     MainActivity.listaRanking1.add((user1!!.puntosTotales).toString() + " .- " + user1!!.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
-                                }else{
+                                } else {
                                     MainActivity.listaRanking1.add((user1!!.puntosTotales).toString() + " .- " + user1!!.Name) //y si no los va a agregar pero sin la estrellita
                                 }
-                            }else{
-                                if((user1!!.puntosTotales)!!.toInt() < 100){
-                                    if(MainActivity.user == userEmail){ //si es el usuario en uso
+                            } else {
+                                if ((user1!!.puntosTotales)!!.toInt() < 100) {
+                                    if (MainActivity.user == userEmail) { //si es el usuario en uso
                                         MainActivity.listaRanking2.add((user1!!.puntosTotales).toString() + " .- " + user1!!.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
-                                    }else{
+                                    } else {
                                         MainActivity.listaRanking2.add((user1!!.puntosTotales).toString() + " .- " + user1!!.Name) //y si no los va a agregar pero sin la estrellita
                                     }
-                                }else{
-                                    if((user1!!.puntosTotales)!!.toInt() < 1000){
-                                        if(MainActivity.user == userEmail){ //si es el usuario en uso
+                                } else {
+                                    if ((user1!!.puntosTotales)!!.toInt() < 1000) {
+                                        if (MainActivity.user == userEmail) { //si es el usuario en uso
                                             MainActivity.listaRanking3.add((user1!!.puntosTotales).toString() + " .- " + user1!!.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
-                                        }else{
+                                        } else {
                                             MainActivity.listaRanking3.add((user1!!.puntosTotales).toString() + " .- " + user1!!.Name) //y si no los va a agregar pero sin la estrellita
                                         }
-                                    }else{
-                                        if(MainActivity.user == userEmail){ //si es el usuario en uso
+                                    } else {
+                                        if (MainActivity.user == userEmail) { //si es el usuario en uso
                                             MainActivity.listaRanking4.add((user1!!.puntosTotales).toString() + " .- " + user1!!.Name + " ✰") //lo agrega a la lista con una estrellita a modo de identificador
-                                        }else{
+                                        } else {
                                             MainActivity.listaRanking4.add((user1!!.puntosTotales).toString() + " .- " + user1!!.Name) //y si no los va a agregar pero sin la estrellita
                                         }
                                     }
@@ -616,31 +679,33 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         MainActivity.listaRanking1.sort(); MainActivity.listaRanking2.sort()// acomoda las listas
         MainActivity.listaRanking3.sort(); MainActivity.listaRanking4.sort()
     }
-    private fun CargarSeguidores(){
-        listaSeguidores.clear()
+
+    private fun CargarSeguidores() {
         val listaSeguidores = ArrayList<String>()
-        var perfilGet =""
+        listaSeguidores.clear()
+        var perfilGet = ""
         val progresDialog = ProgressDialog(this)
         progresDialog.setMessage("Cargando Datos")
         progresDialog.setCancelable(false)
         progresDialog.show()
-        db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
-            for (document in result) {
+        db.collection("users").document(MainActivity.user!!).collection("Seguidores").get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
 
-                perfilGet = document.get("Nombre").toString()
+                    perfilGet = document.get("Nombre").toString()
 
-                if(progresDialog.isShowing) {
-                    //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
-                   // Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
-                    Thread.sleep(1_00)  // wait for 1 second
-                    listaSeguidores.add(perfilGet)
+                    if (progresDialog.isShowing) {
+                        //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
+                        // Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
+                        Thread.sleep(1_00)  // wait for 1 second
+                        listaSeguidores.add(perfilGet)
+                    }
+
                 }
+                Thread.sleep(1_00)  // wait for 1 second
+                progresDialog.dismiss()
 
             }
-            Thread.sleep(1_00)  // wait for 1 second
-            progresDialog.dismiss()
-
-        }
     }
 
     private fun callRankingActivity() {
@@ -652,7 +717,8 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val intent = Intent(this, ChatActivity::class.java)
         startActivity(intent)
     }
-    private fun CargarMetas(){
+
+    private fun CargarMetas() {
         var sdf = SimpleDateFormat("dd")
         val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
         sdf = SimpleDateFormat("MM")
@@ -664,18 +730,32 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         val mesHoy = mesHoy2.toInt()
         val anoHoy = anoHoy2.toInt()
 
-        val diaSemHoy = diaSemana(diaHoy, mesHoy, anoHoy) //se obtiene el numero de dia de la semana (lunes = 1, martes = 2, miercoles = 3, etc)
+        val diaSemHoy = diaSemana(
+            diaHoy,
+            mesHoy,
+            anoHoy
+        ) //se obtiene el numero de dia de la semana (lunes = 1, martes = 2, miercoles = 3, etc)
 
-        var diaF: Int; var mesF: Int; var anoF: Int
-        var diasTotales = 0; var diasxSemana = 0; var diasATrabajar: Int
+        var diaF: Int;
+        var mesF: Int;
+        var anoF: Int
+        var diasTotales = 0;
+        var diasxSemana = 0;
+        var diasATrabajar: Int
 
         var datoDeSuma = 0
 
-        var lun = 0; var mar = 0; var mier = 0; var juev = 0; var vier = 0; var sab = 0; var dom = 0
+        var lun = 0;
+        var mar = 0;
+        var mier = 0;
+        var juev = 0;
+        var vier = 0;
+        var sab = 0;
+        var dom = 0
 
         var cadena: String
 
-        if(MainActivity.validadorListas) {
+        if (MainActivity.validadorListas) {
             MainActivity.user?.let { usuario -> //para cargar las metas
                 db.collection("users").document(usuario)
                     .collection("metas") //abre la base de datos
@@ -688,16 +768,17 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             anoF = (meta.get("anoFinal") as Long).toInt()
 
                             //primero se obtiene la diferencia de dias entre las dos fechas (diasTotales)
-                            if(anoF == anoHoy){ //se comparan los años
-                                if(mesF == mesHoy){ //se comparan los meses
-                                    diasTotales = diaF - diaHoy //y si son los mismos solo se obtiene la diferencia entre los días
-                                }else{ //si no, se le suman los días del mes inicial
-                                    if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
+                            if (anoF == anoHoy) { //se comparan los años
+                                if (mesF == mesHoy) { //se comparan los meses
+                                    diasTotales =
+                                        diaF - diaHoy //y si son los mismos solo se obtiene la diferencia entre los días
+                                } else { //si no, se le suman los días del mes inicial
+                                    if (mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12) {
                                         diasTotales = 31 - diaHoy
-                                    }else{
-                                        if(mesHoy == 2){
+                                    } else {
+                                        if (mesHoy == 2) {
                                             diasTotales = 28 - diaHoy
-                                        }else{
+                                        } else {
                                             diasTotales = 30 - diaHoy
                                         }
                                     }
@@ -718,26 +799,26 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                                     diasTotales += diaF //y se le suman los días del mes final
                                 }
-                            }else{ //para años diferentes
-                                diasTotales = (anoF - anoHoy)*365 //se obtienen los años en días
+                            } else { //para años diferentes
+                                diasTotales = (anoF - anoHoy) * 365 //se obtienen los años en días
 
-                                if(mesF == mesHoy){ //si el mes es igual se resta o suma la diferencia de dias
-                                    if(diaF > diaHoy){
+                                if (mesF == mesHoy) { //si el mes es igual se resta o suma la diferencia de dias
+                                    if (diaF > diaHoy) {
                                         diasTotales += (diaF - diaHoy)
-                                    } else{
+                                    } else {
                                         diasTotales -= (diaHoy - diaF)
                                     }
 
-                                }else{
-                                    if(mesF > mesHoy){ //si el mes es mayor
+                                } else {
+                                    if (mesF > mesHoy) { //si el mes es mayor
 
                                         //se le suman los dias del mes inicial
-                                        if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
+                                        if (mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12) {
                                             diasTotales = diasTotales + 31 - diaHoy
-                                        }else{
-                                            if(mesHoy == 2){
+                                        } else {
+                                            if (mesHoy == 2) {
                                                 diasTotales = diasTotales + 28 - diaHoy
-                                            }else{
+                                            } else {
                                                 diasTotales = diasTotales + 30 - diaHoy
                                             }
                                         }
@@ -758,7 +839,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                                         diasTotales += diaF //y se le suman los días del mes final
 
-                                    } else{ //y si el mes es menor
+                                    } else { //y si el mes es menor
                                         //se le restan los dias del mes inicial
                                         diasTotales -= diaHoy
 
@@ -777,12 +858,12 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                                         }
 
                                         //y se le restan los días del mes final
-                                        if(mesF == 1 || mesF == 3 || mesF == 5 || mesF == 7 || mesF == 8 || mesF == 10 || mesF == 12){
+                                        if (mesF == 1 || mesF == 3 || mesF == 5 || mesF == 7 || mesF == 8 || mesF == 10 || mesF == 12) {
                                             diasTotales = diasTotales - 31 + diaF
-                                        }else{
-                                            if(mesF == 2){
+                                        } else {
+                                            if (mesF == 2) {
                                                 diasTotales = diasTotales - 28 + diaF
-                                            }else{
+                                            } else {
                                                 diasTotales = diasTotales - 30 + diaF
                                             }
                                         }
@@ -791,77 +872,109 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             }
 
                             //ahora se obtienen los dias que se trabaja por semana (diasxSemana)
-                            if(meta.get("lunes") as Boolean){diasxSemana += 1; lun = 1}
-                            if(meta.get("martes") as Boolean){diasxSemana += 1; mar = 2}
-                            if(meta.get("miercoles") as Boolean){diasxSemana += 1; mier = 3}
-                            if(meta.get("jueves") as Boolean){diasxSemana += 1; juev = 4}
-                            if(meta.get("viernes") as Boolean){diasxSemana += 1; vier = 5}
-                            if(meta.get("sabado") as Boolean){diasxSemana += 1; sab = 6}
-                            if(meta.get("domingo") as Boolean){diasxSemana += 1; dom = 7}
+                            if (meta.get("lunes") as Boolean) {
+                                diasxSemana += 1; lun = 1
+                            }
+                            if (meta.get("martes") as Boolean) {
+                                diasxSemana += 1; mar = 2
+                            }
+                            if (meta.get("miercoles") as Boolean) {
+                                diasxSemana += 1; mier = 3
+                            }
+                            if (meta.get("jueves") as Boolean) {
+                                diasxSemana += 1; juev = 4
+                            }
+                            if (meta.get("viernes") as Boolean) {
+                                diasxSemana += 1; vier = 5
+                            }
+                            if (meta.get("sabado") as Boolean) {
+                                diasxSemana += 1; sab = 6
+                            }
+                            if (meta.get("domingo") as Boolean) {
+                                diasxSemana += 1; dom = 7
+                            }
 
                             //los dias a trabajar
-                            diasATrabajar = (diasTotales/7)*diasxSemana
+                            diasATrabajar = (diasTotales / 7) * diasxSemana
 
                             //el dato para sumar al dato inicial
-                            if(diasATrabajar == 0)
+                            if (diasATrabajar == 0)
                                 diasATrabajar = 1
-                            datoDeSuma = ((meta.get("datoFinal") as Long).toInt() - (meta.get("datoInicial") as Long).toInt())/diasATrabajar
+                            datoDeSuma =
+                                ((meta.get("datoFinal") as Long).toInt() - (meta.get("datoInicial") as Long).toInt()) / diasATrabajar
 
                             cadena = meta.get("nombre").toString() //toma el nombre de la meta
                             cadena += " | " //se le agraga texto de formato
-                            if(meta.get("lunes") as Boolean){cadena += "lun "} //se le agregan los dias a trabajar
-                            if(meta.get("martes") as Boolean){cadena += "mar "}
-                            if(meta.get("miercoles") as Boolean){cadena += "mier "}
-                            if(meta.get("jueves") as Boolean){cadena += "juev "}
-                            if(meta.get("viernes") as Boolean){cadena += "vier "}
-                            if(meta.get("sabado") as Boolean){cadena += "sab "}
-                            if(meta.get("domingo") as Boolean){cadena += "dom "}
+                            if (meta.get("lunes") as Boolean) {
+                                cadena += "lun "
+                            } //se le agregan los dias a trabajar
+                            if (meta.get("martes") as Boolean) {
+                                cadena += "mar "
+                            }
+                            if (meta.get("miercoles") as Boolean) {
+                                cadena += "mier "
+                            }
+                            if (meta.get("jueves") as Boolean) {
+                                cadena += "juev "
+                            }
+                            if (meta.get("viernes") as Boolean) {
+                                cadena += "vier "
+                            }
+                            if (meta.get("sabado") as Boolean) {
+                                cadena += "sab "
+                            }
+                            if (meta.get("domingo") as Boolean) {
+                                cadena += "dom "
+                            }
                             cadena += "| " //se le agraga texto de formato
 
                             var suma = true
                             //para ver si es necesario sumarle dato hoy (para que no repita esto el mismo dia varias veces)
-                            if((meta.get("diaSeg") as Long).toInt() == diaHoy && (meta.get("mesSeg") as Long).toInt() == mesHoy && (meta.get("anoSeg") as Long).toInt() == anoHoy){
+                            if ((meta.get("diaSeg") as Long).toInt() == diaHoy && (meta.get("mesSeg") as Long).toInt() == mesHoy && (meta.get(
+                                    "anoSeg"
+                                ) as Long).toInt() == anoHoy
+                            ) {
                                 suma = false //para no actualizar los datos
                             }
 
                             var cadena3 = cadena
 
                             //se le agrega las repeticiones, peso o tiempo a trabajar
-                            if(meta.get("peso") as Boolean){ //con un texto que diferencie
+                            if (meta.get("peso") as Boolean) { //con un texto que diferencie
                                 cadena += "Levantar: "
-                                if(suma) {
+                                if (suma) {
                                     cadena += ((meta.get("datoInicial") as Long).toInt() + datoDeSuma).toString() //se le agrega las repeticiones o peso a levantar o tiempo
-                                }else{
+                                } else {
                                     cadena += ((meta.get("datoInicial") as Long).toInt()).toString()
                                 }
                                 cadena += "kg"
                             }
-                            if(meta.get("repeticion") as Boolean){ //con un texto que diferencie
+                            if (meta.get("repeticion") as Boolean) { //con un texto que diferencie
                                 cadena += "Repeticiones: "
-                                if(suma) {
+                                if (suma) {
                                     cadena += ((meta.get("datoInicial") as Long).toInt() + datoDeSuma).toString() //se le agrega las repeticiones o peso a levantar o tiempo
-                                }else{
+                                } else {
                                     cadena += ((meta.get("datoInicial") as Long).toInt()).toString()
                                 }
                             }
-                            if(meta.get("tiempo") as Boolean){ //con un texto que diferencie
+                            if (meta.get("tiempo") as Boolean) { //con un texto que diferencie
                                 cadena += "Completar: "
 
                                 var minutos = 0
                                 var horas = 0
 
-                                if(suma) {
+                                if (suma) {
                                     minutos = (meta.get("datoInicial") as Long).toInt() + datoDeSuma
-                                }else{
+                                } else {
                                     minutos = (meta.get("datoInicial") as Long).toInt()
                                 }
 
-                                while(minutos >= 60){ //se obtienen las horas
+                                while (minutos >= 60) { //se obtienen las horas
                                     minutos -= 60
                                     horas += 1
                                 }
 
-                                if(horas != 0){
+                                if (horas != 0) {
                                     cadena += horas //se le agrega el tiempo con horas
                                     cadena += "hr "
                                 }
@@ -873,39 +986,83 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             cadena += diaF; cadena += "-"; cadena += mesF; cadena += "-"; cadena += anoF
 
                             //borrarMetas(diaF, mesF, anoF, meta.id)
-                            if(borrarMetas(diaF, mesF, anoF, meta.id)){//dia coincide
-                                if(diaSemHoy == lun || diaSemHoy == mar || diaSemHoy == mier || diaSemHoy == juev || diaSemHoy == vier || diaSemHoy == sab || diaSemHoy == dom){
-                                    if(suma){ //si no ha actualizado datos hoy
-                                    //poner el dia de la actualizacion con la nueva fecha de seguimiento
-                                    actualizarMetas(meta.get("nombre").toString(), (datoDeSuma + meta.get("datoInicial") as Long).toInt(), (meta.get("datoFinal") as Long).toInt(),
-                                        diaF, mesF, anoF, meta.get("peso") as Boolean, meta.get("repeticion") as Boolean, meta.get("tiempo") as Boolean, meta.get("lunes") as Boolean, meta.get("martes") as Boolean, meta.get("miercoles") as Boolean, meta.get("jueves") as Boolean, meta.get("viernes") as Boolean, meta.get("sabado") as Boolean, meta.get("domingo") as Boolean, diaHoy, mesHoy, anoHoy,
-                                        (meta.get("ultDia") as Long).toInt(), (meta.get("ultMes") as Long).toInt(), (meta.get("ultAno") as Long).toInt())
+                            if (borrarMetas(diaF, mesF, anoF, meta.id)) {//dia coincide
+                                if (diaSemHoy == lun || diaSemHoy == mar || diaSemHoy == mier || diaSemHoy == juev || diaSemHoy == vier || diaSemHoy == sab || diaSemHoy == dom) {
+                                    if (suma) { //si no ha actualizado datos hoy
+                                        //poner el dia de la actualizacion con la nueva fecha de seguimiento
+                                        actualizarMetas(
+                                            meta.get("nombre").toString(),
+                                            (datoDeSuma + meta.get("datoInicial") as Long).toInt(),
+                                            (meta.get("datoFinal") as Long).toInt(),
+                                            diaF,
+                                            mesF,
+                                            anoF,
+                                            meta.get("peso") as Boolean,
+                                            meta.get("repeticion") as Boolean,
+                                            meta.get("tiempo") as Boolean,
+                                            meta.get("lunes") as Boolean,
+                                            meta.get("martes") as Boolean,
+                                            meta.get("miercoles") as Boolean,
+                                            meta.get("jueves") as Boolean,
+                                            meta.get("viernes") as Boolean,
+                                            meta.get("sabado") as Boolean,
+                                            meta.get("domingo") as Boolean,
+                                            diaHoy,
+                                            mesHoy,
+                                            anoHoy,
+                                            (meta.get("ultDia") as Long).toInt(),
+                                            (meta.get("ultMes") as Long).toInt(),
+                                            (meta.get("ultAno") as Long).toInt()
+                                        )
                                     }
 
-                                    if((meta.get("ultDia") as Long).toInt() != diaHoy || (meta.get("ultMes") as Long).toInt() != mesHoy || (meta.get("ultAno") as Long).toInt() != anoHoy){ //si la meta no se ha trabajado hoy
+                                    if ((meta.get("ultDia") as Long).toInt() != diaHoy || (meta.get(
+                                            "ultMes"
+                                        ) as Long).toInt() != mesHoy || (meta.get("ultAno") as Long).toInt() != anoHoy
+                                    ) { //si la meta no se ha trabajado hoy
                                         MainActivity.listaMetas.add(cadena)
 
-                                        var cadena4 = (meta.get("ultDia") as Long).toString() + "-" + (meta.get("ultMes") as Long).toString() + "-" + (meta.get("ultAno") as Long).toString()
+                                        var cadena4 =
+                                            (meta.get("ultDia") as Long).toString() + "-" + (meta.get(
+                                                "ultMes"
+                                            ) as Long).toString() + "-" + (meta.get("ultAno") as Long).toString()
                                         MainActivity.listaMetasDates.add(cadena4)
                                     }
                                 }
-                                var cadena2 = (meta.get("ultDia") as Long).toString() + "-" + (meta.get("ultMes") as Long).toString() + "-" + (meta.get("ultAno") as Long).toString()
+                                var cadena2 =
+                                    (meta.get("ultDia") as Long).toString() + "-" + (meta.get("ultMes") as Long).toString() + "-" + (meta.get(
+                                        "ultAno"
+                                    ) as Long).toString()
                                 MainActivity.listaMetasAllDates.add(cadena2) //guarda todas las metas no caducadas (su ultimo dia trabajado)
                                 MainActivity.listaMetasVistaDates.add(cadena2)
 
-                                cargarFechasDeMetas(diaHoy, mesHoy, anoHoy, diaF, mesF, anoF, lun == 1, mar == 2, mier == 3, juev == 4, vier == 5, sab == 6, dom == 7)//carga todas las fechas en que se trabaja una meta
+                                cargarFechasDeMetas(
+                                    diaHoy,
+                                    mesHoy,
+                                    anoHoy,
+                                    diaF,
+                                    mesF,
+                                    anoF,
+                                    lun == 1,
+                                    mar == 2,
+                                    mier == 3,
+                                    juev == 4,
+                                    vier == 5,
+                                    sab == 6,
+                                    dom == 7
+                                )//carga todas las fechas en que se trabaja una meta
 
                                 //se le agrega las repeticiones, peso o tiempo final
-                                if(meta.get("peso") as Boolean){ //con un texto que diferencie
+                                if (meta.get("peso") as Boolean) { //con un texto que diferencie
                                     cadena3 += "Levantar: "
                                     cadena3 += (meta.get("datoFinal") as Long).toString()
                                     cadena3 += "kg"
                                 }
-                                if(meta.get("repeticion") as Boolean){ //con un texto que diferencie
+                                if (meta.get("repeticion") as Boolean) { //con un texto que diferencie
                                     cadena3 += "Repeticiones: "
                                     cadena3 += (meta.get("datoFinal") as Long).toString()
                                 }
-                                if(meta.get("tiempo") as Boolean){ //con un texto que diferencie
+                                if (meta.get("tiempo") as Boolean) { //con un texto que diferencie
                                     cadena3 += "Completar: "
 
                                     var minutos = 0
@@ -913,12 +1070,12 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                                     minutos = (meta.get("datoFinal") as Long).toInt()
 
-                                    while(minutos >= 60){ //se obtienen las horas
+                                    while (minutos >= 60) { //se obtienen las horas
                                         minutos -= 60
                                         horas += 1
                                     }
 
-                                    if(horas != 0){
+                                    if (horas != 0) {
                                         cadena3 += horas //se le agrega el tiempo con horas
                                         cadena3 += "hr "
                                     }
@@ -937,7 +1094,13 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             }
         }
     }
-    private fun borrarMetas(dia: Int, mes: Int, ano: Int, id: String): Boolean { //se encarga de borrar metas ya caducadas
+
+    private fun borrarMetas(
+        dia: Int,
+        mes: Int,
+        ano: Int,
+        id: String
+    ): Boolean { //se encarga de borrar metas ya caducadas
         var sdf = SimpleDateFormat("dd")
         val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
         sdf = SimpleDateFormat("MM")
@@ -945,26 +1108,31 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         sdf = SimpleDateFormat("yyyy")
         val anoHoy2 = sdf.format(Date()) //se obiene el año actual
 
-        val diaHoy = diaHoy2.toInt(); val mesHoy = mesHoy2.toInt(); val anoHoy = anoHoy2.toInt()
+        val diaHoy = diaHoy2.toInt();
+        val mesHoy = mesHoy2.toInt();
+        val anoHoy = anoHoy2.toInt()
 
         //var dia: Int; var mes: Int; var ano: Int
-        if(anoHoy >= ano){
-            if(anoHoy > ano){
+        if (anoHoy >= ano) {
+            if (anoHoy > ano) {
                 MainActivity.user?.let { usuario -> //abre la base de datos
-                    db.collection("users").document(usuario).collection("metas").document(id).delete()
+                    db.collection("users").document(usuario).collection("metas").document(id)
+                        .delete()
                     return false
                 }
-            }else{
-                if(mesHoy >= mes){
-                    if(mesHoy > mes){
+            } else {
+                if (mesHoy >= mes) {
+                    if (mesHoy > mes) {
                         MainActivity.user?.let { usuario -> //abre la base de datos
-                            db.collection("users").document(usuario).collection("metas").document(id).delete()
+                            db.collection("users").document(usuario).collection("metas")
+                                .document(id).delete()
                             return false
                         }
-                    }else{
-                        if(diaHoy > dia){
+                    } else {
+                        if (diaHoy > dia) {
                             MainActivity.user?.let { usuario -> //abre la base de datos
-                                db.collection("users").document(usuario).collection("metas").document(id).delete()
+                                db.collection("users").document(usuario).collection("metas")
+                                    .document(id).delete()
                                 return false
                             }
                         }
@@ -974,8 +1142,32 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         }
         return true
     }
-    private fun actualizarMetas(Nombre: String, DatoInicial: Int, DatoFinal: Int, dia: Int, mes: Int, ano: Int, Peso: Boolean, Repeticion: Boolean, Tiempo: Boolean, D1: Boolean, D2: Boolean, D3: Boolean, D4: Boolean, D5: Boolean, D6: Boolean, D7: Boolean, diaSeg: Int, mesSeg: Int, anoSeg: Int, ultDia: Int, ultMes: Int, ultAno: Int){
-        MainActivity.user?.let{ usuario ->
+
+    private fun actualizarMetas(
+        Nombre: String,
+        DatoInicial: Int,
+        DatoFinal: Int,
+        dia: Int,
+        mes: Int,
+        ano: Int,
+        Peso: Boolean,
+        Repeticion: Boolean,
+        Tiempo: Boolean,
+        D1: Boolean,
+        D2: Boolean,
+        D3: Boolean,
+        D4: Boolean,
+        D5: Boolean,
+        D6: Boolean,
+        D7: Boolean,
+        diaSeg: Int,
+        mesSeg: Int,
+        anoSeg: Int,
+        ultDia: Int,
+        ultMes: Int,
+        ultAno: Int
+    ) {
+        MainActivity.user?.let { usuario ->
             db.collection("users").document(usuario).collection("metas")
                 .document(Nombre).set(
                     hashMapOf(
@@ -1006,20 +1198,35 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         }
     }
 
-    fun cargarFechasDeMetas(diaHoyAux: Int, mesHoyAux: Int, anoHoyAux: Int, dia: Int, mes: Int, ano: Int, D1: Boolean, D2: Boolean, D3: Boolean, D4: Boolean, D5: Boolean, D6: Boolean, D7: Boolean){
+    fun cargarFechasDeMetas(
+        diaHoyAux: Int,
+        mesHoyAux: Int,
+        anoHoyAux: Int,
+        dia: Int,
+        mes: Int,
+        ano: Int,
+        D1: Boolean,
+        D2: Boolean,
+        D3: Boolean,
+        D4: Boolean,
+        D5: Boolean,
+        D6: Boolean,
+        D7: Boolean
+    ) {
         var diasTotales: Int //primero se obtienen los dias totales
         var cadena = "["
 
-        if(ano == anoHoyAux){ //se comparan los años
-            if(mes == mesHoyAux){ //se comparan los meses
-                diasTotales = dia - diaHoyAux //y si son los mismos solo se obtiene la diferencia entre los días
-            }else{ //si no, se le suman los días del mes inicial
-                if(mesHoyAux == 1 || mesHoyAux == 3 || mesHoyAux == 5 || mesHoyAux == 7 || mesHoyAux == 8 || mesHoyAux == 10 || mesHoyAux == 12){
+        if (ano == anoHoyAux) { //se comparan los años
+            if (mes == mesHoyAux) { //se comparan los meses
+                diasTotales =
+                    dia - diaHoyAux //y si son los mismos solo se obtiene la diferencia entre los días
+            } else { //si no, se le suman los días del mes inicial
+                if (mesHoyAux == 1 || mesHoyAux == 3 || mesHoyAux == 5 || mesHoyAux == 7 || mesHoyAux == 8 || mesHoyAux == 10 || mesHoyAux == 12) {
                     diasTotales = 31 - diaHoyAux
-                }else{
-                    if(mesHoyAux == 2){
+                } else {
+                    if (mesHoyAux == 2) {
                         diasTotales = 28 - diaHoyAux
-                    }else{
+                    } else {
                         diasTotales = 30 - diaHoyAux
                     }
                 }
@@ -1040,26 +1247,26 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                 diasTotales += dia //y se le suman los días del mes final
             }
-        }else{ //para años diferentes
-            diasTotales = (ano - anoHoyAux)*365 //se obtienen los años en días
+        } else { //para años diferentes
+            diasTotales = (ano - anoHoyAux) * 365 //se obtienen los años en días
 
-            if(mes == mesHoyAux){ //si el mes es igual se resta o suma la diferencia de dias
-                if(dia > diaHoyAux){
+            if (mes == mesHoyAux) { //si el mes es igual se resta o suma la diferencia de dias
+                if (dia > diaHoyAux) {
                     diasTotales += (dia - diaHoyAux)
-                } else{
+                } else {
                     diasTotales -= (diaHoyAux - dia)
                 }
 
-            }else{
-                if(mes > mesHoyAux){ //si el mes es mayor
+            } else {
+                if (mes > mesHoyAux) { //si el mes es mayor
 
                     //se le suman los dias del mes inicial
-                    if(mesHoyAux == 1 || mesHoyAux == 3 || mesHoyAux == 5 || mesHoyAux == 7 || mesHoyAux == 8 || mesHoyAux == 10 || mesHoyAux == 12){
+                    if (mesHoyAux == 1 || mesHoyAux == 3 || mesHoyAux == 5 || mesHoyAux == 7 || mesHoyAux == 8 || mesHoyAux == 10 || mesHoyAux == 12) {
                         diasTotales = diasTotales + 31 - diaHoyAux
-                    }else{
-                        if(mesHoyAux == 2){
+                    } else {
+                        if (mesHoyAux == 2) {
                             diasTotales = diasTotales + 28 - diaHoyAux
-                        }else{
+                        } else {
                             diasTotales = diasTotales + 30 - diaHoyAux
                         }
                     }
@@ -1080,7 +1287,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                     diasTotales += dia //y se le suman los días del mes final
 
-                } else{ //y si el mes es menor
+                } else { //y si el mes es menor
                     //se le restan los dias del mes inicial
                     diasTotales -= diaHoyAux
 
@@ -1099,12 +1306,12 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     }
 
                     //y se le restan los días del mes final
-                    if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12){
+                    if (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) {
                         diasTotales = diasTotales - 31 + dia
-                    }else{
-                        if(mes == 2){
+                    } else {
+                        if (mes == 2) {
                             diasTotales = diasTotales - 28 + dia
-                        }else{
+                        } else {
                             diasTotales = diasTotales - 30 + dia
                         }
                     }
@@ -1114,58 +1321,60 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
         //se obtiene que dia de la semana es hoy para iniciar a traer las fechas
         var diaSem = diaSemana(diaHoyAux, mesHoyAux, anoHoyAux)
-        var diaHoy = diaHoyAux; var mesHoy = mesHoyAux; var anoHoy = anoHoyAux
+        var diaHoy = diaHoyAux;
+        var mesHoy = mesHoyAux;
+        var anoHoy = anoHoyAux
 
-        for(i in diasTotales downTo 0){
-            if(diaSem == 8){ //avanza los dias de la semana y reinicia si pasa el domingo
+        for (i in diasTotales downTo 0) {
+            if (diaSem == 8) { //avanza los dias de la semana y reinicia si pasa el domingo
                 diaSem = 1
             }
 
             //avanza los dias, meses y años
-            if(mesHoy == 2){
-                if(diaHoy > 28){
+            if (mesHoy == 2) {
+                if (diaHoy > 28) {
                     mesHoy += 1
                     diaHoy = 1
                 }
-            }else{
-                if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
-                    if(diaHoy > 31){
+            } else {
+                if (mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12) {
+                    if (diaHoy > 31) {
                         mesHoy += 1
                         diaHoy = 1
                     }
-                }else{
-                    if(diaHoy > 30) {
+                } else {
+                    if (diaHoy > 30) {
                         mesHoy += 1
                         diaHoy = 1
                     }
                 }
             }
-            if(mesHoy > 12){
+            if (mesHoy > 12) {
                 anoHoy += 1
                 mesHoy = 1
             }
 
             //coloca las fechas a trabajar en la lista de eventos segun corresponda
-            if(diaSem == 1 && D1 == true){
-                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            if (diaSem == 1 && D1 == true) {
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString() + ","
             }
-            if(diaSem == 2 && D2 == true){
-                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            if (diaSem == 2 && D2 == true) {
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString() + ","
             }
-            if(diaSem == 3 && D3 == true){
-                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            if (diaSem == 3 && D3 == true) {
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString() + ","
             }
-            if(diaSem == 4 && D4 == true){
-                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            if (diaSem == 4 && D4 == true) {
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString() + ","
             }
-            if(diaSem == 5 && D5 == true){
-                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            if (diaSem == 5 && D5 == true) {
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString() + ","
             }
-            if(diaSem == 6 && D6 == true){
-                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            if (diaSem == 6 && D6 == true) {
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString() + ","
             }
-            if(diaSem == 7 && D7 == true){
-                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString()+","
+            if (diaSem == 7 && D7 == true) {
+                cadena += diaHoy.toString() + "-" + mesHoy.toString() + "-" + anoHoy.toString() + ","
             }
 
             diaSem += 1
@@ -1173,7 +1382,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         }
 
         var contador = 0
-        for(i in 0 until cadena.length){
+        for (i in 0 until cadena.length) {
             contador += 1
         }
         cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
@@ -1186,41 +1395,41 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         startActivity(intent)
     }
 
-    private fun setup(){
+    private fun setup() {
         val AlturaProfileEt = findViewById<EditText>(R.id.Perfil_altura)
         val PesoProfileEt = findViewById<EditText>(R.id.Perfil_peso)
         val EditProfileDataButton = findViewById<Button>(R.id.EditProfileDataButton)
         val recoverProfileDataButton = findViewById<Button>(R.id.recoverProfileDataButton)
         val saveProfileButton = findViewById<Button>(R.id.saveProfileButton)
-        val ChangeProfilePicButton = findViewById<Button>(R.id.ChangeProfilePicButton)
-        val edBirthDay =   findViewById<EditText>(R.id.Perfil_birthday)
-        val edEmail =   findViewById<EditText>(R.id.Perfil_mail)
-        val edName =   findViewById<EditText>(R.id.Perfil_name)
+        val UploadProfilePicture = findViewById<Button>(R.id.ChangeProfilePicButton)
+        val etBirthDay = findViewById<EditText>(R.id.Perfil_birthday)
+        val edEmail = findViewById<EditText>(R.id.Perfil_mail)
+        val etName = findViewById<EditText>(R.id.Perfil_name)
         val ivProfilePic = findViewById<ImageView>(R.id.Perfil_pic)
-        PesoProfileEt.isEnabled=false
-        edBirthDay.isEnabled = false
+        PesoProfileEt.isEnabled = false
+        etBirthDay.isEnabled = false
         edEmail.isEnabled = false
-        edName.isEnabled = false
-        AlturaProfileEt.isEnabled =false
+        etName.isEnabled = false
+        AlturaProfileEt.isEnabled = false
         saveProfileButton.isVisible = false
-        ChangeProfilePicButton.isVisible = false
+        UploadProfilePicture.isVisible = false
         EditProfileDataButton.isVisible = false
 
         EditProfileDataButton.isVisible = true
         recoverProfileDataButton.isVisible = false
 
-        setBirthdayEditText(edBirthDay)
+        setBirthdayEditText(etBirthDay)
 
         MainActivity.user?.let { it1 ->
             db.collection("users").document(MainActivity.user!!).get()
                 .addOnSuccessListener {
-                edName.setText (it.get("Name") as String?)
+                    etName.setText(it.get("Name") as String?)
                     NombreUsuario = ((it.get("Name") as String?).toString())
-                edEmail.setText(it.get("email") as String?)
-                edBirthDay.setText(it.get("birthDay") as String?)
+                    edEmail.setText(it.get("email") as String?)
+                    etBirthDay.setText(it.get("birthDay") as String?)
                     AlturaProfileEt.setText(it.get("altura") as String?)
                     PesoProfileEt.setText(it.get("peso") as String?)
-            }
+                }
 
         }
 
@@ -1230,12 +1439,13 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         progresDialog.show()
 
 
-        val userID =FirebaseAuth.getInstance().currentUser!!.email.toString()
-        val storageRef = FirebaseStorage.getInstance().reference.child("UsersProfileImages/$userID.jpg")
-        val localfile = File.createTempFile("tempImage","jpg")
-        storageRef.getFile(localfile).addOnSuccessListener{
+        val userID = FirebaseAuth.getInstance().currentUser!!.email.toString()
+        val storageRef =
+            FirebaseStorage.getInstance().reference.child("UsersProfileImages/$userID.jpg")
+        val localfile = File.createTempFile("tempImage", "jpg")
+        storageRef.getFile(localfile).addOnSuccessListener {
 
-            if(progresDialog.isShowing){
+            if (progresDialog.isShowing) {
                 progresDialog.dismiss()
                 try {
                     MainActivity.user?.let { it1 ->
@@ -1245,9 +1455,9 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                             }
                     }
 
-                   // usernameDb = edName.text.toString()
+                    // usernameDb = edName.text.toString()
 
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     MainActivity.user?.let { it1 ->
                         db.collection("users").document(MainActivity.user!!).get()
                             .addOnSuccessListener {
@@ -1256,11 +1466,15 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     }
                 }
             }
-            val bitmap =BitmapFactory.decodeFile(localfile.absolutePath)
+            val bitmap = BitmapFactory.decodeFile(localfile.absolutePath)
             ivProfilePic.setImageBitmap(bitmap)
-        }.addOnFailureListener{
+        }.addOnFailureListener {
             progresDialog.dismiss()
-            Toast.makeText(this,"Recuperación de imagen fallida, sube otra foto",Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Recuperación de imagen fallida, sube otra foto",
+                Toast.LENGTH_SHORT
+            ).show()
             try {
                 MainActivity.user?.let { it1 ->
                     db.collection("users").document(MainActivity.user!!).get()
@@ -1271,7 +1485,7 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                 // usernameDb = edName.text.toString()
 
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 MainActivity.user?.let { it1 ->
                     db.collection("users").document(MainActivity.user!!).get()
                         .addOnSuccessListener {
@@ -1284,17 +1498,17 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
 
 
-        saveProfileButton.setOnClickListener{
+        saveProfileButton.setOnClickListener {
             var Name = findViewById<EditText>(R.id.Perfil_name).text.toString()
             var NombreDisponible: Boolean = true
 
-            for(item in listaNombres){
-                if (Name == item){
+            for (item in listaNombres) {
+                if (Name == item) {
                     NombreDisponible = false
                 }
             }
 
-            if(NombreDisponible) {
+            if (NombreDisponible) {
                 MainActivity.user?.let { usuario ->
                     db.collection("users").document(usuario).update(
                         mapOf(
@@ -1306,38 +1520,39 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                         )
                     )
                 }
-            }else {
+            } else {
                 Toast.makeText(this, "Nombre de usuario no disponible", Toast.LENGTH_SHORT).show()
             }
             callPerfilActivity()
-            AlturaProfileEt.isEnabled =false
+            AlturaProfileEt.isEnabled = false
             saveProfileButton.isVisible = false
-            edBirthDay.isEnabled = false
+            etBirthDay.isEnabled = false
             edEmail.isEnabled = false
-            edName.isEnabled = false
-            PesoProfileEt.isEnabled=false
+            etName.isEnabled = false
+            PesoProfileEt.isEnabled = false
             EditProfileDataButton.isVisible = true
         }
 
         EditProfileDataButton.setOnClickListener {
-            AlturaProfileEt.isEnabled =true
+            AlturaProfileEt.isEnabled = true
             saveProfileButton.isVisible = true
-              edBirthDay.isEnabled = true
-            edName.isEnabled = true
-            PesoProfileEt.isEnabled=true
+            etBirthDay.isEnabled = true
+            etName.isEnabled = true
+            PesoProfileEt.isEnabled = true
             EditProfileDataButton.isVisible = false
 
         }
 
-        ChangeProfilePicButton.setOnClickListener {
-        uploadFile()
+        UploadProfilePicture.setOnClickListener {
+            uploadFile()
         }
         ivProfilePic.setOnClickListener {
-          startFileChooser()
-            ChangeProfilePicButton.isVisible = true
+            startFileChooser()
+            UploadProfilePicture.isVisible = true
         }
 
     }
+
     fun setBirthdayEditText(edBirthDay: EditText) {
 
         edBirthDay.addTextChangedListener(object : TextWatcher {
@@ -1378,13 +1593,17 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                         //with leap years - otherwise, date e.g. 29/02/2012
                         //would be automatically corrected to 28/02/2012
 
-                        day = if (day > cal.getActualMaximum(Calendar.DATE)) cal.getActualMaximum(Calendar.DATE) else day
+                        day = if (day > cal.getActualMaximum(Calendar.DATE)) cal.getActualMaximum(
+                            Calendar.DATE
+                        ) else day
                         clean = String.format("%02d%02d%02d", day, mon, year)
                     }
 
-                    clean = String.format("%s/%s/%s", clean.substring(0, 2),
+                    clean = String.format(
+                        "%s/%s/%s", clean.substring(0, 2),
                         clean.substring(2, 4),
-                        clean.substring(4, 8))
+                        clean.substring(4, 8)
+                    )
 
                     sel = if (sel < 0) 0 else sel
                     current = clean
@@ -1401,14 +1620,16 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             }
         })
     }
+
     private fun uploadFile() {
         val ChangeProfilePicButton = findViewById<Button>(R.id.ChangeProfilePicButton)
-        val  userID = FirebaseAuth.getInstance().currentUser!!.email.toString()
+        val userID = FirebaseAuth.getInstance().currentUser!!.email.toString()
         if (filepath != null) {
             var pd = ProgressDialog(this)
             pd.setTitle("Uploading")
             pd.show()
-            var imageRef = FirebaseStorage.getInstance().reference.child("UsersProfileImages/$userID.jpg")
+            var imageRef =
+                FirebaseStorage.getInstance().reference.child("UsersProfileImages/$userID.jpg")
             imageRef.putFile(filepath)
                 .addOnSuccessListener { p0 ->
                     pd.dismiss()
@@ -1433,16 +1654,15 @@ class PerfilActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private fun startFileChooser() {
         var i = Intent()
         i.setType("image/*").action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(i,"Elige una imagen"),111)
+        startActivityForResult(Intent.createChooser(i, "Elige una imagen"), 111)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         val ivProfilePic = findViewById<ImageView>(R.id.Perfil_pic)
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode==111 && resultCode==Activity.RESULT_OK && data!=null)
-        {
-            filepath =data.data!!
-            var bitmap = MediaStore.Images.Media.getBitmap(contentResolver,filepath)
+        if (requestCode == 111 && resultCode == Activity.RESULT_OK && data != null) {
+            filepath = data.data!!
+            var bitmap = MediaStore.Images.Media.getBitmap(contentResolver, filepath)
             ivProfilePic.setImageBitmap(bitmap)
         }
     }

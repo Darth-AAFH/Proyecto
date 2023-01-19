@@ -22,7 +22,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.*
 import kotlin.properties.Delegates
 import kotlin.random.Random
@@ -41,6 +40,7 @@ class LoginActivity : AppCompatActivity() {
         private const val TAG = "GOOGLE_SIGN_IN_TAG"
 
     }
+
     private var email by Delegates.notNull<String>()
     private var password by Delegates.notNull<String>()
     //private var ConfirmPassword by Delegates.notNull<String>()
@@ -75,7 +75,6 @@ class LoginActivity : AppCompatActivity() {
         // etconfirmPassword.doOnTextChanged { text, start, before, count ->  manageButtonLogin() }
 
 
-
         //init firebase auth
         firebaseAuth = FirebaseAuth.getInstance()
         checkUser()
@@ -87,6 +86,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     }
+
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -101,7 +101,7 @@ class LoginActivity : AppCompatActivity() {
                 val account = accountTask.getResult(ApiException::class.java)
                 val dateRegister = SimpleDateFormat("dd/MM/yyyy").format(Date())
                 val dbRegister = FirebaseFirestore.getInstance()
-                val UltimaFechaTrabajada = LocalDateTime.now()
+                //  val UltimaFechaTrabajada = LocalDateTime.now()
 
                 if (account != null) {
                     email = account.email.toString()
@@ -117,7 +117,8 @@ class LoginActivity : AppCompatActivity() {
                                     "dateRegister" to dateRegister
                                 )
                             )
-                            db.collection("users").document(email).collection("UltimaFechaTrabajada")
+                            db.collection("users").document(email)
+                                .collection("UltimaFechaTrabajada")
                                 .document("UltimaFechaTrabajada").set(
                                     hashMapOf(
                                         "UltimaFechaTrabajada" to dateRegister,
@@ -127,8 +128,7 @@ class LoginActivity : AppCompatActivity() {
                             goHome(email, "email")
                             goHome(email, "Google")
 
-                        }
-                        else Toast.makeText(
+                        } else Toast.makeText(
                             this,
                             "Error en la conexión con Google",
                             Toast.LENGTH_SHORT
@@ -184,6 +184,7 @@ class LoginActivity : AppCompatActivity() {
         if (currentUser != null) goHome(currentUser.email.toString(), currentUser.providerId)
 
     }
+
     public override fun onResume() {
 
         super.onResume()
@@ -203,7 +204,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-    private fun manageButtonLogin(){
+    private fun manageButtonLogin() {
 
         val tvLogin = findViewById<TextView>(R.id.tvLogin) //administrar el btn login
         email = etEmail.text.toString()
@@ -240,14 +241,13 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun loginUser() {
-
         email = etEmail.text.toString()
         password = etPassword.text.toString()
         //  ConfirmPassword = etconfirmPassword.text.toString()
         var tvLogin = findViewById<TextView>(R.id.tvLogin) //administrar el btn login
         mAuth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this){ task ->
-                if (task.isSuccessful)  goHome(email, "email")
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) goHome(email, "email")
                 else {
                     if (lyTerms.visibility == View.INVISIBLE) {
                         lyTerms.visibility = View.VISIBLE
@@ -268,7 +268,6 @@ class LoginActivity : AppCompatActivity() {
 
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
-
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -299,7 +298,7 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    fun goTerms(v: View){
+    fun goTerms(v: View) {
         val intent = Intent(this, TermsActivity::class.java)
         startActivity(intent)
     }
@@ -309,7 +308,7 @@ class LoginActivity : AppCompatActivity() {
         resetPassword()
     }
 
-    private fun resetPassword(){
+    private fun resetPassword() {
         val e = etEmail.text.toString()
         if (!TextUtils.isEmpty(e)) {
             mAuth.sendPasswordResetEmail(e)
@@ -327,4 +326,5 @@ class LoginActivity : AppCompatActivity() {
                 }
         } else Toast.makeText(this, "Indica un email", Toast.LENGTH_SHORT).show()
     }
+
 }

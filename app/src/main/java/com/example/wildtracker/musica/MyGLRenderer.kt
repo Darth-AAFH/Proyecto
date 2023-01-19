@@ -1,11 +1,10 @@
 package com.example.wildtracker.musica
 
 import android.graphics.Color
-import javax.microedition.khronos.egl.EGLConfig
-import javax.microedition.khronos.opengles.GL10
-
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
+import javax.microedition.khronos.egl.EGLConfig
+import javax.microedition.khronos.opengles.GL10
 
 class MyGLRenderer : GLSurfaceView.Renderer {
     private var myRectangles = ArrayList<Rectangle>()
@@ -36,7 +35,12 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
     override fun onSurfaceCreated(unused: GL10, config: EGLConfig) {
         // Set the background frame color
-        GLES20.glClearColor((Color.red(backgroundColor) / 256f), (Color.green(backgroundColor) / 256f), (Color.blue(backgroundColor) / 256f), 1.0f)
+        GLES20.glClearColor(
+            (Color.red(backgroundColor) / 256f),
+            (Color.green(backgroundColor) / 256f),
+            (Color.blue(backgroundColor) / 256f),
+            1.0f
+        )
 
         for (i in 0 until 10 step 1) {
             myRectangles.add(Rectangle((i * 0.2f) - 0.95f, -1.0f, 0.2f, 0f, primaryColor))

@@ -1,14 +1,13 @@
 package com.example.wildtracker.ui
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
@@ -19,12 +18,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.activity_plantillas.*
 import kotlinx.android.synthetic.main.activity_ver_eventos.*
 
-class VerEventos : AppCompatActivity(),OnNavigationItemSelectedListener {
+class VerEventos : AppCompatActivity(), OnNavigationItemSelectedListener {
 
-    var dia = 0; var mes = 0; var ano = 0
+    var dia = 0;
+    var mes = 0;
+    var ano = 0
 
     var listaEventosVista = listOf<eventos>()
 
@@ -63,13 +63,16 @@ class VerEventos : AppCompatActivity(),OnNavigationItemSelectedListener {
         tvUser.text = MainActivity.user
 
     }
-    fun cargarEventos(){
+
+    fun cargarEventos() {
         var cont = 0
 
-        for(i in MainActivity.listaEventos1){
-            if(i == (dia.toString() + "-" + mes.toString() + "-" + ano.toString())){
-                val nombre = MainActivity.listaRutinasATrabajarAux[cont].split(" | ").toTypedArray()[1]
-                val descripcion = MainActivity.listaRutinasATrabajarAux[cont].split(" | ").toTypedArray()[2]
+        for (i in MainActivity.listaEventos1) {
+            if (i == (dia.toString() + "-" + mes.toString() + "-" + ano.toString())) {
+                val nombre =
+                    MainActivity.listaRutinasATrabajarAux[cont].split(" | ").toTypedArray()[1]
+                val descripcion =
+                    MainActivity.listaRutinasATrabajarAux[cont].split(" | ").toTypedArray()[2]
 
                 var acomodo: eventos
                 acomodo = eventos(nombre, descripcion, R.drawable.rutina)
@@ -81,14 +84,15 @@ class VerEventos : AppCompatActivity(),OnNavigationItemSelectedListener {
         }
 
         cont = 0
-        for(i in MainActivity.listaEventos2){
+        for (i in MainActivity.listaEventos2) {
             val arreglo: Array<String?>
             arreglo = i.split(",").toTypedArray() //toma las fechas separadas
 
-            for(j in arreglo){
-                if(j == (dia.toString() + "-" + mes.toString() + "-" + ano.toString())){
+            for (j in arreglo) {
+                if (j == (dia.toString() + "-" + mes.toString() + "-" + ano.toString())) {
                     val nombre = MainActivity.listaAllMetas[cont].split(" | ").toTypedArray()[0]
-                    val descripcion = MainActivity.listaAllMetas[cont].split(" | ").toTypedArray()[2]
+                    val descripcion =
+                        MainActivity.listaAllMetas[cont].split(" | ").toTypedArray()[2]
 
                     var acomodo: eventos
                     acomodo = eventos(nombre, descripcion, R.drawable.excersice_icon)
@@ -103,8 +107,8 @@ class VerEventos : AppCompatActivity(),OnNavigationItemSelectedListener {
 
     }
 
-    fun mostrarLista(){
-        if(listaEventosVista.isEmpty()){
+    fun mostrarLista() {
+        if (listaEventosVista.isEmpty()) {
             textViewAyudaEventos.visibility = View.VISIBLE
         }
 
@@ -135,12 +139,12 @@ class VerEventos : AppCompatActivity(),OnNavigationItemSelectedListener {
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            R.id.nav_musica ->callMusica()
+            R.id.nav_musica -> callMusica()
             R.id.nav_metas -> callMetasActivity()
-            R.id.nav_amigos ->callAmigosActivity()
-            R.id.Settings->callAjustesActivity()
-            R.id.nav_seguimiento->callSeguimientoActivity()
-            R.id.nav_solicitudes-> callSolicitudesActivity()
+            R.id.nav_amigos -> callAmigosActivity()
+            R.id.Settings -> callAjustesActivity()
+            R.id.nav_seguimiento -> callSeguimientoActivity()
+            R.id.nav_solicitudes -> callSolicitudesActivity()
 
 
         }
@@ -152,15 +156,19 @@ class VerEventos : AppCompatActivity(),OnNavigationItemSelectedListener {
 
     private fun callSolicitudesActivity() {
         val intent = Intent(this, SolicitudesActivity::class.java)
-        startActivity(intent)    }
+        startActivity(intent)
+    }
+
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
     }
+
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
@@ -205,6 +213,7 @@ class VerEventos : AppCompatActivity(),OnNavigationItemSelectedListener {
         val intent = Intent(this, MetasActivity::class.java)
         startActivity(intent)
     }
+
     fun callSignOut(view: View) {
         signOut()
     }
@@ -235,7 +244,6 @@ class VerEventos : AppCompatActivity(),OnNavigationItemSelectedListener {
             e.printStackTrace()
         }
     }
-
 
 
 }

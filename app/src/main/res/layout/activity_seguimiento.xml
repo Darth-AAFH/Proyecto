@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawerlayout"
@@ -10,9 +9,9 @@
     tools:openDrawer="start">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_marginTop="50dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
         tools:context=".ui.SeguimientoActivity">
 
         <ListView
@@ -37,24 +36,22 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <RelativeLayout
-        android:layout_marginTop="50dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
         tools:context=".ui.SeguimientoActivity">
 
-        <com.github.sundeepk.compactcalendarview.CompactCalendarView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <com.github.sundeepk.compactcalendarview.CompactCalendarView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/calendario2"
             android:layout_width="fill_parent"
-            android:layout_marginTop="25dp"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
             android:layout_height="250dp"
-            app:compactCalendarTextSize="12sp"
+            android:layout_marginTop="25dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             app:compactCalendarBackgroundColor="#FFFFFF"
             app:compactCalendarCurrentDayBackgroundColor="#2b91f7"
             app:compactCalendarMultiEventIndicatorColor="#2b91f7"
-            />
+            app:compactCalendarTextSize="12sp" />
 
     </RelativeLayout>
 
@@ -68,6 +65,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        app:menu="@menu/activity_main_drawer"
-        />
+        app:menu="@menu/activity_main_drawer" />
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -25,20 +25,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import java.lang.Math.random
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.random.Random.Default.nextInt
 
 @Suppress("DEPRECATION")
 class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawer: DrawerLayout
     private val db = FirebaseFirestore.getInstance()
-    private var listViewRanking: ListView?= null
-    private var buttonRecargar: Button ?= null
+    private var listViewRanking: ListView? = null
+
+    //private var buttonRecargar: Button ?= null
     private lateinit var builder: AlertDialog.Builder
-    private fun CargarRanking () {
+    private fun CargarRanking() {
 
         MainActivity.listaRanking1.sort(); MainActivity.listaRanking2.sort() //acomoda las listas de menor a mayor
         MainActivity.listaRanking3.sort(); MainActivity.listaRanking4.sort()
@@ -54,14 +52,15 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             i--
         }
 
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array)
+        val adapter: ArrayAdapter<String> =
+            ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, array)
         listViewRanking!!.adapter = adapter //La lista se adapta en la text view
         // listaRanking.sort()
-        listViewRanking!!.setOnItemClickListener  { parent, view, position, id ->
-            var Perfil:String  =  listaRanking[(listaRanking.size.toInt()- position.toInt())-1]
+        listViewRanking!!.setOnItemClickListener { parent, view, position, id ->
+            var Perfil: String = listaRanking[(listaRanking.size.toInt() - position.toInt()) - 1]
             Perfil = Perfil.substringAfter("-")
             //  Toast.makeText(this,MainActivity.listaRanking[(listaRanking!!.size.toInt()- position.toInt())-1]+"$Perfil",Toast.LENGTH_SHORT).show()
-            AlertaSeguir(Perfil )
+            AlertaSeguir(Perfil)
         }
 
     }
@@ -93,8 +92,12 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                         .setCancelable(true)
                         .setPositiveButton("Seguir") { dialogInterface, it ->
                             //Validar si ya se sigue al usuario
-                            if(validarSeguimiento(usuario)){
-                                Toast.makeText(this,"Haciendo validacion de usuario",Toast.LENGTH_SHORT).show()
+                            if (validarSeguimiento(usuario)) {
+                                Toast.makeText(
+                                    this,
+                                    "Haciendo validacion de usuario",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
 
 
@@ -115,8 +118,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                         }
                         .show()
 
-                }
-                else{
+                } else {
 
                     // Toast.makeText(this,"No se encontro... "+ perfilGet.length,Toast.LENGTH_LONG).show()
                     //  Toast.makeText(this,"Buscaba..."+ perfil2.length,Toast.LENGTH_LONG).show()
@@ -124,7 +126,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 Log.d("myTag", "Encontre:$perfilGet")
                 Log.d("myTag", "Buscaba:$perfil2")
 
-                if(progresDialog.isShowing) {
+                if (progresDialog.isShowing) {
                     //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
                     Thread.sleep(1_000)  // wait for 1 second
                     progresDialog.dismiss()
@@ -139,119 +141,131 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private fun validarSeguimiento(usuario: String): Boolean {
         var Siguiendo = false
 
-        var NombreValidador =" "
-        db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
-            for (document in result) {
-                NombreValidador = document.get("Nombre").toString()
-                if(NombreValidador==usuario){
-                    Siguiendo=true
-                    Toast.makeText(this,"Siguiendolo ya!!",Toast.LENGTH_SHORT).show()
+        var NombreValidador = " "
+        db.collection("users").document(MainActivity.user!!).collection("Seguidores").get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    NombreValidador = document.get("Nombre").toString()
+                    if (NombreValidador == usuario) {
+                        Siguiendo = true
+                        Toast.makeText(this, "Siguiendolo ya!!", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-            if(!Siguiendo){
-                //Hacer validacion de solicitud de amistad
-               // validarSolicitudAmistad(usuario)
-                //Meterme al usuario y setear una nueva solicitud de amistad
+                if (!Siguiendo) {
+                    //Hacer validacion de solicitud de amistad
+                    // validarSolicitudAmistad(usuario)
+                    //Meterme al usuario y setear una nueva solicitud de amistad
 
-                db.collection("users").get().addOnSuccessListener { result ->
-                    for (document in result) {
-                        var documentRef = document.id
-                        NombreValidador = document.get("Name").toString()
-                       // Toast.makeText(this,"Buscaba: {$usuario} Encontre: $NombreValidador",Toast.LENGTH_SHORT).show()
-                        //Toast.makeText(this,"Buscaba: $usuario",Toast.LENGTH_SHORT).show()
+                    db.collection("users").get().addOnSuccessListener { result ->
+                        for (document in result) {
+                            var documentRef = document.id
+                            NombreValidador = document.get("Name").toString()
+                            // Toast.makeText(this,"Buscaba: {$usuario} Encontre: $NombreValidador",Toast.LENGTH_SHORT).show()
+                            //Toast.makeText(this,"Buscaba: $usuario",Toast.LENGTH_SHORT).show()
 
-                        if(usuario==NombreValidador){
-                            db.collection("users").document(documentRef).collection("SolicitudesAmistad").get().addOnSuccessListener {
-                                var continuar =true
-                                for (document in it){
+                            if (usuario == NombreValidador) {
+                                db.collection("users").document(documentRef)
+                                    .collection("SolicitudesAmistad").get().addOnSuccessListener {
+                                    var continuar = true
+                                    for (document in it) {
 
-                                    var ParaQuien = document.get("Paraquien") as String?
-                                    var Nombre = document.get("Nombre") as String?
-                                    var Aceptada = document.get("SolicitudAceptada") as Boolean
-                                  //  Toast.makeText(this,"Nombre $Nombre + Aceptada: $Aceptada", Toast.LENGTH_SHORT).show()
+                                        var ParaQuien = document.get("Paraquien") as String?
+                                        var Nombre = document.get("Nombre") as String?
+                                        var Aceptada = document.get("SolicitudAceptada") as Boolean
+                                        //  Toast.makeText(this,"Nombre $Nombre + Aceptada: $Aceptada", Toast.LENGTH_SHORT).show()
 
-                                    if(Aceptada ==true&& ParaQuien==usuario){
+                                        if (Aceptada == true && ParaQuien == usuario) {
 
-                                        Toast.makeText(this,"Comenzaste a seguir a $usuario",Toast.LENGTH_SHORT).show()
-                                        MainActivity.user?.let {
-                                            db.collection("users").document(it).collection("Seguidores").document().set(   //Añade a mi lista de quien sigo el nuevo usuario
-                                                hashMapOf(
-                                                    "Nombre" to usuario
+                                            Toast.makeText(
+                                                this,
+                                                "Comenzaste a seguir a $usuario",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            MainActivity.user?.let {
+                                                db.collection("users").document(it)
+                                                    .collection("Seguidores").document()
+                                                    .set(   //Añade a mi lista de quien sigo el nuevo usuario
+                                                        hashMapOf(
+                                                            "Nombre" to usuario
+                                                        )
+
+                                                    )
+                                                db.collection("users").document(documentRef)
+                                                    .collection("Siguiendo").document().set(
+                                                    hashMapOf(
+                                                        "Nombre" to PerfilActivity.NombreUsuario // Añade al usuario que comence a seguir mi id para que le aparezca que yo lo sigo
+                                                    )
                                                 )
+                                            }
+                                            var SolicitudEliminar = document.id
+                                            db.collection("users").document(documentRef)
+                                                .collection("SolicitudesAmistad")
+                                                .document(SolicitudEliminar).delete()
+                                            var documentRef = document.id
+                                            NombreValidador = document.get("Name").toString()
+                                            if (usuario == NombreValidador) {
 
-                                            )
-                                            db.collection("users").document(documentRef).collection("Siguiendo").document().set(
-                                                hashMapOf(
-                                                    "Nombre" to PerfilActivity.NombreUsuario // Añade al usuario que comence a seguir mi id para que le aparezca que yo lo sigo
-                                                )
-                                            )
+
+                                            }
                                         }
-                                        var SolicitudEliminar = document.id
-                                       db.collection("users").document(documentRef).collection("SolicitudesAmistad").document(SolicitudEliminar).delete()
-                                                var documentRef = document.id
-                                                NombreValidador = document.get("Name").toString()
-                                                if(usuario==NombreValidador ){
+                                    }
 
+                                }
+                            }
+                        }
+                    }
+                    db.collection("users").get().addOnSuccessListener { result ->
+                        // var SolicitudAceptada:Boolean = false
+                        for (document in result) {
+                            var ExisteSol: Boolean? = false
+                            var ExisteSol2 = ExisteSol.toString()
 
-
-                                        }
+                            var documentRef = document.id
+                            db.collection("users").document(documentRef)
+                                .collection("SolicitudesAmistad")
+                                .document("Solicitud de ${PerfilActivity.NombreUsuario}").get()
+                                .addOnSuccessListener { hay ->
+                                    ExisteSol = hay.get("ExisteSolicitud") as Boolean?
+                                    // Toast.makeText(this,"Soli: ${ExisteSol.toString()}",Toast.LENGTH_LONG).show()
+                                    var NombreValidador = document.get("Name").toString()
+                                    val rnds = (0..1000000).random()
+                                    if (usuario == NombreValidador && ExisteSol == false || ExisteSol == null || ExisteSol2 == "null") {
+                                        db.collection("users").document(documentRef)
+                                            .collection("SolicitudesAmistad").document(
+                                            (MainActivity.listaSolicitudesEnviadas.size + rnds).toString()
+                                        ).set(
+                                            hashMapOf(
+                                                "Nombre" to PerfilActivity.NombreUsuario, // Añade al usuario que comence a seguir mi id para que le aparezca que yo lo sigo
+                                                "Paraquien" to usuario,
+                                                "SolicitudAceptada" to false,
+                                                "ExisteSolicitud" to true
+                                            )
+                                        )
                                     }
                                 }
 
-                            }
                         }
                     }
-                }
-                db.collection("users").get().addOnSuccessListener { result ->
-                   // var SolicitudAceptada:Boolean = false
-                    for (document in result) {
-                        var ExisteSol:Boolean? = false
-                        var ExisteSol2 = ExisteSol.toString()
 
-                        var documentRef = document.id
-                        db.collection("users").document(documentRef).collection("SolicitudesAmistad").document("Solicitud de ${PerfilActivity.NombreUsuario}").get().addOnSuccessListener { hay->
-                         ExisteSol =   hay.get("ExisteSolicitud") as Boolean?
-                           // Toast.makeText(this,"Soli: ${ExisteSol.toString()}",Toast.LENGTH_LONG).show()
-                            var NombreValidador = document.get("Name").toString()
-                            val rnds = (0..1000000).random()
-                            if(usuario==NombreValidador && ExisteSol==false || ExisteSol==null || ExisteSol2=="null"){
-                                db.collection("users").document(documentRef).collection("SolicitudesAmistad").document(
-                                    (MainActivity.listaSolicitudesEnviadas.size+ rnds).toString()
-                                ).set(
-                                    hashMapOf(
-                                        "Nombre" to PerfilActivity.NombreUsuario, // Añade al usuario que comence a seguir mi id para que le aparezca que yo lo sigo
-                                        "Paraquien" to usuario,
-                                        "SolicitudAceptada" to false,
-                                        "ExisteSolicitud" to true
-                                    )
-                                )
-                            }
-                        }
+                    Toast.makeText(
+                        this,
+                        "Solicitud de amistad mandada a $usuario",
+                        Toast.LENGTH_SHORT
+                    ).show()
 
-                    }
+
+                    //Este queda despues de que el usuario acepta mi solicitud de amistad
+                    //If(SolicitudAceptada)
+                    //else
+
                 }
 
-                Toast.makeText(this,"Solicitud de amistad mandada a $usuario",Toast.LENGTH_SHORT).show()
 
+                //Añade al usuario que comence a seguir en su lista de siguiendome el nombre del usuario que lo comenzó a seguir
+                //If solicitud aprobada{}
 
-
-
-
-
-
-                //Este queda despues de que el usuario acepta mi solicitud de amistad
-                //If(SolicitudAceptada)
-                //else
 
             }
-
-
-
-            //Añade al usuario que comence a seguir en su lista de siguiendome el nombre del usuario que lo comenzó a seguir
-            //If solicitud aprobada{}
-
-
-        }
 
 
 
@@ -264,26 +278,35 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             for (document in result) {
                 var documentRef = document.id
                 var NombreValidador = document.get("Name").toString()
-                if(usuario==NombreValidador){
-                    db.collection("users").document(documentRef).collection("SolicitudesAmistad").get().addOnSuccessListener {
-                        for (document in it){
+                if (usuario == NombreValidador) {
+                    db.collection("users").document(documentRef).collection("SolicitudesAmistad")
+                        .get().addOnSuccessListener {
+                        for (document in it) {
                             var ParaQuien = document.get("Paraquien") as String?
                             var Nombre = document.get("Nombre") as String?
                             var Aceptada = document.get("SolicitudAceptada") as Boolean
-                           // Toast.makeText(this,"Nombre $Nombre + Aceptada: $Aceptada", Toast.LENGTH_SHORT).show()
+                            // Toast.makeText(this,"Nombre $Nombre + Aceptada: $Aceptada", Toast.LENGTH_SHORT).show()
 
-                            if(Aceptada ==true && ParaQuien==usuario){
-                                Toast.makeText(this,"Comenzaste a seguir a $usuario",Toast.LENGTH_SHORT).show()
+                            if (Aceptada == true && ParaQuien == usuario) {
+                                Toast.makeText(
+                                    this,
+                                    "Comenzaste a seguir a $usuario",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 MainActivity.user?.let {
-                                    db.collection("users").document(it).collection("Seguidores").document().set(   //Añade a mi lista de quien sigo el nuevo usuario
-                                        hashMapOf(
-                                            "Nombre" to usuario
-                                        )
+                                    db.collection("users").document(it).collection("Seguidores")
+                                        .document()
+                                        .set(   //Añade a mi lista de quien sigo el nuevo usuario
+                                            hashMapOf(
+                                                "Nombre" to usuario
+                                            )
 
-                                    )
+                                        )
                                 }
                                 var SolicitudEliminar = document.id
-                                db.collection("users").document(documentRef).collection("SolicitudesAmistad").document( SolicitudEliminar).delete()
+                                db.collection("users").document(documentRef)
+                                    .collection("SolicitudesAmistad").document(SolicitudEliminar)
+                                    .delete()
                             }
                         }
                     }
@@ -297,12 +320,13 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
 
         db.collection("users").get().addOnSuccessListener { result ->
-            var SolicitudAceptada:Boolean = false
+            var SolicitudAceptada: Boolean = false
             for (document in result) {
                 var documentRef = document.id
                 var NombreValidador = document.get("Name").toString()
-                if(usuario==NombreValidador){
-                    db.collection("users").document(documentRef).collection("SolicitudesAmistad").document().set(
+                if (usuario == NombreValidador) {
+                    db.collection("users").document(documentRef).collection("SolicitudesAmistad")
+                        .document().set(
                         hashMapOf(
                             "Nombre" to PerfilActivity.NombreUsuario, // Añade al usuario que comence a seguir mi id para que le aparezca que yo lo sigo
                             "Paraquien" to usuario,
@@ -313,7 +337,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             }
         }
 
-        Toast.makeText(this,"Solicitud de amistad mandada a $usuario",Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Solicitud de amistad mandada a $usuario", Toast.LENGTH_SHORT).show()
     }
 
 
@@ -324,31 +348,32 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         initToolbar()
         initNavigationView()
 
-        buttonRecargar = findViewById(R.id.buttonRecargar)
+        //  buttonRecargar = findViewById(R.id.buttonRecargar)
         listViewRanking = findViewById(R.id.listViewRanking)
         progresDialog.setMessage("Cargando Datos")
         progresDialog.setCancelable(false)
         progresDialog.show()
         CargarRanking()
 
-        buttonRecargar!!.setOnClickListener{////////////////////////////////////
-            progresDialog.setMessage("Cargando Datos")
-            progresDialog.setCancelable(false)
-            progresDialog.show()
-            CargarRanking()
-            if(progresDialog.isShowing){
-                Handler(Looper.getMainLooper()).postDelayed(
-                    {
-                        // This method will be executed once the timer is over
-                        progresDialog.dismiss()
-                    },
-                    1000 // value in milliseconds
-                )
 
-            }
-        }
+        /* buttonRecargar!!.setOnClickListener{////////////////////////////////////
+             progresDialog.setMessage("Cargando Datos")
+             progresDialog.setCancelable(false)
+             progresDialog.show()
+             CargarRanking()
+             if(progresDialog.isShowing){
+                 Handler(Looper.getMainLooper()).postDelayed(
+                     {
+                         // This method will be executed once the timer is over
+                         progresDialog.dismiss()
+                     },
+                     1000 // value in milliseconds
+                 )
 
-        if(progresDialog.isShowing){
+             }
+         }*/
+
+        if (progresDialog.isShowing) {
             Handler(Looper.getMainLooper()).postDelayed(
                 {
                     // This method will be executed once the timer is over
@@ -403,11 +428,11 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
 
-            R.id.nav_musica ->callMusica()
-            R.id.nav_amigos ->callAmigosActivity()
-            R.id.Settings->callAjustesActivity()
-            R.id.nav_seguimiento->callSeguimientoActivity()
-            R.id.nav_solicitudes-> callSolicitudesActivity()
+            R.id.nav_musica -> callMusica()
+            R.id.nav_amigos -> callAmigosActivity()
+            R.id.Settings -> callAjustesActivity()
+            R.id.nav_seguimiento -> callSeguimientoActivity()
+            R.id.nav_solicitudes -> callSolicitudesActivity()
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
@@ -417,20 +442,24 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     private fun callSolicitudesActivity() {
         val intent = Intent(this, SolicitudesActivity::class.java)
-        startActivity(intent)    }
+        startActivity(intent)
+    }
 
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
     }
+
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
     }
+
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
@@ -486,6 +515,7 @@ class RankingActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         //Cierra sesion y manda devuelta al login
         deleteAppData()
     }
+
     private fun deleteAppData() {
         try {
             // clearing app data

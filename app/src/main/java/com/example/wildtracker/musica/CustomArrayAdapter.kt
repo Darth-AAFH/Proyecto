@@ -9,8 +9,11 @@ import android.widget.Filter
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 
-class CustomArrayAdapter<T>(context: Context, @LayoutRes private val layoutResource: Int, private val array: Array<String?>)
-    : ArrayAdapter<String?>(context, layoutResource, array) {
+class CustomArrayAdapter<T>(
+    context: Context,
+    @LayoutRes private val layoutResource: Int,
+    private val array: Array<String?>
+) : ArrayAdapter<String?>(context, layoutResource, array) {
 
     private var mArray: Array<String?> = array
 
@@ -23,7 +26,8 @@ class CustomArrayAdapter<T>(context: Context, @LayoutRes private val layoutResou
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val view: TextView = convertView as TextView? ?: LayoutInflater.from(context).inflate(layoutResource, parent, false) as TextView
+        val view: TextView = convertView as TextView? ?: LayoutInflater.from(context)
+            .inflate(layoutResource, parent, false) as TextView
         view.text = mArray[position]
         return view
     }

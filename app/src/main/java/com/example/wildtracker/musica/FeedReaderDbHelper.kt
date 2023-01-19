@@ -66,7 +66,8 @@ val SQL_DELETE_PARAMETERS_ENTRIES = "DROP TABLE IF EXISTS ${PARAMETERS_TABLE_NAM
 
 val SQL_DELETE_LAST_SONG_ENTRIES = "DROP TABLE IF EXISTS ${LAST_SONG_PLAYED_TABLE_NAME}"
 
-class FeedReaderDbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+class FeedReaderDbHelper(context: Context) :
+    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(SQL_CREATE_SONG_LIST_ENTRIES)
         db.execSQL(SQL_CREATE_MUSIC_PATHS_ENTRIES)

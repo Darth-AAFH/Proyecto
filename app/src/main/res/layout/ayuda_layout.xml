@@ -1,14 +1,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scrollMapsPlaceInfo"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/chartAyuda"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-       >
+        android:orientation="vertical">
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,10 +28,12 @@
                 android:text="Pausar/reanudar actividad fisica" />
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -57,27 +59,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="147dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/skip_excercise">
+                android:orientation="horizontal">
 
-            </ImageView>
+                <ImageView
+                    android:layout_width="147dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/skip_excercise">
 
-            <TextView
-                android:id="@+id/Saltar"
-                android:layout_width="132dp"
-                android:layout_height="wrap_content"
-                android:text="Saltar el ejercio (para cuando no haya iniciado o terminado un ejercicio)" />
+                </ImageView>
 
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/Saltar"
+                    android:layout_width="132dp"
+                    android:layout_height="wrap_content"
+                    android:text="Saltar el ejercio (para cuando no haya iniciado o terminado un ejercicio)" />
+
+            </LinearLayout>
         </LinearLayout>
-
 
 
         <LinearLayout

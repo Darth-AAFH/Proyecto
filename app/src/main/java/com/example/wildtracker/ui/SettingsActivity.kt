@@ -23,8 +23,10 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 
 lateinit var drawer: DrawerLayout
+
 class SettingsActivity : AppCompatActivity(),
-    SharedPreferences.OnSharedPreferenceChangeListener, NavigationView.OnNavigationItemSelectedListener {
+    SharedPreferences.OnSharedPreferenceChangeListener,
+    NavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -39,8 +41,8 @@ class SettingsActivity : AppCompatActivity(),
                 .commit()
         }
 
-    PreferenceManager.getDefaultSharedPreferences(this)
-        .registerOnSharedPreferenceChangeListener(this)
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .registerOnSharedPreferenceChangeListener(this)
 
 
     }
@@ -52,18 +54,19 @@ class SettingsActivity : AppCompatActivity(),
     }
 
     override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        if(key== "dark_mode") {
+        if (key == "dark_mode") {
             val prefs = sharedPreferences?.getString(key, "1")
             when (prefs?.toInt()) {
-                1->AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                2->AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                3->AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                4->AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
+                1 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                2 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                3 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                4 -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY)
 
             }
 
         }
     }
+
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         toolbar.title = "Ajustes"
@@ -77,6 +80,7 @@ class SettingsActivity : AppCompatActivity(),
         drawer.addDrawerListener(toggle)
         toggle.syncState()
     }
+
     private fun initNavigationView() {
 
         val navigationView: NavigationView = findViewById(R.id.nav_view)
@@ -105,15 +109,16 @@ class SettingsActivity : AppCompatActivity(),
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
 
-            R.id.nav_musica ->callMusica()
-            R.id.nav_amigos ->callAmigosActivity()
-            R.id.Settings->callAjustesActivity()
+            R.id.nav_musica -> callMusica()
+            R.id.nav_amigos -> callAmigosActivity()
+            R.id.Settings -> callAjustesActivity()
         }
 
         drawer.closeDrawer(GravityCompat.START) // cerrar menu
 
         return true
     }
+
     private fun callRankingActivity() {
         val intent = Intent(this, RankingActivity::class.java)
         startActivity(intent)
@@ -128,10 +133,12 @@ class SettingsActivity : AppCompatActivity(),
         val intent = Intent(this, MetasActivity::class.java)
         startActivity(intent)
     }
+
     private fun callSeguimientoActivity() {
         val intent = Intent(this, SeguimientoActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
@@ -141,6 +148,7 @@ class SettingsActivity : AppCompatActivity(),
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
     }
+
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
@@ -150,10 +158,12 @@ class SettingsActivity : AppCompatActivity(),
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
     }
+
     private fun callInicioActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
+
     private fun callPlantillasActivity() {
         val intent = Intent(this, PlantillasActivity::class.java)
         startActivity(intent)
@@ -168,6 +178,7 @@ class SettingsActivity : AppCompatActivity(),
         val intent = Intent(this, MapsActivity::class.java)
         startActivity(intent)
     }
+
     fun signOut() {
 
         LoginActivity.useremail = ""
@@ -183,6 +194,7 @@ class SettingsActivity : AppCompatActivity(),
         //Cierra sesion y manda devuelta al login
         deleteAppData()
     }
+
     private fun deleteAppData() {
         try {
             // clearing app data
@@ -193,10 +205,11 @@ class SettingsActivity : AppCompatActivity(),
             e.printStackTrace()
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
-    PreferenceManager.getDefaultSharedPreferences(this)
-        .unregisterOnSharedPreferenceChangeListener(this)
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .unregisterOnSharedPreferenceChangeListener(this)
     }
 
 }

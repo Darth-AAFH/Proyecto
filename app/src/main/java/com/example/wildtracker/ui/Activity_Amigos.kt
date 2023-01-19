@@ -22,135 +22,137 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_amigos.*
-import org.achartengine.ChartFactory
-import org.achartengine.GraphicalView
-import org.achartengine.model.XYMultipleSeriesDataset
-import org.achartengine.model.XYSeries
-import org.achartengine.renderer.XYMultipleSeriesRenderer
-import org.achartengine.renderer.XYSeriesRenderer
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 @Suppress("DEPRECATION")
 class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var drawer: DrawerLayout
     private val db = FirebaseFirestore.getInstance() //Instancia de firebase para traerse los datos
-    private var listViewRanking: ListView?= null
-    private var buttonRecargar: Button?= null //Boton para recargar los datos del activity
+    private var listViewRanking: ListView? = null
+    private var buttonRecargar: Button? = null //Boton para recargar los datos del activity
     private lateinit var builder: AlertDialog.Builder //Dialogo de alerta para interactuar en el activity
     private lateinit var builderStadistics: AlertDialog.Builder
 
-    private fun CargarSeguidores () {
+    private fun CargarSeguidores() {
         //Funcion que se trae los datos de la lista de personas a las que el usuario esta siguiendo
-        val values = ArrayList<String>() //Values es la lista de seguidores a que será llenada con datos de firebase
+        val values =
+            ArrayList<String>() //Values es la lista de seguidores a que será llenada con datos de firebase
         values.clear() // Limpiamos la vista cada que se presione el boton para evitar escribir mas de alguna vez el dato
-        var mListView = findViewById<ListView>(R.id.userlist) //Seteamos la lista de usuarios en una variable para poder manipularla
+        var mListView =
+            findViewById<ListView>(R.id.userlist) //Seteamos la lista de usuarios en una variable para poder manipularla
         mListView.emptyView //Vaciamos la lista
-        mListView.adapter = ArrayAdapter(this,
-            android.R.layout.simple_list_item_1, values) //Seteamos los valores de la lista a que se adapten con los valores que se cargue de la lista de usuarios
+        mListView.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1, values
+        ) //Seteamos los valores de la lista a que se adapten con los valores que se cargue de la lista de usuarios
         //Accesar a la coleccion de amigos del usuario
         var listaSeguidores = ArrayList<String>()
-        var perfilGet ="" //Variable para el nombre de usuario
+        var perfilGet = "" //Variable para el nombre de usuario
         val progresDialog = ProgressDialog(this)
         progresDialog.setMessage("Cargando Datos")
         progresDialog.setCancelable(false)
         progresDialog.show()
         MainActivity.listaSeguidores.clear() //Cada que se traiga los datos de firebase actualizara la lista de seguidores global
         //Sentencia para consultar los datos de firebase en la ruta de usuarios, el usuario actual loggeado y en sus seguidores
-        db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
-            for (document in result) {
-                perfilGet = document.get("Nombre").toString()
-                if(progresDialog.isShowing) {
-                    //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
-                    //Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
-                    Thread.sleep(1_00)  // wait for 1 second
-                    MainActivity.listaSeguidores.add(perfilGet)//Añade a la lista de seguidores los nombres encontrados en firebase
+        db.collection("users").document(MainActivity.user!!).collection("Seguidores").get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    perfilGet = document.get("Nombre").toString()
+                    if (progresDialog.isShowing) {
+                        //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
+                        //Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
+                        Thread.sleep(1_00)  // wait for 1 second
+                        MainActivity.listaSeguidores.add(perfilGet)//Añade a la lista de seguidores los nombres encontrados en firebase
+                    }
+
+                }
+                Thread.sleep(1_00)  // wait for 1 second
+                MainActivity.listaSeguidores.sort() // Acomoda la lista de seguidores numericamente 0,1,2....
+                val array = ArrayList<String>()
+                var i = MainActivity.listaSeguidores.size - 1
+                while (i != -1) {
+                    //Acomoda el arreglo para mostrar en orden a los seguidores
+                    array.add(MainActivity.listaSeguidores[i])
+                    i--
                 }
 
+                progresDialog.dismiss()
+                val arrayAdapter: ArrayAdapter<*>
+                // val users = MainActivity.listaSeguidores
+
+                // access the listView from xml file
+
+                arrayAdapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_list_item_1, array
+                )
+                //Pinta la lista de seguidores en orden
+                mListView.adapter = arrayAdapter
+
             }
-            Thread.sleep(1_00)  // wait for 1 second
-            MainActivity.listaSeguidores.sort() // Acomoda la lista de seguidores numericamente 0,1,2....
-            val array = ArrayList<String>()
-            var i = MainActivity.listaSeguidores.size - 1
-            while (i != -1) {
-                //Acomoda el arreglo para mostrar en orden a los seguidores
-                array.add(MainActivity.listaSeguidores[i])
-                i--
-            }
-
-            progresDialog.dismiss()
-            val arrayAdapter: ArrayAdapter<*>
-            // val users = MainActivity.listaSeguidores
-
-            // access the listView from xml file
-
-            arrayAdapter = ArrayAdapter(this,
-                android.R.layout.simple_list_item_1, array)
-            //Pinta la lista de seguidores en orden
-            mListView.adapter = arrayAdapter
-
-        }
-
-
-
-
-
 
 
     }
 
-    private fun CargarSeguidoresSiguiendome () {
+    private fun CargarSeguidoresSiguiendome() {
         //Funcion que se trae los datos de la lista de personas a las que el usuario esta siguiendo
-        val values = ArrayList<String>() //Values es la lista de seguidores a que será llenada con datos de firebase
+        val values =
+            ArrayList<String>() //Values es la lista de seguidores a que será llenada con datos de firebase
         values.clear() // Limpiamos la vista cada que se presione el boton para evitar escribir mas de alguna vez el dato
-        var mListView = findViewById<ListView>(R.id.userlistSiguiendome) //Seteamos la lista de usuarios en una variable para poder manipularla
+        var mListView =
+            findViewById<ListView>(R.id.userlistSiguiendome) //Seteamos la lista de usuarios en una variable para poder manipularla
         mListView.emptyView //Vaciamos la lista
-        mListView.adapter = ArrayAdapter(this,
-            android.R.layout.simple_list_item_1, values) //Seteamos los valores de la lista a que se adapten con los valores que se cargue de la lista de usuarios
+        mListView.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1, values
+        ) //Seteamos los valores de la lista a que se adapten con los valores que se cargue de la lista de usuarios
         //Accesar a la coleccion de amigos del usuario
         var listaSeguidores = ArrayList<String>()
-        var perfilGet ="" //Variable para el nombre de usuario
+        var perfilGet = "" //Variable para el nombre de usuario
         val progresDialog = ProgressDialog(this)
         progresDialog.setMessage("Cargando Datos")
         progresDialog.setCancelable(false)
         progresDialog.show()
         MainActivity.ListaSiguiendome.clear() //Cada que se traiga los datos de firebase actualizara la lista de seguidores global
         //Sentencia para consultar los datos de firebase en la ruta de usuarios, el usuario actual loggeado y en sus seguidores
-        db.collection("users").document(MainActivity.user!!).collection("Siguiendo").get().addOnSuccessListener { result ->
-            for (document in result) {
-                perfilGet = document.get("Nombre").toString()
-                if(progresDialog.isShowing) {
-                    //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
-                    //Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
-                    Thread.sleep(1_00)  // wait for 1 second
-                    MainActivity.ListaSiguiendome.add(perfilGet)//Añade a la lista de seguidores los nombres encontrados en firebase
+        db.collection("users").document(MainActivity.user!!).collection("Siguiendo").get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    perfilGet = document.get("Nombre").toString()
+                    if (progresDialog.isShowing) {
+                        //Toast.makeText(this,"Encontrado! "+ document.get("Name").toString(),Toast.LENGTH_LONG).show()
+                        //Toast.makeText(this,perfilGet,Toast.LENGTH_LONG).show()
+                        Thread.sleep(1_00)  // wait for 1 second
+                        MainActivity.ListaSiguiendome.add(perfilGet)//Añade a la lista de seguidores los nombres encontrados en firebase
+                    }
+
+                }
+                Thread.sleep(1_00)  // wait for 1 second
+                MainActivity.ListaSiguiendome.sort() // Acomoda la lista de seguidores numericamente 0,1,2....
+                val array = ArrayList<String>()
+                var i = MainActivity.ListaSiguiendome.size - 1
+                while (i != -1) {
+                    //Acomoda el arreglo para mostrar en orden a los seguidores
+                    array.add(MainActivity.ListaSiguiendome[i])
+                    i--
                 }
 
+                progresDialog.dismiss()
+                val arrayAdapter: ArrayAdapter<*>
+                // val users = MainActivity.listaSeguidores
+
+                // access the listView from xml file
+
+                arrayAdapter = ArrayAdapter(
+                    this,
+                    android.R.layout.simple_list_item_1, array
+                )
+                //Pinta la lista de seguidores en orden
+                mListView.adapter = arrayAdapter
+
             }
-            Thread.sleep(1_00)  // wait for 1 second
-            MainActivity.ListaSiguiendome.sort() // Acomoda la lista de seguidores numericamente 0,1,2....
-            val array = ArrayList<String>()
-            var i = MainActivity.ListaSiguiendome.size - 1
-            while (i != -1) {
-                //Acomoda el arreglo para mostrar en orden a los seguidores
-                array.add(MainActivity.ListaSiguiendome[i])
-                i--
-            }
-
-            progresDialog.dismiss()
-            val arrayAdapter: ArrayAdapter<*>
-            // val users = MainActivity.listaSeguidores
-
-            // access the listView from xml file
-
-            arrayAdapter = ArrayAdapter(this,
-                android.R.layout.simple_list_item_1, array)
-            //Pinta la lista de seguidores en orden
-            mListView.adapter = arrayAdapter
-
-        }
 
     }
 
@@ -170,18 +172,19 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             .setCancelable(true)
             .setPositiveButton("Dejar de seguir") { dialogInterface, it ->
                 //Funcion para eliminar al usuario de mis amigos
-                db.collection("users").document(MainActivity.user!!).collection("Seguidores").get().addOnSuccessListener { result ->
-                    //Consulta en la base de datos los usuarios que coicidan con el nombre de usuario a dejar de seguir, cuando lo encuentra lo elimina
-                    for (document in result) {
+                db.collection("users").document(MainActivity.user!!).collection("Seguidores").get()
+                    .addOnSuccessListener { result ->
+                        //Consulta en la base de datos los usuarios que coicidan con el nombre de usuario a dejar de seguir, cuando lo encuentra lo elimina
+                        for (document in result) {
 
-                        perfilGet = document.get("Nombre").toString()
+                            perfilGet = document.get("Nombre").toString()
 
-                        if(perfilGet==perfil){
-                            document.reference.delete()
+                            if (perfilGet == perfil) {
+                                document.reference.delete()
+                            }
                         }
-                    }
 
-                }
+                    }
             }
             .setNeutralButton("Ver información") { dialogInterface, it ->
                 //Buscar al usuario y traerse sus estadisticas
@@ -189,7 +192,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     for (document in result) {
 
                         perfilGet = document.get("Name").toString()
-                        if(perfilGet==perfil){
+                        if (perfilGet == perfil) {
                             //Traerse los datos necesarios
                             /*   builderStadistics = AlertDialog.Builder(this)
                                builderStadistics.setTitle("Estadisticas de $perfil")
@@ -259,15 +262,19 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         val siguiendome = MainActivity.ListaSiguiendome
         //Seteamos la mListView como la lista de seguidores
         var mListView = findViewById<ListView>(R.id.userlist)
-        arrayAdapter = ArrayAdapter(this,
-            android.R.layout.simple_list_item_1, users)
+        arrayAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1, users
+        )
         mListView.adapter = arrayAdapter
         CargarSeguidores() //Cargamos a los seguidores
 
 
         var mListViewSiguiendome = findViewById<ListView>(R.id.userlistSiguiendome)
-        arrayAdapterSiguiendome = ArrayAdapter(this,
-            android.R.layout.simple_list_item_1, siguiendome)
+        arrayAdapterSiguiendome = ArrayAdapter(
+            this,
+            android.R.layout.simple_list_item_1, siguiendome
+        )
         mListViewSiguiendome.adapter = arrayAdapterSiguiendome
         CargarSeguidoresSiguiendome() //Cargamos a los seguidores
 
@@ -277,24 +284,25 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         //  CargarSeguidores()
 
-        buttonRecargar!!.setOnClickListener{////////////////////////////////////
+        buttonRecargar!!.setOnClickListener {////////////////////////////////////
             CargarSeguidores()
         }
-        mListView!!.setOnItemClickListener  { parent, view, position, id ->
+        mListView!!.setOnItemClickListener { parent, view, position, id ->
             //Al dar click en un elemento de la vista se traere el texto que se clickeo y mandara llamar a AlertaSeguidor para interactuar con ese elemento
-            var Perfil:String  =  MainActivity.listaSeguidores[(MainActivity.listaSeguidores.size.toInt()- position.toInt())-1]
+            var Perfil: String =
+                MainActivity.listaSeguidores[(MainActivity.listaSeguidores.size.toInt() - position.toInt()) - 1]
             CargarDatosGrafica(Perfil)
             CargarRutinasAmigo(Perfil)
-            AlertaSeguidor(Perfil )
+            AlertaSeguidor(Perfil)
         }
         mListViewSiguiendome!!.setOnItemClickListener { parent, view, position, id ->
 
-            var Perfil:String  =  MainActivity.ListaSiguiendome[(MainActivity.ListaSiguiendome.size.toInt()- position.toInt())-1]
+            var Perfil: String =
+                MainActivity.ListaSiguiendome[(MainActivity.ListaSiguiendome.size.toInt() - position.toInt()) - 1]
             CargarDatosGrafica(Perfil)
             CargarRutinasAmigo(Perfil)
-            AlertaSiguiendome(Perfil )
+            AlertaSiguiendome(Perfil)
         }
-
 
 
     }
@@ -315,16 +323,17 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             .setCancelable(true)
             .setPositiveButton("Eliminar") { dialogInterface, it ->
                 //Funcion para eliminar al usuario de mis amigos
-                db.collection("users").document(MainActivity.user!!).collection("Siguiendo").get().addOnSuccessListener { result ->
-                    //Consulta en la base de datos los usuarios que coicidan con el nombre de usuario a dejar de seguir, cuando lo encuentra lo elimina
-                    for (document in result) {
-                        perfilGet = document.get("Nombre").toString()
-                        if(perfilGet==perfil){
-                            document.reference.delete()
+                db.collection("users").document(MainActivity.user!!).collection("Siguiendo").get()
+                    .addOnSuccessListener { result ->
+                        //Consulta en la base de datos los usuarios que coicidan con el nombre de usuario a dejar de seguir, cuando lo encuentra lo elimina
+                        for (document in result) {
+                            perfilGet = document.get("Nombre").toString()
+                            if (perfilGet == perfil) {
+                                document.reference.delete()
+                            }
                         }
-                    }
 
-                }
+                    }
             }
             .setNeutralButton("Ver información") { dialogInterface, it ->
                 //Buscar al usuario y traerse sus estadisticas
@@ -332,7 +341,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     for (document in result) {
 
                         perfilGet = document.get("Name").toString()
-                        if(perfilGet==perfil){
+                        if (perfilGet == perfil) {
                             //Traerse los datos necesarios
 
                             alertScrollView(perfil) //Muestra las estadisticas del usuario seleccionado
@@ -360,10 +369,14 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         progresDialog.dismiss()
     }
 
-    var dia1: Double = 0.0; var dia2: Double = 0.0; var dia3: Double = 0.0; var dia4: Double = 0.0
-    var dia5: Double = 0.0; var dia6: Double = 0.0; var dia7: Double = 0.0
+    var dia1: Double = 0.0;
+    var dia2: Double = 0.0;
+    var dia3: Double = 0.0;
+    var dia4: Double = 0.0
+    var dia5: Double = 0.0;
+    var dia6: Double = 0.0;
+    var dia7: Double = 0.0
     var tiempoAux: Double = 0.0
-
 
 
     private fun CargarDatosGrafica(perfil: String) {
@@ -376,44 +389,47 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         val anoHoy = sdf.format(Date()) //se obiene el año actual
 
         val dias: java.util.ArrayList<String> = arrayListOf<String>() //arreglo de string?
-        dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add("") //se llena el arreglo de dias con datos vacios
+        dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(""); dias.add(
+            ""
+        ); dias.add("") //se llena el arreglo de dias con datos vacios
 
         var contadorAux = 0 //un contador auxiliar para encontrar los dias pasados
 
         for (i in 7 downTo 0) { //para obtener los ejercicios de la semana pasada
-            var diaAux = diaHoy.toInt() - contadorAux //variable que va a modificarse segun el día, inicia siendo el dia actual menos 0
+            var diaAux =
+                diaHoy.toInt() - contadorAux //variable que va a modificarse segun el día, inicia siendo el dia actual menos 0
 
-            if(diaAux == 0){ //en caso de que llegue a cero el día
+            if (diaAux == 0) { //en caso de que llegue a cero el día
                 val mesAux = mesHoy.toInt() //una variable para cambiarle el valor al mes
 
-                if(mesAux == 3){
+                if (mesAux == 3) {
                     diaHoy = "28"
                     diaAux = 28
-                }else{
-                    if(mesAux == 2 || mesAux == 4 || mesAux == 6 || mesAux == 8 || mesAux == 9 || mesAux == 11 || mesAux == 1) {
+                } else {
+                    if (mesAux == 2 || mesAux == 4 || mesAux == 6 || mesAux == 8 || mesAux == 9 || mesAux == 11 || mesAux == 1) {
                         diaHoy = "31"
                         diaAux = 31
-                    }else{
+                    } else {
                         diaHoy = "30"
                         diaAux = 30
                     }
                 }
 
-                if((mesAux - 1) < 10){//fallo para cambio de año
+                if ((mesAux - 1) < 10) {//fallo para cambio de año
                     mesHoy = "0" + (mesHoy.toInt() - 1).toString()
-                }else{
+                } else {
                     mesHoy = (mesHoy.toInt() - 1).toString()
                 }
                 contadorAux = 0
             }
 
-            if(diaAux < 10){ //se guardan en el arreglo de días los dias pasados y se les da el formato
+            if (diaAux < 10) { //se guardan en el arreglo de días los dias pasados y se les da el formato
                 dias[i] = "0" + diaAux.toString() + "-" + mesHoy + "-" + anoHoy
-            }else {
+            } else {
                 dias[i] = diaAux.toString() + "-" + mesHoy + "-" + anoHoy
             }
 
-            contadorAux+= 1 //se le agrega al contador un numero más para retorceder más días
+            contadorAux += 1 //se le agrega al contador un numero más para retorceder más días
         }
 
         var perfilGet: String
@@ -422,17 +438,19 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         db.collection("users").get().addOnSuccessListener { result ->
             for (document in result) {
                 perfilGet = document.get("Name").toString()
-                if(perfilGet == perfil){
+                if (perfilGet == perfil) {
                     email = document.get("email").toString()
 
                     MainActivity.user?.let { usuario -> //trae los tiempos segun el día
-                        db.collection("users").document(email).collection("tiempos") //abre la base de datos
+                        db.collection("users").document(email)
+                            .collection("tiempos") //abre la base de datos
                             .get().addOnSuccessListener {
-                                for(tiempos in it) { //por cada dia registrado
+                                for (tiempos in it) { //por cada dia registrado
                                     val idFecha = tiempos.get("idFecha") as String //toma la fecha
 
-                                    if(idFecha == dias[1]){ //si la fecha es igual al dia 1 para la grafica
-                                        dia1 = (tiempos.get("puntos") as Long).toDouble() //guardara el tiempo en la variable del dia
+                                    if (idFecha == dias[1]) { //si la fecha es igual al dia 1 para la grafica
+                                        dia1 =
+                                            (tiempos.get("puntos") as Long).toDouble() //guardara el tiempo en la variable del dia
 
                                         /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble() //de horas a minutos
@@ -442,42 +460,42 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                                         dia1 += tiempoAux / 60
                                          */
                                     }
-                                    if(idFecha == dias[2]){ //y así con las demas fechas
+                                    if (idFecha == dias[2]) { //y así con las demas fechas
                                         dia2 = (tiempos.get("puntos") as Long).toDouble()
                                         /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble(); dia2 += tiempoAux * 60
                                         tiempoAux = (tiempos.get("segundos") as Long).toDouble(); dia2 += tiempoAux / 60
                                          */
                                     }
-                                    if(idFecha == dias[3]){
+                                    if (idFecha == dias[3]) {
                                         dia3 = (tiempos.get("puntos") as Long).toDouble()
                                         /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble(); dia3 += tiempoAux * 60
                                         tiempoAux = (tiempos.get("segundos") as Long).toDouble(); dia3 += tiempoAux / 60
                                          */
                                     }
-                                    if(idFecha == dias[4]){
+                                    if (idFecha == dias[4]) {
                                         dia4 = (tiempos.get("puntos") as Long).toDouble()
                                         /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble(); dia4 += tiempoAux * 60
                                         tiempoAux = (tiempos.get("segundos") as Long).toDouble(); dia4 += tiempoAux / 60
                                          */
                                     }
-                                    if(idFecha == dias[5]){
+                                    if (idFecha == dias[5]) {
                                         dia5 = (tiempos.get("puntos") as Long).toDouble()
                                         /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble(); dia5 += tiempoAux * 60
                                         tiempoAux = (tiempos.get("segundos") as Long).toDouble(); dia5 += tiempoAux / 60
                                          */
                                     }
-                                    if(idFecha == dias[6]){
+                                    if (idFecha == dias[6]) {
                                         dia6 = (tiempos.get("puntos") as Long).toDouble()
                                         /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble(); dia6 += tiempoAux * 60
                                         tiempoAux = (tiempos.get("segundos") as Long).toDouble(); dia6 += tiempoAux / 60
                                          */
                                     }
-                                    if(idFecha == dias[7]){
+                                    if (idFecha == dias[7]) {
                                         dia7 = (tiempos.get("puntos") as Long).toDouble()
                                         /*
                                         tiempoAux = (tiempos.get("horas") as Long).toDouble(); dia7 += tiempoAux * 60
@@ -492,7 +510,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
     }
 
-    private fun CargarRutinasAmigo(perfil: String){
+    private fun CargarRutinasAmigo(perfil: String) {
         VerGraficaAmigos.listaRutinasAmigo.clear()
         var perfilGet: String
         var email = ""
@@ -500,29 +518,34 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         db.collection("users").get().addOnSuccessListener { result ->
             for (document in result) {
                 perfilGet = document.get("Name").toString()
-                if(perfilGet == perfil){
+                if (perfilGet == perfil) {
                     email = document.get("email").toString()
 
                     MainActivity.user?.let { usuario -> //abre la base de datos buscando al usuario amigo
                         db.collection("users").document(email).collection("rutinas")
                             .get().addOnSuccessListener {
-                                for(rutina in it) { //por cada dia rutina del usuario
-                                    var cadena = rutina.get("nombre") as String + " | " //cadena que toma la rutina con los ejercicios
+                                for (rutina in it) { //por cada dia rutina del usuario
+                                    var cadena =
+                                        rutina.get("nombre") as String + " | " //cadena que toma la rutina con los ejercicios
                                     cadena += (rutina.get("nivel") as Long).toString() + " | "//y el nivel
 
-                                    var ejercicios = rutina.get("ejercicios") as String //toma los ejercicios pero unidos
+                                    var ejercicios =
+                                        rutina.get("ejercicios") as String //toma los ejercicios pero unidos
 
                                     val arreglo: Array<String?>
-                                    arreglo = ejercicios.split(",").toTypedArray() //toma los ejercicios separados
+                                    arreglo = ejercicios.split(",")
+                                        .toTypedArray() //toma los ejercicios separados
 
                                     MainActivity.user?.let { usuario -> //abre la base de datos buscando al usuario amigo
-                                        db.collection("users").document(email).collection("ejercicios")
+                                        db.collection("users").document(email)
+                                            .collection("ejercicios")
                                             .get().addOnSuccessListener {
-                                                for(i in arreglo){ //para los ejercicios de la rutina
-                                                    for(ejercicio in it){ //lo va a comparar con todos los ejercicios del usuario
-                                                        val id = (ejercicio.get("id") as Long).toString() //toma el id
+                                                for (i in arreglo) { //para los ejercicios de la rutina
+                                                    for (ejercicio in it) { //lo va a comparar con todos los ejercicios del usuario
+                                                        val id =
+                                                            (ejercicio.get("id") as Long).toString() //toma el id
 
-                                                        if(i == id){ //y si el ejercicio esta en la rutina
+                                                        if (i == id) { //y si el ejercicio esta en la rutina
                                                             cadena += ejercicio.get("nombre") as String + " "
                                                         }
                                                     }
@@ -581,12 +604,12 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             R.id.nav_metas -> callMetasActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            R.id.nav_ranking->callRankingActivity()
-            R.id.nav_musica ->callMusica()
-            R.id.nav_amigos ->callAmigosActivity()
-            R.id.Settings->callAjustesActivity()
-            R.id.nav_seguimiento-> callSeguimientoActivity()
-            R.id.nav_solicitudes-> callSolicitudesActivity()
+            R.id.nav_ranking -> callRankingActivity()
+            R.id.nav_musica -> callMusica()
+            R.id.nav_amigos -> callAmigosActivity()
+            R.id.Settings -> callAjustesActivity()
+            R.id.nav_seguimiento -> callSeguimientoActivity()
+            R.id.nav_solicitudes -> callSolicitudesActivity()
 
         }
 
@@ -594,9 +617,12 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         return true
     }
+
     private fun callSolicitudesActivity() {
         val intent = Intent(this, SolicitudesActivity::class.java)
-        startActivity(intent)    }
+        startActivity(intent)
+    }
+
     private fun callRankingActivity() {
         val intent = Intent(this, RankingActivity::class.java)
         startActivity(intent)
@@ -606,14 +632,17 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
     }
+
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
     }
+
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
@@ -669,6 +698,7 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         //Cierra sesion y manda devuelta al login
         deleteAppData() //Elimina los datos de la app
     }
+
     private fun deleteAppData() {
         try {
             // clearing app data
@@ -679,7 +709,6 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
             e.printStackTrace()
         }
     }
-
 
 
     fun alertScrollView(perfil: String) {
@@ -698,15 +727,15 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
         tv.text = ""
         var nombre = perfil
         var puntos = " "
-        var altura =" "
+        var altura = " "
         var peso = ""
-        var contador =1
+        var contador = 1
         db.collection("users").get().addOnSuccessListener { result ->
             for (document in result) {
                 try {
-                    if(perfil==document.get("Name"))
+                    if (perfil == document.get("Name"))
                         contador++
-                    if(perfil==document.get("Name")&& contador<=2) {
+                    if (perfil == document.get("Name") && contador <= 2) {
                         puntos = document.get("puntosTotales").toString()
                         peso = document.get("peso").toString()
                         altura = document.get("altura").toString()
@@ -714,37 +743,34 @@ class Activity_Amigos : AppCompatActivity(), NavigationView.OnNavigationItemSele
                         Thread.sleep(200)
                         tv.append("Nombre : ${document.get("Name").toString()}\n")
                         myScrollView.visibility = View.VISIBLE
-                        if(puntos==""){
-                            puntos ="NR"
+                        if (puntos == "") {
+                            puntos = "NR"
                         }
-                        if(peso==""){
-                            peso ="NR"
+                        if (peso == "") {
+                            peso = "NR"
                         }
-                        if(altura==""){
-                            altura ="NR"
+                        if (altura == "") {
+                            altura = "NR"
                         }
                         tv.append("Puntos Totales : $puntos\n")
                         tv.append("Peso : ${peso}\n")
                         tv.append("Altura : ${altura}\n")
                     }
 
-                }
-                catch (e:Exception){
+                } catch (e: Exception) {
 
                 }
             }
-            if(progresDialog.isShowing) {
+            if (progresDialog.isShowing) {
                 progresDialog.dismiss()
             }
         }
         AlertDialog.Builder(this).setView(myScrollView)
             .setTitle("Informacion de personas")
-            .setNeutralButton("Ok") {  dialog, id -> dialog.cancel() }.show()
-
+            .setNeutralButton("Ok") { dialog, id -> dialog.cancel() }.show()
 
 
     }
-
 
 
 }

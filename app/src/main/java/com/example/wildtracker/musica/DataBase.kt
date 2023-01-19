@@ -41,7 +41,12 @@ class DataBase {
                         dataBase.insert(SONG_LIST_TABLE_NAME, null, values)
                         Log.l("DataBaseLog: Song '$newFileName' inserted into the database.")
                     } else {
-                        dataBase.update(SONG_LIST_TABLE_NAME, values,  "$COLUMN_SONG = '$newFileName'", null)
+                        dataBase.update(
+                            SONG_LIST_TABLE_NAME,
+                            values,
+                            "$COLUMN_SONG = '$newFileName'",
+                            null
+                        )
                         Log.l("DataBaseLog: Song '$newFileName' is already in the database. Updating it.")
                     }
                 }
@@ -63,7 +68,10 @@ class DataBase {
             }
             val arrayListOfSongs = arrayOfNulls<String>(numOfSongs)
             val dataBase = dataBaseHelper.readableDatabase
-            val cursor = dataBase.rawQuery("SELECT * FROM $SONG_LIST_TABLE_NAME ORDER BY $COLUMN_SONG COLLATE NOCASE ASC", null)
+            val cursor = dataBase.rawQuery(
+                "SELECT * FROM $SONG_LIST_TABLE_NAME ORDER BY $COLUMN_SONG COLLATE NOCASE ASC",
+                null
+            )
             if (cursor.moveToFirst()) {
                 var i = 0
                 while (!cursor.isAfterLast) {
@@ -79,7 +87,8 @@ class DataBase {
 
         fun getArrayListOfSongs(): ArrayList<SongFile> {
             val dataBase = dataBaseHelper.readableDatabase
-            val query = "SELECT * FROM $SONG_LIST_TABLE_NAME ORDER BY $COLUMN_SONG COLLATE NOCASE ASC"
+            val query =
+                "SELECT * FROM $SONG_LIST_TABLE_NAME ORDER BY $COLUMN_SONG COLLATE NOCASE ASC"
             val cursor = dataBase.rawQuery(query, null)
             val arrayOfSongs = ArrayList<SongFile>(cursor.count)
             if (cursor.moveToFirst()) {
@@ -132,7 +141,12 @@ class DataBase {
                         dataBase.insert(PARAMETERS_TABLE_NAME, null, values)
                         Log.l("DataBaseLog: Parameter: '$parameter', with Value: '$value' inserted into the database.")
                     } else {
-                        dataBase.update(PARAMETERS_TABLE_NAME, values, "$COLUMN_PARAMETER = '$parameter'", null)
+                        dataBase.update(
+                            PARAMETERS_TABLE_NAME,
+                            values,
+                            "$COLUMN_PARAMETER = '$parameter'",
+                            null
+                        )
                         Log.l("DataBaseLog: Parameter: '$parameter', with Value: '$value' updated into the database.")
                     }
                 }
@@ -146,7 +160,8 @@ class DataBase {
             val dataBase = dataBaseHelper.readableDatabase
             val cursor = dataBase.rawQuery(
                 "SELECT $COLUMN_PARAMETER_VALUE FROM $PARAMETERS_TABLE_NAME " +
-                        "WHERE $COLUMN_PARAMETER = '$parameter'", null)
+                        "WHERE $COLUMN_PARAMETER = '$parameter'", null
+            )
             if (cursor.moveToFirst()) {
                 value = cursor.getString(0)
             }
@@ -165,14 +180,34 @@ class DataBase {
                         put(COLUMN_MUSIC_PATH_VALUE, musicPath)
                     }
 
-                    if (!isInDataBase(MUSIC_PATHS_TABLE_NAME, COLUMN_MUSIC_PATH, COLUMN_MUSIC_PATH_VALUE,  "musicPath", musicPath)) {
+                    if (!isInDataBase(
+                            MUSIC_PATHS_TABLE_NAME,
+                            COLUMN_MUSIC_PATH,
+                            COLUMN_MUSIC_PATH_VALUE,
+                            "musicPath",
+                            musicPath
+                        )
+                    ) {
                         dataBase.insert(MUSIC_PATHS_TABLE_NAME, null, values)
                         Log.l("DataBaseLog: Music path with Value: '$musicPath' inserted into the database.")
-                        Toast.makeText(context, context.getString(R.string.music_path_added), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.music_path_added),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
-                        dataBase.update(MUSIC_PATHS_TABLE_NAME, values, "$COLUMN_MUSIC_PATH_VALUE = '$musicPath'", null)
+                        dataBase.update(
+                            MUSIC_PATHS_TABLE_NAME,
+                            values,
+                            "$COLUMN_MUSIC_PATH_VALUE = '$musicPath'",
+                            null
+                        )
                         Log.l("DataBaseLog: Music path with Value: '$musicPath' updated into the database.")
-                        Toast.makeText(context, context.getString(R.string.music_path_already_stored), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.music_path_already_stored),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             } catch (e: Exception) {
@@ -183,7 +218,11 @@ class DataBase {
         fun deleteMusicPath(musicPath: String) {
             val dataBase = dataBaseHelper.writableDatabase
             try {
-                dataBase.delete(MUSIC_PATHS_TABLE_NAME, "$COLUMN_MUSIC_PATH_VALUE=?", arrayOf(musicPath))
+                dataBase.delete(
+                    MUSIC_PATHS_TABLE_NAME,
+                    "$COLUMN_MUSIC_PATH_VALUE=?",
+                    arrayOf(musicPath)
+                )
                 Log.l("DataBaseLog: Deleting music path '$musicPath'.")
             } catch (e: Exception) {
                 Log.e("DataBaseLog: Error deleting music path '$musicPath'.")
@@ -203,7 +242,8 @@ class DataBase {
             val dataBase = dataBaseHelper.readableDatabase
             val cursor = dataBase.rawQuery(
                 "SELECT $COLUMN_MUSIC_PATH_VALUE FROM $MUSIC_PATHS_TABLE_NAME " +
-                    "WHERE $COLUMN_MUSIC_PATH = 'musicPath'", null)
+                        "WHERE $COLUMN_MUSIC_PATH = 'musicPath'", null
+            )
             if (cursor.moveToFirst()) {
                 musicPath.add(cursor.getString(0))
                 var i = 0
@@ -220,7 +260,8 @@ class DataBase {
 
         private fun isLastSongPlayedTableEmpty(): Boolean {
             val dataBase = dataBaseHelper.writableDatabase
-            val cursor = dataBase.rawQuery("SELECT count(*) FROM $LAST_SONG_PLAYED_TABLE_NAME", null)
+            val cursor =
+                dataBase.rawQuery("SELECT count(*) FROM $LAST_SONG_PLAYED_TABLE_NAME", null)
             cursor.moveToFirst()
             val count = cursor.getInt(0)
             cursor.close()
@@ -238,7 +279,12 @@ class DataBase {
                     if (isLastSongPlayedTableEmpty()) {
                         dataBase.insert(LAST_SONG_PLAYED_TABLE_NAME, null, values)
                     } else {
-                        dataBase.update(LAST_SONG_PLAYED_TABLE_NAME, values,  "$COLUMN_LAST_SONG_NAME IS NOT NULL", null)
+                        dataBase.update(
+                            LAST_SONG_PLAYED_TABLE_NAME,
+                            values,
+                            "$COLUMN_LAST_SONG_NAME IS NOT NULL",
+                            null
+                        )
                     }
                     Log.l("DataBaseLog: Last song played '$lastSongPlayed' inserted into the database.")
                 }
@@ -250,7 +296,10 @@ class DataBase {
         fun getLastSongPlayed(): String? {
             try {
                 val dataBase = dataBaseHelper.writableDatabase
-                val cursor = dataBase.rawQuery("SELECT $COLUMN_LAST_SONG_NAME FROM $LAST_SONG_PLAYED_TABLE_NAME", null)
+                val cursor = dataBase.rawQuery(
+                    "SELECT $COLUMN_LAST_SONG_NAME FROM $LAST_SONG_PLAYED_TABLE_NAME",
+                    null
+                )
                 cursor.moveToLast()
                 val lastSongName = cursor.getString(0)
                 cursor.close()
@@ -271,9 +320,16 @@ class DataBase {
             return b
         }
 
-        private fun isInDataBase(tableName: String, column1: String, column2: String, value1: String, value2: String): Boolean {
+        private fun isInDataBase(
+            tableName: String,
+            column1: String,
+            column2: String,
+            value1: String,
+            value2: String
+        ): Boolean {
             val dataBase = dataBaseHelper.readableDatabase
-            val query = "SELECT * FROM $tableName WHERE $column1 = '$value1' AND $column2 = '$value2'"
+            val query =
+                "SELECT * FROM $tableName WHERE $column1 = '$value1' AND $column2 = '$value2'"
             val cursor = dataBase.rawQuery(query, null)
             val b = cursor.count > 0
             cursor.close()

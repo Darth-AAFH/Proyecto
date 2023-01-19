@@ -28,58 +28,76 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.activity_plantillas.*
 import kotlinx.android.synthetic.main.activity_seguimiento.*
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 
-class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
+class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     private lateinit var drawer: DrawerLayout
 
-    var listViewMetas: ListView?= null
+    var listViewMetas: ListView? = null
 
     var calendario: CompactCalendarView? = null
     private val dateFormatMonth = SimpleDateFormat("MMMM - yyyy", Locale.getDefault())
 
     private val db = FirebaseFirestore.getInstance()
 
-    fun cargarRutinasProgramadas(){
-        for(i in MainActivity.listaEventos1){ //para agregar las rutinas a trabajar en el calendario
+    fun cargarRutinasProgramadas() {
+        for (i in MainActivity.listaEventos1) { //para agregar las rutinas a trabajar en el calendario
             var dia = i.split("-").toTypedArray()[0].toLong()
             var mes = i.split("-").toTypedArray()[1].toLong()
             var ano = i.split("-").toTypedArray()[2].toLong()
 
-            dia = dia-1L; mes = mes-1L; ano = ano-1970L
-            val tiempoMil = (dia*86400L + mes*2629743L + ano*31556926L)*1000L + 36000000L
+            dia = dia - 1L; mes = mes - 1L; ano = ano - 1970L
+            val tiempoMil = (dia * 86400L + mes * 2629743L + ano * 31556926L) * 1000L + 36000000L
 
-            var evento = Event(Color.WHITE  , tiempoMil, "")
+            var evento = Event(Color.WHITE, tiempoMil, "")
 
             val random = Random().nextInt(10)
-            if(random == 0){evento = Event(Color.BLUE, tiempoMil, "")}
-            if(random == 1){evento = Event(Color.BLACK, tiempoMil, "")}
-            if(random == 2){evento = Event(Color.CYAN, tiempoMil, "")}
-            if(random == 3){evento = Event(Color.DKGRAY, tiempoMil, "")}
-            if(random == 4){evento = Event(Color.GRAY, tiempoMil, "")}
-            if(random == 5){evento = Event(Color.GREEN, tiempoMil, "")}
-            if(random == 6){evento = Event(Color.LTGRAY, tiempoMil, "")}
-            if(random == 7){evento = Event(Color.MAGENTA, tiempoMil, "")}
-            if(random == 8){evento = Event(Color.RED, tiempoMil, "")}
-            if(random == 9){evento = Event(Color.YELLOW, tiempoMil, "")}
+            if (random == 0) {
+                evento = Event(Color.BLUE, tiempoMil, "")
+            }
+            if (random == 1) {
+                evento = Event(Color.BLACK, tiempoMil, "")
+            }
+            if (random == 2) {
+                evento = Event(Color.CYAN, tiempoMil, "")
+            }
+            if (random == 3) {
+                evento = Event(Color.DKGRAY, tiempoMil, "")
+            }
+            if (random == 4) {
+                evento = Event(Color.GRAY, tiempoMil, "")
+            }
+            if (random == 5) {
+                evento = Event(Color.GREEN, tiempoMil, "")
+            }
+            if (random == 6) {
+                evento = Event(Color.LTGRAY, tiempoMil, "")
+            }
+            if (random == 7) {
+                evento = Event(Color.MAGENTA, tiempoMil, "")
+            }
+            if (random == 8) {
+                evento = Event(Color.RED, tiempoMil, "")
+            }
+            if (random == 9) {
+                evento = Event(Color.YELLOW, tiempoMil, "")
+            }
 
             calendario!!.addEvent(evento)
         }
     }
 
-    fun cargarMetas(){
-        for(i in MainActivity.listaEventos2){ //para cada meta
+    fun cargarMetas() {
+        for (i in MainActivity.listaEventos2) { //para cada meta
             val arreglo: Array<String?>
-            arreglo = i.split(",").toTypedArray() //toma todas las fechas en que se va a realizar la meta
+            arreglo =
+                i.split(",").toTypedArray() //toma todas las fechas en que se va a realizar la meta
 
             val random = Random().nextInt(10) //numero random para poner los colores
 
-            for(j in arreglo){ //para cada fecha
+            for (j in arreglo) { //para cada fecha
                 var dia = j!!.split("-").toTypedArray()[0].toInt() //se toma el dia
                 var mes = j.split("-").toTypedArray()[1].toInt()
                 var ano = j.split("-").toTypedArray()[2].toInt()
@@ -91,45 +109,68 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
                 //////////////////////////////////////////////////////////////
 
-                var evento = Event(Color.WHITE  , tiempoMil, "") //lo pasa a un evento
+                var evento = Event(Color.WHITE, tiempoMil, "") //lo pasa a un evento
 
-                if(random == 0){evento = Event(Color.BLUE, tiempoMil, "")}
-                if(random == 1){evento = Event(Color.BLACK, tiempoMil, "")}
-                if(random == 2){evento = Event(Color.CYAN, tiempoMil, "")}
-                if(random == 3){evento = Event(Color.DKGRAY, tiempoMil, "")}
-                if(random == 4){evento = Event(Color.GRAY, tiempoMil, "")}
-                if(random == 5){evento = Event(Color.GREEN, tiempoMil, "")}
-                if(random == 6){evento = Event(Color.LTGRAY, tiempoMil, "")}
-                if(random == 7){evento = Event(Color.MAGENTA, tiempoMil, "")}
-                if(random == 8){evento = Event(Color.RED, tiempoMil, "")}
-                if(random == 9){evento = Event(Color.YELLOW, tiempoMil, "")}
+                if (random == 0) {
+                    evento = Event(Color.BLUE, tiempoMil, "")
+                }
+                if (random == 1) {
+                    evento = Event(Color.BLACK, tiempoMil, "")
+                }
+                if (random == 2) {
+                    evento = Event(Color.CYAN, tiempoMil, "")
+                }
+                if (random == 3) {
+                    evento = Event(Color.DKGRAY, tiempoMil, "")
+                }
+                if (random == 4) {
+                    evento = Event(Color.GRAY, tiempoMil, "")
+                }
+                if (random == 5) {
+                    evento = Event(Color.GREEN, tiempoMil, "")
+                }
+                if (random == 6) {
+                    evento = Event(Color.LTGRAY, tiempoMil, "")
+                }
+                if (random == 7) {
+                    evento = Event(Color.MAGENTA, tiempoMil, "")
+                }
+                if (random == 8) {
+                    evento = Event(Color.RED, tiempoMil, "")
+                }
+                if (random == 9) {
+                    evento = Event(Color.YELLOW, tiempoMil, "")
+                }
 
                 calendario!!.addEvent(evento) //y lo añade al calendario
             }
         }
     }
 
-    fun diferenciaDeDias(dia: Int, mes: Int, ano: Int): Long{
+    fun diferenciaDeDias(dia: Int, mes: Int, ano: Int): Long {
         var sdf = SimpleDateFormat("dd")
         val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
         sdf = SimpleDateFormat("MM")
         val mesHoy2 = sdf.format(Date()) //se obtiene el mes actual
         sdf = SimpleDateFormat("yyyy")
         val anoHoy2 = sdf.format(Date()) //se obiene el año actual
-        val diaHoy = diaHoy2.toInt(); val mesHoy = mesHoy2.toInt(); val anoHoy = anoHoy2.toInt()
+        val diaHoy = diaHoy2.toInt();
+        val mesHoy = mesHoy2.toInt();
+        val anoHoy = anoHoy2.toInt()
 
         var diasTotales: Int
 
-        if(ano == anoHoy){ //se comparan los años
-            if(mes == mesHoy){ //se comparan los meses
-                diasTotales = dia - diaHoy //y si son los mismos solo se obtiene la diferencia entre los días
-            }else{ //si no, se le suman los días del mes inicial
-                if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
+        if (ano == anoHoy) { //se comparan los años
+            if (mes == mesHoy) { //se comparan los meses
+                diasTotales =
+                    dia - diaHoy //y si son los mismos solo se obtiene la diferencia entre los días
+            } else { //si no, se le suman los días del mes inicial
+                if (mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12) {
                     diasTotales = 31 - diaHoy
-                }else{
-                    if(mesHoy == 2){
+                } else {
+                    if (mesHoy == 2) {
                         diasTotales = 28 - diaHoy
-                    }else{
+                    } else {
                         diasTotales = 30 - diaHoy
                     }
                 }
@@ -150,26 +191,26 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
                 diasTotales += dia //y se le suman los días del mes final
             }
-        }else{ //para años diferentes
-            diasTotales = (ano - anoHoy)*365 //se obtienen los años en días
+        } else { //para años diferentes
+            diasTotales = (ano - anoHoy) * 365 //se obtienen los años en días
 
-            if(mes == mesHoy){ //si el mes es igual se resta o suma la diferencia de dias
-                if(dia > diaHoy){
+            if (mes == mesHoy) { //si el mes es igual se resta o suma la diferencia de dias
+                if (dia > diaHoy) {
                     diasTotales += (dia - diaHoy)
-                } else{
+                } else {
                     diasTotales -= (diaHoy - dia)
                 }
 
-            }else{
-                if(mes > mesHoy){ //si el mes es mayor
+            } else {
+                if (mes > mesHoy) { //si el mes es mayor
 
                     //se le suman los dias del mes inicial
-                    if(mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12){
+                    if (mesHoy == 1 || mesHoy == 3 || mesHoy == 5 || mesHoy == 7 || mesHoy == 8 || mesHoy == 10 || mesHoy == 12) {
                         diasTotales = diasTotales + 31 - diaHoy
-                    }else{
-                        if(mesHoy == 2){
+                    } else {
+                        if (mesHoy == 2) {
                             diasTotales = diasTotales + 28 - diaHoy
-                        }else{
+                        } else {
                             diasTotales = diasTotales + 30 - diaHoy
                         }
                     }
@@ -190,7 +231,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
                     diasTotales += dia //y se le suman los días del mes final
 
-                } else{ //y si el mes es menor
+                } else { //y si el mes es menor
                     //se le restan los dias del mes inicial
                     diasTotales -= diaHoy
 
@@ -209,12 +250,12 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     }
 
                     //y se le restan los días del mes final
-                    if(mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12){
+                    if (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12) {
                         diasTotales = diasTotales - 31 + dia
-                    }else{
-                        if(mes == 2){
+                    } else {
+                        if (mes == 2) {
                             diasTotales = diasTotales - 28 + dia
-                        }else{
+                        } else {
                             diasTotales = diasTotales - 30 + dia
                         }
                     }
@@ -225,10 +266,10 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         return diasTotales.toLong()
     }
 
-    fun cargarListaMetas(){
+    fun cargarListaMetas() {
         var listaMetasVista = listOf<metas>()
 
-        for(i in MainActivity.listaMetasVista){
+        for (i in MainActivity.listaMetasVista) {
             val nombre = i.split(" | ").toTypedArray()[0] //toma el nombre
             val meta = i.split(" | ").toTypedArray()[2] //toma la meta
 
@@ -254,7 +295,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         initNavigationView()
 
         listViewMetas = findViewById(R.id.listViewMetas)
-        if(MainActivity.listaMetasVista.isEmpty()){
+        if (MainActivity.listaMetasVista.isEmpty()) {
             textViewAyudaSeg.visibility = View.VISIBLE
         }
 
@@ -267,11 +308,11 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         cargarMetas() //en calendario
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
-      //  toolbar.title = "Seguimiento"
+        //  toolbar.title = "Seguimiento"
 
 
-        var monthname= android.text.format.DateFormat.format("MMMM",  Date())
-        var mesActual:String = monthname.toString()
+        var monthname = android.text.format.DateFormat.format("MMMM", Date())
+        var mesActual: String = monthname.toString()
         var mesActualCapital = mesActual.capitalize()
         toolbar.title = mesActualCapital
 
@@ -285,30 +326,64 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
                 val mesAux = (fechaSeleccionada.toString()).split(" ").toTypedArray()[1]
                 var mes = 0
-                if(mesAux == "Jan"){ mes = 1}; if(mesAux == "Feb"){ mes = 2}; if(mesAux == "Mar"){ mes = 3}
-                if(mesAux == "Apr"){ mes = 4}; if(mesAux == "May"){ mes = 5}; if(mesAux == "Jun"){ mes = 6}
-                if(mesAux == "Jul"){ mes = 7}; if(mesAux == "Aug"){ mes = 8}; if(mesAux == "Sep"){ mes = 9}
-                if(mesAux == "Oct"){ mes = 10}; if(mesAux == "Nov"){ mes = 11}; if(mesAux == "Dec"){ mes = 12}
+                if (mesAux == "Jan") {
+                    mes = 1
+                }; if (mesAux == "Feb") {
+                    mes = 2
+                }; if (mesAux == "Mar") {
+                    mes = 3
+                }
+                if (mesAux == "Apr") {
+                    mes = 4
+                }; if (mesAux == "May") {
+                    mes = 5
+                }; if (mesAux == "Jun") {
+                    mes = 6
+                }
+                if (mesAux == "Jul") {
+                    mes = 7
+                }; if (mesAux == "Aug") {
+                    mes = 8
+                }; if (mesAux == "Sep") {
+                    mes = 9
+                }
+                if (mesAux == "Oct") {
+                    mes = 10
+                }; if (mesAux == "Nov") {
+                    mes = 11
+                }; if (mesAux == "Dec") {
+                    mes = 12
+                }
 
                 crearAlerta(dia, mes, ano)
             }
+
             override fun onMonthScroll(firstDayOfNewMonth: Date) {
-                val formatter:String = firstDayOfNewMonth.toString()
+                val formatter: String = firstDayOfNewMonth.toString()
                 var mes = formatter.split(" ")
 
                 Log.d(TAG, "Month was scrolled to: " + firstDayOfNewMonth)
                 val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
-                if(mes[1] == "Jan") toolbar.title = "Enero"; if(mes[1] == "Feb") toolbar.title = "Febrero"
-                if(mes[1] == "Mar") toolbar.title = "Marzo"; if(mes[1] == "Apr") toolbar.title = "Abril"
-                if(mes[1] == "May") toolbar.title = "Mayo"; if(mes[1] == "Jun") toolbar.title = "Junio"
-                if(mes[1] == "Jul") toolbar.title = "Julio"; if(mes[1] == "Aug") toolbar.title = "Agosto"
-                if(mes[1] == "Sep") toolbar.title = "Septiembre"; if(mes[1] == "Oct") toolbar.title = "Octubre"
-                if(mes[1] == "Nov") toolbar.title = "Noviembre"; if(mes[1] == "Dec") toolbar.title = "Diciembre"
+                if (mes[1] == "Jan") toolbar.title = "Enero"; if (mes[1] == "Feb") toolbar.title =
+                    "Febrero"
+                if (mes[1] == "Mar") toolbar.title = "Marzo"; if (mes[1] == "Apr") toolbar.title =
+                    "Abril"
+                if (mes[1] == "May") toolbar.title = "Mayo"; if (mes[1] == "Jun") toolbar.title =
+                    "Junio"
+                if (mes[1] == "Jul") toolbar.title = "Julio"; if (mes[1] == "Aug") toolbar.title =
+                    "Agosto"
+                if (mes[1] == "Sep") toolbar.title =
+                    "Septiembre"; if (mes[1] == "Oct") toolbar.title = "Octubre"
+                if (mes[1] == "Nov") toolbar.title =
+                    "Noviembre"; if (mes[1] == "Dec") toolbar.title = "Diciembre"
                 setSupportActionBar(toolbar)
 
                 com.example.wildtracker.ui.drawer = findViewById(R.id.drawerlayout)!!
                 val toggle = ActionBarDrawerToggle(
-                    this@SeguimientoActivity, com.example.wildtracker.ui.drawer, toolbar, R.string.bar_title,
+                    this@SeguimientoActivity,
+                    com.example.wildtracker.ui.drawer,
+                    toolbar,
+                    R.string.bar_title,
                     R.string.navigation_drawer_close
                 )
                 com.example.wildtracker.ui.drawer.addDrawerListener(toggle)
@@ -318,10 +393,10 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         })
     }
 
-    fun crearAlerta(dia: Int, mes: Int, ano: Int){
-        if(diaAnterior(dia, mes, ano)) {
+    fun crearAlerta(dia: Int, mes: Int, ano: Int) {
+        if (diaAnterior(dia, mes, ano)) {
             Toast.makeText(this, "No puede seleccionar una fecha pasada", Toast.LENGTH_SHORT).show()
-        }else{
+        } else {
             val items = arrayOfNulls<CharSequence>(4)
             items[0] = "Agregar rutina única"; items[1] = "Borrar rutina programada"
             items[2] = "Ver eventos"; items[3] = "Cancelar"
@@ -348,20 +423,21 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                         }
 
                         val posicion: Int
-                        posicion = MainActivity.listaEventos1.indexOf(fecha) //borra la rutina de las listas en base a la fecha
-                        if(posicion != -1){
+                        posicion =
+                            MainActivity.listaEventos1.indexOf(fecha) //borra la rutina de las listas en base a la fecha
+                        if (posicion != -1) {
                             MainActivity.listaEventos1.removeAt(posicion)
                             MainActivity.listaRutinasATrabajarAux.removeAt(posicion)
                         }
 
-                        for(i in MainActivity.listaRutinasATrabajar){ //busca la rutina si es que esta se hace hoy para quitarla de la otra lista
+                        for (i in MainActivity.listaRutinasATrabajar) { //busca la rutina si es que esta se hace hoy para quitarla de la otra lista
                             val fecha2 = i.split("Fecha: ").toTypedArray()[1]
-                            if(fecha2 == fecha){
+                            if (fecha2 == fecha) {
                                 MainActivity.listaRutinasATrabajar.clear()
                             }
                         }
-                    }else{
-                        if(i == 2){
+                    } else {
+                        if (i == 2) {
                             val intent = Intent(this@SeguimientoActivity, VerEventos::class.java)
                             intent.putExtra("Dia", dia)
                             intent.putExtra("Mes", mes)
@@ -377,7 +453,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }
     }
 
-    fun diaAnterior(dia: Int, mes: Int, ano: Int): Boolean{
+    fun diaAnterior(dia: Int, mes: Int, ano: Int): Boolean {
         var sdf = SimpleDateFormat("dd")
         val diaHoy2 = sdf.format(Date()) //se obtiene el dia actual
         sdf = SimpleDateFormat("MM")
@@ -385,24 +461,27 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         sdf = SimpleDateFormat("yyyy")
         val anoHoy2 = sdf.format(Date()) //se obiene el año actual
 
-        val diaHoy = diaHoy2.toInt(); val mesHoy = mesHoy2.toInt(); val anoHoy = anoHoy2.toInt() //obtiene la fecha actual en enteros
+        val diaHoy = diaHoy2.toInt();
+        val mesHoy = mesHoy2.toInt();
+        val anoHoy = anoHoy2.toInt() //obtiene la fecha actual en enteros
 
         return dia < diaHoy && mes == mesHoy && ano == anoHoy || mes < mesHoy && ano == anoHoy || ano < anoHoy
     }
 
     private fun initToolbar() {
-       /* val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
-        toolbar.title = "Seguimiento"
-        setSupportActionBar(toolbar)
+        /* val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
+         toolbar.title = "Seguimiento"
+         setSupportActionBar(toolbar)
 
-        com.example.wildtracker.ui.drawer = findViewById(R.id.drawerlayout)!!
-        val toggle = ActionBarDrawerToggle(
-            this, com.example.wildtracker.ui.drawer, toolbar, R.string.bar_title,
-            R.string.navigation_drawer_close
-        )
-        com.example.wildtracker.ui.drawer.addDrawerListener(toggle)
-        toggle.syncState()*/
+         com.example.wildtracker.ui.drawer = findViewById(R.id.drawerlayout)!!
+         val toggle = ActionBarDrawerToggle(
+             this, com.example.wildtracker.ui.drawer, toolbar, R.string.bar_title,
+             R.string.navigation_drawer_close
+         )
+         com.example.wildtracker.ui.drawer.addDrawerListener(toggle)
+         toggle.syncState()*/
     }
+
     private fun initNavigationView() {
 
         val navigationView: NavigationView = findViewById(R.id.nav_view)
@@ -431,11 +510,11 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            R.id.nav_musica ->callMusica()
-            R.id.nav_amigos ->callAmigosActivity()
-            R.id.Settings->callAjustesActivity()
-            R.id.nav_seguimiento->callSeguimientoActivity()
-            R.id.nav_solicitudes-> callSolicitudesActivity()
+            R.id.nav_musica -> callMusica()
+            R.id.nav_amigos -> callAmigosActivity()
+            R.id.Settings -> callAjustesActivity()
+            R.id.nav_seguimiento -> callSeguimientoActivity()
+            R.id.nav_solicitudes -> callSolicitudesActivity()
 
         }
 
@@ -447,23 +526,29 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     private fun callSolicitudesActivity() {
         val intent = Intent(this, SolicitudesActivity::class.java)
-        startActivity(intent)    }
+        startActivity(intent)
+    }
+
     private fun callRankingActivity() {
         val intent = Intent(this, RankingActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
     }
+
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
     }
+
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
@@ -519,6 +604,7 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         //Cierra sesion y manda devuelta al login
         deleteAppData()
     }
+
     private fun deleteAppData() {
         try {
             // clearing app data
@@ -529,7 +615,6 @@ class SeguimientoActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             e.printStackTrace()
         }
     }
-
 
 
 }

@@ -5,34 +5,36 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.*
+import android.widget.AdapterView.OnItemClickListener
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.wildtracker.LoginActivity
 import com.example.wildtracker.R
+import com.example.wildtracker.musica.mPlayerActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import android.widget.*
-import android.widget.AdapterView.OnItemClickListener
-import com.example.wildtracker.musica.mPlayerActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_plantillas.*
 
 class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    var buttonAdd: Button ?= null; var buttonRutina: Button ?= null; var buttonEjercicio: Button ?= null
-    var listViewRutinas: ListView?= null
+    var buttonAdd: Button? = null;
+    var buttonRutina: Button? = null;
+    var buttonEjercicio: Button? = null
+    var listViewRutinas: ListView? = null
 
     var validadorMostar = 0
 
     private val db = FirebaseFirestore.getInstance()
     var ejerciciosPredeterminados = false
 
-    private fun CargarListas(){ //ayuda a organizar las listas de rutinas y los ejercicios
-        if(MainActivity.validadorAcomodo){ //esto debe ir en plantillas y ejercicios
+    private fun CargarListas() { //ayuda a organizar las listas de rutinas y los ejercicios
+        if (MainActivity.validadorAcomodo) { //esto debe ir en plantillas y ejercicios
             MainActivity.listaRutinas = MainActivity.listaRutinas1
             MainActivity.listaRutinas.addAll(MainActivity.listaRutinas2)
 
@@ -45,10 +47,14 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             MainActivity.validadorAcomodo = false
         }
 
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinas)
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_list_item_1,
+            MainActivity.listaRutinas
+        )
         listViewRutinas!!.adapter = adapter //La tabla se adapta en la text view
 
-        if(MainActivity.listaRutinas.isEmpty()){
+        if (MainActivity.listaRutinas.isEmpty()) {
             textViewAyudaPlan.visibility = View.VISIBLE
         }
     }
@@ -61,33 +67,36 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         initNavigationView()
 
         buttonAdd = findViewById(R.id.buttonAdd)
-        buttonRutina = findViewById(R.id.buttonRutina); buttonRutina!!.visibility = View.INVISIBLE; buttonRutina!!.isEnabled =
+        buttonRutina = findViewById(R.id.buttonRutina); buttonRutina!!.visibility =
+            View.INVISIBLE; buttonRutina!!.isEnabled =
             false
-        buttonEjercicio = findViewById(R.id.buttonEjercicio); buttonEjercicio!!.visibility = View.INVISIBLE; buttonEjercicio!!.isEnabled =
+        buttonEjercicio = findViewById(R.id.buttonEjercicio); buttonEjercicio!!.visibility =
+            View.INVISIBLE; buttonEjercicio!!.isEnabled =
             false
         listViewRutinas = findViewById(R.id.listViewRutinas)
 
         MainActivity.user?.let { usuario -> //para cargar los ejercicios por defecto
             db.collection("users").document(usuario).collection("ejercicios")
                 .get().addOnSuccessListener {
-                if(it.isEmpty){
-                    ejerciciosPredeterminados = true
+                    if (it.isEmpty) {
+                        ejerciciosPredeterminados = true
+                    }
                 }
-            }
         }
 
         CargarListas()
 
         var cadena = "["
 
-        if(!MainActivity.listaRutinasATrabajarAux.isEmpty()) { //para tomar las rutinas programadas que se estan usando
+        if (!MainActivity.listaRutinasATrabajarAux.isEmpty()) { //para tomar las rutinas programadas que se estan usando
             for (i in 0..MainActivity.listaRutinasATrabajarAux.size - 1) {
-                cadena += MainActivity.listaRutinasATrabajarAux[i].split(" | ").toTypedArray()[0] //agrega las rutinas programadas
+                cadena += MainActivity.listaRutinasATrabajarAux[i].split(" | ")
+                    .toTypedArray()[0] //agrega las rutinas programadas
                 cadena += "," //y una coma
             }
 
             var contador = 0
-            for(i in 0 until cadena.length){
+            for (i in 0 until cadena.length) {
                 contador += 1
             }
             cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
@@ -96,12 +105,12 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         val arreglo: Array<String?>
         arreglo = cadena.split(",").toTypedArray() //toma los ids de las rutinas
 
-        buttonAdd!!.setOnClickListener{
-            if(validadorMostar == 0) {
+        buttonAdd!!.setOnClickListener {
+            if (validadorMostar == 0) {
                 buttonRutina!!.visibility = View.VISIBLE; buttonRutina!!.isEnabled = true
                 buttonEjercicio!!.visibility = View.VISIBLE; buttonEjercicio!!.isEnabled = true
                 validadorMostar = 1
-            }else{
+            } else {
                 buttonRutina!!.visibility = View.INVISIBLE; buttonRutina!!.isEnabled = false
                 buttonEjercicio!!.visibility = View.INVISIBLE; buttonEjercicio!!.isEnabled = false
                 validadorMostar = 0
@@ -109,31 +118,32 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             validadorPredeterDB()
         }
 
-        buttonRutina!!.setOnClickListener{
+        buttonRutina!!.setOnClickListener {
             val intent = Intent(this@PlantillasActivity, CreadorRutinas::class.java)
             startActivity(intent)
         }
 
-        buttonEjercicio!!.setOnClickListener{
+        buttonEjercicio!!.setOnClickListener {
             val intent = Intent(this@PlantillasActivity, CreadorEjercicios::class.java)
             startActivity(intent)
         }
 
         listViewRutinas!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-            val num = MainActivity.listaRutinas[position].split(" ").toTypedArray()[0].toInt() //toma los datos de la rutina
+            val num = MainActivity.listaRutinas[position].split(" ")
+                .toTypedArray()[0].toInt() //toma los datos de la rutina
             val nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
             val ejercicios = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[3]
             val nivelAux = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[2]
 
             var validadorEdicion = true
 
-            for(i in arreglo){ //recorre las rutinas programadas
-                if(num.toString() == i){ //si la rutina a  editar esta puesta para ser programada
+            for (i in arreglo) { //recorre las rutinas programadas
+                if (num.toString() == i) { //si la rutina a  editar esta puesta para ser programada
                     validadorEdicion = false //no lo podra editar
                 }
             }
 
-            if(validadorEdicion) {
+            if (validadorEdicion) {
                 val arreglo: Array<String?>
                 arreglo = nivelAux.split(" ").toTypedArray()
                 val nivel = arreglo[1]!!.toInt()
@@ -144,50 +154,72 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
                 intent.putExtra("Ejercicios", ejercicios)
                 intent.putExtra("Nivel", nivel)
                 startActivity(intent)
-            }else{
-                Toast.makeText(this, "No se puede editar una rutina que está programada", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "No se puede editar una rutina que está programada",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
 
-    private fun validadorPredeterDB(){
-        if(ejerciciosPredeterminados) {
-            var id = 1; var nombre = "Sentadillas"; var tipo = "Piernas"; var peso = true; var url =".youtube.com/embed/VRKdOsad3HQ"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
-            id = 2; nombre = "Saltos de tijera"; tipo = "Piernas"; peso = false; url=".youtube.com/embed/95j1mH27eXc"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
-            id = 3; nombre = "Elevación de talones"; tipo = "Piernas"; peso = false; url=".youtube.com/embed/igRyr2jWRTs"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+    private fun validadorPredeterDB() {
+        if (ejerciciosPredeterminados) {
+            var id = 1;
+            var nombre = "Sentadillas";
+            var tipo = "Piernas";
+            var peso = true;
+            var url = ".youtube.com/embed/VRKdOsad3HQ"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
+            id = 2; nombre = "Saltos de tijera"; tipo = "Piernas"; peso = false; url =
+                ".youtube.com/embed/95j1mH27eXc"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
+            id = 3; nombre = "Elevación de talones"; tipo = "Piernas"; peso = false; url =
+                ".youtube.com/embed/igRyr2jWRTs"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
 
-            id = 4; nombre = "Abdominales"; tipo = "Abdomen"; peso = false; url=".youtube.com/embed/OsUz898onTE"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
-            id = 5; nombre = "Plancha"; tipo = "Abdomen"; peso = false; url=".youtube.com/embed/OuFDY0fwlvk"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
-            id = 6; nombre = "Escaladores"; tipo = "Abdomen"; peso = false; url=".youtube.com/embed/lD_gfTofg4A"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 4; nombre = "Abdominales"; tipo = "Abdomen"; peso = false; url =
+                ".youtube.com/embed/OsUz898onTE"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
+            id = 5; nombre = "Plancha"; tipo = "Abdomen"; peso = false; url =
+                ".youtube.com/embed/OuFDY0fwlvk"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
+            id = 6; nombre = "Escaladores"; tipo = "Abdomen"; peso = false; url =
+                ".youtube.com/embed/lD_gfTofg4A"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
 
-            id = 7; nombre = "Dominadas"; tipo = "Pecho"; peso = false; url=".youtube.com/embed/A2thchjoWkI"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
-            id = 8; nombre = "Press de pecho"; tipo = "Pecho"; peso = true; url=".youtube.com/embed/NfJqRwAlZY8"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 7; nombre = "Dominadas"; tipo = "Pecho"; peso = false; url =
+                ".youtube.com/embed/A2thchjoWkI"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
+            id = 8; nombre = "Press de pecho"; tipo = "Pecho"; peso = true; url =
+                ".youtube.com/embed/NfJqRwAlZY8"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
 
-            id = 9; nombre = "Peso muerto"; tipo = "Espalda"; peso = true; url=".youtube.com/embed/gBY5Se4apXc"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 9; nombre = "Peso muerto"; tipo = "Espalda"; peso = true; url =
+                ".youtube.com/embed/gBY5Se4apXc"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
 
-            id = 10; nombre = "Punches"; tipo = "Brazos"; peso = false; url=".youtube.com/embed/b0ZeY-j5T1w"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
-            id = 11; nombre = "Dips de tríceps"; tipo = "Brazos"; peso = false; url="youtube.com/embed/EtPHEAOIxUU"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 10; nombre = "Punches"; tipo = "Brazos"; peso = false; url =
+                ".youtube.com/embed/b0ZeY-j5T1w"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
+            id = 11; nombre = "Dips de tríceps"; tipo = "Brazos"; peso = false; url =
+                "youtube.com/embed/EtPHEAOIxUU"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
 
-            id = 12; nombre = "Press de hombros"; tipo = "Hombros"; peso = true; url=".youtube.com/embed/UFKqIoAbUBg?start=9"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
-            id = 13; nombre = "Elevaciones laterales"; tipo = "Hombros"; peso = true; url=".youtube.com/embed/dT6Q3NHtSjw"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 12; nombre = "Press de hombros"; tipo = "Hombros"; peso = true; url =
+                ".youtube.com/embed/UFKqIoAbUBg?start=9"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
+            id = 13; nombre = "Elevaciones laterales"; tipo = "Hombros"; peso = true; url =
+                ".youtube.com/embed/dT6Q3NHtSjw"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
 
-            id = 14; nombre = "Flexiones"; tipo = "Otro"; peso = false; url=".youtube.com/embed/nOFk-PYAvwI"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
-            id = 15; nombre = "Burpees"; tipo = "Otro"; peso = false; url=".youtube.com/embed/auBLPXO8Fww"
-            ejerciciosPredeterDB(id, nombre, tipo, peso,url)
+            id = 14; nombre = "Flexiones"; tipo = "Otro"; peso = false; url =
+                ".youtube.com/embed/nOFk-PYAvwI"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
+            id = 15; nombre = "Burpees"; tipo = "Otro"; peso = false; url =
+                ".youtube.com/embed/auBLPXO8Fww"
+            ejerciciosPredeterDB(id, nombre, tipo, peso, url)
         }
     }
 
@@ -197,23 +229,24 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         Tipo: String,
         Peso: Boolean,
         url: String
-    ){
-        MainActivity.user?.let{ usuario ->
-            db.collection("users").document(usuario).collection("ejercicios").document(Id.toString()).set(
+    ) {
+        MainActivity.user?.let { usuario ->
+            db.collection("users").document(usuario).collection("ejercicios")
+                .document(Id.toString()).set(
                 hashMapOf(
                     "id" to Id,
                     "nombre" to Nombre,
                     "tipo" to Tipo,
                     "peso" to Peso,
-                "url" to url
+                    "url" to url
                 )
             )
         }
 
         var cadena = Id.toString() + " | " + Nombre + " | " + Tipo
-        if(Peso){
+        if (Peso) {
             cadena += " | Con peso"
-        }else{
+        } else {
             cadena += " | Sin peso"
         }
         MainActivity.listaEjercicios.add(cadena)
@@ -260,12 +293,12 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            
-            R.id.nav_musica ->callMusica()
-            R.id.nav_amigos ->callAmigosActivity()
-            R.id.Settings->callAjustesActivity()
-            R.id.nav_seguimiento->callSeguimientoActivity()
-            R.id.nav_solicitudes-> callSolicitudesActivity()
+
+            R.id.nav_musica -> callMusica()
+            R.id.nav_amigos -> callAmigosActivity()
+            R.id.Settings -> callAjustesActivity()
+            R.id.nav_seguimiento -> callSeguimientoActivity()
+            R.id.nav_solicitudes -> callSolicitudesActivity()
 
         }
 
@@ -273,21 +306,27 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
 
         return true
     }
+
     private fun callSolicitudesActivity() {
         val intent = Intent(this, SolicitudesActivity::class.java)
-        startActivity(intent)    }
+        startActivity(intent)
+    }
+
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
     }
+
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
     }
+
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
@@ -343,6 +382,7 @@ class PlantillasActivity : AppCompatActivity(), NavigationView.OnNavigationItemS
         //Cierra sesion y manda devuelta al login
         deleteAppData()
     }
+
     private fun deleteAppData() {
         try {
             // clearing app data

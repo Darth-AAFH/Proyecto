@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -272,7 +271,7 @@ class FotosActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             R.id.nav_amigos -> callAmigosActivity()
             R.id.Settings -> callAjustesActivity()
             R.id.nav_seguimiento -> callSeguimientoActivity()
-            R.id.nav_solicitudes-> callSolicitudesActivity()
+            R.id.nav_solicitudes -> callSolicitudesActivity()
 
         }
 
@@ -280,9 +279,12 @@ class FotosActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
         return true
     }
+
     private fun callSolicitudesActivity() {
         val intent = Intent(this, SolicitudesActivity::class.java)
-        startActivity(intent)    }
+        startActivity(intent)
+    }
+
     private fun callRankingActivity() {
         val intent = Intent(this, RankingActivity::class.java)
         startActivity(intent)

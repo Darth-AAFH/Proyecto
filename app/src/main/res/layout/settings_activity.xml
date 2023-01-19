@@ -17,18 +17,18 @@
         android:orientation="vertical">
 
         <TextView
-            android:gravity="center"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="Agregar música"
             android:textColor="@color/white"
             android:textSize="24sp" />
 
         <TextView
-            android:layout_marginTop="20dp"
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:text="Paso 1: Selecciona la ruta de musica" />
 
         <ImageButton
@@ -36,6 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:background="@drawable/baseline_folder_white_48" />
+
         <TextView
             android:id="@+id/textView14"
             android:layout_width="match_parent"
@@ -47,12 +48,12 @@
             android:layout_width="48dp"
             android:layout_height="47dp"
             android:background="@drawable/baseline_add_white_48" />
+
         <TextView
             android:id="@+id/textView16"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Paso 3: Verifica que la ruta sea la correcta " />
-
 
 
         <RelativeLayout
@@ -64,7 +65,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:orientation="horizontal">
-
 
 
                 <RelativeLayout
@@ -97,8 +97,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"></LinearLayout>
-
-
 
 
         <TextView
@@ -146,11 +144,11 @@
         </RelativeLayout>
 
         <TextView
-            android:gravity="center"
-            android:layout_marginTop="50dp"
             android:id="@+id/textView15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:gravity="center"
             android:text="Listo!, vuelve para reproducir musica" />
 
         <RelativeLayout
@@ -181,8 +179,7 @@
         </RelativeLayout>
 
 
-
     </LinearLayout>
 
-    
+
 </ScrollView>

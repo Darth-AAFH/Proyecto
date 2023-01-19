@@ -8,7 +8,7 @@ import com.example.wildtracker.R
 class MyGLSurfaceView : GLSurfaceView {
     private val renderer: MyGLRenderer
 
-    constructor(context: Context, attributes: AttributeSet? = null): super(context) {
+    constructor(context: Context, attributes: AttributeSet? = null) : super(context) {
         setEGLContextClientVersion(2)
         val backgroundColor = context.resources.getColor(R.color.blue)
         val primaryColor = context.resources.getColor(R.color.color_02)

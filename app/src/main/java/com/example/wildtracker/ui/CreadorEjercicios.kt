@@ -22,15 +22,19 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class CreadorEjercicios : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    var editTextNombre: EditText ?= null
-    @SuppressLint("UseSwitchCompatOrMaterialCode") private var switchPeso: Switch ?= null
-    private var buttonCrear: Button?= null; private var buttonEditar: Button ?= null
+    var editTextNombre: EditText? = null
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private var switchPeso: Switch? = null
+    private var buttonCrear: Button? = null;
+    private var buttonEditar: Button? = null
 
-    var arregloEjercicios = Array<ejercicio?>(66){null}
+    var arregloEjercicios = Array<ejercicio?>(66) { null }
     var validadorNombre = true
 
     private val db = FirebaseFirestore.getInstance()
-    var contadorMaxEjer = 0; var idFinalEjer = 0; var idAux = 0
+    var contadorMaxEjer = 0;
+    var idFinalEjer = 0;
+    var idAux = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,47 +47,57 @@ class CreadorEjercicios : AppCompatActivity(), NavigationView.OnNavigationItemSe
         buttonEditar = findViewById(R.id.buttonEditarEjercicio)
         val spinnerTipos: Spinner = findViewById(R.id.spinnerTipos)
 
-        val listaSpinner = listOf("Piernas", "Abdomen", "Pecho", "Espalda", "Brazos", "Hombros", "Otro")
-        val adaptadorSpinner = ArrayAdapter(this, android.R.layout.simple_spinner_item, listaSpinner)
+        val listaSpinner =
+            listOf("Piernas", "Abdomen", "Pecho", "Espalda", "Brazos", "Hombros", "Otro")
+        val adaptadorSpinner =
+            ArrayAdapter(this, android.R.layout.simple_spinner_item, listaSpinner)
         spinnerTipos.adapter = adaptadorSpinner
 
         MainActivity.user?.let { usuario -> //para encontrar el id final de los ejercicios
-            db.collection("users").document(usuario).collection("ejercicios") //abre la base de datos
+            db.collection("users").document(usuario)
+                .collection("ejercicios") //abre la base de datos
                 .get().addOnSuccessListener {
-                    for(ejercicio in it){ //para cada ejercicio
+                    for (ejercicio in it) { //para cada ejercicio
                         contadorMaxEjer += 1 //cuenta cuantos ejercicios hay
                         idAux = (ejercicio.get("id") as Long).toInt() //toma el id
-                        if(idFinalEjer < idAux){ //si es un id mayor
-                            idFinalEjer = (ejercicio.get("id") as Long).toInt() //lo va a guardar como el id final
+                        if (idFinalEjer < idAux) { //si es un id mayor
+                            idFinalEjer =
+                                (ejercicio.get("id") as Long).toInt() //lo va a guardar como el id final
                         }
 
                     }
                 }
         }
 
-        buttonCrear!!.setOnClickListener{
-            val nombre = editTextNombre!!.text.toString(); val tipo = spinnerTipos.selectedItem.toString(); val peso = switchPeso!!.isChecked
-            if(crear(nombre, tipo, peso)){
-                if(validadorNombre) {
+        buttonCrear!!.setOnClickListener {
+            val nombre = editTextNombre!!.text.toString();
+            val tipo = spinnerTipos.selectedItem.toString();
+            val peso = switchPeso!!.isChecked
+            if (crear(nombre, tipo, peso)) {
+                if (validadorNombre) {
                     finish()
                 }
-            }else {
-                Toast.makeText(this, "Se ha alcanzado el numero maximo de ejercicios", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Se ha alcanzado el numero maximo de ejercicios",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
-        buttonEditar!!.setOnClickListener{
+        buttonEditar!!.setOnClickListener {
             val intent = Intent(this@CreadorEjercicios, VerEjercicios::class.java)
             startActivity(intent)
         }
     }
 
-    private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean{
+    private fun crear(Nombre: String, Tipo: String, validadorPeso: Boolean): Boolean {
         var confirmacion = false
-        if(contadorMaxEjer <= 65){//////////////numero máx de ejercicios que el usuario puede crear (50)
+        if (contadorMaxEjer <= 65) {//////////////numero máx de ejercicios que el usuario puede crear (50)
             var nombre = Nombre
 
-            if(nombre == ""){
+            if (nombre == "") {
                 val idF = idFinalEjer
                 nombre = "Ejercicio" + (idF - 14)
             }
@@ -93,14 +107,19 @@ class CreadorEjercicios : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
             validadorNombre = true
             for (i in 0 until arreglo.size) {//recorre todo el nombre
-                if(arreglo[i]!!.isDigitsOnly()) { //si uno de los datos es numero
-                    Toast.makeText(this, "El nombre de un ejercicio no puede contener numeros", Toast.LENGTH_SHORT).show()
+                if (arreglo[i]!!.isDigitsOnly()) { //si uno de los datos es numero
+                    Toast.makeText(
+                        this,
+                        "El nombre de un ejercicio no puede contener numeros",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     validadorNombre = false
                 }
             }
 
-            if(validadorNombre == true){
-                arregloEjercicios[contadorMaxEjer] = ejercicio(idFinalEjer+1, nombre, Tipo, validadorPeso)
+            if (validadorNombre == true) {
+                arregloEjercicios[contadorMaxEjer] =
+                    ejercicio(idFinalEjer + 1, nombre, Tipo, validadorPeso)
                 guardarBD(arregloEjercicios[contadorMaxEjer]!!)
             }
 
@@ -110,27 +129,28 @@ class CreadorEjercicios : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private fun guardarBD(Ejercicio: ejercicio) {
-        MainActivity.user?.let{ usuario ->
+        MainActivity.user?.let { usuario ->
             db.collection("users").document(usuario).collection("ejercicios")
                 .document(Ejercicio.id.toString()).set(
-                hashMapOf(
-                    "id" to Ejercicio.id,
-                    "nombre" to Ejercicio.nombre,
-                    "tipo" to Ejercicio.tipo,
-                    "peso" to Ejercicio.peso
+                    hashMapOf(
+                        "id" to Ejercicio.id,
+                        "nombre" to Ejercicio.nombre,
+                        "tipo" to Ejercicio.tipo,
+                        "peso" to Ejercicio.peso
+                    )
                 )
-            )
         }
         var cadena = Ejercicio.id.toString() + " | " + Ejercicio.nombre + " | " + Ejercicio.tipo
-        if(Ejercicio.peso){
+        if (Ejercicio.peso) {
             cadena += " | Con peso"
-        }else{
+        } else {
             cadena += " | Sin peso"
         }
         MainActivity.listaEjercicios.add(cadena)
 
         Toast.makeText(this, "Se ha guardado el ejercicio", Toast.LENGTH_SHORT).show()
     }
+
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         toolbar.title = "Editor Ejercicio"
@@ -173,11 +193,11 @@ class CreadorEjercicios : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            R.id.nav_musica ->callMusica()
-            R.id.nav_amigos ->callAmigosActivity()
-            R.id.Settings->callAjustesActivity()
-            R.id.nav_seguimiento->callSeguimientoActivity()
-            R.id.nav_solicitudes-> callSolicitudesActivity()
+            R.id.nav_musica -> callMusica()
+            R.id.nav_amigos -> callAmigosActivity()
+            R.id.Settings -> callAjustesActivity()
+            R.id.nav_seguimiento -> callSeguimientoActivity()
+            R.id.nav_solicitudes -> callSolicitudesActivity()
 
         }
 
@@ -185,25 +205,32 @@ class CreadorEjercicios : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         return true
     }
+
     private fun callSolicitudesActivity() {
         val intent = Intent(this, SolicitudesActivity::class.java)
-        startActivity(intent)    }
+        startActivity(intent)
+    }
+
     private fun callRankingActivity() {
         val intent = Intent(this, RankingActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
     }
+
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
     }
+
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
@@ -259,6 +286,7 @@ class CreadorEjercicios : AppCompatActivity(), NavigationView.OnNavigationItemSe
         //Cierra sesion y manda devuelta al login
         deleteAppData()
     }
+
     private fun deleteAppData() {
         try {
             // clearing app data

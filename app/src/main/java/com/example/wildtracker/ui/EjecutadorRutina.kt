@@ -46,47 +46,70 @@ class EjecutadorRutina : AppCompatActivity() {
     private lateinit var builder: AlertDialog.Builder //Dialogo de alerta para interactuar en el activity
     private lateinit var VideosEjercicios: RecyclerView
     private var youtubeVideos = Vector<youTubeVideos>()
-    var textViewActividadEnFoco: TextView?= null; var textViewReloj: TextView?= null
-    var buttonParar: Button?= null; var buttonPausar: Button?= null; var buttonSaltar: Button?= null
-    var listViewEjerciciosPorHacer: ListView?= null; var buttonSiguiente: Button?= null; var buttonAyuda: Button?=null
+    var textViewActividadEnFoco: TextView? = null;
+    var textViewReloj: TextView? = null
+    var buttonParar: Button? = null;
+    var buttonPausar: Button? = null;
+    var buttonSaltar: Button? = null
+    var listViewEjerciciosPorHacer: ListView? = null;
+    var buttonSiguiente: Button? = null;
+    var buttonAyuda: Button? = null
     private lateinit var photofile: File
     var listado = ArrayList<String>()
     var datos = ArrayList<String>()
+
     companion object {
         const val REQUEST_CODE = 42
         var Ismeta = false
         var AlertaMostrado = false
 
     }
+
     lateinit var timer: Timer
     lateinit var trabajoTimer: TimerTask
     var tiempo = 0.0
-    var pausar = false; var firstclick = false; var parar = false
+    var pausar = false;
+    var firstclick = false;
+    var parar = false
     var final = false
 
     private val db = FirebaseFirestore.getInstance()
-    var num = 0; var nombre  = ""; var puntos = 0; var xp = 0; var nivel = 0; var ejercicios = ""; var meta = ""
-    var fecha = ""; var duracion = ""
-    var ultDia = 0; var ultMes = 0; var ultAno = 0
+    var num = 0;
+    var nombre = "";
+    var puntos = 0;
+    var xp = 0;
+    var nivel = 0;
+    var ejercicios = "";
+    var meta = ""
+    var fecha = "";
+    var duracion = ""
+    var ultDia = 0;
+    var ultMes = 0;
+    var ultAno = 0
     var terminar2 = false
-    var horasE = 0; var minutosE = 0; var segundosE = 0; var puntosE = 0 //E de extras
-    var horasR = 0; var minutosR = 0; var segundosR = 0 //R de rutina
+    var horasE = 0;
+    var minutosE = 0;
+    var segundosE = 0;
+    var puntosE = 0 //E de extras
+    var horasR = 0;
+    var minutosR = 0;
+    var segundosR = 0 //R de rutina
 
     private fun CargarRutina(arreglo: Array<String?>) { //Funcion que trae la rutina
-        for(i in 0 until arreglo.size) { //va a recorrer los ejercicios de la rutina
+        for (i in 0 until arreglo.size) { //va a recorrer los ejercicios de la rutina
             for (j in MainActivity.listaEjercicios) { //para todos los ejercicios
                 val id = j.split(" ").toTypedArray()[0] //toma el id
-                if(arreglo[i] == id){ //si esta el ejercicio en la rutina
+                if (arreglo[i] == id) { //si esta el ejercicio en la rutina
                     val nombre = j.split(" | ").toTypedArray()[1] //va a tomar el nombre
                     datos.add(nombre) //y lo agrega para la list view
                 }
             }
         }
 
-        for(i in MainActivity.listaRutinas){ //para obtener el nivel de la rutina
+        for (i in MainActivity.listaRutinas) { //para obtener el nivel de la rutina
             var arreglo: Array<String?>
             arreglo = i.split(" ").toTypedArray()
-            if(arreglo[0]!!.toInt() == num) {
+            if (arreglo[0]!!.toInt() == num) {
                 val cadena = i.split("Nivel:").toTypedArray()[1]
                 arreglo[0] = cadena.split(" ").toTypedArray()[1]
                 nivel = arreglo[0]!!.toInt()
@@ -95,36 +118,44 @@ class EjecutadorRutina : AppCompatActivity() {
 
         datos.add(" ")
         listado = datos
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
+        val adapter: ArrayAdapter<String> =
+            ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
         listViewEjerciciosPorHacer!!.adapter = adapter //La rutina se adapta en la text view
     }
 
-    var Name = ""; var birthDay = ""; var email = ""; var peso = ""
+    var Name = "";
+    var birthDay = "";
+    var email = "";
+    var peso = ""
     var puntosTotales: Int = 0
 
-    data class puntosTotalesClass (
+    data class puntosTotalesClass(
         val Name: String? = "",
         val birthDay: String? = "",
         val email: String = "",
         val puntosTotales: Int? = 0,
-        val peso:String =""
+        val peso: String = ""
     )
+
     private fun puntosTotalesFun(bool: Boolean) {
-        if(bool) {
+        if (bool) {
             var puntosTaux: puntosTotalesClass
             MainActivity.user?.let { usuario -> //para cargar los puntos totales del usuario
                 db.collection("users").document(usuario).get().addOnSuccessListener {
                     GlobalScope.launch(Dispatchers.IO) {
                         val puntosTDocument = Firebase.firestore
-                            .collection("users").document(usuario) //se toma la ruta del documento del usuario
+                            .collection("users")
+                            .document(usuario) //se toma la ruta del documento del usuario
 
-                        puntosTaux = puntosTDocument.get().await().toObject(puntosTotalesClass::class.java)!! //se toma puntosTotales
+                        puntosTaux = puntosTDocument.get().await()
+                            .toObject(puntosTotalesClass::class.java)!! //se toma puntosTotales
 
                         withContext(Dispatchers.Main) {
                             Name = puntosTaux.Name!!
                             birthDay = puntosTaux.birthDay!!
                             email = puntosTaux.email
-                            puntosTotales = puntosTaux.puntosTotales!! //se guarda en la variable global
+                            puntosTotales =
+                                puntosTaux.puntosTotales!! //se guarda en la variable global
                             peso = puntosTaux.peso
                             if (puntosTotales == null) { //en caso de que sea null se guarda como 0
                                 puntosTotales = 0
@@ -133,7 +164,7 @@ class EjecutadorRutina : AppCompatActivity() {
                     }
                 }
             }
-        } else{
+        } else {
             MainActivity.user?.let { usuario -> //se abre la base de datos para subir los datos
                 db.collection("users").document(usuario).update(
                     mapOf(
@@ -149,7 +180,7 @@ class EjecutadorRutina : AppCompatActivity() {
     }
 
     private fun BorrarRutinaDelDia(fecha: String) {
-        if(fecha != "0") {
+        if (fecha != "0") {
             val linea: String
             linea = num.toString() + " | " + nombre + " | Fecha:" + fecha
 
@@ -169,15 +200,27 @@ class EjecutadorRutina : AppCompatActivity() {
         }
     }
 
-    var Peso = false; var Repeticion = false; var Tiempo = false
-    var D1 = false ; var D2 = false; var D3 = false; var D4 = false
-    var D5 = false; var D6 = false; var D7 = false
-    var diaF = 0; var mesF = 0; var anoF = 0
-    var DatoInicial = 0; var DatoFinal = 0
-    var diaSeg = 0; var mesSeg = 0; var anoSeg = 0
+    var Peso = false;
+    var Repeticion = false;
+    var Tiempo = false
+    var D1 = false;
+    var D2 = false;
+    var D3 = false;
+    var D4 = false
+    var D5 = false;
+    var D6 = false;
+    var D7 = false
+    var diaF = 0;
+    var mesF = 0;
+    var anoF = 0
+    var DatoInicial = 0;
+    var DatoFinal = 0
+    var diaSeg = 0;
+    var mesSeg = 0;
+    var anoSeg = 0
 
     private fun BorrarMetaDelDia(paso: Int) {
-        if(paso == 1) {
+        if (paso == 1) {
             MainActivity.user?.let { usuario -> //para cargar la meta
                 db.collection("users").document(usuario)
                     .collection("metas")
@@ -203,7 +246,7 @@ class EjecutadorRutina : AppCompatActivity() {
                         anoSeg = (it.get("anoSeg") as Long).toInt()
                     }
             }
-        }else {
+        } else {
             MainActivity.user?.let { usuario ->
                 db.collection("users").document(usuario).collection("metas")
                     .document(nombre).set(
@@ -237,29 +280,43 @@ class EjecutadorRutina : AppCompatActivity() {
             var linea: String //linea de texto para borrar la meta de la lista de metas
             linea = nombre + " | " //se le agrega el nombre
 
-            if(D1){linea += "lun "} //se le agregan los dias a trabajar
-            if(D2){linea += "mar "}; if(D3){linea += "mier "}; if(D4){linea += "juev "}
-            if(D5){linea += "vier "}; if(D6){linea += "sab "}; if(D7){linea += "dom "}
+            if (D1) {
+                linea += "lun "
+            } //se le agregan los dias a trabajar
+            if (D2) {
+                linea += "mar "
+            }; if (D3) {
+                linea += "mier "
+            }; if (D4) {
+                linea += "juev "
+            }
+            if (D5) {
+                linea += "vier "
+            }; if (D6) {
+                linea += "sab "
+            }; if (D7) {
+                linea += "dom "
+            }
 
             linea += "| " //se le agraga texto de formato
 
-            if(Peso){ //con un texto que diferencie peso o repeticiones
+            if (Peso) { //con un texto que diferencie peso o repeticiones
                 linea += "Levantar: " + DatoInicial + "kg"
-            }else{
-                if(Repeticion){
+            } else {
+                if (Repeticion) {
                     linea += "Repeticiones: " + DatoInicial
-                }else{
+                } else {
                     linea += "Completar: "
 
                     var minutos = DatoInicial
                     var horas = 0
 
-                    while(minutos >= 60){ //se obtienen las horas
+                    while (minutos >= 60) { //se obtienen las horas
                         minutos -= 60
                         horas += 1
                     }
 
-                    if(horas != 0){
+                    if (horas != 0) {
                         linea += horas //se le agrega el tiempo con horas
                         linea += "hr "
                     }
@@ -288,16 +345,19 @@ class EjecutadorRutina : AppCompatActivity() {
         VideosEjercicios.layoutManager = LinearLayoutManager(this)
         val BotonMostrar: Button = (findViewById(R.id.buttonMostrarVideo))
 
-        youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www" +
-                ".youtube.com/embed/VRKdOsad3HQ\" frameborder=\"0\" allowfullscreen></iframe>"))
+        youtubeVideos.add(
+            youTubeVideos(
+                "<iframe width=\"100%\" height=\"100%\" src=\"https://www" +
+                        ".youtube.com/embed/VRKdOsad3HQ\" frameborder=\"0\" allowfullscreen></iframe>"
+            )
+        )
 
         val videoAdapter = VideoAdapter(youtubeVideos)
         BotonMostrar.setOnClickListener {
-            if(VideosEjercicios.isVisible){
-                VideosEjercicios.isVisible=false
-            }
-            else{
-                VideosEjercicios.isVisible=true
+            if (VideosEjercicios.isVisible) {
+                VideosEjercicios.isVisible = false
+            } else {
+                VideosEjercicios.isVisible = true
                 VideosEjercicios.adapter = videoAdapter
             }
 
@@ -330,12 +390,13 @@ class EjecutadorRutina : AppCompatActivity() {
         MainActivity.user?.let { usuario -> //para traer el tiempo del día
             db.collection("users").document(usuario).collection("tiempos") //abre la base de datos
                 .get().addOnSuccessListener {
-                    for(tiempo in it){ //para cada fecha
+                    for (tiempo in it) { //para cada fecha
 
                         val idFecha = (tiempo.get("idFecha")).toString() //toma el id
-                        if(currentDate == idFecha){ //si es igual a la fecha actual
+                        if (currentDate == idFecha) { //si es igual a la fecha actual
                             puntosE = (tiempo.get("puntos") as Long).toInt()
-                            horasE = (tiempo.get("horas") as Long).toInt() //va a traer los datos de la bd
+                            horasE =
+                                (tiempo.get("horas") as Long).toInt() //va a traer los datos de la bd
                             minutosE = (tiempo.get("minutos") as Long).toInt()
                             segundosE = (tiempo.get("segundos") as Long).toInt()
                         }
@@ -347,11 +408,12 @@ class EjecutadorRutina : AppCompatActivity() {
         MainActivity.user?.let { usuario -> //para traer el tiempo de la rutina
             db.collection("users").document(usuario).collection("rutinas") //abre la base de datos
                 .get().addOnSuccessListener {
-                    for(rutinas in it){ //para cada rutina
+                    for (rutinas in it) { //para cada rutina
 
                         val idRutina = (rutinas.get("id")).toString() //toma el id de la rutina
-                        if(num.toString() == idRutina){ //hasta encontrar el de la rutina del que se esta tranajando
-                            horasR = (rutinas.get("horas") as Long).toInt() //va a traer los datos de la bd
+                        if (num.toString() == idRutina) { //hasta encontrar el de la rutina del que se esta tranajando
+                            horasR =
+                                (rutinas.get("horas") as Long).toInt() //va a traer los datos de la bd
                             minutosR = (rutinas.get("minutos") as Long).toInt()
                             segundosR = (rutinas.get("segundos") as Long).toInt()
                         }
@@ -360,19 +422,19 @@ class EjecutadorRutina : AppCompatActivity() {
                 }
         }
 
-        while(segundosR >= 60){
+        while (segundosR >= 60) {
             segundosR -= 60
             minutosR += 1
         }
 
-        while(minutosR >= 60){
+        while (minutosR >= 60) {
             minutosR -= 60
             horasR += 1
         }
 
-        for(i in MainActivity.listaRutinas){ //recorre todas las rutinas
+        for (i in MainActivity.listaRutinas) { //recorre todas las rutinas
             val id = i.split(" ").toTypedArray()[0] //toma el id
-            if(id == num.toString()){ //al encontrar la seleccionada
+            if (id == num.toString()) { //al encontrar la seleccionada
                 ejercicios = i.split(" | ").toTypedArray()[3] //tomara los ejercicios de esta
             }
         }
@@ -383,20 +445,20 @@ class EjecutadorRutina : AppCompatActivity() {
 
         puntosTotalesFun(true)
 
-        if(num != -1) {
+        if (num != -1) {
             BorrarRutinaDelDia(fecha)
-        }else{
+        } else {
             BorrarMetaDelDia(1)
-            textViewActividadEnFoco!!.text = nombre + ", " +meta
+            textViewActividadEnFoco!!.text = nombre + ", " + meta
             listado.add(" ")
         }
 
         Toast.makeText(this, "Presione > para iniciar", Toast.LENGTH_SHORT).show()
         timer = Timer()
 
-        buttonParar!!.setOnClickListener{
-            if(firstclick == true && parar == false) {
-                if(pausar == true)
+        buttonParar!!.setOnClickListener {
+            if (firstclick == true && parar == false) {
+                if (pausar == true)
                     trabajoTimer.cancel()
 
                 val alertaParar = AlertDialog.Builder(this)
@@ -411,16 +473,16 @@ class EjecutadorRutina : AppCompatActivity() {
                 }
 
                 alertaParar.setNegativeButton("Cancelar") { dialogInterface, i ->
-                    if(pausar == true)
+                    if (pausar == true)
                         inciarTimer()
                 }
                 alertaParar.show()
             }
         }
 
-        buttonPausar!!.setOnClickListener{
-            if(firstclick == false){
-                if(num != -1) {
+        buttonPausar!!.setOnClickListener {
+            if (firstclick == false) {
+                if (num != -1) {
                     val ejercicio1 = listado[0]
                     textViewActividadEnFoco!!.text = "" + ejercicio1
                     listado.removeAt(0) //Remueve el primer ejercicio de la lista
@@ -437,7 +499,7 @@ class EjecutadorRutina : AppCompatActivity() {
                 firstclick = true
             }
 
-            if(parar != true) {
+            if (parar != true) {
                 if (pausar == false) {
                     buttonPausar!!.background = getDrawable(R.drawable.ic_pause)
                     inciarTimer()
@@ -450,9 +512,9 @@ class EjecutadorRutina : AppCompatActivity() {
             }
         }
 
-        buttonSaltar!!.setOnClickListener{
-            if(firstclick == true && parar == false) {
-                if(pausar == true)
+        buttonSaltar!!.setOnClickListener {
+            if (firstclick == true && parar == false) {
+                if (pausar == true)
                     trabajoTimer.cancel()
 
                 val alertaSaltar = AlertDialog.Builder(this)
@@ -466,11 +528,15 @@ class EjecutadorRutina : AppCompatActivity() {
 
                     alertaIncompleto.setPositiveButton("Sí") { dialogInterface, i ->
                         puntos += 1
-                        if(final != true) {
+                        if (final != true) {
                             val ejercicio = listado[0]
                             textViewActividadEnFoco!!.text = "" + ejercicio
                             listado.removeAt(0) //Remueve el primer ejercicio de la lista
-                            val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
+                            val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+                                this,
+                                android.R.layout.simple_list_item_1,
+                                listado
+                            )
                             listViewEjerciciosPorHacer!!.adapter = adapter
 
                             if (listado[0] == " ") {
@@ -478,9 +544,9 @@ class EjecutadorRutina : AppCompatActivity() {
                                 final = true
                             }
 
-                            if(pausar == true)
+                            if (pausar == true)
                                 inciarTimer()
-                        }else {
+                        } else {
                             parar = true
                             trabajoTimer.cancel()
                             fin(true)
@@ -488,11 +554,15 @@ class EjecutadorRutina : AppCompatActivity() {
                     }
 
                     alertaIncompleto.setNegativeButton("No") { dialogInterface, i ->
-                        if(final != true) {
+                        if (final != true) {
                             val ejercicio = listado[0]
                             textViewActividadEnFoco!!.text = "" + ejercicio
                             listado.removeAt(0) //Remueve el primer ejercicio de la lista
-                            val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
+                            val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+                                this,
+                                android.R.layout.simple_list_item_1,
+                                listado
+                            )
                             listViewEjerciciosPorHacer!!.adapter = adapter
 
                             if (listado[0] == " ") {
@@ -500,9 +570,9 @@ class EjecutadorRutina : AppCompatActivity() {
                                 final = true
                             }
 
-                            if(pausar == true)
+                            if (pausar == true)
                                 inciarTimer()
-                        }else{
+                        } else {
                             parar = true
                             trabajoTimer.cancel()
                             fin(true)
@@ -512,7 +582,7 @@ class EjecutadorRutina : AppCompatActivity() {
                 }
 
                 alertaSaltar.setNegativeButton("Cancelar") { dialogInterface, i ->
-                    if(pausar == true)
+                    if (pausar == true)
                         inciarTimer()
                 }
                 alertaSaltar.show()
@@ -520,11 +590,11 @@ class EjecutadorRutina : AppCompatActivity() {
         }
 
 
-        buttonSiguiente!!.setOnClickListener{
-            if(firstclick == true && parar == false){
+        buttonSiguiente!!.setOnClickListener {
+            if (firstclick == true && parar == false) {
                 puntos += 2
 
-                if(final == false) {
+                if (final == false) {
                     val ejercicio = listado[0]
                     textViewActividadEnFoco!!.text = "" + ejercicio
 
@@ -532,20 +602,21 @@ class EjecutadorRutina : AppCompatActivity() {
                     cargarVideo(ejercicio)
 
                     listado.removeAt(0) //Remueve el primer ejercicio de la lista
-                    val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
+                    val adapter: ArrayAdapter<String> =
+                        ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listado)
                     listViewEjerciciosPorHacer!!.adapter = adapter
 
                     if (listado[0] == " ") {
                         buttonSiguiente!!.text = "Terminar"
                         final = true
                     }
-                }else{
+                } else {
                     parar = true
                     trabajoTimer.cancel()
                     fin(true)
                 }
             }
-            if(terminar2){
+            if (terminar2) {
                 //Añadir a firebase el dato del ultimo día trabajado de ejercicio
                 terminar()
                 terminar2 = false
@@ -553,7 +624,7 @@ class EjecutadorRutina : AppCompatActivity() {
         }
 
 
-        buttonAyuda!!.setOnClickListener{
+        buttonAyuda!!.setOnClickListener {
 
             val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
             val myScrollView: View = inflater.inflate(R.layout.ayuda_layout, null, false)
@@ -580,14 +651,7 @@ class EjecutadorRutina : AppCompatActivity() {
             progresDialog.dismiss()
 
 
-
-
-
-
-
         }
-
-
 
 
     }
@@ -608,11 +672,13 @@ class EjecutadorRutina : AppCompatActivity() {
             notificationManager.createNotificationChannel(channel)
         }
     }
+
     private fun notificacionTrabajarOtrosEjercicios() {
         val intent = Intent(this, CreadorRutinas::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         var builder = NotificationCompat.Builder(this, "Chanel1")
             .setSmallIcon(R.drawable.icon2)
             .setContentTitle("Sugerencia de rutina")
@@ -638,23 +704,27 @@ class EjecutadorRutina : AppCompatActivity() {
 
     private fun cargarVideo(ejercicio: String) {
         youtubeVideos.removeAllElements()
-        when(ejercicio){
-            "Sentadillas"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www" +
-                    ".youtube.com/embed/VRKdOsad3HQ\" frameborder=\"0\" allowfullscreen></iframe>"))
-            "Saltos de tijera"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/2P2_TjzqGLQ?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
-            "Elevación de talones"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/igRyr2jWRTs?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
-            "Abdominales"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/CwhxepX7aR8?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
-            "Plancha"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/OuFDY0fwlvk?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
-            "Escaladores"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/lD_gfTofg4A?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
-            "Dominadas"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/A2thchjoWkI?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
-            "Press de pecho"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/NfJqRwAlZY8?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
-            "Peso muerto"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/gBY5Se4apXc?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
-            "Punches"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/b0ZeY-j5T1w?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
-            "Dips de tríceps"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/EtPHEAOIxUU?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
-            "Press de hombros"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/UFKqIoAbUBg?controls=0&amp;start=9\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
-            "Elevaciones laterales"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/dT6Q3NHtSjw?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
-            "Flexiones"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/nOFk-PYAvwI?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
-            "Burpees"-> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/auBLPXO8Fww?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+        when (ejercicio) {
+            "Sentadillas" -> youtubeVideos.add(
+                youTubeVideos(
+                    "<iframe width=\"100%\" height=\"100%\" src=\"https://www" +
+                            ".youtube.com/embed/VRKdOsad3HQ\" frameborder=\"0\" allowfullscreen></iframe>"
+                )
+            )
+            "Saltos de tijera" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/2P2_TjzqGLQ?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+            "Elevación de talones" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/igRyr2jWRTs?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+            "Abdominales" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/CwhxepX7aR8?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+            "Plancha" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/OuFDY0fwlvk?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+            "Escaladores" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/lD_gfTofg4A?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+            "Dominadas" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/A2thchjoWkI?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+            "Press de pecho" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/NfJqRwAlZY8?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+            "Peso muerto" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/gBY5Se4apXc?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+            "Punches" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/b0ZeY-j5T1w?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+            "Dips de tríceps" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/EtPHEAOIxUU?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+            "Press de hombros" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/UFKqIoAbUBg?controls=0&amp;start=9\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+            "Elevaciones laterales" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/dT6Q3NHtSjw?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+            "Flexiones" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/nOFk-PYAvwI?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
+            "Burpees" -> youtubeVideos.add(youTubeVideos("<iframe width=\"100%\" height=\"100%\" src=\"https://www.youtube.com/embed/auBLPXO8Fww?controls=0\" title=\"YouTube video player\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>"))
         }
     }
 
@@ -666,7 +736,7 @@ class EjecutadorRutina : AppCompatActivity() {
                     textViewReloj!!.text = tiempoATexto()
 
                     //para las metas con tiempo
-                    if(duracion != "0") {
+                    if (duracion != "0") {
                         if (tiempoATexto() == duracion) { //al llegar al tiempo seleccionado
                             final = true
                             parar = true
@@ -681,7 +751,7 @@ class EjecutadorRutina : AppCompatActivity() {
         timer.scheduleAtFixedRate(trabajoTimer, 0, 1000)
     }
 
-    private fun tiempoATexto(): String{
+    private fun tiempoATexto(): String {
         val redondeo = tiempo.roundToInt()
         val horas = redondeo % 86400 / 3600
         val minutos = redondeo % 86400 % 3600 / 60
@@ -689,25 +759,33 @@ class EjecutadorRutina : AppCompatActivity() {
         return formatTime(horas, minutos, segundos)
     }
 
-    private fun formatTime (horas: Int, minutos: Int, segundos: Int): String {
-        return String.format("%02d", horas) + " : " + String.format("%02d",minutos) + " : " + String.format("%02d", segundos)
+    private fun formatTime(horas: Int, minutos: Int, segundos: Int): String {
+        return String.format("%02d", horas) + " : " + String.format(
+            "%02d",
+            minutos
+        ) + " : " + String.format("%02d", segundos)
     }
 
     @SuppressLint("SetTextI18n")
-    private fun fin(completado: Boolean){
-        if(num != -1) {
+    private fun fin(completado: Boolean) {
+        if (num != -1) {
             val redondeo = tiempo.roundToInt()
             val horas = redondeo % 86400 / 3600
             val minutos = redondeo % 86400 % 3600 / 60
             val segundos = redondeo % 86400 % 3600 % 60
 
             if (completado == true) { //en caso de SI completar la rutina
-                Toast.makeText(this, "Felicidades, completó la rutina!!", Toast.LENGTH_LONG).show() //se mandara mensaje de felicidades
+                Toast.makeText(this, "Felicidades, completó la rutina!!", Toast.LENGTH_LONG)
+                    .show() //se mandara mensaje de felicidades
 
                 xp += 1 //se le suma uno de experiencia
 
-                if(nivel == 3 && xp == 6){
-                    Toast.makeText(this, "Realizó la rutina 15 veces, le recomendamos trabajar otros ejercicios", Toast.LENGTH_LONG).show() //se mandara mensaje de felicidades
+                if (nivel == 3 && xp == 6) {
+                    Toast.makeText(
+                        this,
+                        "Realizó la rutina 15 veces, le recomendamos trabajar otros ejercicios",
+                        Toast.LENGTH_LONG
+                    ).show() //se mandara mensaje de felicidades
                     notificacionTrabajarOtrosEjercicios()
                 }
 
@@ -788,7 +866,8 @@ class EjecutadorRutina : AppCompatActivity() {
                         val id = j.split(" ").toTypedArray()[0] //toma el id
                         if (idRandom == id.toInt()) { //si esta el ejercicio en la rutina
                             val nombre = j.split(" | ").toTypedArray()[1] //va a tomar el nombre
-                            textViewActividadEnFoco!!.text = "" + nombre //y lo va a poner en la actividad en foco
+                            textViewActividadEnFoco!!.text =
+                                "" + nombre //y lo va a poner en la actividad en foco
                         }
                     }
 
@@ -803,14 +882,14 @@ class EjecutadorRutina : AppCompatActivity() {
             } else { //en caso que no
                 foto(puntos, horas, minutos, segundos)
             }
-        } else{
+        } else {
             if (completado == true) {
                 Toast.makeText(this, "Felicidades, completó la meta!!", Toast.LENGTH_LONG).show()
                 fotoMeta(nombre)
             }
 
         }
-        if(AlertaMostrado){
+        if (AlertaMostrado) {
 
         }
 
@@ -826,7 +905,7 @@ class EjecutadorRutina : AppCompatActivity() {
         val segundos = redondeo % 86400 % 3600 % 60
         val date = getCurrentDateTime()
         val dateInString = date.toString("yyyy/MM/dd")
-        MainActivity.user?.let{ usuario ->
+        MainActivity.user?.let { usuario ->
             db.collection("users").document(MainActivity.user!!).collection("tiempos2")
                 .document("currentDate").set(
                     hashMapOf(
@@ -835,11 +914,14 @@ class EjecutadorRutina : AppCompatActivity() {
                 )
         }
 
-        if(num != -1) {
+        if (num != -1) {
             foto(puntos, horas, minutos, segundos)
-        }else{
+        } else {
             mandarPuntos(16, horas, minutos, segundos)
-            val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
+            val intent = Intent(
+                this@EjecutadorRutina,
+                EjercicioActivity::class.java
+            ) // Cuando se termina te manda a los ejercicios
             startActivity(intent)
         }
     }
@@ -850,7 +932,7 @@ class EjecutadorRutina : AppCompatActivity() {
         alertaFoto.setTitle("Registro de entrenamiento") //Se ponen los textos para preguntar si quiere un ejercicio extra
         alertaFoto.setMessage("¿Deseas tomarte una foto como registro de ejercicio para la rutina $nombre?")
         //nombre como ruta para la rutina en firebase
-        alertaFoto.setPositiveButton("Si"){dialogInterface, i ->
+        alertaFoto.setPositiveButton("Si") { dialogInterface, i ->
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             //Hacer validacion de la toma de foto para analizar si ya existe una foto
 
@@ -859,7 +941,8 @@ class EjecutadorRutina : AppCompatActivity() {
 
             photofile = getPhotoFile("foto_${nombre}_1-")
 
-            val fileProvider = FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile)
+            val fileProvider =
+                FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile)
 
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
             if (takePictureIntent.resolveActivity(this.packageManager) != null) {
@@ -870,18 +953,27 @@ class EjecutadorRutina : AppCompatActivity() {
 
             mandarPuntos(puntos, horas, minutos, segundos)
         }
-        alertaFoto.setNegativeButton("No"){dialogInterface, i ->
+        alertaFoto.setNegativeButton("No") { dialogInterface, i ->
             dialogInterface.cancel()
 
             mandarPuntos(puntos, horas, minutos, segundos)
-            val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
+            val intent = Intent(
+                this@EjecutadorRutina,
+                EjercicioActivity::class.java
+            ) // Cuando se termina te manda a los ejercicios
             startActivity(intent)
         }
 
         alertaFoto.show()
     }
+
     @SuppressLint("SimpleDateFormat")
-    private fun mandarPuntos(puntos: Int, horasF: Int, minutosF: Int, segundosF: Int){ //F de finales
+    private fun mandarPuntos(
+        puntos: Int,
+        horasF: Int,
+        minutosF: Int,
+        segundosF: Int
+    ) { //F de finales
         puntosE += puntos
         puntosTotales += puntos
         puntosTotalesFun(false)
@@ -893,17 +985,17 @@ class EjecutadorRutina : AppCompatActivity() {
         minutosE += minutosF
         segundosE += segundosF
 
-        while(segundosE >= 60){
+        while (segundosE >= 60) {
             segundosE -= 60
             minutosE += 1
         }
 
-        while(minutosE >= 60){
+        while (minutosE >= 60) {
             minutosE -= 60
             horasE += 1
         }
 
-        MainActivity.user?.let{ usuario ->
+        MainActivity.user?.let { usuario ->
             db.collection("users").document(usuario).collection("tiempos")
                 .document(currentDate).set(
                     hashMapOf(
@@ -915,7 +1007,7 @@ class EjecutadorRutina : AppCompatActivity() {
                     )
                 )
         }
-        MainActivity.user?.let{ usuario ->
+        MainActivity.user?.let { usuario ->
             db.collection("users").document(usuario).collection("UltimaFechaTrabajada")
                 .document("UltimaFechaTrabajada").set(
                     hashMapOf(
@@ -930,7 +1022,8 @@ class EjecutadorRutina : AppCompatActivity() {
         val storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(fileName, ".jpg", storageDirectory)
     }
-    override  fun onActivityResult(
+
+    override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
         data: Intent?
@@ -938,7 +1031,8 @@ class EjecutadorRutina : AppCompatActivity() {
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
 //            val takenImage = data?.extras?.get("data") as Bitmap
             val takenImage = BitmapFactory.decodeFile(photofile.absolutePath)
-            val fileProvider = FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile)
+            val fileProvider =
+                FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile)
             uploadFile(fileProvider)
             // foto?.setImageBitmap(takenImage)
 
@@ -964,16 +1058,16 @@ class EjecutadorRutina : AppCompatActivity() {
             var storageRef = storage.reference
 
             var imagesRef: StorageReference? = storageRef.child("images")
-            var spaceRef = storageRef.child("UsersTakenPictures/$userID/Rutina_$nombre/${photofile.name}")
+            var spaceRef =
+                storageRef.child("UsersTakenPictures/$userID/Rutina_$nombre/${photofile.name}")
             val FotoSeparada = photofile.name.split("-").toTypedArray()
-           // Toast.makeText(this,"SEPARADA:${FotoSeparada[0]}",Toast.LENGTH_SHORT).show()
-            if(Ismeta){
-            listAllFilesMetas(userID,FotoSeparada[0],takenImage)
+            // Toast.makeText(this,"SEPARADA:${FotoSeparada[0]}",Toast.LENGTH_SHORT).show()
+            if (Ismeta) {
+                listAllFilesMetas(userID, FotoSeparada[0], takenImage)
+            } else {
+                listAllFiles(userID, FotoSeparada[0], takenImage)
             }
-            else{
-            listAllFiles(userID,FotoSeparada[0],takenImage)
-            }
-            if(num == -1) {
+            if (num == -1) {
                 BorrarMetaDelDia(2)
             }
             terminar()
@@ -1000,7 +1094,10 @@ class EjecutadorRutina : AppCompatActivity() {
             //Toast.makeText(this, "Subida", Toast.LENGTH_LONG).show()
         }
 
-        val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
+        val intent = Intent(
+            this@EjecutadorRutina,
+            EjercicioActivity::class.java
+        ) // Cuando se termina te manda a los ejercicios
         startActivity(intent)
     }
 
@@ -1013,24 +1110,28 @@ class EjecutadorRutina : AppCompatActivity() {
         listRef.listAll()
             .addOnSuccessListener { listResult ->
                 var Renombrar = false
-                var FotoFB =""
+                var FotoFB = ""
 
                 for (item in listResult.items) {
                     // All the items under listRef.
-                    val FotoFirebaseSeparada= (item.name.split("-").toTypedArray())
+                    val FotoFirebaseSeparada = (item.name.split("-").toTypedArray())
                     //Toast.makeText(this,"SEPARADA:${FotoFirebaseSeparada[0]}",Toast.LENGTH_SHORT).show()
 
                     var FotoFB = FotoFirebaseSeparada[0]
-                    if(FotoFB==name){
+                    if (FotoFB == name) {
                         //   Toast.makeText(this,"YA EXISTE UN ARCHIVO",Toast.LENGTH_SHORT).show()
-                        Renombrar=true
+                        Renombrar = true
                     }
 
                     // Toast.makeText(this,"Foto item:"+FotoFirebaseSeparada[0],Toast.LENGTH_SHORT).show()
                 }
-                if(Renombrar){
+                if (Renombrar) {
                     FotoFB = ("foto_${nombre}_2")
-                    Toast.makeText(this,"Se ha actualizado la foto de registro de actividad",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Se ha actualizado la foto de registro de actividad",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     var imageRef =
                         FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Rutina_$nombre/${FotoFB}")
                     imageRef.putFile(takenImage)
@@ -1041,8 +1142,7 @@ class EjecutadorRutina : AppCompatActivity() {
                         }
                         .addOnProgressListener { p0 ->
                         }
-                }
-                else{
+                } else {
                     val FotoListInicial = (photofile.name.split("-").toTypedArray())
                     val FotoInicial = FotoListInicial[0]
 
@@ -1051,7 +1151,8 @@ class EjecutadorRutina : AppCompatActivity() {
                     imageRef.putFile(takenImage)
                         .addOnSuccessListener { p0 ->
 
-                            Toast.makeText(applicationContext, "File Uploaded", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(applicationContext, "File Uploaded", Toast.LENGTH_SHORT)
+                                .show()
                             //  Toast.makeText(applicationContext, "${userID}", Toast.LENGTH_LONG).show()
 
                         }
@@ -1063,7 +1164,7 @@ class EjecutadorRutina : AppCompatActivity() {
             }
             .addOnFailureListener {
 
-                Toast.makeText(this,"No se que paso",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "No se que paso", Toast.LENGTH_SHORT).show()
             }
 
 
@@ -1075,7 +1176,7 @@ class EjecutadorRutina : AppCompatActivity() {
         alertaFoto.setTitle("Registro de entrenamiento") //Se ponen los textos para preguntar si quiere un ejercicio extra
         alertaFoto.setMessage("¿Deseas tomarte una foto como registro de ejercicio para la meta ${nombreMeta}?")
         //nombre como ruta para la rutina en firebase
-        alertaFoto.setPositiveButton("Si"){dialogInterface, i ->
+        alertaFoto.setPositiveButton("Si") { dialogInterface, i ->
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             //Hacer validacion de la toma de foto para analizar si ya existe una foto
             //Formato original de la foto
@@ -1083,25 +1184,30 @@ class EjecutadorRutina : AppCompatActivity() {
 
             photofile = getPhotoFile("foto_${nombreMeta}_1-")
             Ismeta = true
-            val fileProvider = FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile)
+            val fileProvider =
+                FileProvider.getUriForFile(this, "com.example.wildtracker.fileprovider", photofile)
 
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
             if (takePictureIntent.resolveActivity(this.packageManager) != null) {
                 startActivityForResult(takePictureIntent, REQUEST_CODE)
-                AlertaMostrado =true
+                AlertaMostrado = true
             } else {
                 Toast.makeText(this, "Unable to open camera", Toast.LENGTH_SHORT).show()
             }
 
             // mandarPuntos(puntos, horas, minutos, segundos)
         }
-        alertaFoto.setNegativeButton("No"){dialogInterface, i ->
+        alertaFoto.setNegativeButton("No") { dialogInterface, i ->
             dialogInterface.cancel()
-            if(num ==-1){            BorrarMetaDelDia(2)
+            if (num == -1) {
+                BorrarMetaDelDia(2)
             }
             terminar()
             // mandarPuntos(puntos, horas, minutos, segundos)
-            val intent = Intent(this@EjecutadorRutina, EjercicioActivity::class.java) // Cuando se termina te manda a los ejercicios
+            val intent = Intent(
+                this@EjecutadorRutina,
+                EjercicioActivity::class.java
+            ) // Cuando se termina te manda a los ejercicios
             startActivity(intent)
 
         }
@@ -1110,9 +1216,6 @@ class EjecutadorRutina : AppCompatActivity() {
 
 
     }
-
-
-
 
 
     fun listAllFilesMetas(userID: String, name: String, takenImage: Uri) {
@@ -1124,23 +1227,27 @@ class EjecutadorRutina : AppCompatActivity() {
         listRef.listAll()
             .addOnSuccessListener { listResult ->
                 var Renombrar = false
-                var FotoFB =""
+                var FotoFB = ""
                 for (item in listResult.items) {
                     // All the items under listRef.
-                    val FotoFirebaseSeparada= (item.name.split("-").toTypedArray())
+                    val FotoFirebaseSeparada = (item.name.split("-").toTypedArray())
                     //Toast.makeText(this,"SEPARADA:${FotoFirebaseSeparada[0]}",Toast.LENGTH_SHORT).show()
 
                     var FotoFB = FotoFirebaseSeparada[0]
-                    if(FotoFB==name){
+                    if (FotoFB == name) {
                         //   Toast.makeText(this,"YA EXISTE UN ARCHIVO",Toast.LENGTH_SHORT).show()
-                        Renombrar=true
+                        Renombrar = true
                     }
 
                     // Toast.makeText(this,"Foto item:"+FotoFirebaseSeparada[0],Toast.LENGTH_SHORT).show()
                 }
-                if(Renombrar){
+                if (Renombrar) {
                     FotoFB = ("foto_${nombre}_2")
-                    Toast.makeText(this,"Se ha actualizado la foto de registro de actividad",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Se ha actualizado la foto de registro de actividad",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     var imageRef =
                         FirebaseStorage.getInstance().reference.child("UsersTakenPictures/$userID/Meta_$nombre/${FotoFB}")
                     imageRef.putFile(takenImage)
@@ -1152,8 +1259,7 @@ class EjecutadorRutina : AppCompatActivity() {
                         }
                         .addOnProgressListener { p0 ->
                         }
-                }
-                else{
+                } else {
                     val FotoListInicial = (photofile.name.split("-").toTypedArray())
                     val FotoInicial = FotoListInicial[0]
 
@@ -1162,7 +1268,8 @@ class EjecutadorRutina : AppCompatActivity() {
                     imageRef.putFile(takenImage)
                         .addOnSuccessListener { p0 ->
 
-                            Toast.makeText(applicationContext, "File Uploaded", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(applicationContext, "File Uploaded", Toast.LENGTH_SHORT)
+                                .show()
                             //  Toast.makeText(applicationContext, "${userID}", Toast.LENGTH_LONG).show()
 
                         }
@@ -1174,12 +1281,11 @@ class EjecutadorRutina : AppCompatActivity() {
             }
             .addOnFailureListener {
 
-                Toast.makeText(this,"No se que paso",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "No se que paso", Toast.LENGTH_SHORT).show()
             }
 
 
     }
-
 
 
 }

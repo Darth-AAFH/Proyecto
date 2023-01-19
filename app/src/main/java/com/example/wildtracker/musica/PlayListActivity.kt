@@ -13,7 +13,6 @@ import androidx.core.view.get
 import androidx.core.view.size
 import androidx.core.widget.addTextChangedListener
 import com.example.wildtracker.R
-import com.example.wildtracker.musica.BroadcastMessage
 
 class PlayListActivity : AppCompatActivity() {
     private lateinit var playListBroadcastReceiver: PlayListActivityBroadcastReceiver
@@ -85,12 +84,14 @@ class PlayListActivity : AppCompatActivity() {
         currentSongTexView.isSelected = true
         currentSongTimeBarSeekBar = this.findViewById(R.id.current_song_time_bar_play_list)
 
-        currentSong = CurrentSong(0,
+        currentSong = CurrentSong(
+            0,
             intent.getIntExtra("CURRENT_SONG_LENGTH", 0),
             intent.getStringExtra("CURRENT_SONG_NAME").toString(),
             "",
             intent.getIntExtra("CURRENT_SONG_TIME", 0),
-            intent.getBooleanExtra("PLAYING", false))
+            intent.getBooleanExtra("PLAYING", false)
+        )
 
         val arrayListOfSongs = DataBase.getArrayOfSongs()
         if (arrayListOfSongs.isNullOrEmpty() || arrayListOfSongs[0] == null) {
@@ -109,8 +110,14 @@ class PlayListActivity : AppCompatActivity() {
             }
 
             playListView.post(Runnable {
-                updateCurrentSongInteger(currentSong.currentSongName, arrayListOfSongs.indexOf(currentSong.currentSongName))
-                playListView.setSelectionFromTop(currentSong.currentSongInteger, playListView.height / 2)
+                updateCurrentSongInteger(
+                    currentSong.currentSongName,
+                    arrayListOfSongs.indexOf(currentSong.currentSongName)
+                )
+                playListView.setSelectionFromTop(
+                    currentSong.currentSongInteger,
+                    playListView.height / 2
+                )
             })
 
             playListView.setOnScrollChangeListener { _, _, _, _, _ ->
@@ -127,12 +134,14 @@ class PlayListActivity : AppCompatActivity() {
                 if (currentSong.currentSongName != "") {
                     if (!currentSong.playing) {
                         sendBroadcastToService(BroadcastMessage.START_PLAYING)
-                        playButton.background = ContextCompat.getDrawable(this,
+                        playButton.background = ContextCompat.getDrawable(
+                            this,
                             R.drawable.baseline_play_arrow_white_48
                         )
                     } else {
                         sendBroadcastToService(BroadcastMessage.STOP_PLAYING)
-                        playButton.background = ContextCompat.getDrawable(this,
+                        playButton.background = ContextCompat.getDrawable(
+                            this,
                             R.drawable.baseline_pause_white_48
                         )
                     }
@@ -147,7 +156,8 @@ class PlayListActivity : AppCompatActivity() {
                 sendBroadcastToService(BroadcastMessage.NEXT_SONG)
             }
 
-            currentSongTimeBarSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            currentSongTimeBarSeekBar.setOnSeekBarChangeListener(object :
+                SeekBar.OnSeekBarChangeListener {
 
                 override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
 
@@ -159,7 +169,8 @@ class PlayListActivity : AppCompatActivity() {
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
                     var bundle = Bundle()
-                    currentSong.currentSongTime = ((currentSongTimeBarSeekBar.progress.toDouble() / 100.0) * currentSong.currentSongLength.toDouble()).toInt()
+                    currentSong.currentSongTime =
+                        ((currentSongTimeBarSeekBar.progress.toDouble() / 100.0) * currentSong.currentSongLength.toDouble()).toInt()
                     bundle.putInt("currentSongTime", currentSong.currentSongTime)
                     sendBroadcastToService(BroadcastMessage.SET_CURRENT_SONG_TIME, bundle)
                 }
@@ -190,15 +201,18 @@ class PlayListActivity : AppCompatActivity() {
         }
 
         if (currentSong.currentSongLength > 0) {
-            currentSongTimeBarSeekBar.progress = ((currentSong.currentSongTime.toFloat()  / currentSong.currentSongLength.toFloat()) * 100f).toInt()
+            currentSongTimeBarSeekBar.progress =
+                ((currentSong.currentSongTime.toFloat() / currentSong.currentSongLength.toFloat()) * 100f).toInt()
         }
 
         if (currentSong.playing) {
-            playButton.background = ContextCompat.getDrawable(this,
+            playButton.background = ContextCompat.getDrawable(
+                this,
                 R.drawable.baseline_pause_white_48
             )
         } else {
-            playButton.background = ContextCompat.getDrawable(this,
+            playButton.background = ContextCompat.getDrawable(
+                this,
                 R.drawable.baseline_play_arrow_white_48
             )
         }
@@ -236,8 +250,12 @@ class PlayListActivity : AppCompatActivity() {
                     } else if (broadcast == BroadcastMessage.UPDATE_ACTIVITY_VARIABLES_01.toString()) {
                         if (extras != null) {
                             currentSong.playing = extras.getBoolean("playing")
-                            updateCurrentSongInteger(extras.getString("currentSongName").toString(), extras.getInt("currentSongInteger"))
-                            currentSong.currentSongName = extras.getString("currentSongName").toString()
+                            updateCurrentSongInteger(
+                                extras.getString("currentSongName").toString(),
+                                extras.getInt("currentSongInteger")
+                            )
+                            currentSong.currentSongName =
+                                extras.getString("currentSongName").toString()
                             currentSong.currentSongLength = extras.getInt("currentSongLength")
                             listOfSongsSize = extras.getInt("listOfSongsSize")
                         }

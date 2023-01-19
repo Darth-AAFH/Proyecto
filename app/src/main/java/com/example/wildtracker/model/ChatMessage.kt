@@ -9,17 +9,19 @@ class ChatMessage(toString: String, displayName: String?) {
     var messageUser: String? = null
     var messageTime: Long = 0
 
-    fun ChatMessage(){
+    fun ChatMessage() {
 
     }
+
     @SuppressLint("NotConstructor")
-    fun ChatMessage(messageText: String, messageUser:String) {
+    fun ChatMessage(messageText: String, messageUser: String) {
         this.messageText = messageText
         this.messageUser = messageUser
 
         // Initialize to current time
-        messageTime =  Date().time
+        messageTime = Date().time
     }
+
     @JvmName("getMessageText1")
     fun getMessageText(): String? {
         return messageText

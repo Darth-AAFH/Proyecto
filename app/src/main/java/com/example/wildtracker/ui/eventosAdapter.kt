@@ -8,7 +8,8 @@ import android.widget.ArrayAdapter
 import com.example.wildtracker.R
 import kotlinx.android.synthetic.main.metasdiseno.view.*
 
-class eventosAdapter (private val mContext: Context, private val listaEventos: List<eventos>) : ArrayAdapter<eventos>(mContext, 0, listaEventos) {
+class eventosAdapter(private val mContext: Context, private val listaEventos: List<eventos>) :
+    ArrayAdapter<eventos>(mContext, 0, listaEventos) {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val layout = LayoutInflater.from(mContext).inflate(R.layout.eventosdiseno, parent, false)
         val evento = listaEventos[position]

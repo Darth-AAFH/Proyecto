@@ -2,13 +2,10 @@ package com.example.wildtracker.musica
 
 import android.graphics.Color
 import android.opengl.GLES20
-import android.opengl.GLES32.GL_QUADS
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 import java.nio.ShortBuffer
-import kotlin.math.abs
-import kotlin.math.sin
 
 class Rectangle {
     private var xPosition: Float = 0f
@@ -49,7 +46,7 @@ class Rectangle {
         verticesCount = verticesCoords.size / COORDS_PER_VERTEX
 
         drawListBuffer =
-            // (# of coordinate values * 2 bytes per short)
+                // (# of coordinate values * 2 bytes per short)
             ByteBuffer.allocateDirect(drawOrder.size * 2).run {
                 order(ByteOrder.nativeOrder())
                 asShortBuffer().apply {
@@ -109,7 +106,14 @@ class Rectangle {
             GLES20.glEnableVertexAttribArray(it)
 
             // Prepare the triangle coordinate data
-            GLES20.glVertexAttribPointer(it, COORDS_PER_VERTEX, GLES20.GL_FLOAT, false, COORDS_PER_VERTEX * 4, vertexBuffer)
+            GLES20.glVertexAttribPointer(
+                it,
+                COORDS_PER_VERTEX,
+                GLES20.GL_FLOAT,
+                false,
+                COORDS_PER_VERTEX * 4,
+                vertexBuffer
+            )
 
             // get handle to fragment shader's vColor member
             mColorHandle = GLES20.glGetUniformLocation(mProgram, "vColor").also { colorHandle ->
@@ -118,7 +122,12 @@ class Rectangle {
             }
 
 //            GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, verticesCount)
-            GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.size, GLES20.GL_UNSIGNED_SHORT, drawListBuffer)
+            GLES20.glDrawElements(
+                GLES20.GL_TRIANGLES,
+                drawOrder.size,
+                GLES20.GL_UNSIGNED_SHORT,
+                drawListBuffer
+            )
 
             GLES20.glDisableVertexAttribArray(it)
         }

@@ -23,7 +23,6 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.wildtracker.R
-import com.example.wildtracker.musica.Utils
 import java.io.File
 import java.util.Collections.shuffle
 
@@ -110,12 +109,14 @@ class mPlayerService : Service() {
         mediaSession = MediaSessionCompat(applicationContext, mPlayerService::class.java.simpleName)
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
         mediaSession.setMediaButtonReceiver(null)
-        mediaSession.setPlaybackState(PlaybackStateCompat.Builder().setActions(
-            PlaybackStateCompat.ACTION_PLAY or
-            PlaybackStateCompat.ACTION_PAUSE or
-            PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
-            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
-        ).build())
+        mediaSession.setPlaybackState(
+            PlaybackStateCompat.Builder().setActions(
+                PlaybackStateCompat.ACTION_PLAY or
+                        PlaybackStateCompat.ACTION_PAUSE or
+                        PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
+                        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+            ).build()
+        )
 
         mediaSession.setCallback(object : MediaSessionCompat.Callback() {
             override fun onPlay() {
@@ -267,7 +268,10 @@ class mPlayerService : Service() {
         }
     }
 
-    private fun play(songPath: String = currentSong.currentSongPath, songTime: Int = currentSong.currentSongTime) {
+    private fun play(
+        songPath: String = currentSong.currentSongPath,
+        songTime: Int = currentSong.currentSongTime
+    ) {
         Log.l("Play $songPath")
         if (getListOfSongs().isNullOrEmpty()) return
         setCurrentSongPath(songPath)
@@ -280,7 +284,11 @@ class mPlayerService : Service() {
                 mediaPlayer?.seekTo(songTime)
                 mediaPlayer?.start()
                 DataBase.setLastSongPlayed(currentSong.currentSongName)
-                Toast.makeText(this, getString(R.string.playing_song, currentSong.currentSongName), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.playing_song, currentSong.currentSongName),
+                    Toast.LENGTH_SHORT
+                ).show()
                 mediaPlayer?.setOnCompletionListener {
                     if (currentSong.currentSongTime > 0) {
                         next()
@@ -335,19 +343,23 @@ class mPlayerService : Service() {
     private fun updateCurrentSongInfo() {
         if (getListOfSongs() != null && getListOfSongs()?.isNotEmpty()!!
             && currentSong.currentSongInteger >= 0
-            && currentSong.currentSongInteger < getListOfSongs()?.size!!) {
+            && currentSong.currentSongInteger < getListOfSongs()?.size!!
+        ) {
             setCurrentSongName(getListOfSongs()?.get(currentSong.currentSongInteger)?.songName.toString())
-            setCurrentSongPath(String().plus(getListOfSongs()?.get(currentSong.currentSongInteger)?.path.toString())
-                .plus("/")
-                .plus(getListOfSongs()?.get(currentSong.currentSongInteger)?.songName)
-                .plus(".")
-                .plus(getListOfSongs()?.get(currentSong.currentSongInteger)?.format))
+            setCurrentSongPath(
+                String().plus(getListOfSongs()?.get(currentSong.currentSongInteger)?.path.toString())
+                    .plus("/")
+                    .plus(getListOfSongs()?.get(currentSong.currentSongInteger)?.songName)
+                    .plus(".")
+                    .plus(getListOfSongs()?.get(currentSong.currentSongInteger)?.format)
+            )
 
             if (getListOfSongs()?.get(currentSong.currentSongInteger)?.length!!.toInt() <= 0) {
                 try {
                     val metaRetriever = MediaMetadataRetriever()
                     metaRetriever.setDataSource(currentSong.currentSongPath)
-                    val durationString = metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                    val durationString =
+                        metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
                     var duration: Int = -1
                     if (durationString != null) {
                         duration = durationString.toInt()
@@ -368,14 +380,22 @@ class mPlayerService : Service() {
             visualizer.captureSize = Visualizer.getCaptureSizeRange()[0]
 
             visualizer.setDataCaptureListener(object : Visualizer.OnDataCaptureListener {
-                override fun onWaveFormDataCapture(visualizer: Visualizer?, waveform: ByteArray?, samplingRate: Int) {
+                override fun onWaveFormDataCapture(
+                    visualizer: Visualizer?,
+                    waveform: ByteArray?,
+                    samplingRate: Int
+                ) {
 
                 }
 
-                override fun onFftDataCapture(visualizer: Visualizer?, fft: ByteArray?, samplingRate: Int) {
+                override fun onFftDataCapture(
+                    visualizer: Visualizer?,
+                    fft: ByteArray?,
+                    samplingRate: Int
+                ) {
                     val bundle = Bundle()
-                    var spectrum = FloatArray(10) {
-                        i -> fft!![i].toFloat()
+                    var spectrum = FloatArray(10) { i ->
+                        fft!![i].toFloat()
                     }
 
                     spectrum = Utils.normalize(spectrum)
@@ -432,7 +452,8 @@ class mPlayerService : Service() {
                 Log.e("Folder does not exist! rootPath: $rootPath")
                 return
             }
-            val files: Array<File>? = rootFolder.listFiles() //here you will get NPE if directory doesn't contains any file. Handle it like this.
+            val files: Array<File>? =
+                rootFolder.listFiles() //here you will get NPE if directory doesn't contains any file. Handle it like this.
             if (!files.isNullOrEmpty()) {
                 for (file in files) {
                     if (file.isDirectory) {
@@ -440,7 +461,8 @@ class mPlayerService : Service() {
                     } else if (hasValidExtension(file.name)) {
 //                        Log.l("Song added to play list: " + file.name)
                         val fileName = file.name.substring(0, file.name.lastIndexOf("."))
-                        val fileFormat = file.name.substring(file.name.lastIndexOf(".") + 1, file.name.length)
+                        val fileFormat =
+                            file.name.substring(file.name.lastIndexOf(".") + 1, file.name.length)
                         val songFile = SongFile(rootPath, fileName, fileFormat, -1)
                         Log.l(
                             "Song added to play list. rootPath: " + rootPath
@@ -523,11 +545,13 @@ class mPlayerService : Service() {
                         mediaPlayer?.pause()
                         setCurrentSongName(extras?.getString("currentSongName").toString())
                         setCurrentSongInteger(getSongInteger(currentSong.currentSongName))
-                        setCurrentSongPath(getListOfSongs()?.get(currentSong.currentSongInteger)?.path!!.toString()
-                            .plus("/")
-                            .plus(currentSong.currentSongName)
-                            .plus(".")
-                            .plus(getListOfSongs()?.get(currentSong.currentSongInteger)?.format!!.toString()))
+                        setCurrentSongPath(
+                            getListOfSongs()?.get(currentSong.currentSongInteger)?.path!!.toString()
+                                .plus("/")
+                                .plus(currentSong.currentSongName)
+                                .plus(".")
+                                .plus(getListOfSongs()?.get(currentSong.currentSongInteger)?.format!!.toString())
+                        )
                         setCurrentSongTime(0)
                         play()
                     } else if (broadcast == BroadcastMessage.STOP_PLAYING.toString()) {
@@ -610,12 +634,17 @@ class mPlayerService : Service() {
         notificationName = resources.getString(R.string.app_name)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_LOW
-            val channel = NotificationChannel(serviceNotificationStringId, notificationName, importance).apply {
+            val channel = NotificationChannel(
+                serviceNotificationStringId,
+                notificationName,
+                importance
+            ).apply {
                 description = "descriptionText"
             }
             channel.setShowBadge(false)
             //Register the channel with the system
-            val notificationManager: NotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            val notificationManager: NotificationManager =
+                getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
             this.notificationManager = notificationManager
         }
@@ -625,7 +654,8 @@ class mPlayerService : Service() {
         val intent = Intent(this, mPlayerActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT
         }
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        intent.flags =
+            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
         notificationTitle = currentSong.currentSongName
@@ -636,7 +666,10 @@ class mPlayerService : Service() {
             .setContentTitle(notificationTitle)
             .setContentIntent(pendingIntent)
             .setAutoCancel(false)
-            .setStyle(androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(mediaSession.sessionToken))
+            .setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle()
+                    .setMediaSession(mediaSession.sessionToken)
+            )
 
         updateNotificationActions()
 
@@ -664,26 +697,53 @@ class mPlayerService : Service() {
         /** PREVIOUS **/
         val previousIntent = Intent()
         previousIntent.action = BroadcastMessage.PREVIOUS_SONG.toString()
-        val previousPendingIntent = PendingIntent.getBroadcast(this, 0, previousIntent,PendingIntent.FLAG_IMMUTABLE)
+        val previousPendingIntent =
+            PendingIntent.getBroadcast(this, 0, previousIntent, PendingIntent.FLAG_IMMUTABLE)
 
         /** PAUSE **/
         val playStopIntent = Intent()
         playStopIntent.action = BroadcastMessage.START_STOP_PLAYING_NOTIFICATION.toString()
-        var playStopPendingIntent = PendingIntent.getBroadcast(this, 0, playStopIntent, PendingIntent.FLAG_IMMUTABLE)
+        var playStopPendingIntent =
+            PendingIntent.getBroadcast(this, 0, playStopIntent, PendingIntent.FLAG_IMMUTABLE)
 
         /** PREVIOUS **/
         val nextIntent = Intent()
         nextIntent.action = BroadcastMessage.NEXT_SONG.toString()
-        val nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_IMMUTABLE)
+        val nextPendingIntent =
+            PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_IMMUTABLE)
 
         var listOfActions = ArrayList<NotificationCompat.Action>()
-        listOfActions.add(NotificationCompat.Action(R.drawable.baseline_skip_previous_white_36, "Previous", previousPendingIntent))
+        listOfActions.add(
+            NotificationCompat.Action(
+                R.drawable.baseline_skip_previous_white_36,
+                "Previous",
+                previousPendingIntent
+            )
+        )
         if (currentSong.playing) {
-            listOfActions.add(NotificationCompat.Action(R.drawable.baseline_pause_white_36, "Pause", playStopPendingIntent))
+            listOfActions.add(
+                NotificationCompat.Action(
+                    R.drawable.baseline_pause_white_36,
+                    "Pause",
+                    playStopPendingIntent
+                )
+            )
         } else {
-            listOfActions.add(NotificationCompat.Action(R.drawable.baseline_play_arrow_white_36, "Play", playStopPendingIntent))
+            listOfActions.add(
+                NotificationCompat.Action(
+                    R.drawable.baseline_play_arrow_white_36,
+                    "Play",
+                    playStopPendingIntent
+                )
+            )
         }
-        listOfActions.add(NotificationCompat.Action(R.drawable.baseline_skip_next_white_36, "Next", nextPendingIntent))
+        listOfActions.add(
+            NotificationCompat.Action(
+                R.drawable.baseline_skip_next_white_36,
+                "Next",
+                nextPendingIntent
+            )
+        )
 
         notification.mActions.clear()
         for (i in 0 until listOfActions.size step 1) {

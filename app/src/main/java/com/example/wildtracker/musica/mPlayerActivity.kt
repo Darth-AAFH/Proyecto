@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.wildtracker.R
-import com.example.wildtracker.musica.Utils
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlin.system.exitProcess
 
@@ -78,8 +77,10 @@ class mPlayerActivity : AppCompatActivity() {
     private val REQUEST_ID_MULTIPLE_PERMISSIONS: Int = 1
 
     private fun checkAndRequestPermissions(): Boolean {
-        val readExternalStoragePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-        val recordAudioPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+        val readExternalStoragePermission =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val recordAudioPermission =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
 
         val listPermissionsNeeded: MutableList<String> = ArrayList()
         if (readExternalStoragePermission != PackageManager.PERMISSION_GRANTED) {
@@ -90,13 +91,21 @@ class mPlayerActivity : AppCompatActivity() {
         }
 
         if (listPermissionsNeeded.isNotEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toTypedArray(), REQUEST_ID_MULTIPLE_PERMISSIONS)
+            ActivityCompat.requestPermissions(
+                this,
+                listPermissionsNeeded.toTypedArray(),
+                REQUEST_ID_MULTIPLE_PERMISSIONS
+            )
             return false
         }
         return true
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         Log.l("onRequestPermissionsResult, requestCode: $requestCode, permissions: $permissions, grantResults: $grantResults")
         when (requestCode) {
@@ -170,7 +179,8 @@ class mPlayerActivity : AppCompatActivity() {
 
         shuffleButton.setOnClickListener {
             if (shuffle) {
-                Toast.makeText(this, getString(R.string.shuffle_disabled), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.shuffle_disabled), Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 Toast.makeText(this, getString(R.string.shuffle_enabled), Toast.LENGTH_SHORT).show()
             }
@@ -180,7 +190,7 @@ class mPlayerActivity : AppCompatActivity() {
         showPlayListImageButton.setOnClickListener {
             this.onPause()
             intent = Intent(applicationContext, SettingsActivity::class.java)
-           // intent = Intent(applicationContext, PlayListActivity::class.java)
+            // intent = Intent(applicationContext, PlayListActivity::class.java)
             /*
             intent.putExtra("CURRENT_SONG_INTEGER", currentSong.currentSongInteger)
             intent.putExtra("PLAYING", currentSong.playing)
@@ -192,7 +202,8 @@ class mPlayerActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        currentSongTimeBarSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        currentSongTimeBarSeekBar.setOnSeekBarChangeListener(object :
+            SeekBar.OnSeekBarChangeListener {
 
             override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
 
@@ -204,7 +215,8 @@ class mPlayerActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 var bundle = Bundle()
-                currentSong.currentSongTime = ((currentSongTimeBarSeekBar.progress.toDouble() / 100.0) * currentSong.currentSongLength.toDouble()).toInt()
+                currentSong.currentSongTime =
+                    ((currentSongTimeBarSeekBar.progress.toDouble() / 100.0) * currentSong.currentSongLength.toDouble()).toInt()
                 bundle.putInt("currentSongTime", currentSong.currentSongTime)
                 sendBroadcastToService(BroadcastMessage.SET_CURRENT_SONG_TIME, bundle)
             }
@@ -227,7 +239,8 @@ class mPlayerActivity : AppCompatActivity() {
         currentSongLengthTexView.text =
             Utils.millisecondsToHoursMinutesAndSeconds(currentSong.currentSongLength)
         if (currentSong.currentSongLength > 0) {
-            currentSongTimeBarSeekBar.progress = ((currentSong.currentSongTime.toFloat()  / currentSong.currentSongLength.toFloat()) * 100f).toInt()
+            currentSongTimeBarSeekBar.progress =
+                ((currentSong.currentSongTime.toFloat() / currentSong.currentSongLength.toFloat()) * 100f).toInt()
         }
 
         if (currentSong.playing) {
@@ -243,7 +256,8 @@ class mPlayerActivity : AppCompatActivity() {
         }
 
         if (listOfSongsSize > 0) {
-            numberOfSongsTextView.text = getString(R.string.number_of_songs, listOfSongsSize.toString())
+            numberOfSongsTextView.text =
+                getString(R.string.number_of_songs, listOfSongsSize.toString())
         } else {
             numberOfSongsTextView.text = getString(R.string.number_of_songs, "0")
         }
@@ -278,13 +292,13 @@ class mPlayerActivity : AppCompatActivity() {
         exitProcess(-1)
     }
 
-   /* override fun onDestroy() {
-        Log.l("onDestroy $this")
-        super.onDestroy()
-        //If there is a Service running...
-        val serviceIntent = Intent(applicationContext, mPlayerService::class.java)
-        applicationContext.stopService(serviceIntent)
-    }*/
+    /* override fun onDestroy() {
+         Log.l("onDestroy $this")
+         super.onDestroy()
+         //If there is a Service running...
+         val serviceIntent = Intent(applicationContext, mPlayerService::class.java)
+         applicationContext.stopService(serviceIntent)
+     }*/
 
     private fun sendBroadcastToService(broadcastMessage: BroadcastMessage) {
         sendBroadcastToService(broadcastMessage, null)
@@ -325,9 +339,11 @@ class mPlayerActivity : AppCompatActivity() {
                         Log.l("mPlayerActivityLog:: UPDATE_ACTIVITY_VARIABLES_01")
                         if (extras != null) {
                             currentSong.playing = extras.getBoolean("playing")
-                            currentSong.currentSongPath = extras.getString("currentSongPath").toString()
+                            currentSong.currentSongPath =
+                                extras.getString("currentSongPath").toString()
                             currentSong.currentSongInteger = extras.getInt("currentSongInteger")
-                            currentSong.currentSongName = extras.getString("currentSongName").toString()
+                            currentSong.currentSongName =
+                                extras.getString("currentSongName").toString()
                             currentSong.currentSongLength = extras.getInt("currentSongLength")
                             listOfSongsSize = extras.getInt("listOfSongsSize")
                             shuffle = extras.getBoolean("shuffle")

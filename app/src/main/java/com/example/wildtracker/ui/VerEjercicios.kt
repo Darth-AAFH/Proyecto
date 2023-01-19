@@ -25,26 +25,27 @@ import kotlinx.android.synthetic.main.activity_ver_ejercicios.*
 
 class VerEjercicios : AppCompatActivity(), OnNavigationItemSelectedListener {
 
-    var listViewEjercicios: ListView?= null
+    var listViewEjercicios: ListView? = null
 
     var listaEjercicios = ArrayList<String>()
 
     var cadena = "["
 
-    private fun CargarTabla(){
-        for(i in MainActivity.listaEjercicios){
+    private fun CargarTabla() {
+        for (i in MainActivity.listaEjercicios) {
             val arreglo = i.split(" ").toTypedArray()
             val id = arreglo[0].toInt()
-            if(id > 15) {
+            if (id > 15) {
                 listaEjercicios.add(i)
             }
         }
 
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listaEjercicios)
+        val adapter: ArrayAdapter<String> =
+            ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listaEjercicios)
         listViewEjercicios!!.adapter = adapter //La tabla se adapta en la text view
 
 
-        if(MainActivity.listaEjercicios.size <= 15){
+        if (MainActivity.listaEjercicios.size <= 15) {
             textViewAyudaVerEj.visibility = View.VISIBLE
         }
     }
@@ -56,15 +57,16 @@ class VerEjercicios : AppCompatActivity(), OnNavigationItemSelectedListener {
         initNavigationView()
         listViewEjercicios = findViewById(R.id.listViewEjercicios)
 
-        if(!MainActivity.listaRutinas.isEmpty()) { //para tomar los ejercicios que se estan usando
+        if (!MainActivity.listaRutinas.isEmpty()) { //para tomar los ejercicios que se estan usando
             for (i in 0..MainActivity.listaRutinas.size - 1) {
-                cadena += MainActivity.listaRutinas[i].split(" | ").toTypedArray()[3] //agrega los ejercicios
+                cadena += MainActivity.listaRutinas[i].split(" | ")
+                    .toTypedArray()[3] //agrega los ejercicios
                 cadena += "," //y una coma
             }
         }
 
         var contador = 0
-        for(i in 0 until cadena.length){
+        for (i in 0 until cadena.length) {
             contador += 1
         }
         cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
@@ -75,32 +77,41 @@ class VerEjercicios : AppCompatActivity(), OnNavigationItemSelectedListener {
         CargarTabla()
         Toast.makeText(this, "Click para editar ejercicio", Toast.LENGTH_SHORT).show()
 
-        listViewEjercicios!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
-            val num = MainActivity.listaEjercicios[position+15].split(" | ").toTypedArray()[0]
-            var validadorEdicion = true
+        listViewEjercicios!!.onItemClickListener =
+            OnItemClickListener { parent, view, position, id ->
+                val num = MainActivity.listaEjercicios[position + 15].split(" | ").toTypedArray()[0]
+                var validadorEdicion = true
 
-            for(i in arreglo){ //lo compara con todos los ejercicios de las rutinas
-                if(num == i){ //si está en una rutina
-                    validadorEdicion = false //no lo podra editar
+                for (i in arreglo) { //lo compara con todos los ejercicios de las rutinas
+                    if (num == i) { //si está en una rutina
+                        validadorEdicion = false //no lo podra editar
+                    }
+                }
+
+                if (validadorEdicion) {
+                    val nombre =
+                        MainActivity.listaEjercicios[position + 15].split(" | ").toTypedArray()[1]
+                    val tipo =
+                        MainActivity.listaEjercicios[position + 15].split(" | ").toTypedArray()[2]
+                    val peso =
+                        MainActivity.listaEjercicios[position + 15].split(" | ").toTypedArray()[3]
+
+                    val intent = Intent(this@VerEjercicios, EditorEjercicios::class.java)
+                    intent.putExtra("Num", num)
+                    intent.putExtra("Nombre", nombre)
+                    intent.putExtra("Tipo", tipo)
+                    intent.putExtra("Peso", peso)
+                    startActivity(intent)
+                } else {
+                    Toast.makeText(
+                        this,
+                        "No se puede editar un ejercicio que esta siendo utilizado en una rutina",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
-
-            if(validadorEdicion) {
-                val nombre = MainActivity.listaEjercicios[position+15].split(" | ").toTypedArray()[1]
-                val tipo = MainActivity.listaEjercicios[position+15].split(" | ").toTypedArray()[2]
-                val peso = MainActivity.listaEjercicios[position+15].split(" | ").toTypedArray()[3]
-
-                val intent = Intent(this@VerEjercicios, EditorEjercicios::class.java)
-                intent.putExtra("Num", num)
-                intent.putExtra("Nombre", nombre)
-                intent.putExtra("Tipo", tipo)
-                intent.putExtra("Peso", peso)
-                startActivity(intent)
-            }else{
-                Toast.makeText(this, "No se puede editar un ejercicio que esta siendo utilizado en una rutina", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
+
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         toolbar.title = "Lista Ejercicios"
@@ -143,11 +154,11 @@ class VerEjercicios : AppCompatActivity(), OnNavigationItemSelectedListener {
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            R.id.nav_musica ->callMusica()
-            R.id.nav_amigos ->callAmigosActivity()
-            R.id.Settings->callAjustesActivity()
-            R.id.nav_seguimiento->callSeguimientoActivity()
-            R.id.nav_solicitudes-> callSolicitudesActivity()
+            R.id.nav_musica -> callMusica()
+            R.id.nav_amigos -> callAmigosActivity()
+            R.id.Settings -> callAjustesActivity()
+            R.id.nav_seguimiento -> callSeguimientoActivity()
+            R.id.nav_solicitudes -> callSolicitudesActivity()
 
         }
 
@@ -155,25 +166,32 @@ class VerEjercicios : AppCompatActivity(), OnNavigationItemSelectedListener {
 
         return true
     }
+
     private fun callSolicitudesActivity() {
         val intent = Intent(this, SolicitudesActivity::class.java)
-        startActivity(intent)    }
+        startActivity(intent)
+    }
+
     private fun callRankingActivity() {
         val intent = Intent(this, RankingActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
     }
+
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
     }
+
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
@@ -229,6 +247,7 @@ class VerEjercicios : AppCompatActivity(), OnNavigationItemSelectedListener {
         //Cierra sesion y manda devuelta al login
         deleteAppData()
     }
+
     private fun deleteAppData() {
         try {
             // clearing app data

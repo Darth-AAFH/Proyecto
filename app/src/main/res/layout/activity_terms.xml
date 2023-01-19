@@ -2,45 +2,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/blue">
+    android:background="@color/blue"
+    android:orientation="vertical">
 
     <Toolbar
         android:id="@+id/toolbar_terms"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:title="@string/bar_title_terms"
-        />
+        android:title="@string/bar_title_terms" />
+
     <TextView
         android:id="@+id/tvTerms1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:layout_marginTop="20dp"
         android:text="@string/terms1"
         android:textColor="@color/black"
-        android:textSize="12sp"
-        android:layout_margin="8dp"
-        />
+        android:textSize="12sp" />
+
     <TextView
         android:id="@+id/tvTerms2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:layout_marginTop="20dp"
         android:text="@string/terms2"
         android:textColor="@color/black"
-        android:textSize="12sp"
-        android:layout_margin="8dp"
-        />
+        android:textSize="12sp" />
+
     <TextView
         android:id="@+id/tvTerms3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:layout_marginTop="20dp"
         android:text="@string/terms3"
         android:textColor="@color/black"
-        android:textSize="12sp"
-        android:layout_margin="8dp"
-        />
+        android:textSize="12sp" />
 
 
 </LinearLayout>

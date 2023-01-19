@@ -39,23 +39,27 @@ import java.util.*
 
 class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    var listViewRutinas2: ListView?= null
-    var listViewRutinas3: ListView?= null
-    var textViewRutina: TextView?= null
-    var buttonIniciar: Button?= null
+    var listViewRutinas2: ListView? = null
+    var listViewRutinas3: ListView? = null
+    var textViewRutina: TextView? = null
+    var buttonIniciar: Button? = null
 
     private val db = FirebaseFirestore.getInstance()
-    var num = 0; var nombre  = ""; var xp: Int? = null
-    var nombreRutina =""
+    var num = 0;
+    var nombre = "";
+    var xp: Int? = null
+    var nombreRutina = ""
     var fecha = ""
-    var dia = 0; var mes = 0; var ano = 0
+    var dia = 0;
+    var mes = 0;
+    var ano = 0
     var meta = ""
     var tiempo = ""
 
-    private fun CargarUltimasFechasDeMetas(opcion: Int): Array<String?>{
+    private fun CargarUltimasFechasDeMetas(opcion: Int): Array<String?> {
         var cadena = "["
 
-        if(opcion == 1) {
+        if (opcion == 1) {
             if (!MainActivity.listaMetasAllDates.isEmpty()) { //para tomar las ultimas fechas trabajadas de las metas
                 for (i in 0..MainActivity.listaMetasAllDates.size - 1) {
                     cadena += MainActivity.listaMetasAllDates[i]// agrega las fechas
@@ -68,7 +72,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 }
                 cadena = cadena.substring(1, contador - 1) //quita el '[' y la última coma
             }
-        }else{
+        } else {
             if (!MainActivity.listaMetasDates.isEmpty()) { //para tomar las ultimas fechas trabajadas de las metas
                 for (i in 0..MainActivity.listaMetasDates.size - 1) {
                     cadena += MainActivity.listaMetasDates[i]// agrega las fechas
@@ -89,9 +93,9 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return arreglo
     }
 
-    private fun CargarListas(){
+    private fun CargarListas() {
         //ayuda a organizar las listas de rutinas y los ejercicios
-        if(MainActivity.validadorAcomodo){ //esto debe ir en plantillas y ejercicios
+        if (MainActivity.validadorAcomodo) { //esto debe ir en plantillas y ejercicios
             MainActivity.listaRutinas = MainActivity.listaRutinas1
             MainActivity.listaRutinas.addAll(MainActivity.listaRutinas2)
             MainActivity.listaEjercicios = MainActivity.listaEjercicios1
@@ -112,22 +116,29 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinasVista)
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_list_item_1,
+            MainActivity.listaRutinasVista
+        )
         listViewRutinas2!!.setAdapter(adapter) //La tabla se adapta en la text view
 
-        val adapter2: ArrayAdapter<String> = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, MainActivity.listaRutinasATrabajar + MainActivity.listaMetas)
+        val adapter2: ArrayAdapter<String> = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_list_item_1,
+            MainActivity.listaRutinasATrabajar + MainActivity.listaMetas
+        )
         listViewRutinas3!!.adapter = adapter2 //La tabla se adapta en la text view
 
-        if(MainActivity.listaRutinasATrabajar.isEmpty() && MainActivity.listaMetas.isEmpty()){
+        if (MainActivity.listaRutinasATrabajar.isEmpty() && MainActivity.listaMetas.isEmpty()) {
             textViewAyudaEj2.setVisibility(View.VISIBLE)
-        }
-        else{
+        } else {
             //
-           // NotificacionRutinaPendiente()
+            // NotificacionRutinaPendiente()
             NotificacionRutinaPen()
         }
 
-        if(MainActivity.listaRutinas.isEmpty()){
+        if (MainActivity.listaRutinas.isEmpty()) {
             textViewAyudaEj1.setVisibility(View.VISIBLE)
         }
     }
@@ -136,7 +147,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val intent = Intent(this, EjercicioActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         var builder = NotificationCompat.Builder(this, "Chanel1")
             .setSmallIcon(R.drawable.icon2)
             .setContentTitle("Recordatorio")
@@ -150,11 +162,13 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         }
 
     }
+
     private fun NotificacionSinEjercicio3Dias() {
         val intent = Intent(this, EjercicioActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         var builder = NotificationCompat.Builder(this, "Chanel1")
             .setSmallIcon(R.drawable.icon2)
             .setContentTitle("Recordatorio")
@@ -194,11 +208,17 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         sdf = SimpleDateFormat("yyyy")
         val anoHoy2 = sdf.format(Date()) //se obiene el año actual
 
-        val diaHoy = diaHoy2.toInt(); val mesHoy = mesHoy2.toInt(); val anoHoy = anoHoy2.toInt()
+        val diaHoy = diaHoy2.toInt();
+        val mesHoy = mesHoy2.toInt();
+        val anoHoy = anoHoy2.toInt()
 
-        var diaNot = diaHoy - 14; var mesNot = mesHoy; var anoNot = anoHoy
+        var diaNot = diaHoy - 14;
+        var mesNot = mesHoy;
+        var anoNot = anoHoy
 
-        var dia = 0; var mes = 0; var ano = 0
+        var dia = 0;
+        var mes = 0;
+        var ano = 0
         var contador = -1
 
         var mandarNot = false
@@ -222,7 +242,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
         }
 
-        if(ultimasFechas[0] != "[") {
+        if (ultimasFechas[0] != "[") {
             for (i in ultimasFechas) { //recorre las ultimas fechas trabajadas de la meta
                 contador += 1
                 dia = ultimasFechas[contador]!!.split("-").toTypedArray()[0].toInt()
@@ -234,14 +254,15 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
                     //borrar meta de listas: all dates, all metas
                     var posicion: Int
-                    posicion = MainActivity.listaMetasAllDates.indexOf(dia.toString()+"-"+mes.toString()+"-"+ano.toString())
+                    posicion =
+                        MainActivity.listaMetasAllDates.indexOf(dia.toString() + "-" + mes.toString() + "-" + ano.toString())
                     MainActivity.listaMetasAllDates.removeAt(posicion)
                     MainActivity.listaAllMetas.removeAt(posicion)
                 }
             }
         }
 
-        if(mandarNot){
+        if (mandarNot) {
             Toast.makeText(this, "Tienes metas pendientes a caducar", Toast.LENGTH_SHORT).show()
             //NotificacionNoHasAvanzado2Semanas()
             NotificacionNoHasAvanzado()
@@ -257,11 +278,17 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         sdf = SimpleDateFormat("yyyy")
         val anoHoy2 = sdf.format(Date()) //se obiene el año actual
 
-        val diaHoy = diaHoy2.toInt(); val mesHoy = mesHoy2.toInt(); val anoHoy = anoHoy2.toInt()
+        val diaHoy = diaHoy2.toInt();
+        val mesHoy = mesHoy2.toInt();
+        val anoHoy = anoHoy2.toInt()
 
-        var diaNot = diaHoy - 21; var mesNot = mesHoy; var anoNot = anoHoy
+        var diaNot = diaHoy - 21;
+        var mesNot = mesHoy;
+        var anoNot = anoHoy
 
-        var dia = 0; var mes = 0; var ano = 0
+        var dia = 0;
+        var mes = 0;
+        var ano = 0
 
         var mandarNot = false
 
@@ -284,9 +311,10 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
         }
 
-        if(ultimasFechas[0] != "[") {
+        if (ultimasFechas[0] != "[") {
             for (i in ultimasFechas) { //recorre las ultimas fechas trabajadas de la meta
-                dia = i!!.split("-").toTypedArray()[0].toInt() //el ultimo dia trabajado de todas las metas
+                dia = i!!.split("-")
+                    .toTypedArray()[0].toInt() //el ultimo dia trabajado de todas las metas
                 mes = i!!.split("-").toTypedArray()[1].toInt()
                 ano = i!!.split("-").toTypedArray()[2].toInt()
 
@@ -297,7 +325,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     var cadena = ""
 
                     var posicion: Int
-                    posicion = MainActivity.listaMetasAllDates.indexOf(dia.toString()+"-"+mes.toString()+"-"+ano.toString())
+                    posicion =
+                        MainActivity.listaMetasAllDates.indexOf(dia.toString() + "-" + mes.toString() + "-" + ano.toString())
                     MainActivity.listaMetasAllDates.removeAt(posicion)
                     cadena = MainActivity.listaAllMetas[posicion] //toma la meta que se va a borrar
                     MainActivity.listaAllMetas.removeAt(posicion)
@@ -305,7 +334,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
                     //borrar lista metas, metas dates, y de la base de datos
                     var arreglo = CargarUltimasFechasDeMetas(2)
-                    if(arreglo[0] != "[") {
+                    if (arreglo[0] != "[") {
                         for (j in arreglo) { //para borrar la meta de las listas y de la base de datos
                             val dia2 = j!!.split("-")
                                 .toTypedArray()[0].toInt() //el ultimo dia trabajado de las metas que se hace hoy
@@ -322,16 +351,18 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     }
 
                     //borra la meta de la base de datos
-                    if(cadena != "") {
+                    if (cadena != "") {
                         cadena = cadena!!.split(" | ").toTypedArray()[0]
 
-                        MainActivity.user?.let{ usuario ->
-                            db.collection("users").document(usuario).collection("metas").document(cadena).delete()
+                        MainActivity.user?.let { usuario ->
+                            db.collection("users").document(usuario).collection("metas")
+                                .document(cadena).delete()
                         }
                     }
 
                     //borra meta de la lista de vista (las que se muestran en seguimiento) y lista metas vista fechas
-                    posicion = MainActivity.listaMetasVistaDates.indexOf(dia.toString()+"-"+mes.toString()+"-"+ano.toString())
+                    posicion =
+                        MainActivity.listaMetasVistaDates.indexOf(dia.toString() + "-" + mes.toString() + "-" + ano.toString())
                     MainActivity.listaMetasVistaDates.removeAt(posicion)
                     MainActivity.listaMetasVista.removeAt(posicion)
 
@@ -340,8 +371,12 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
         }
 
-        if(mandarNot){
-            Toast.makeText(this, "Se ha borrado una meta que no se trabajaba en 3 semanas", Toast.LENGTH_SHORT).show()
+        if (mandarNot) {
+            Toast.makeText(
+                this,
+                "Se ha borrado una meta que no se trabajaba en 3 semanas",
+                Toast.LENGTH_SHORT
+            ).show()
             //Notificacion se ha borrado meta
             //NotificacionRutinaBorrada()
             NotificacionRutinaEliminada(nombreRutina)
@@ -349,6 +384,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     private lateinit var drawer: DrawerLayout
+
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -361,7 +397,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         listViewRutinas2 = findViewById(R.id.listViewRutinas2)
         listViewRutinas3 = findViewById(R.id.listViewRutinas3)
         textViewRutina = findViewById(R.id.textViewRutina)
-        buttonIniciar = findViewById(R.id.buttonIniciar); buttonIniciar!!.visibility = View.INVISIBLE; buttonIniciar!!.isEnabled =
+        buttonIniciar = findViewById(R.id.buttonIniciar); buttonIniciar!!.visibility =
+            View.INVISIBLE; buttonIniciar!!.isEnabled =
             false
 
         Toast.makeText(this, "Seleccione la rutina", Toast.LENGTH_SHORT).show()
@@ -373,32 +410,34 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             nombre = MainActivity.listaRutinas[position].split(" | ").toTypedArray()[1]
             fecha = "0"; tiempo = "0"
 
-            textViewRutina!!.setText("Rutina seleccionada: "+nombre)
+            textViewRutina!!.setText("Rutina seleccionada: " + nombre)
 
             buttonIniciar!!.visibility = View.VISIBLE; buttonIniciar!!.isEnabled = true
 
             var idRutina: Int
             MainActivity.user?.let { usuario -> //abre la base de datos
-                db.collection("users").document(usuario).collection("rutinas").get().addOnSuccessListener {
-                    for(rutinas in it){ //para cada rutina
-                        idRutina = (rutinas.get("id") as Long).toInt() //toma el id de la rutina
-                        if(idRutina == num){ //al encontrar la seleccionada
-                            xp = (rutinas.get("xp") as Long).toInt() //guardara la xp que tiene
+                db.collection("users").document(usuario).collection("rutinas").get()
+                    .addOnSuccessListener {
+                        for (rutinas in it) { //para cada rutina
+                            idRutina = (rutinas.get("id") as Long).toInt() //toma el id de la rutina
+                            if (idRutina == num) { //al encontrar la seleccionada
+                                xp = (rutinas.get("xp") as Long).toInt() //guardara la xp que tiene
+                            }
                         }
                     }
-                }
             }
         }
 
         listViewRutinas3!!.onItemClickListener = OnItemClickListener { parent, view, position, id ->
             var aux = ""
 
-            if(MainActivity.listaRutinasATrabajar.isEmpty()) {
+            if (MainActivity.listaRutinasATrabajar.isEmpty()) {
                 aux = MainActivity.listaMetas[position].split(" | ").toTypedArray()[2]
-            }else{
-                if(MainActivity.listaMetas.isEmpty()){
-                    aux = MainActivity.listaRutinasATrabajar[position].split(" | ").toTypedArray()[2]
-                }else{
+            } else {
+                if (MainActivity.listaMetas.isEmpty()) {
+                    aux =
+                        MainActivity.listaRutinasATrabajar[position].split(" | ").toTypedArray()[2]
+                } else {
                     var listaAux = MainActivity.listaRutinasATrabajar + MainActivity.listaMetas
                     aux = listaAux[position].split(" | ").toTypedArray()[2]
                 }
@@ -407,30 +446,35 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             val arreglo: Array<String?>
             arreglo = aux.split(" ").toTypedArray()
 
-            if(arreglo[0].toString() == "Fecha:"){ //para identificar a las rutinas unicas
-                num = MainActivity.listaRutinasATrabajar[position].split(" ").toTypedArray()[0].toInt()
+            if (arreglo[0].toString() == "Fecha:") { //para identificar a las rutinas unicas
+                num = MainActivity.listaRutinasATrabajar[position].split(" ")
+                    .toTypedArray()[0].toInt()
                 nombre = MainActivity.listaRutinasATrabajar[position].split(" | ").toTypedArray()[1]
-                fecha = MainActivity.listaRutinasATrabajar[position].split("Fecha: ").toTypedArray()[1]
+                fecha =
+                    MainActivity.listaRutinasATrabajar[position].split("Fecha: ").toTypedArray()[1]
                 tiempo = "0"
 
-                textViewRutina!!.text = "Rutina seleccionada: "+nombre
+                textViewRutina!!.text = "Rutina seleccionada: " + nombre
 
                 buttonIniciar!!.visibility = View.VISIBLE; buttonIniciar!!.isEnabled = true
 
                 var idRutina: Int
                 MainActivity.user?.let { usuario -> //abre la base de datos
-                    db.collection("users").document(usuario).collection("rutinas").get().addOnSuccessListener {
-                        for(rutinas in it){ //para cada rutina
-                            idRutina = (rutinas.get("id") as Long).toInt() //toma el id de la rutina
-                            if(idRutina == num){ //al encontrar la seleccionada
-                                xp = (rutinas.get("xp") as Long).toInt() //guardara la xp que tiene
+                    db.collection("users").document(usuario).collection("rutinas").get()
+                        .addOnSuccessListener {
+                            for (rutinas in it) { //para cada rutina
+                                idRutina =
+                                    (rutinas.get("id") as Long).toInt() //toma el id de la rutina
+                                if (idRutina == num) { //al encontrar la seleccionada
+                                    xp =
+                                        (rutinas.get("xp") as Long).toInt() //guardara la xp que tiene
+                                }
                             }
                         }
-                    }
                 }
-            }else{ //para las metas
+            } else { //para las metas
                 var numDif = 0
-                if(!MainActivity.listaRutinasATrabajar.isEmpty()){ //en caso de que haya una rutina agragara un numero para cambiar la posicion de la lista (esto pq hay dos listas mostrandose)
+                if (!MainActivity.listaRutinasATrabajar.isEmpty()) { //en caso de que haya una rutina agragara un numero para cambiar la posicion de la lista (esto pq hay dos listas mostrandose)
                     numDif = 1
                 }
                 nombre = MainActivity.listaMetas[position - numDif].split(" | ").toTypedArray()[0]
@@ -438,35 +482,38 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
                 num = -1; xp = 0; fecha = "0"
 
-                if(arreglo[0].toString() == "Completar:") { //para tomar el tiempo (en caso de que la meta sea por tiempo)
-                    var minutos: Int; var horas = 0
-                    var minutosAux: String; var horasAux: String
+                if (arreglo[0].toString() == "Completar:") { //para tomar el tiempo (en caso de que la meta sea por tiempo)
+                    var minutos: Int;
+                    var horas = 0
+                    var minutosAux: String;
+                    var horasAux: String
 
                     tiempo = aux.split("Completar: ").toTypedArray()[1] //toma solo los tiempos
 
-                    if(tiempo.length <= 5){ //si hay menos de 5 caracteres
+                    if (tiempo.length <= 5) { //si hay menos de 5 caracteres
                         minutos = tiempo.split("min").toTypedArray()[0].toInt() //toma los minutos
-                    }else {
+                    } else {
                         horasAux = tiempo.split(" ").toTypedArray()[0] //separa las horas y minutos
                         minutosAux = tiempo.split(" ").toTypedArray()[1]
-                        horas = horasAux.split("hr").toTypedArray()[0].toInt() //y los toma de manera separada
+                        horas = horasAux.split("hr")
+                            .toTypedArray()[0].toInt() //y los toma de manera separada
                         minutos = minutosAux.split("min").toTypedArray()[0].toInt()
                     }
 
                     //forma la cadena de texto que enviará a ejercicios
-                    if(horas == 0){ //comienza con las horas
+                    if (horas == 0) { //comienza con las horas
                         tiempo = "00 : "
-                    }else{
-                        if(horas < 10){
+                    } else {
+                        if (horas < 10) {
                             tiempo = "0" + horas.toString() + " : "
-                        }else{
+                        } else {
                             tiempo = horas.toString() + " : "
                         }
                     }
 
-                    if(minutos < 10){ //y despues con los minutos
+                    if (minutos < 10) { //y despues con los minutos
                         tiempo += "0" + minutos.toString() + " : 00"
-                    }else{
+                    } else {
                         tiempo += minutos.toString() + " : 00"
                     }
                 }
@@ -482,13 +529,13 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 mes = mesHoy.toInt()
                 ano = anoHoy.toInt()
 
-                textViewRutina!!.text = "Meta seleccionada: "+nombre
+                textViewRutina!!.text = "Meta seleccionada: " + nombre
 
                 buttonIniciar!!.visibility = View.VISIBLE; buttonIniciar!!.isEnabled = true
             }
         }
 
-        buttonIniciar!!.setOnClickListener{
+        buttonIniciar!!.setOnClickListener {
             val intent = Intent(this@EjercicioActivity, EjecutadorRutina::class.java)
             intent.putExtra("Num", num)
             intent.putExtra("Nombre", nombre)
@@ -505,40 +552,46 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun validarUltimoDía() {
 
-        db.collection("users").document(MainActivity.user!!).collection("UltimaFechaTrabajada").get().addOnSuccessListener { result ->
-            var UltimaFechaTrabajada ="09-05-2002"
+        db.collection("users").document(MainActivity.user!!).collection("UltimaFechaTrabajada")
+            .get().addOnSuccessListener { result ->
+            var UltimaFechaTrabajada = "09-05-2002"
             for (document in result) {
                 UltimaFechaTrabajada = document.get("UltimaFechaTrabajada").toString()
-                Toast.makeText(this,"UltimaFecha=$UltimaFechaTrabajada",Toast.LENGTH_LONG).show()
+                // Toast.makeText(this,"UltimaFecha=$UltimaFechaTrabajada",Toast.LENGTH_LONG).show()
             }
-           // var StringToDate= LocalDate.parse(UltimaFechaTrabajada, DateTimeFormatter.ISO_DATE)
+            // var StringToDate= LocalDate.parse(UltimaFechaTrabajada, DateTimeFormatter.ISO_DATE)
             var string = UltimaFechaTrabajada
-            val format = DateTimeFormatter.ofPattern("dd-M-yyyy")
-            var date: LocalDate = getDateFromString(string, format)
+            try {
+                val format = DateTimeFormatter.ofPattern("dd-M-yyyy")
+                var date: LocalDate = getDateFromString(string, format)
 
-            var dias3futuro: LocalDate= date.plusDays(3) //Fecha en localdate autosetear alarma con 3 dias ?
-            /*Log.d("Futuro", dias3futuro.toString())
 
-            val formatters = DateTimeFormatter.ofPattern("dd-M-yyyy")
-            val FechaFutura = dias3futuro.format(formatters) //Fecha en formato dd-m-yyyy
+                var dias3futuro: LocalDate =
+                    date.plusDays(3) //Fecha en localdate autosetear alarma con 3 dias ?
+                /*Log.d("Futuro", dias3futuro.toString())
 
-            val sdf = SimpleDateFormat("dd-M-yyyy")
-            val currentDate = sdf.format(Date())
+                val formatters = DateTimeFormatter.ofPattern("dd-M-yyyy")
+                val FechaFutura = dias3futuro.format(formatters) //Fecha en formato dd-m-yyyy
 
-            Log.d("Futuro2",FechaFutura.toString())
-            if(currentDate == UltimaFechaTrabajada){
-                Toast.makeText(this,"MismaFecha",Toast.LENGTH_SHORT).show()
+                val sdf = SimpleDateFormat("dd-M-yyyy")
+                val currentDate = sdf.format(Date())
+
+                Log.d("Futuro2",FechaFutura.toString())
+                if(currentDate == UltimaFechaTrabajada){
+                    Toast.makeText(this,"MismaFecha",Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    Toast.makeText(this,"No es la misma fecha",Toast.LENGTH_SHORT).show()
+
+                }
+                //Setear alarma en 3 dia*/
+                Log.d("UltimoDia", dias3futuro.toString())
+                if (dias3futuro.toString() != "2002-05-12") {
+                    Notificacion3Dias(dias3futuro)
+                }
+            } catch (e: Exception) {
+
             }
-            else{
-                Toast.makeText(this,"No es la misma fecha",Toast.LENGTH_SHORT).show()
-
-            }
-            //Setear alarma en 3 dia*/
-            Log.d("UltimoDia",dias3futuro.toString())
-            if(dias3futuro.toString()!="2002-05-12"){
-            Notificacion3Dias(dias3futuro)
-            }
-
 
         }
     }
@@ -558,7 +611,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         )
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val time =getAlarma3Dias(dias3futuro)
+        val time = getAlarma3Dias(dias3futuro)
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             time,
@@ -571,8 +624,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun getAlarma3Dias(dias3futuro: LocalDate): Long {
         val calendar = Calendar.getInstance()
         val day = (dias3futuro.dayOfMonth)
-        val month = (dias3futuro.monthValue-1)
-        val year =(dias3futuro.year)
+        val month = (dias3futuro.monthValue - 1)
+        val year = (dias3futuro.year)
         calendar.set(year, month, day)
         Log.d("AlarmaSet", calendar.timeInMillis.toString())
         return calendar.timeInMillis
@@ -596,17 +649,18 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val channel = NotificationChannel(channelID, name, importance)
         channel.description = desc
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-       // notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        // notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         notificationManager.createNotificationChannel(channel)
     }
 
-    private fun NotificacionNoHasAvanzado2Semanas(){
+    private fun NotificacionNoHasAvanzado2Semanas() {
 
         val intent = Intent(this, EjercicioActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         var builder = NotificationCompat.Builder(this, "Chanel1")
             .setSmallIcon(R.drawable.icon2)
             .setContentTitle("Recordatorio")
@@ -626,7 +680,8 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val intent = Intent(this, EjercicioActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         var builder = NotificationCompat.Builder(this, "Chanel1")
             .setSmallIcon(R.drawable.icon2)
             .setContentTitle("Oye ${PerfilActivity.NombreUsuario}!")
@@ -644,7 +699,6 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
 
-
     private fun NotificacionNoHasAvanzado() {
         val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
         val title = "Recordatorio"
@@ -660,7 +714,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         )
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val time =getTime()
+        val time = getTime()
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             time,
@@ -669,6 +723,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         Log.d("RutinaProgramada", java.lang.String.format(time.toString()))
 
     }
+
     private fun NotificacionRutinaPendiente() {
         val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
         val title = "Recordatorio"
@@ -685,7 +740,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         )
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val time =getTime()
+        val time = getTime()
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             time,
@@ -694,6 +749,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         Log.d("RutinaProgramada", java.lang.String.format(time.toString()))
 
     }
+
     private fun NotificacionRutinaBorrada() {
         val intent = Intent(applicationContext, com.example.wildtracker.ui.Notification::class.java)
         val title = "Rutina Borrada"
@@ -710,7 +766,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         )
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val time =getTime()
+        val time = getTime()
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             time,
@@ -726,13 +782,11 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val hour = calendar.get(Calendar.HOUR)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         val month = calendar.get(Calendar.MONTH)
-        val year =calendar.get(Calendar.YEAR)
+        val year = calendar.get(Calendar.YEAR)
         val year2 = calendar.timeInMillis
         calendar.set(year, month, day, hour, minute)
         return calendar.timeInMillis
     }
-
-
 
 
     private fun initToolbar() {
@@ -776,12 +830,12 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            
-            R.id.nav_musica ->callMusica()
-            R.id.nav_amigos ->callAmigosActivity()
-            R.id.Settings->callAjustesActivity()
-            R.id.nav_seguimiento->callSeguimientoActivity()
-            R.id.nav_solicitudes-> callSolicitudesActivity()
+
+            R.id.nav_musica -> callMusica()
+            R.id.nav_amigos -> callAmigosActivity()
+            R.id.Settings -> callAjustesActivity()
+            R.id.nav_seguimiento -> callSeguimientoActivity()
+            R.id.nav_solicitudes -> callSolicitudesActivity()
 
         }
 
@@ -789,13 +843,17 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         return true
     }
+
     private fun callSolicitudesActivity() {
         val intent = Intent(this, SolicitudesActivity::class.java)
-        startActivity(intent)    }
+        startActivity(intent)
+    }
+
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
@@ -840,6 +898,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val intent = Intent(this, MetasActivity::class.java)
         startActivity(intent)
     }
+
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
@@ -860,6 +919,7 @@ class EjercicioActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         //Cierra sesion y manda devuelta al login
         deleteAppData()
     }
+
     private fun deleteAppData() {
         try {
             // clearing app data

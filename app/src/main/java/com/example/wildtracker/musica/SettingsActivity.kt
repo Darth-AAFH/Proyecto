@@ -2,7 +2,6 @@ package com.example.wildtracker.musica
 
 import android.app.ActionBar
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -11,12 +10,9 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.*
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.wildtracker.R
-import com.example.wildtracker.musica.Utils
-import kotlinx.android.synthetic.main.settings_activity.*
 
 
 class SettingsActivity : AppCompatActivity() {
@@ -25,7 +21,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var addMusicPathImageButton: ImageButton
     private lateinit var fillPlayListButton: Button
     private lateinit var clearPlayListButton: Button
-    private lateinit var VolverReproductorMusica:Button
+    private lateinit var VolverReproductorMusica: Button
     private lateinit var musicPathsParentLinearLayout: LinearLayout
     private lateinit var appVersionNumberTextView: TextView
 
@@ -94,7 +90,6 @@ class SettingsActivity : AppCompatActivity() {
     }
 
 
-
     private fun updateMusicPaths() {
         musicPathsParentLinearLayout.removeAllViews()
         var musicPaths = DataBase.getMusicPaths()
@@ -112,7 +107,8 @@ class SettingsActivity : AppCompatActivity() {
         var params = ViewGroup.LayoutParams(Utils.dpToPx(36f), Utils.dpToPx(36f))
         imageButton.layoutParams = params
         imageButton.foregroundGravity = Gravity.CENTER
-        imageButton.background = ContextCompat.getDrawable(this,
+        imageButton.background = ContextCompat.getDrawable(
+            this,
             R.drawable.baseline_delete_white_36
         )
 
@@ -161,7 +157,10 @@ class SettingsActivity : AppCompatActivity() {
         if (resultCode == RESULT_OK) {
             if (data?.data != null) {
                 val uri: Uri? = data.data
-                val docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri))
+                val docUri = DocumentsContract.buildDocumentUriUsingTree(
+                    uri,
+                    DocumentsContract.getTreeDocumentId(uri)
+                )
                 if (docUri != null) {
                     val path = MyFileUtil.getPath(this, docUri)
                     if (path != null) {

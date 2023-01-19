@@ -11,7 +11,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -44,7 +43,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var drawer: DrawerLayout
     private val accesdata = FirebaseFirestore.getInstance()
     private val name = FirebaseFirestore.getInstance()
-    private  var userName:String = ""
+    private var userName: String = ""
     private val openDocument = registerForActivityResult(MyOpenDocumentContract()) { uri ->
         if (uri != null) {
             onImageSelected(uri)
@@ -222,14 +221,13 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun getUserName(): String? {
         var nombre: String = ""
 
-        if(nombre.isEmpty())
-        nombre = PerfilActivity.usernameDb
-        if(nombre ==""){
+        if (nombre.isEmpty())
+            nombre = PerfilActivity.usernameDb
+        if (nombre == "") {
             nombre = "Anonimo"
         }
         return nombre
     }
-
 
 
     companion object {
@@ -238,6 +236,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         const val ANONYMOUS = "Sanonymous"
         private const val LOADING_IMAGE_URL = "https://www.google.com/images/spin-32.gif"
     }
+
     private fun initToolbar() {
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_main)
         toolbar.title = "Community Chat"
@@ -279,12 +278,12 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_ranking -> callRankingActivity()
             R.id.nav_chat -> callChatActivity()
             R.id.logOut -> signOut()
-            R.id.nav_musica ->callMusica()
+            R.id.nav_musica -> callMusica()
             R.id.nav_metas -> callMetasActivity()
-            R.id.nav_amigos ->callAmigosActivity()
-            R.id.Settings->callAjustesActivity()
-            R.id.nav_seguimiento->callSeguimientoActivity()
-            R.id.nav_solicitudes-> callSolicitudesActivity()
+            R.id.nav_amigos -> callAmigosActivity()
+            R.id.Settings -> callAjustesActivity()
+            R.id.nav_seguimiento -> callSeguimientoActivity()
+            R.id.nav_solicitudes -> callSolicitudesActivity()
 
 
         }
@@ -293,17 +292,22 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         return true
     }
+
     private fun callSolicitudesActivity() {
         val intent = Intent(this, SolicitudesActivity::class.java)
-        startActivity(intent)    }
+        startActivity(intent)
+    }
+
     private fun callAjustesActivity() {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
+
     private fun callAmigosActivity() {
         val intent = Intent(this, Activity_Amigos::class.java)
         startActivity(intent)
     }
+
     private fun callPerfilActivity() {
         val intent = Intent(this, PerfilActivity::class.java)
         startActivity(intent)
@@ -348,6 +352,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val intent = Intent(this, MetasActivity::class.java)
         startActivity(intent)
     }
+
     private fun callMusica() {
         val intent = Intent(this, mPlayerActivity::class.java)
         startActivity(intent)
@@ -368,6 +373,7 @@ class ChatActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //Cierra sesion y manda devuelta al login
         deleteAppData()
     }
+
     private fun deleteAppData() {
         try {
             // clearing app data
